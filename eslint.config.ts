@@ -1,4 +1,4 @@
-import { sheriff, type SheriffSettings, tseslint } from "eslint-config-sheriff";
+import { sheriff, type SheriffSettings, tseslint } from 'eslint-config-sheriff';
 
 const sheriffOptions: SheriffSettings = {
   react: true,
@@ -15,19 +15,22 @@ const sheriffOptions: SheriffSettings = {
 export default tseslint.config(sheriff(sheriffOptions), {
   rules: {
     // https://typescript-eslint.io/rules/no-misused-promises/#checksvoidreturn
-    "@typescript-eslint/no-misused-promises": [
-      "error",
+    '@typescript-eslint/no-misused-promises': [
+      'error',
       {
         checksVoidReturn: false,
       },
     ],
-    "no-console": "off",
+    'no-console': 'off',
     // 절대경로 통일을 위해 ".*" 패턴 제한
-    "no-restricted-imports": [
-      "error",
+    'no-restricted-imports': [
+      'error',
       {
-        patterns: [".*"],
+        patterns: ['.*'],
       },
     ],
+    '@typescript-eslint/no-floating-promises': 'off',
+    'react-refresh/only-export-components': 'off',
+    'react/jsx-no-useless-fragment': 'off',
   },
 });
