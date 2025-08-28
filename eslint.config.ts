@@ -32,5 +32,8 @@ export default tseslint.config(sheriff(sheriffOptions), {
     '@typescript-eslint/no-floating-promises': 'off',
     'react-refresh/only-export-components': 'off',
     'react/jsx-no-useless-fragment': 'off',
+    'react/jsx-boolean-value': 'off',
+    '@typescript-eslint/no-misused-spread': 'off',
+    'func-style': 'off',
   },
 });
