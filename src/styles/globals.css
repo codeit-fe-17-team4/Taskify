@@ -1,10 +1,54 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
 }
+@theme {
+  /** @color */
+  --color-black: #000000;
+  --color-black-1: #171717;
+  --color-black-2: #333236;
+  --color-black-3: #4b4b4b;
 
+  --color-gray-1: #787486;
+  --color-gray-2: #9fa6b2;
+  --color-gray-3: #d9d9d9;
+  --color-gray-4: #eeeeee;
+  --color-gray-5: #fafafa;
+  --color-white: #ffffff;
+
+  --color-violet: #5534da;
+  --color-violet-light: #f1effd;
+  --color-red: #d6173a;
+  --color-green: #7ac555;
+  --color-purple: #760dde;
+  --color-orange: #ffa500;
+  --color-blue: #76a5ea;
+  --color-pink: #e876ea;
+
+  /** @text */
+  --text-3xl: 2rem;
+  --text-2xl: 1.5rem;
+  --text-xl: 1.25rem;
+  --text-2lg: 1.125rem;
+  --text-lg: 1rem;
+  --text-md: 0.875rem;
+  --text-sm: 0.8125rem;
+  --text-xs: 0.75rem;
+
+  --text-3xl--line-height: 2.625rem;
+  --text-2xl--line-height: 2rem;
+  --text-xl--line-height: 2rem;
+  --text-2lg--line-height: 1.625rem;
+  --text-lg--line-height: 1.625rem;
+  --text-md--line-height: 1.5rem;
+  --text-sm--line-height: 1.375rem;
+  --text-xs--line-height: 1.125rem;
+
+  /** @font */
+  --font-pretendard: var(--font-pretendard);
+}
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -12,5 +56,5 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-pretendard);
 }
