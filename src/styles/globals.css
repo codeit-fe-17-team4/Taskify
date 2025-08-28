@@ -6,7 +6,7 @@
 }
 @theme {
   /** @color */
-  --color-black: #000000;
+  --color-black: #090909;
   --color-black-1: #171717;
   --color-black-2: #333236;
   --color-black-3: #4b4b4b;
@@ -49,10 +49,24 @@
   /** @font */
   --font-pretendard: var(--font-pretendard);
 }
+/** @break-point */
+@theme {
+  --breakpoint-*: initial;
+}
+@custom-variant tablet (@media (max-width: 80rem));
+@custom-variant mobile (@media (max-width: 48rem));
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 }
+
+@utility flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
