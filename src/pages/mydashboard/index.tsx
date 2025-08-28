@@ -12,7 +12,7 @@ export default function Mydashboard(): ReactNode {
         <div className='ml-40'>
           {/* 새로운 대시보드 */}
           <div className='max-w-7xl p-6'>
-            <button className='flex h-11 w-3xs cursor-pointer items-center justify-center gap-1 rounded border border-gray-200 bg-white'>
+            <button className='flex h-11 w-full cursor-pointer items-center justify-center gap-1 rounded border border-gray-200 bg-white sm:w-2xs md:w-40 lg:w-md xl:w-3xs'>
               <span className='text-xs font-bold text-gray-600'>
                 새로운 대시보드
               </span>
@@ -24,20 +24,19 @@ export default function Mydashboard(): ReactNode {
               />
             </button>
             {/* 초대받은 대시보드 */}
-            <div className='relative mt-10 h-70 w-3xl max-w-4xl gap-2 rounded-lg border-0 bg-white'>
+            <div className='relative mt-10 h-70 w-full max-w-4xl items-center gap-2 rounded-lg border-0 bg-white sm:w-2xs md:w-sm lg:w-md xl:w-3xl'>
               <div className='pt-4 pl-8'>
                 <h2 className='text-lg font-bold text-gray-600'>
                   초대받은 대시보드
                 </h2>
                 {/* 빈 상태 표시 */}
-                <div className='mt-4 flex flex-col items-center justify-center gap-1'>
+                <div className='absolute mt-4 flex-col items-center justify-center gap-1 pl-70'>
                   <Image
                     src='/icon/inviteEmpty.svg'
                     alt='초대받은 대시보드'
                     width={15}
                     height={10}
-                    style={{ width: 15, height: 15 }}
-                    priority
+                    className='h-[100px] w-[150px]'
                   />
                   <p className='font absolute text-xs text-gray-400'>
                     아직 초대받은 대시보드가 없어요
