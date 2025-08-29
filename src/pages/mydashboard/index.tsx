@@ -24,24 +24,21 @@ export default function Mydashboard(): ReactNode {
               />
             </button>
             {/* 초대받은 대시보드 */}
-            <div className='relative mt-10 h-70 w-full max-w-4xl items-center gap-2 rounded-lg border-0 bg-white sm:w-2xs md:w-sm lg:w-md xl:w-3xl'>
-              <div className='pt-4 pl-8'>
-                <h2 className='text-lg font-bold text-gray-600'>
-                  초대받은 대시보드
-                </h2>
-                {/* 빈 상태 표시 */}
-                <div className='absolute mt-4 flex-col items-center justify-center gap-1 pl-70'>
-                  <Image
-                    src='/icon/inviteEmpty.svg'
-                    alt='초대받은 대시보드'
-                    width={15}
-                    height={10}
-                    className='h-[100px] w-[150px]'
-                  />
-                  <p className='font absolute text-xs text-gray-400'>
-                    아직 초대받은 대시보드가 없어요
-                  </p>
-                </div>
+            <div className='mt-10 flex h-70 w-full max-w-4xl flex-col rounded-lg border-0 bg-white sm:w-2xs md:w-sm lg:w-md xl:w-3xl'>
+              <h2 className='pt-4 pl-7 text-lg font-bold text-gray-600'>
+                초대받은 대시보드
+              </h2>
+              {/* 빈 상태 표시 */}
+              <div className='flex flex-grow flex-col items-center justify-center gap-4'>
+                <Image
+                  src='/icon/inviteEmpty.svg'
+                  alt='초대받은 대시보드'
+                  width={80}
+                  height={80}
+                />
+                <p className='font text-xs text-gray-400'>
+                  아직 초대받은 대시보드가 없어요
+                </p>
               </div>
             </div>
           </div>
