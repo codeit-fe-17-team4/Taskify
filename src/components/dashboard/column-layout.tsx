@@ -1,0 +1,45 @@
+import DashboardColumn from './dashboard-column';
+import AddColumnButton from './add-column-button';
+import { ColumnType, TaskType } from '@/types/task';
+
+interface ColumnLayoutProps {
+  columns: ColumnType[];
+  onAddColumnClick?: () => void;
+  onColumnSettingsClick?: (columnId: string) => void;
+  onAddTaskClick?: (columnId: string) => void;
+  onTaskClick?: (task: TaskType) => void;
+}
+
+export default function ColumnLayout({
+  columns,
+  onAddColumnClick,
+  onColumnSettingsClick,
+  onAddTaskClick,
+  onTaskClick,
+}: ColumnLayoutProps) {
+  return (
+    <div className='column-layout-container flex h-full'>
+      {/* 칼럼 목록 */}
+      {columns.map((col) => (
+        <div
+          key={col.id}
+          className='column-container flex h-full w-80 flex-shrink-0 flex-col border-r border-[#EEEEEE] px-4 py-6'
+        >
+          <DashboardColumn
+            column={col}
+            onSettingsClick={() => onColumnSettingsClick?.(col.id)}
+            onAddTaskClick={() => onAddTaskClick?.(col.id)}
+            onTaskClick={onTaskClick}
+          />
+        </div>
+      ))}
+
+      {/* 칼럼 추가 버튼 */}
+      <div className='add-column-container h-full w-80 flex-shrink-0 px-4 py-6'>
+        <div className='mt-12'>
+          <AddColumnButton onClick={onAddColumnClick} />
+        </div>
+      </div>
+    </div>
+  );
+}
