@@ -1,15 +1,15 @@
 import { z } from 'zod';
 
-export async function customFetch<T extends z.ZodType>(
+export default async function customFetch<T extends z.ZodType>(
   input: RequestInfo,
-  init: RequestInit,
-  schema: T
+  schema: T,
+  init?: RequestInit
 ): Promise<z.infer<T>> {
   const res = await fetch(input, {
     ...init,
     headers: {
       'Content-Type': 'application/json',
-      ...init.headers,
+      ...init?.headers,
     },
   });
 

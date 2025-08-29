@@ -40,6 +40,8 @@ export default tseslint.config(sheriff(sheriffOptions), {
     'react/jsx-no-useless-fragment': 'off',
     'react/jsx-boolean-value': 'off',
     '@typescript-eslint/no-misused-spread': 'off',
+    'fsecond/prefer-destructured-optionals': 'off',
+    'unicorn/consistent-function-scoping': 'off',
     'func-style': 'off',
   },
 });
