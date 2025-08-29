@@ -25,7 +25,7 @@ export async function customFetch<T extends z.ZodType>(
   } catch (error) {
     if (error instanceof z.ZodError) {
       throw new TypeError(
-        `Response validation failed: ${JSON.stringify(error)}`
+        `Response validation failed: ${JSON.stringify(error.issues)}`
       );
     }
     throw error;

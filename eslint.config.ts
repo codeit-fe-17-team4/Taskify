@@ -13,6 +13,12 @@ const sheriffOptions: SheriffSettings = {
 };
 
 export default tseslint.config(sheriff(sheriffOptions), {
+  languageOptions: {
+    parserOptions: {
+      project: './tsconfig.json',
+      tsconfigRootDir: __dirname,
+    },
+  },
   rules: {
     // https://typescript-eslint.io/rules/no-misused-promises/#checksvoidreturn
     '@typescript-eslint/no-misused-promises': [
