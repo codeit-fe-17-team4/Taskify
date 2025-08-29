@@ -1,5 +1,6 @@
 import { BASE_API_URL } from '@/lib//constants';
 import customFetch from '@/lib/custom-fetch';
+import type * as i from '@/lib/dashboards/interface';
 import {
   dashboardSchema,
   dashboardsSchema,
@@ -12,39 +13,10 @@ import {
   type InvitationType,
 } from '@/lib/dashboards/type';
 
-interface GetDashBoardsParams {
-  navigationMethod: 'infiniteScroll' | 'pagination';
-  cursorId?: number;
-  page?: number;
-  size?: number;
-}
-interface CreateDashBoardParams {
-  title: string;
-  color: string;
-}
-interface EditDashBoardParams {
-  id: number;
-  body: CreateDashBoardParams;
-}
-interface CreateInvitationParams {
-  id: number;
-  body: {
-    email: string;
-  };
-}
-interface GetInvitationsParams {
-  dashboardId: number;
-  page?: number;
-  size?: number;
-}
-interface DeleteInvitationParams {
-  dashboardId: number;
-  invitationId: number;
-}
 export const createDashBoard = async ({
   title,
   color,
-}: CreateDashBoardParams): Promise<DashboardType> => {
+}: i.CreateDashBoardParams): Promise<DashboardType> => {
   const data = await customFetch(
     `${BASE_API_URL}/dashboards`,
     dashboardSchema,
@@ -64,7 +36,7 @@ export const getDashBoards = async ({
   cursorId = 0,
   page = 1,
   size = 10,
-}: GetDashBoardsParams): Promise<DashboardsType> => {
+}: i.GetDashBoardsParams): Promise<DashboardsType> => {
   const data = await customFetch(
     `${BASE_API_URL}/dashboards?navigationMethod=${navigationMethod}&cursorId=${String(cursorId)}&page=${String(page)}&size=${String(size)}`,
     dashboardsSchema
@@ -88,7 +60,7 @@ export const getDashBoard = async ({
 export const editDashBoard = async ({
   id,
   body,
-}: EditDashBoardParams): Promise<DashboardType> => {
+}: i.EditDashBoardParams): Promise<DashboardType> => {
   const { title, color } = body;
   const data = await customFetch(
     `${BASE_API_URL}/dashboards/${String(id)}`,
@@ -117,7 +89,7 @@ export const deleteDashBoard = async ({
 export const createInvitation = async ({
   body,
   id,
-}: CreateInvitationParams): Promise<InvitationType> => {
+}: i.CreateInvitationParams): Promise<InvitationType> => {
   const { email } = body;
   const data = await customFetch(
     `${BASE_API_URL}/dashboards/${String(id)}/invitations`,
@@ -137,7 +109,7 @@ export const getInvitations = async ({
   dashboardId,
   page = 1,
   size = 10,
-}: GetInvitationsParams): Promise<InvitationsType> => {
+}: i.GetInvitationsParams): Promise<InvitationsType> => {
   const data = await customFetch(
     `${BASE_API_URL}/dashboards/${String(dashboardId)}/invitations?page=${String(page)}&size=${String(size)}`,
     invitationsSchema
@@ -148,7 +120,7 @@ export const getInvitations = async ({
 export const deleteInvitation = async ({
   dashboardId,
   invitationId,
-}: DeleteInvitationParams): Promise<void> => {
+}: i.DeleteInvitationParams): Promise<void> => {
   await customFetch(
     `${BASE_API_URL}/dashboards/${String(dashboardId)}/invitations/${String(invitationId)}}`,
     deleteSchema,
