@@ -5,6 +5,10 @@ export default function Home(): ReactNode {
   return (
     <div>
       <Link href='/mydashboard'>mydashboard</Link>
+      &nbsp;
+      <Link href='/mydashboard/invite-list'>invite-list</Link>
+      &nbsp;
+      <Link href='/dashboard/1/edit'>dashboardEdit 1</Link>
     </div>
   );
 }
