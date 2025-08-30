@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { type ReactNode , useState } from 'react';
+import { type ReactNode, useState } from 'react';
 
 export default function MydashboardEdit(): ReactNode {
   const membersData = [
@@ -65,7 +65,7 @@ export default function MydashboardEdit(): ReactNode {
                 />
               </div>
               <div>
-                <div className='mt-3 flex items-center gap-3'>
+                <div className='mt-3 flex items-center gap-2'>
                   {/* 색상 선택 */}
                   <Image
                     src='/icon/dot-big/greenDotBig.svg'
@@ -158,7 +158,9 @@ export default function MydashboardEdit(): ReactNode {
                         <button
                           type='button'
                           className='w-15.5 cursor-pointer rounded border border-gray-200 px-3 py-1 text-xs text-violet-500 transition-colors hover:bg-gray-50'
-                          onClick={() => { handleDeleteMember(member.id); }}
+                          onClick={() => {
+                            handleDeleteMember(member.id);
+                          }}
                         >
                           삭제
                         </button>
