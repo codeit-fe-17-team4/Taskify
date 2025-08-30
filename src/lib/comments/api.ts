@@ -1,6 +1,6 @@
-import { BASE_API_URL } from '@/lib//constants';
 import type * as i from '@/lib/comments/interface';
 import * as z from '@/lib/comments/type';
+import { BASE_API_URL } from '@/lib/constants';
 import customFetch from '@/lib/custom-fetch';
 
 export const createComment = async (
