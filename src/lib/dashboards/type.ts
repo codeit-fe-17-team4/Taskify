@@ -38,7 +38,7 @@ export const invitationListSchema = z.object({
   invitations: z.array(invitationSchema),
 });
 export const deleteSchema = z.object();
-export type DashboardsType = z.infer<typeof dashboardListSchema>;
+export type DashboardListType = z.infer<typeof dashboardListSchema>;
 export type DashboardType = z.infer<typeof dashboardSchema>;
 export type InvitationType = z.infer<typeof invitationSchema>;
-export type InvitationsType = z.infer<typeof invitationListSchema>;
+export type InvitationListType = z.infer<typeof invitationListSchema>;

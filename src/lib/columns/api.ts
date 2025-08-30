@@ -4,7 +4,7 @@ import { BASE_API_URL } from '@/lib/constants';
 import customFetch from '@/lib/custom-fetch';
 
 export const createColumn = async (
-  body: i.CreateColumnsParams
+  body: i.CreateColumnBody
 ): Promise<z.ColumnType> => {
   const data = await customFetch(`${BASE_API_URL}/columns`, z.columnSchema, {
     method: 'POST',

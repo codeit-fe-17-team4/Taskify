@@ -1,16 +1,16 @@
-export interface GetDashBoardsParams {
+export interface GetDashBoardListParams {
   navigationMethod: 'infiniteScroll' | 'pagination';
   cursorId?: number;
   page?: number;
   size?: number;
 }
-export interface CreateDashBoardParams {
+export interface CreateDashBoardBody {
   title: string;
   color: string;
 }
 export interface EditDashBoardParams {
   id: number;
-  body: CreateDashBoardParams;
+  body: CreateDashBoardBody;
 }
 export interface CreateInvitationParams {
   id: number;
@@ -18,7 +18,7 @@ export interface CreateInvitationParams {
     email: string;
   };
 }
-export interface GetInvitationsParams {
+export interface GetInvitationListParams {
   dashboardId: number;
   page?: number;
   size?: number;

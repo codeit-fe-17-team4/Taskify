@@ -1,4 +1,4 @@
-export interface CreateColumnsParams {
+export interface CreateColumnBody {
   title: string;
   dashboardId: number;
 }

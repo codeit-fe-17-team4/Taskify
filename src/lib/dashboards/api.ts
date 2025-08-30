@@ -4,7 +4,7 @@ import type * as i from '@/lib/dashboards/interface';
 import * as z from '@/lib/dashboards/type';
 
 export const createDashBoard = async (
-  body: i.CreateDashBoardParams
+  body: i.CreateDashBoardBody
 ): Promise<z.DashboardType> => {
   const data = await customFetch(
     `${BASE_API_URL}/dashboards`,
@@ -19,12 +19,12 @@ export const createDashBoard = async (
 
   return data;
 };
-export const getDashBoards = async ({
+export const getDashBoardList = async ({
   navigationMethod = 'infiniteScroll',
   cursorId = 0,
   page = 1,
   size = 10,
-}: i.GetDashBoardsParams): Promise<z.DashboardsType> => {
+}: i.GetDashBoardListParams): Promise<z.DashboardListType> => {
   const queryParams = new URLSearchParams({
     navigationMethod,
     cursorId: String(cursorId),
@@ -39,11 +39,7 @@ export const getDashBoards = async ({
   return data;
 };
 
-export const getDashBoard = async ({
-  id,
-}: {
-  id: number;
-}): Promise<z.DashboardType> => {
+export const getDashBoard = async (id: number): Promise<z.DashboardType> => {
   const data = await customFetch(
     `${BASE_API_URL}/dashboards/${String(id)}`,
     z.dashboardSchema
@@ -68,11 +64,7 @@ export const editDashBoard = async ({
 
   return data;
 };
-export const deleteDashBoard = async ({
-  id,
-}: {
-  id: number;
-}): Promise<void> => {
+export const deleteDashBoard = async (id: number): Promise<void> => {
   await customFetch(
     `${BASE_API_URL}/dashboards/${String(id)}`,
     z.deleteSchema,
@@ -100,11 +92,11 @@ export const createInvitation = async ({
   return data;
 };
 
-export const getInvitations = async ({
+export const getInvitationList = async ({
   dashboardId,
   page = 1,
   size = 10,
-}: i.GetInvitationsParams): Promise<z.InvitationsType> => {
+}: i.GetInvitationListParams): Promise<z.InvitationListType> => {
   const queryParams = new URLSearchParams({
     dashboardId: String(dashboardId),
     page: String(page),
