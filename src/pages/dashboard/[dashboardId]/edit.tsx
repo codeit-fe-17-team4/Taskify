@@ -1,8 +1,16 @@
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import type { ReactNode } from 'react';
+import { type ReactNode , useState } from 'react';
 
 export default function MydashboardEdit(): ReactNode {
+  const membersData = [
+    { id: 1, name: '정만철', initial: 'J', color: 'bg-amber-200' },
+    { id: 2, name: '김태순', initial: 'K', color: 'bg-sky-200' },
+    { id: 3, name: '최주협', initial: 'C', color: 'bg-yellow-400' },
+    { id: 4, name: '윤지현', initial: 'Y', color: 'bg-orange-300' },
+  ];
+
+  const [members, setMembers] = useState(membersData);
   const router = useRouter();
   const { dashboardId } = router.query;
   const dashboardData = [
@@ -13,9 +21,16 @@ export default function MydashboardEdit(): ReactNode {
     { id: 5, name: '중요 문서함' },
   ];
 
+  // 대시보드 이름 불러오기
   const currentDashboard = dashboardData.find(
     (dashboard) => dashboard.id === Number(dashboardId)
   );
+
+  const handleDeleteMember = (memberId: number) => {
+    setMembers((prevMembers) =>
+      prevMembers.filter((member) => member.id !== memberId)
+    );
+  };
 
   return (
     <div className='min-h-screen bg-gray-50'>
@@ -33,7 +48,7 @@ export default function MydashboardEdit(): ReactNode {
             />
             <span>돌아가기</span>
           </div>
-          <div className='mt-8 h-[340px] w-[620px] rounded-lg bg-white p-7'>
+          <div className='mt-8 h-[340px] w-[550px] rounded-lg bg-white p-7'>
             <h2 className='text-xl font-bold'>{currentDashboard?.name}</h2>
             <form className='mt-4 space-y-4'>
               {/* 이름 수정 */}
@@ -95,10 +110,9 @@ export default function MydashboardEdit(): ReactNode {
             </form>
           </div>
           {/* 구성원 */}
-          <div className='mt-8 h-[340px] w-[620px] rounded-lg bg-white p-7'>
+          <div className='mt-8 h-[340px] w-[550px] rounded-lg bg-white p-7'>
             <div className='flex items-center justify-between'>
               <h2 className='text-xl font-bold'>구성원</h2>
-
               <div className='flex items-center justify-end gap-2'>
                 <span className='text-xs'>1 페이지 중 1</span>
                 <div className='flex items-center justify-center'>
@@ -121,23 +135,52 @@ export default function MydashboardEdit(): ReactNode {
                 </div>
               </div>
             </div>
-            <table className='mt-5'>
+            <table className='mt-5 w-full text-center text-xs'>
               <thead>
-                <th className='text-xs font-normal text-gray-400'>이름</th>
+                <tr>
+                  <th className='text-start font-normal text-gray-400'>이름</th>
+                </tr>
               </thead>
-              <th></th>
+              <tbody>
+                {members.map((member) => {
+                  return (
+                    <tr
+                      key={member.id}
+                      className='flex items-center justify-between border-b border-gray-200'
+                    >
+                      <td className='py-3'>
+                        <div className='flex items-center gap-2'>
+                          <div>{member.initial}</div>
+                          <span>{member.name}</span>
+                        </div>
+                      </td>
+                      <td className='py-3'>
+                        <button
+                          type='button'
+                          className='w-15.5 cursor-pointer rounded border border-gray-200 px-3 py-1 text-xs text-violet-500 transition-colors hover:bg-gray-50'
+                          onClick={() => { handleDeleteMember(member.id); }}
+                        >
+                          삭제
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
             </table>
           </div>
           {/* 초대 내역 */}
-          <div className='mt-8 h-[340px] w-[620px] rounded-lg bg-white p-7'>
+          <div className='mt-8 h-[340px] w-[550px] rounded-lg bg-white p-7'>
             <h2 className='text-xl font-bold'>초대 내역</h2>
           </div>
           {/* 대시보드 삭제 */}
           <div>
             <button
               type='submit'
-              onClick={() => alert('대시보드를 삭제하시겠습니까?')}
               className='my-6 h-12 w-xs cursor-pointer rounded-md border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-100'
+              onClick={() => {
+                alert('대시보드를 삭제하시겠습니까?');
+              }}
             >
               대시보드 삭제하기
             </button>
