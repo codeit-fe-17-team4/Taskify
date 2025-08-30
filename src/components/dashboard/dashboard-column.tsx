@@ -3,7 +3,7 @@ import ColumnHeader from './column-header';
 import AddTaskButton from './add-task-button';
 import ColumnTaskCard from './column-task-card';
 import CreateTaskModal from './create-task-modal';
-import { ColumnType, TaskType } from '@/types/task';
+import type { ColumnType, TaskType } from './type';
 
 interface ColumnProps {
   column: ColumnType;

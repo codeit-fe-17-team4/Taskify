@@ -1,8 +1,5 @@
 import Image from 'next/image';
-
-interface AddTaskButtonProps {
-  onClick?: () => void;
-}
+import type { AddTaskButtonProps } from './type';
 
 export default function AddTaskButton({ onClick }: AddTaskButtonProps) {
   return (

@@ -1,6 +1,6 @@
 import DashboardColumn from './dashboard-column';
 import AddColumnButton from './add-column-button';
-import { ColumnType, TaskType } from '@/types/task';
+import type { ColumnType, TaskType } from './type';
 
 interface ColumnLayoutProps {
   columns: ColumnType[];

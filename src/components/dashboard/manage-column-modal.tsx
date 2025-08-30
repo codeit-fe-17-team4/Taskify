@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import BaseModal from '../ui/base-modal';
 import ManageColumnForm, { ManageColumnFormData } from './manage-column-form';
-import { ColumnType } from '@/types/task';
+import type { ColumnType } from './type';
 
 interface ManageColumnModalProps {
   isOpen: boolean;

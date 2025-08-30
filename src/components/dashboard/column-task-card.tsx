@@ -1,9 +1,5 @@
 import Image from 'next/image';
-import { TaskType } from '@/types/task';
-
-interface ColumnTaskCardProps {
-  task: TaskType;
-}
+import type { TaskCardProps } from './type';
 
 const getTagColorClasses = (color: string) => {
   switch (color) {
@@ -22,7 +18,7 @@ const getTagColorClasses = (color: string) => {
   }
 };
 
-export default function ColumnTaskCard({ task }: ColumnTaskCardProps) {
+export default function ColumnTaskCard({ task }: TaskCardProps) {
   return (
     <div className='cursor-pointer rounded-lg border border-gray-300 bg-white'>
       {/* 이미지 */}

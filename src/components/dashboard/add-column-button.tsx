@@ -1,8 +1,5 @@
 import Image from 'next/image';
-
-interface AddColumnButtonProps {
-  onClick?: () => void;
-}
+import type { AddColumnButtonProps } from './type';
 
 export default function AddColumnButton({ onClick }: AddColumnButtonProps) {
   return (

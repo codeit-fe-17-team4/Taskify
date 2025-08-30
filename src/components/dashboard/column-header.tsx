@@ -1,10 +1,5 @@
 import Image from 'next/image';
-import { ColumnType } from '@/types/task';
-
-interface ColumnHeaderProps {
-  column: ColumnType;
-  onSettingsClick?: () => void;
-}
+import type { ColumnHeaderProps } from './type';
 
 export default function ColumnHeader({
   column,

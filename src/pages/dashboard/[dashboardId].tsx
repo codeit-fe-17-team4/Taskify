@@ -2,7 +2,7 @@ import { useState } from 'react';
 import ColumnLayout from '@/components/dashboard/column-layout';
 import CreateColumnModal from '@/components/dashboard/create-column-modal';
 import ManageColumnModal from '@/components/dashboard/manage-column-modal';
-import { ColumnType, TaskType } from '@/types/task';
+import type { ColumnType, TaskType } from '@/components/dashboard/type';
 import { ColumnFormData } from '@/components/dashboard/create-column-form';
 import { ManageColumnFormData } from '@/components/dashboard/manage-column-form';
 
