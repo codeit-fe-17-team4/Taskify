@@ -1,6 +1,5 @@
 // import type { InferGetServerSidePropsType } from 'next';
 import type { ReactNode } from 'react';
-import { getDashBoards } from '@/lib/dashboards/dashboards';
 
 // interface ReturnInterface {
 //   props: { dashboards: DashboardsType };
@@ -18,21 +17,7 @@ import { getDashBoards } from '@/lib/dashboards/dashboards';
 // };
 
 export default function Home(): ReactNode {
-  const handleDashBoard = async () => {
-    const data = await getDashBoards({
-      navigationMethod: 'infiniteScroll',
-    });
-
-    console.log(data);
-  };
-
-  return (
-    <>
-      <button className='block' onClick={handleDashBoard}>
-        대쉬보드
-      </button>
-    </>
-  );
+  return <div>home</div>;
 }
 
 // export default function Home(): ReactNode {
