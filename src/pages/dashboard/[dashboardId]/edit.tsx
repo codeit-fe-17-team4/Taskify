@@ -36,6 +36,7 @@ export default function MydashboardEdit(): ReactNode {
           <div className='mt-8 h-[340px] w-[620px] rounded-lg bg-white p-7'>
             <h2 className='text-xl font-bold'>{currentDashboard?.name}</h2>
             <form className='mt-4 space-y-4'>
+              {/* 이름 수정 */}
               <div>
                 <label htmlFor='name' className='block text-base font-medium'>
                   대시보드 이름
@@ -92,6 +93,24 @@ export default function MydashboardEdit(): ReactNode {
                 </button>
               </div>
             </form>
+          </div>
+          {/* 구성원 */}
+          <div className='mt-8 h-[340px] w-[620px] rounded-lg bg-white p-7'>
+            <h2 className='text-xl font-bold'>구성원</h2>
+          </div>
+          {/* 초대 내역 */}
+          <div className='mt-8 h-[340px] w-[620px] rounded-lg bg-white p-7'>
+            <h2 className='text-xl font-bold'>초대 내역</h2>
+          </div>
+          {/* 대시보드 삭제 */}
+          <div>
+            <button
+              type='submit'
+              onClick={() => alert('대시보드를 삭제하시겠습니까?')}
+              className='my-6 h-12 w-xs cursor-pointer rounded-md border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-100'
+            >
+              대시보드 삭제하기
+            </button>
           </div>
         </div>
       </div>
