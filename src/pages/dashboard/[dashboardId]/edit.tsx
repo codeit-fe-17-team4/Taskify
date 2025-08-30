@@ -96,7 +96,37 @@ export default function MydashboardEdit(): ReactNode {
           </div>
           {/* 구성원 */}
           <div className='mt-8 h-[340px] w-[620px] rounded-lg bg-white p-7'>
-            <h2 className='text-xl font-bold'>구성원</h2>
+            <div className='flex items-center justify-between'>
+              <h2 className='text-xl font-bold'>구성원</h2>
+
+              <div className='flex items-center justify-end gap-2'>
+                <span className='text-xs'>1 페이지 중 1</span>
+                <div className='flex items-center justify-center'>
+                  <button className='flex h-7 w-7 cursor-pointer items-center justify-center rounded border border-gray-200 bg-white'>
+                    <Image
+                      src='/icon/prevPage.svg'
+                      alt='prev'
+                      width={7}
+                      height={7}
+                    />
+                  </button>
+                  <button className='flex h-7 w-7 cursor-pointer items-center justify-center rounded border border-gray-200 bg-white'>
+                    <Image
+                      src='/icon/nextPage.svg'
+                      alt='prev'
+                      width={7}
+                      height={7}
+                    />
+                  </button>
+                </div>
+              </div>
+            </div>
+            <table className='mt-5'>
+              <thead>
+                <th className='text-xs font-normal text-gray-400'>이름</th>
+              </thead>
+              <th></th>
+            </table>
           </div>
           {/* 초대 내역 */}
           <div className='mt-8 h-[340px] w-[620px] rounded-lg bg-white p-7'>

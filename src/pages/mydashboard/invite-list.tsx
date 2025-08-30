@@ -154,27 +154,27 @@ export default function InviteList(): ReactNode {
                   height={15}
                 />
               </button>
-              <p className='absolute end-30 top-35 text-xs text-gray-600'>
-                1 페이지 중의 1
-              </p>
-              {/* 페이지네이션 라이브러리 추가 예정 */}
-              <div className='flex'>
-                <button className='absolute end-20 top-33 flex h-7 w-7 cursor-pointer items-center justify-center rounded border border-gray-200 bg-white'>
-                  <Image
-                    src='/icon/prevPage.svg'
-                    alt='prev'
-                    width={7}
-                    height={7}
-                  />
-                </button>
-                <button className='absolute end-10 top-33 flex h-7 w-7 cursor-pointer items-center justify-center rounded border border-gray-200 bg-white'>
-                  <Image
-                    src='/icon/nextPage.svg'
-                    alt='prev'
-                    width={7}
-                    height={7}
-                  />
-                </button>
+              <div className='absolute end-0 top-35 flex items-center justify-end gap-2'>
+                <p className='text-xs text-gray-600'>1 페이지 중의 1</p>
+                {/* 페이지네이션 라이브러리 추가 예정 */}
+                <div className='flex'>
+                  <button className='flex h-7 w-7 cursor-pointer items-center justify-center rounded border border-gray-200 bg-white'>
+                    <Image
+                      src='/icon/prevPage.svg'
+                      alt='prev'
+                      width={7}
+                      height={7}
+                    />
+                  </button>
+                  <button className='end-10 top-33 flex h-7 w-7 cursor-pointer items-center justify-center rounded border border-gray-200 bg-white'>
+                    <Image
+                      src='/icon/nextPage.svg'
+                      alt='prev'
+                      width={7}
+                      height={7}
+                    />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
