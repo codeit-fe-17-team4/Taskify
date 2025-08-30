@@ -7,7 +7,7 @@ export const dashboardSchema = z.object({
   userId: z.number(),
   createdByMe: z.boolean(),
 });
-export const dashboardsSchema = z.object({
+export const dashboardListSchema = z.object({
   cursorId: z.number(),
   totalCount: z.number(),
   dashboards: z.array(dashboardSchema),
@@ -33,12 +33,12 @@ export const invitationSchema = z.object({
   createdAt: z.string(),
   updatedAt: z.string(),
 });
-export const invitationsSchema = z.object({
+export const invitationListSchema = z.object({
   totalCount: z.number(),
   invitations: z.array(invitationSchema),
 });
 export const deleteSchema = z.object();
-export type DashboardsType = z.infer<typeof dashboardsSchema>;
+export type DashboardsType = z.infer<typeof dashboardListSchema>;
 export type DashboardType = z.infer<typeof dashboardSchema>;
 export type InvitationType = z.infer<typeof invitationSchema>;
-export type InvitationsType = z.infer<typeof invitationsSchema>;
+export type InvitationsType = z.infer<typeof invitationListSchema>;

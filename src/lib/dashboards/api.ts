@@ -1,30 +1,18 @@
 import { BASE_API_URL } from '@/lib//constants';
 import customFetch from '@/lib/custom-fetch';
 import type * as i from '@/lib/dashboards/interface';
-import {
-  dashboardSchema,
-  dashboardsSchema,
-  type DashboardsType,
-  type DashboardType,
-  deleteSchema,
-  invitationSchema,
-  invitationsSchema,
-  type InvitationsType,
-  type InvitationType,
-} from '@/lib/dashboards/type';
+import * as z from '@/lib/dashboards/type';
 
-export const createDashBoard = async ({
-  title,
-  color,
-}: i.CreateDashBoardParams): Promise<DashboardType> => {
+export const createDashBoard = async (
+  body: i.CreateDashBoardParams
+): Promise<z.DashboardType> => {
   const data = await customFetch(
     `${BASE_API_URL}/dashboards`,
-    dashboardSchema,
+    z.dashboardSchema,
     {
       method: 'POST',
       body: JSON.stringify({
-        title,
-        color,
+        ...body,
       }),
     }
   );
@@ -36,10 +24,16 @@ export const getDashBoards = async ({
   cursorId = 0,
   page = 1,
   size = 10,
-}: i.GetDashBoardsParams): Promise<DashboardsType> => {
+}: i.GetDashBoardsParams): Promise<z.DashboardsType> => {
+  const queryParams = new URLSearchParams({
+    navigationMethod,
+    cursorId: String(cursorId),
+    page: String(page),
+    size: String(size),
+  });
   const data = await customFetch(
-    `${BASE_API_URL}/dashboards?navigationMethod=${navigationMethod}&cursorId=${String(cursorId)}&page=${String(page)}&size=${String(size)}`,
-    dashboardsSchema
+    `${BASE_API_URL}/dashboards?${queryParams}`,
+    z.dashboardListSchema
   );
 
   return data;
@@ -49,10 +43,10 @@ export const getDashBoard = async ({
   id,
 }: {
   id: number;
-}): Promise<DashboardType> => {
+}): Promise<z.DashboardType> => {
   const data = await customFetch(
     `${BASE_API_URL}/dashboards/${String(id)}`,
-    dashboardSchema
+    z.dashboardSchema
   );
 
   return data;
@@ -60,16 +54,14 @@ export const getDashBoard = async ({
 export const editDashBoard = async ({
   id,
   body,
-}: i.EditDashBoardParams): Promise<DashboardType> => {
-  const { title, color } = body;
+}: i.EditDashBoardParams): Promise<z.DashboardType> => {
   const data = await customFetch(
     `${BASE_API_URL}/dashboards/${String(id)}`,
-    dashboardSchema,
+    z.dashboardSchema,
     {
       method: 'PUT',
       body: JSON.stringify({
-        title,
-        color,
+        ...body,
       }),
     }
   );
@@ -81,23 +73,26 @@ export const deleteDashBoard = async ({
 }: {
   id: number;
 }): Promise<void> => {
-  await customFetch(`${BASE_API_URL}/dashboards/${String(id)}`, deleteSchema, {
-    method: 'DELETE',
-  });
+  await customFetch(
+    `${BASE_API_URL}/dashboards/${String(id)}`,
+    z.deleteSchema,
+    {
+      method: 'DELETE',
+    }
+  );
 };
 
 export const createInvitation = async ({
   body,
   id,
-}: i.CreateInvitationParams): Promise<InvitationType> => {
-  const { email } = body;
+}: i.CreateInvitationParams): Promise<z.InvitationType> => {
   const data = await customFetch(
     `${BASE_API_URL}/dashboards/${String(id)}/invitations`,
-    invitationSchema,
+    z.invitationSchema,
     {
       method: 'POST',
       body: JSON.stringify({
-        email,
+        ...body,
       }),
     }
   );
@@ -109,10 +104,15 @@ export const getInvitations = async ({
   dashboardId,
   page = 1,
   size = 10,
-}: i.GetInvitationsParams): Promise<InvitationsType> => {
+}: i.GetInvitationsParams): Promise<z.InvitationsType> => {
+  const queryParams = new URLSearchParams({
+    dashboardId: String(dashboardId),
+    page: String(page),
+    size: String(size),
+  });
   const data = await customFetch(
-    `${BASE_API_URL}/dashboards/${String(dashboardId)}/invitations?page=${String(page)}&size=${String(size)}`,
-    invitationsSchema
+    `${BASE_API_URL}/dashboards/${queryParams}`,
+    z.invitationListSchema
   );
 
   return data;
@@ -123,7 +123,7 @@ export const deleteInvitation = async ({
 }: i.DeleteInvitationParams): Promise<void> => {
   await customFetch(
     `${BASE_API_URL}/dashboards/${String(dashboardId)}/invitations/${String(invitationId)}}`,
-    deleteSchema,
+    z.deleteSchema,
     {
       method: 'DELETE',
     }

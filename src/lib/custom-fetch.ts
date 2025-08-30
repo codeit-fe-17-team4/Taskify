@@ -24,8 +24,9 @@ export default async function customFetch<T extends z.ZodType>(
     return schema.parse(data);
   } catch (error) {
     if (error instanceof z.ZodError) {
+      console.error('API 응답 검증 실패:', error.issues);
       throw new TypeError(
-        `Response validation failed: ${JSON.stringify(error.issues)}`
+        `서버 응답 형식이 올바르지 않습니다: ${JSON.stringify(error.issues)}`
       );
     }
     throw error;
