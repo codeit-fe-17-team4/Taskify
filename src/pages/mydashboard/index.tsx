@@ -14,7 +14,7 @@ export default function Mydashboard(): ReactNode {
           {/* 새로운 대시보드 */}
           <div className='max-w-7xl p-6'>
             <Link href='../components/mydashboard/invite-list.tsx'>
-              <button className='flex h-11 w-full cursor-pointer items-center justify-center gap-1 rounded border border-gray-200 bg-white sm:w-2xs md:w-40 lg:w-md xl:w-3xs'>
+              <button className='flex h-12 w-2xs cursor-pointer items-center justify-center gap-1 rounded border border-gray-200 bg-white'>
                 <span className='text-xs font-bold text-gray-600'>
                   새로운 대시보드
                 </span>
@@ -27,7 +27,7 @@ export default function Mydashboard(): ReactNode {
               </button>
             </Link>
             {/* 초대받은 대시보드 */}
-            <div className='mt-10 flex h-[280px] w-full max-w-4xl flex-col rounded-lg border-0 bg-white sm:w-2xs md:w-sm lg:w-md xl:w-3xl'>
+            <div className='mt-10 flex h-[280px] w-full max-w-4xl flex-col rounded-lg border-0 bg-white'>
               <h2 className='pt-4 pl-[28px] text-lg font-bold text-gray-600'>
                 초대받은 대시보드
               </h2>
