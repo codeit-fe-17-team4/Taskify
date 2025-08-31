@@ -3,14 +3,35 @@ import { useRouter } from 'next/router';
 import { type ReactNode, useState } from 'react';
 
 export default function MydashboardEdit(): ReactNode {
-  const membersData = [
-    { id: 1, name: '정만철', initial: 'J', color: 'bg-amber-200' },
-    { id: 2, name: '김태순', initial: 'K', color: 'bg-sky-200' },
-    { id: 3, name: '최주협', initial: 'C', color: 'bg-yellow-400' },
-    { id: 4, name: '윤지현', initial: 'Y', color: 'bg-orange-300' },
+  const membersName = [
+    { id: 1, name: '정만철', initial: 'J' },
+    { id: 2, name: '김태순', initial: 'K' },
+    { id: 3, name: '최주협', initial: 'C' },
+    { id: 4, name: '윤지현', initial: 'Y' },
   ];
 
-  const [members, setMembers] = useState(membersData);
+  const [members, setMembers] = useState(membersName);
+  const handleDeleteMember = (memberId: number) => {
+    setMembers((prevMembers) =>
+      prevMembers.filter((member) => member.id !== memberId)
+    );
+  };
+
+  const membersEmail = [
+    { id: 1, email: 'codeitA@codeit.com' },
+    { id: 2, email: 'codeitB@codeit.com' },
+    { id: 3, email: 'codeitC@codeit.com' },
+    { id: 4, email: 'codeitD@codeit.com' },
+    { id: 5, email: 'codeitE@codeit.com' },
+  ];
+
+  const [membersEmails, setMembersEmails] = useState(membersEmail);
+  const handleDeleteMemberEmail = (memberId: number) => {
+    setMembersEmails((prevMembersEmails) =>
+      prevMembersEmails.filter((member) => member.id !== memberId)
+    );
+  };
+
   const router = useRouter();
   const { dashboardId } = router.query;
   const dashboardData = [
@@ -25,12 +46,6 @@ export default function MydashboardEdit(): ReactNode {
   const currentDashboard = dashboardData.find(
     (dashboard) => dashboard.id === Number(dashboardId)
   );
-
-  const handleDeleteMember = (memberId: number) => {
-    setMembers((prevMembers) =>
-      prevMembers.filter((member) => member.id !== memberId)
-    );
-  };
 
   return (
     <div className='min-h-screen bg-gray-50'>
@@ -116,7 +131,7 @@ export default function MydashboardEdit(): ReactNode {
               <div className='flex items-center justify-end gap-2'>
                 <span className='text-xs'>1 페이지 중 1</span>
                 <div className='flex items-center justify-center'>
-                  <button className='flex h-7 w-7 cursor-pointer items-center justify-center rounded border border-gray-200 bg-white'>
+                  <button className='flex h-7 w-7 cursor-pointer items-center justify-center rounded border border-gray-200 bg-white hover:bg-gray-100'>
                     <Image
                       src='/icon/prevPage.svg'
                       alt='prev'
@@ -124,7 +139,7 @@ export default function MydashboardEdit(): ReactNode {
                       height={7}
                     />
                   </button>
-                  <button className='flex h-7 w-7 cursor-pointer items-center justify-center rounded border border-gray-200 bg-white'>
+                  <button className='flex h-7 w-7 cursor-pointer items-center justify-center rounded border border-gray-200 bg-white hover:bg-gray-100'>
                     <Image
                       src='/icon/nextPage.svg'
                       alt='prev'
@@ -173,13 +188,87 @@ export default function MydashboardEdit(): ReactNode {
           </div>
           {/* 초대 내역 */}
           <div className='mt-8 h-[340px] w-[550px] rounded-lg bg-white p-7'>
-            <h2 className='text-xl font-bold'>초대 내역</h2>
+            <div className='flex items-center justify-between'>
+              <h2 className='text-xl font-bold'>초대 내역</h2>
+              <div className='flex items-center justify-end gap-3'>
+                <div className='flex items-center justify-end gap-3'>
+                  <span className='text-xs'>1 페이지 중 1</span>
+                  <div className='flex items-center justify-center'>
+                    <button className='flex h-7 w-7 cursor-pointer items-center justify-center rounded border border-gray-200 bg-white hover:bg-gray-100'>
+                      <Image
+                        src='/icon/prevPage.svg'
+                        alt='prev'
+                        width={7}
+                        height={7}
+                      />
+                    </button>
+                    <button className='flex h-7 w-7 cursor-pointer items-center justify-center rounded border border-gray-200 bg-white hover:bg-gray-100'>
+                      <Image
+                        src='/icon/nextPage.svg'
+                        alt='prev'
+                        width={7}
+                        height={7}
+                      />
+                    </button>
+                  </div>
+                </div>
+                <div>
+                  <button className='flex cursor-pointer gap-2 rounded-sm bg-violet-500 py-1 pr-2 pl-2 text-white hover:bg-violet-600'>
+                    <Image
+                      src='/icon/addmember.svg'
+                      alt='add-member'
+                      width={20}
+                      height={20}
+                    />
+                    <span className='text-xs'>초대하기</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div>
+              <table className='mt-5 w-full text-center text-xs'>
+                <thead>
+                  <tr>
+                    <th className='text-start font-normal text-gray-400'>
+                      이메일
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {membersEmails.map((member) => {
+                    return (
+                      <tr
+                        key={member.id}
+                        className='flex items-center justify-between border-b border-gray-200'
+                      >
+                        <td className='py-3'>
+                          <div className='flex items-center gap-2'>
+                            <span>{member.email}</span>
+                          </div>
+                        </td>
+                        <td className='py-3'>
+                          <button
+                            type='button'
+                            className='w-15.5 cursor-pointer rounded border border-gray-200 px-3 py-1 text-xs text-violet-500 transition-colors hover:bg-gray-50'
+                            onClick={() => {
+                              handleDeleteMemberEmail(member.id);
+                            }}
+                          >
+                            취소
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
           {/* 대시보드 삭제 */}
           <div>
             <button
               type='submit'
-              className='my-6 h-12 w-xs cursor-pointer rounded-md border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-100'
+              className='my-6 h-12 w-xs cursor-pointer rounded-sm border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-100'
               onClick={() => {
                 alert('대시보드를 삭제하시겠습니까?');
               }}
