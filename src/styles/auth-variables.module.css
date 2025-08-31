@@ -1,0 +1,22 @@
+/* Auth 전용 CSS 변수들 - CSS Module */
+.auth {
+  --auth-bg: #fafafa;
+  --auth-primary: #5534da;
+  --auth-text-strong: #333236;
+  --auth-border: #d9d9d9;
+  --auth-placeholder: #9fa6b2;
+  --auth-error: #d6173a;
+}
+
+/* auth 스코프 내에서만 작동하는 utility 클래스들 */
+.auth .bgAuth {
+  background: var(--auth-bg);
+}
+
+.auth .textStrong {
+  color: var(--auth-text-strong);
+}
+
+.auth .ringAuth {
+  --tw-ring-color: var(--auth-primary);
+}
