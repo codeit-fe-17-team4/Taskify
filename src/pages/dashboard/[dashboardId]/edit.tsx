@@ -3,11 +3,27 @@ import { useRouter } from 'next/router';
 import { type ReactNode, useState } from 'react';
 
 export default function MydashboardEdit(): ReactNode {
+  const router = useRouter();
+  const { dashboardId } = router.query;
+  const dashboardData = [
+    { id: 1, name: '비브리지' },
+    { id: 2, name: '코드잇' },
+    { id: 3, name: '3분기 계획' },
+    { id: 4, name: '회의록' },
+    { id: 5, name: '중요 문서함' },
+  ];
+
+  // 대시보드 이름 불러오기
+  const currentDashboard = dashboardData.find(
+    (dashboard) => dashboard.id === Number(dashboardId)
+  );
+
   const membersName = [
     { id: 1, name: '정만철', initial: 'J' },
     { id: 2, name: '김태순', initial: 'K' },
     { id: 3, name: '최주협', initial: 'C' },
     { id: 4, name: '윤지현', initial: 'Y' },
+    { id: 5, name: '심예진', initial: 'S' },
   ];
 
   const [members, setMembers] = useState(membersName);
@@ -31,21 +47,6 @@ export default function MydashboardEdit(): ReactNode {
       prevMembersEmails.filter((member) => member.id !== memberId)
     );
   };
-
-  const router = useRouter();
-  const { dashboardId } = router.query;
-  const dashboardData = [
-    { id: 1, name: '비브리지' },
-    { id: 2, name: '코드잇' },
-    { id: 3, name: '3분기 계획' },
-    { id: 4, name: '회의록' },
-    { id: 5, name: '중요 문서함' },
-  ];
-
-  // 대시보드 이름 불러오기
-  const currentDashboard = dashboardData.find(
-    (dashboard) => dashboard.id === Number(dashboardId)
-  );
 
   return (
     <div className='min-h-screen bg-gray-50'>
@@ -125,7 +126,7 @@ export default function MydashboardEdit(): ReactNode {
             </form>
           </div>
           {/* 구성원 */}
-          <div className='mt-8 h-[340px] w-[550px] rounded-lg bg-white p-7'>
+          <div className='mt-8 h-auto w-[550px] rounded-lg bg-white pt-5 pr-5 pl-5'>
             <div className='flex items-center justify-between'>
               <h2 className='text-xl font-bold'>구성원</h2>
               <div className='flex items-center justify-end gap-2'>
@@ -157,15 +158,21 @@ export default function MydashboardEdit(): ReactNode {
                 </tr>
               </thead>
               <tbody>
-                {members.map((member) => {
+                {members.slice(0, 5).map((member, index) => {
+                  const isLastItem = index === Math.min(members.length - 1, 4);
+
                   return (
                     <tr
                       key={member.id}
-                      className='flex items-center justify-between border-b border-gray-200'
+                      className={`flex items-center justify-between ${
+                        !isLastItem ? 'border-b border-gray-200' : ''
+                      }`}
                     >
                       <td className='py-3'>
                         <div className='flex items-center gap-2'>
-                          <div>{member.initial}</div>
+                          <div className='flex h-5 w-5 items-center justify-center rounded-full bg-sky-200 text-white'>
+                            {member.initial}
+                          </div>
                           <span>{member.name}</span>
                         </div>
                       </td>
@@ -187,7 +194,7 @@ export default function MydashboardEdit(): ReactNode {
             </table>
           </div>
           {/* 초대 내역 */}
-          <div className='mt-8 h-[340px] w-[550px] rounded-lg bg-white p-7'>
+          <div className='mt-8 h-auto w-[550px] rounded-lg bg-white pt-5 pr-5 pl-5'>
             <div className='flex items-center justify-between'>
               <h2 className='text-xl font-bold'>초대 내역</h2>
               <div className='flex items-center justify-end gap-3'>
@@ -235,11 +242,16 @@ export default function MydashboardEdit(): ReactNode {
                   </tr>
                 </thead>
                 <tbody>
-                  {membersEmails.map((member) => {
+                  {membersEmails.slice(0, 5).map((member, index) => {
+                    const isLastItem =
+                      index === Math.min(members.length - 1, 4);
+
                     return (
                       <tr
                         key={member.id}
-                        className='flex items-center justify-between border-b border-gray-200'
+                        className={`flex items-center justify-between ${
+                          !isLastItem ? 'border-b border-gray-200' : ''
+                        }`}
                       >
                         <td className='py-3'>
                           <div className='flex items-center gap-2'>
