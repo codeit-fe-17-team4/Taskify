@@ -22,7 +22,6 @@ export const ChipVariants = cva(`flex-center gap-1.5 rounded-sm font-normal`, {
 interface ChipProps
   extends HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof ChipVariants> {
-  children?: ReactNode;
   /** 버튼 내부 텍스트 */
   label: string;
   /** 사이즈: 'md' | 'lg'*/
@@ -31,7 +30,6 @@ interface ChipProps
   color: 'blue' | 'pink' | 'green' | 'brown';
 }
 export default function ChipTag({
-  children,
   label,
   size = 'md',
   color = 'blue',
@@ -40,7 +38,6 @@ export default function ChipTag({
   return (
     <>
       <div className={cn(ChipVariants({ color, size }))} {...props}>
-        {children}
         <span>{label}</span>
       </div>
     </>

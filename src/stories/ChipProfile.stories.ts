@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 
-import ChipTag from '@/components/ui/chip-tag';
+import ChipProfile from '@/components/ui/chip-profile';
 import { INITIAL_VIEWPORTS, MINIMAL_VIEWPORTS } from 'storybook/viewport';
 
 const meta = {
-  title: 'chip-tag',
-  component: ChipTag,
+  title: 'chip-profile',
+  component: ChipProfile,
   parameters: {
     viewport: { ...MINIMAL_VIEWPORTS, ...INITIAL_VIEWPORTS },
     layout: 'centered',
@@ -14,46 +14,39 @@ const meta = {
   argTypes: {
     size: {
       control: 'radio',
-      options: ['md', 'lg'],
+      options: ['sm', 'md', 'lg'],
     },
     color: {
       control: 'radio',
-      options: ['blue', 'pink', 'green', 'brown'],
+      options: ['green', 'blue', 'orange', 'yellow', 'brown'],
     },
     label: {
       control: 'text',
     },
   },
-} satisfies Meta<typeof ChipTag>;
+} satisfies Meta<typeof ChipProfile>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const BrownMD: Story = {
+export const GreenSM: Story = {
   args: {
-    size: 'md',
-    color: 'brown',
-    label: '프로젝트',
-  },
-};
-export const GreenMD: Story = {
-  args: {
-    size: 'md',
+    size: 'sm',
     color: 'green',
-    label: '일반',
+    label: 'K',
   },
 };
-export const PinkLG: Story = {
+export const blueMD: Story = {
   args: {
-    size: 'lg',
-    color: 'pink',
-    label: '백엔드',
-  },
-};
-export const blueLG: Story = {
-  args: {
-    size: 'lg',
+    size: 'md',
     color: 'blue',
-    label: '상',
+    label: 'L',
+  },
+};
+export const orangeLG: Story = {
+  args: {
+    size: 'lg',
+    color: 'orange',
+    label: 'P',
   },
 };

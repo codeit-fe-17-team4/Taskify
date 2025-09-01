@@ -11,7 +11,7 @@ const pretendardVariable = localFont({
 
 export default function App({ Component, pageProps }: AppProps): ReactNode {
   return (
-    <main className={pretendardVariable.variable}>
+    <main className={`${pretendardVariable.variable} font-pretendard`}>
       <Component {...pageProps} />
     </main>
   );
