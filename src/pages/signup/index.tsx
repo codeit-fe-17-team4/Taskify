@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Image from 'next/image';
 import styles from '@/styles/auth-variables.module.css';
+import SignupSuccessModal from '@/components/auth/SignupSuccessModal';
 
 export default function SignupPage() {
   const router = useRouter();
@@ -18,6 +19,7 @@ export default function SignupPage() {
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const validateNickname = (nickname: string) => {
     return nickname.length <= 10;
@@ -89,6 +91,11 @@ export default function SignupPage() {
     !confirmPasswordError &&
     agreedToTerms;
 
+  const handleModalClose = () => {
+    setShowSuccessModal(false);
+    router.push('/login');
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isFormValid) return;
@@ -104,8 +111,7 @@ export default function SignupPage() {
       });
 
       // 임시로 회원가입 성공 처리
-      alert('가입이 완료되었습니다');
-      router.push('/login');
+      setShowSuccessModal(true);
     } catch (error: any) {
       console.error('Signup failed:', error);
       // 회원가입 실패 시 에러 처리
@@ -401,6 +407,12 @@ export default function SignupPage() {
           </form>
         </div>
       </div>
+
+      {/* 회원가입 성공 모달 */}
+      <SignupSuccessModal
+        isOpen={showSuccessModal}
+        onClose={handleModalClose}
+      />
     </main>
   );
 }
