@@ -1,17 +1,52 @@
-export default function MyDashboardPage() {
+import Image from 'next/image';
+import Link from 'next/link';
+import type { ReactNode } from 'react';
+
+export default function Mydashboard(): ReactNode {
   return (
-    <div className='bg-auth flex min-h-screen items-center justify-center'>
-      <div className='text-center'>
-        <h1 className='text-strong mb-[16px] text-[32px] leading-[40px] font-[600]'>
-          My Dashboard
-        </h1>
-        <p className='text-[18px] leading-[26px] text-[var(--auth-placeholder)]'>
-          내 대시보드 페이지입니다
-        </p>
+    // 헤더, 사이드바 공간 필요
+    <div className='min-h-screen bg-gray-50'>
+      {/* BG global 생성되면 수정 예정 */}
+      {/* 헤더 공간 */}
+      <div className='pt-16'>
+        {/* 사이드바 공간 */}
+        <div className='ml-40'>
+          {/* 새로운 대시보드 */}
+          <div className='max-w-7xl p-6'>
+            <Link href='../components/mydashboard/invite-list.tsx'>
+              <button className='flex h-12 w-2xs cursor-pointer items-center justify-center gap-1 rounded border border-gray-200 bg-white'>
+                <span className='text-xs font-bold text-gray-600'>
+                  새로운 대시보드
+                </span>
+                <Image
+                  src='/icon/newDashboard.svg'
+                  alt='새로운 대시보드'
+                  width={15}
+                  height={15}
+                />
+              </button>
+            </Link>
+            {/* 초대받은 대시보드 */}
+            <div className='mt-10 flex h-[280px] w-full max-w-4xl flex-col rounded-lg border-0 bg-white'>
+              <h2 className='pt-4 pl-[28px] text-lg font-bold text-gray-600'>
+                초대받은 대시보드
+              </h2>
+              {/* 빈 상태 표시 */}
+              <div className='flex flex-grow flex-col items-center justify-center gap-2'>
+                <Image
+                  src='/icon/inviteEmpty.svg'
+                  alt='초대받은 대시보드'
+                  width={80}
+                  height={80}
+                />
+                <p className='pt-5 text-xs text-gray-400'>
+                  아직 초대받은 대시보드가 없어요
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
 }
-
-
-
