@@ -6,7 +6,7 @@ import Button from '@/components/ui/button';
 import { INITIAL_VIEWPORTS, MINIMAL_VIEWPORTS } from 'storybook/viewport';
 
 const meta = {
-  title: 'Button',
+  title: 'button',
   component: Button,
   parameters: {
     viewport: { ...MINIMAL_VIEWPORTS, ...INITIAL_VIEWPORTS },

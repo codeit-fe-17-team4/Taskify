@@ -42,7 +42,6 @@ interface ButtonProps
   labelColor?: 'gray';
   /** 버튼 내부 텍스트 */
   label: string;
-  children?: ReactNode;
   /** 추가적인 tailwind className */
   additionalClass?: string;
   /** button disabled 여부
@@ -51,6 +50,7 @@ interface ButtonProps
   disabled?: boolean;
   /** 클릭 이벤트 핸들러 */
   onClick?: () => void;
+  children?: ReactNode;
 }
 /**
  * primary, modal, invitation 세가지 형태의 버튼을 표시합니다.
@@ -84,7 +84,7 @@ export default function Button({
         {...props}
       >
         {children}
-        {label && label}
+        {label}
       </button>
     </>
   );

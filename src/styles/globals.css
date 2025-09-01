@@ -27,6 +27,15 @@
   --color-blue: #76a5ea;
   --color-pink: #e876ea;
 
+  --color-chip-blue: #4981d5;
+  --color-chip-blue-bg: #dbe6f7;
+  --color-chip-pink: #d549b6;
+  --color-chip-pink-bg: #f7dbf0;
+  --color-chip-green: #86d549;
+  --color-chip-green-bg: #e7f7db;
+  --color-chip-brown: #d58d49;
+  --color-chip-brown-bg: #f9eee3;
+
   /** @text */
   --text-3xl: 2rem;
   --text-2xl: 1.5rem;
