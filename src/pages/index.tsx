@@ -29,7 +29,7 @@ export default function LandingPage(): ReactElement {
         <SettingsGrid />
       </main>
       {/* Footer 상단 간격 160px */}
-      <div className='mt-[160px]'>
+      <div className='mt-[160px] max-[375px]:mt-[120.48px]'>
         <Footer />
       </div>
     </div>

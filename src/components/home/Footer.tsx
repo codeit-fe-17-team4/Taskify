@@ -14,33 +14,36 @@ export default function Footer(): ReactElement {
   return (
     <footer className='bg-inverse text-on-inverse w-full'>
       {/* 컨테이너: Header와 동일한 패딩, 세로 중앙 */}
-      <div className='flex min-h-[100px] items-center justify-between px-[80px] max-[744px]:px-[40px] min-[745px]:px-[80px]'>
+      <div className='flex min-h-[100px] items-center justify-between px-[80px] max-[744px]:px-[40px] max-[375px]:flex-col max-[375px]:justify-center max-[375px]:gap-3 max-[375px]:py-6 min-[745px]:px-[80px]'>
         {/* 좌측: © 텍스트 (시안은 '@codeit - 2023') */}
         <p
-          className='text-muted-on-inverse text-[16px] leading-[100%] font-normal'
+          className='text-muted-on-inverse text-[16px] leading-[100%] font-normal max-[375px]:order-1 max-[375px]:text-[12px]'
           aria-label='copyright'
         >
           @codeit - 2023
         </p>
 
         {/* 중앙: 링크 2개 (Privacy Policy, FAQ) */}
-        <nav className='flex items-center gap-8' aria-label='footer-nav'>
+        <nav
+          className='flex items-center gap-8 max-[375px]:order-2 max-[375px]:gap-4'
+          aria-label='footer-nav'
+        >
           <a
             href='/privacy'
-            className='text-muted-on-inverse text-[16px] leading-[100%] font-normal underline-offset-2 hover:underline focus:underline focus:outline-none'
+            className='text-muted-on-inverse text-[16px] leading-[100%] font-normal whitespace-nowrap underline-offset-2 hover:underline focus:underline focus:outline-none max-[375px]:text-[12px]'
           >
             Privacy Policy
           </a>
           <a
             href='/faq'
-            className='text-muted-on-inverse text-[16px] leading-[100%] font-normal underline-offset-2 hover:underline focus:underline focus:outline-none'
+            className='text-muted-on-inverse text-[16px] leading-[100%] font-normal whitespace-nowrap underline-offset-2 hover:underline focus:underline focus:outline-none max-[375px]:text-[12px]'
           >
             FAQ
           </a>
         </nav>
 
         {/* 우측: 아이콘 3개 (메일, Facebook, Instagram) */}
-        <div className='flex items-center gap-4'>
+        <div className='flex items-center gap-4 max-[375px]:order-3'>
           {/* 메일 아이콘 */}
           <a
             aria-label='email'
@@ -63,10 +66,14 @@ export default function Footer(): ReactElement {
               width='18'
               height='18'
               viewBox='0 0 24 24'
-              fill='currentColor'
+              fill='none'
               aria-hidden='true'
             >
-              <path d='M13 22V12h3l1-4h-4V6c0-1.103.897-2 2-2h2V0h-2a6 6 0 0 0-6 6v2H7v4h3v10h3Z' />
+              <rect x='3' y='3' width='18' height='18' rx='3' fill='white' />
+              <path
+                d='M13 22V12h3l1-4h-4V6c0-1.103.897-2 2-2h2V0h-2a6 6 0 0 0-6 6v2H7v4h3v10h3Z'
+                fill='black'
+              />
             </svg>
           </a>
           {/* Instagram 아이콘 */}
