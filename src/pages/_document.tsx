@@ -12,4 +12,3 @@ export default function Document(): ReactNode {
     </Html>
   );
 }
-// "tailwindStylesheet": "./src/pages/styles/globals.css",
