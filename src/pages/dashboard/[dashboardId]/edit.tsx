@@ -64,7 +64,7 @@ export default function MydashboardEdit(): ReactNode {
             />
             <span>돌아가기</span>
           </div>
-          <div className='mt-8 h-[340px] w-[550px] rounded-lg bg-white p-7'>
+          <div className='tablet:w-[540px] mobile:w-[280px] mt-8 h-[340px] w-[620px] rounded-lg bg-white p-7'>
             <h2 className='text-xl font-bold'>{currentDashboard?.name}</h2>
             <form className='mt-4 space-y-4'>
               {/* 이름 수정 */}
@@ -126,7 +126,7 @@ export default function MydashboardEdit(): ReactNode {
             </form>
           </div>
           {/* 구성원 */}
-          <div className='mt-8 h-auto w-[550px] rounded-lg bg-white pt-5 pr-5 pl-5'>
+          <div className='tablet:w-[540px] mobile:w-[280px] mt-8 h-auto w-[620px] rounded-lg bg-white pt-5 pr-8 pl-8'>
             <div className='flex items-center justify-between'>
               <h2 className='text-xl font-bold'>구성원</h2>
               <div className='flex items-center justify-end gap-2'>
@@ -194,10 +194,10 @@ export default function MydashboardEdit(): ReactNode {
             </table>
           </div>
           {/* 초대 내역 */}
-          <div className='mt-8 h-auto w-[550px] rounded-lg bg-white pt-5 pr-5 pl-5'>
+          <div className='tablet:w-[540px] mobile:w-[280px] mt-8 h-auto w-[620px] rounded-lg bg-white pt-5 pr-8 pl-8'>
             <div className='flex items-center justify-between'>
               <h2 className='text-xl font-bold'>초대 내역</h2>
-              <div className='flex items-center justify-end gap-3'>
+              <div className='mobile:relative flex items-center justify-end gap-3'>
                 <div className='flex items-center justify-end gap-3'>
                   <span className='text-xs'>1 페이지 중 1</span>
                   <div className='flex items-center justify-center'>
@@ -220,7 +220,7 @@ export default function MydashboardEdit(): ReactNode {
                   </div>
                 </div>
                 <div>
-                  <button className='flex cursor-pointer gap-2 rounded-sm bg-violet-500 py-1 pr-2 pl-2 text-white hover:bg-violet-600'>
+                  <button className='mobile:absolute mobile:right-0 mobile:top-10 flex cursor-pointer gap-2 rounded-sm bg-violet-500 py-1 pr-2 pl-2 text-white hover:bg-violet-600'>
                     <Image
                       src='/icon/addmember.svg'
                       alt='add-member'
@@ -280,7 +280,7 @@ export default function MydashboardEdit(): ReactNode {
           <div>
             <button
               type='submit'
-              className='my-6 h-12 w-xs cursor-pointer rounded-sm border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-100'
+              className='mobile:w-[280px] my-6 h-12 w-xs cursor-pointer rounded-sm border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-100'
               onClick={() => {
                 alert('대시보드를 삭제하시겠습니까?');
               }}
