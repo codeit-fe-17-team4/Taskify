@@ -1,10 +1,4 @@
-// SPEC: Hero 컴포넌트 - 이전 채팅 로그 기반
-// desktop.svg: 722×422.76 (PC), 537.25×314.76 (태블릿)
-// 제목: "새로운 일정 관리 Taskify" (한 줄)
-// 컨테이너: max-w 1200px (PC), 664px (태블릿)
-// 제목 컨테이너: 834px (PC), 626px (태블릿)
-// 로그인 버튼: 280×54
-
+// 랜딩페이지 메인 히어로 섹션 컴포넌트 (로고 + 제목 + 로그인 버튼)
 import Image from 'next/image';
 import type { ReactElement } from 'react';
 

@@ -1,9 +1,4 @@
-// SPEC: Header 컴포넌트 - 이전 채팅 로그 기반
-// 높이: 70px (시안 기준), 태블릿 패딩 80px→40px
-// 로고: Group 676.svg
-// 네비게이션: 로그인, 회원가입 링크
-// 최소 좌우 여백 12px 유지
-
+// 랜딩페이지 상단 헤더 컴포넌트 (로고 + 네비게이션)
 import Image from 'next/image';
 import type { ReactElement } from 'react';
 

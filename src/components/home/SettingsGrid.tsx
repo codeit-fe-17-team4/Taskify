@@ -1,11 +1,4 @@
-// SPEC: SettingsGrid 컴포넌트 - 채팅 로그 기반
-// PC 1920 기준: 컨테이너 1200px
-// Tablet 744px 기준: 컨테이너 664px
-// 3개 카드: landing3.svg, landing4.svg, landing5.svg
-// 그리드 간격: 24px
-// 카드 크기: 378×260 (썸네일) + 124px (텍스트)
-// 타이틀과 그리드 간격: 36px
-
+// 랜딩페이지 설정 카드 그리드 컴포넌트 (생산성 기능 소개)
 import Image from 'next/image';
 import type { ReactElement } from 'react';
 

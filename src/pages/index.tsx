@@ -1,4 +1,5 @@
 import type { ReactElement } from 'react';
+import { GetStaticProps } from 'next';
 
 import FeatureOne from '@/components/home/FeatureOne';
 import FeatureTwo from '@/components/home/FeatureTwo';
@@ -24,3 +25,11 @@ export default function LandingPage(): ReactElement {
     </div>
   );
 }
+
+// 정적 생성 설정
+export const getStaticProps: GetStaticProps = async () => {
+  return {
+    props: {},
+    revalidate: false, // 완전 정적 (재생성 안함)
+  };
+};

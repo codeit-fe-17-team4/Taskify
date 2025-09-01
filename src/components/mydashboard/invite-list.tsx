@@ -1,3 +1,4 @@
+// 마이 대시보드 초대 목록 컴포넌트
 import Image from 'next/image';
 import type { ReactNode } from 'react';
 

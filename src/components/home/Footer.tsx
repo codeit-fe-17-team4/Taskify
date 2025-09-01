@@ -1,13 +1,4 @@
-// SPEC: Footer 컴포넌트 - 픽셀 매칭 복구
-// 높이: 100px
-// 배경: 검정색 (#000000)
-// 패딩: Header와 동일 (PC 80px, Tablet 40px)
-// 정렬: Header와 동일 (justify-between)
-// 마진: 제거하고 패딩만 사용
-// 3열 그리드: 좌측 @codeit - 2023 / 중앙 Privacy Policy · FAQ / 우측 아이콘
-// 텍스트 색: #9FA6B2 (토큰 기반)
-// 불필요한 HR/보더/중앙 정렬 제거
-
+// 랜딩페이지 하단 푸터 컴포넌트 (소셜 링크 + 저작권)
 import type { ReactElement } from 'react';
 
 export default function Footer(): ReactElement {

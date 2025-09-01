@@ -1,15 +1,20 @@
+// 인증 페이지용 통합 모달 컴포넌트 (성공/에러 메시지)
 import React from 'react';
 import { createPortal } from 'react-dom';
 
-interface SignupSuccessModalProps {
+interface UnifiedModalProps {
   isOpen: boolean;
   onClose: () => void;
+  message: string;
+  type?: 'success' | 'error';
 }
 
-export default function SignupSuccessModal({
+export default function UnifiedModal({
   isOpen,
   onClose,
-}: SignupSuccessModalProps): React.ReactElement | null {
+  message,
+  type = 'success',
+}: UnifiedModalProps): React.ReactElement | null {
   if (!isOpen) return null;
 
   const modalContent = (
@@ -28,9 +33,9 @@ export default function SignupSuccessModal({
         <div className='flex h-full flex-col items-center justify-center px-16 py-10 max-[375px]:px-0 max-[375px]:py-0'>
           {/* 내부 컨테이너 */}
           <div className='flex h-[112px] w-[240px] flex-col items-center justify-between max-[375px]:h-full max-[375px]:w-full max-[375px]:justify-start'>
-            {/* 가입 완료 텍스트 */}
-            <h2 className='text-center text-[20px] leading-[28px] font-medium text-black max-[375px]:mt-[81px] max-[375px]:text-[16px] max-[375px]:leading-[24px]'>
-              가입이 완료되었습니다!
+            {/* 메시지 텍스트 - 한 줄로 표시 */}
+            <h2 className='text-center text-[20px] leading-[28px] font-medium whitespace-nowrap text-black max-[375px]:mt-[81px] max-[375px]:text-[16px] max-[375px]:leading-[24px]'>
+              {message}
             </h2>
 
             {/* 확인 버튼 */}

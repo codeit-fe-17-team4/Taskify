@@ -1,9 +1,16 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import Image from 'next/image';
+import { GetStaticProps } from 'next';
 import styles from '@/styles/auth-variables.module.css';
-import SignupSuccessModal from '@/components/auth/SignupSuccessModal';
+import UnifiedModal from '@/components/auth/UnifiedModal';
+import { signup } from '@/lib/users/api';
+import type { SignupParams } from '@/lib/users/interface';
+import AuthHero from '@/components/auth/AuthHero';
+import TextInput from '@/components/auth/TextInput';
+import EmailInput from '@/components/auth/EmailInput';
+import PasswordInput from '@/components/auth/PasswordInput';
+import AuthButton from '@/components/auth/AuthButton';
 
 export default function SignupPage() {
   const router = useRouter();
@@ -19,7 +26,8 @@ export default function SignupPage() {
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
 
   const validateNickname = (nickname: string) => {
     return nickname.length <= 10;
@@ -81,10 +89,6 @@ export default function SignupPage() {
     email &&
     password &&
     confirmPassword &&
-    validateNickname(nickname) &&
-    validateEmail(email) &&
-    validatePassword(password) &&
-    validateConfirmPassword(password, confirmPassword) &&
     !nicknameError &&
     !emailError &&
     !passwordError &&
@@ -92,8 +96,12 @@ export default function SignupPage() {
     agreedToTerms;
 
   const handleModalClose = () => {
-    setShowSuccessModal(false);
-    router.push('/login');
+    setShowModal(false);
+    setModalMessage('');
+    // 성공 모달인 경우 로그인 페이지로 이동
+    if (modalMessage === '가입이 완료되었습니다!') {
+      router.push('/login');
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -101,20 +109,34 @@ export default function SignupPage() {
     if (!isFormValid) return;
 
     setIsLoading(true);
+
     try {
-      // API 기능은 나중에 구현 예정
-      console.log('회원가입 시도:', {
+      // 회원가입 API 호출
+      const signupParams: SignupParams = {
         nickname,
         email,
         password,
-        confirmPassword,
-      });
+      };
 
-      // 임시로 회원가입 성공 처리
-      setShowSuccessModal(true);
+      const response = await signup(signupParams);
+
+      console.log('회원가입 성공:', response);
+
+      // 회원가입 성공 모달 표시
+      setModalMessage('가입이 완료되었습니다!');
+      setShowModal(true);
     } catch (error: any) {
-      console.error('Signup failed:', error);
-      // 회원가입 실패 시 에러 처리
+      // 에러 메시지 처리
+      if (error.message.includes('[409]')) {
+        setModalMessage('이미 사용중인 이메일입니다');
+        setShowModal(true);
+      } else if (error.message.includes('[400]')) {
+        setModalMessage('이미 사용중인 이메일입니다');
+        setShowModal(true);
+      } else {
+        setModalMessage('회원가입에 실패했습니다. 다시 시도해주세요.');
+        setShowModal(true);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -126,26 +148,7 @@ export default function SignupPage() {
     >
       <div className='flex h-auto min-h-[653px] w-[520px] shrink-0 flex-col items-center gap-[30px] max-[375px]:w-[351px] max-[375px]:gap-[36px]'>
         {/* Hero Block */}
-        <div className='flex h-[322px] w-[200px] flex-col items-center gap-[10px]'>
-          <div className='flex h-[280px] w-[200px] flex-col items-center gap-[30px]'>
-            <div className='relative h-[280px] w-[200px]'>
-              <Link href='/' className='block h-full w-full'>
-                <Image
-                  src='/auth/image/login-signup-logo.svg'
-                  alt='Taskify Logo'
-                  fill
-                  className='object-contain object-center'
-                  priority
-                />
-              </Link>
-            </div>
-          </div>
-          <p
-            className={`${styles.textStrong} mx-auto mt-[12px] h-[32px] w-[200px] overflow-visible text-center text-[20px] leading-[32px] font-[500] tracking-[-0.01em] whitespace-nowrap max-[375px]:mt-[8px] max-[375px]:flex max-[375px]:h-[26px] max-[375px]:w-[170px] max-[375px]:items-center max-[375px]:justify-center max-[375px]:text-[18px]`}
-          >
-            첫 방문을 환영합니다!
-          </p>
-        </div>
+        <AuthHero title='첫 방문을 환영합니다!' />
 
         {/* Form Wrapper */}
         <div className='flex w-[520px] flex-col items-center max-[375px]:w-[351px]'>
@@ -158,206 +161,57 @@ export default function SignupPage() {
               {/* Input Group */}
               <div className='flex w-[520px] flex-col items-start max-[375px]:w-[351px]'>
                 {/* Nickname Input */}
-                <div className='flex w-[520px] flex-col gap-0 max-[375px]:w-[351px]'>
-                  <label
-                    htmlFor='nickname'
-                    className={`${styles.textStrong} mb-2 text-[16px] leading-[26px]`}
-                  >
-                    닉네임
-                  </label>
-                  <input
-                    id='nickname'
-                    type='text'
-                    value={nickname}
-                    onChange={(e) => setNickname(e.target.value)}
-                    onBlur={handleNicknameBlur}
-                    placeholder='닉네임을 입력해 주세요'
-                    className={`h-[50px] w-[520px] rounded-[8px] bg-white px-[16px] py-[15px] ring-1 placeholder:text-[var(--auth-placeholder)] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none max-[375px]:w-[351px] ${
-                      nicknameError
-                        ? 'ring-[var(--auth-error)] focus:ring-[var(--auth-error)]'
-                        : 'ring-[var(--auth-border)]'
-                    }`}
-                    aria-invalid={!!nicknameError}
-                    aria-describedby={
-                      nicknameError ? 'nickname-error' : undefined
-                    }
-                  />
-                  {nicknameError && (
-                    <p
-                      id='nickname-error'
-                      className='mt-2 text-[14px] leading-[24px] text-[var(--auth-error)] max-[375px]:mt-2 max-[375px]:mb-2'
-                      aria-live='polite'
-                    >
-                      {nicknameError}
-                    </p>
-                  )}
-                </div>
+                <TextInput
+                  id='nickname'
+                  label='닉네임'
+                  value={nickname}
+                  onChange={setNickname}
+                  onBlur={handleNicknameBlur}
+                  placeholder='닉네임을 입력해 주세요'
+                  error={nicknameError}
+                />
 
                 {/* Email Input */}
-                <div className='flex w-[520px] flex-col gap-0 max-[375px]:w-[351px]'>
-                  <label
-                    htmlFor='email'
-                    className={`${styles.textStrong} mt-[16px] mb-2 text-[16px] leading-[26px] max-[375px]:mt-0`}
-                  >
-                    이메일
-                  </label>
-                  <input
-                    id='email'
-                    type='email'
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    onBlur={handleEmailBlur}
-                    placeholder='이메일을 입력해 주세요'
-                    className={`h-[50px] w-[520px] rounded-[8px] bg-white px-[16px] py-[15px] ring-1 placeholder:text-[var(--auth-placeholder)] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none max-[375px]:w-[351px] ${
-                      emailError
-                        ? 'ring-[var(--auth-error)] focus:ring-[var(--auth-error)]'
-                        : 'ring-[var(--auth-border)]'
-                    }`}
-                    aria-invalid={!!emailError}
-                    aria-describedby={emailError ? 'email-error' : undefined}
-                  />
-                  {emailError && (
-                    <p
-                      id='email-error'
-                      className='mt-2 text-[14px] leading-[24px] text-[var(--auth-error)] max-[375px]:mt-2 max-[375px]:mb-2'
-                      aria-live='polite'
-                    >
-                      {emailError}
-                    </p>
-                  )}
-                </div>
+                <EmailInput
+                  id='email'
+                  label='이메일'
+                  value={email}
+                  onChange={setEmail}
+                  onBlur={handleEmailBlur}
+                  placeholder='이메일을 입력해 주세요'
+                  error={emailError}
+                  className='mt-[16px] max-[375px]:mt-0'
+                />
 
                 {/* Password Input */}
-                <div className='flex w-[520px] flex-col gap-0 max-[375px]:w-[351px]'>
-                  <label
-                    htmlFor='password'
-                    className={`${styles.textStrong} mt-[16px] mb-2 text-[16px] leading-[26px] max-[375px]:mt-0`}
-                  >
-                    비밀번호
-                  </label>
-                  <div className='relative w-[520px] max-[375px]:w-[351px]'>
-                    <input
-                      id='password'
-                      type={showPassword ? 'text' : 'password'}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      onBlur={handlePasswordBlur}
-                      placeholder='비밀번호를 입력해 주세요'
-                      className={`h-[50px] w-[520px] rounded-[8px] bg-white px-[16px] py-[12px] pr-10 ring-1 placeholder:text-[var(--auth-placeholder)] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none max-[375px]:w-[351px] ${
-                        passwordError
-                          ? 'ring-[var(--auth-error)] focus:ring-[var(--auth-error)]'
-                          : 'ring-[var(--auth-border)]'
-                      }`}
-                      aria-invalid={!!passwordError}
-                      aria-describedby={
-                        passwordError ? 'password-error' : undefined
-                      }
-                    />
-                    <button
-                      type='button'
-                      onClick={() => setShowPassword(!showPassword)}
-                      className='absolute top-1/2 right-3 flex h-[24px] w-[24px] -translate-y-1/2 items-center justify-center text-[#9FA6B2] transition-colors duration-200 hover:text-[#5534da]'
-                      aria-label={
-                        showPassword ? '비밀번호 숨기기' : '비밀번호 보기'
-                      }
-                      aria-pressed={showPassword}
-                    >
-                      {showPassword ? (
-                        <Image
-                          src='/auth/icon/visibility.svg'
-                          alt='비밀번호 숨기기'
-                          width={24}
-                          height={24}
-                        />
-                      ) : (
-                        <Image
-                          src='/auth/icon/visibility-off.svg'
-                          alt='비밀번호 보기'
-                          width={24}
-                          height={24}
-                        />
-                      )}
-                    </button>
-                  </div>
-                  {passwordError && (
-                    <p
-                      id='password-error'
-                      className='mt-2 text-[14px] leading-[24px] text-[var(--auth-error)] max-[375px]:mt-2 max-[375px]:mb-2'
-                      aria-live='polite'
-                    >
-                      {passwordError}
-                    </p>
-                  )}
-                </div>
+                <PasswordInput
+                  id='password'
+                  label='비밀번호'
+                  value={password}
+                  onChange={setPassword}
+                  onBlur={handlePasswordBlur}
+                  placeholder='비밀번호를 입력해 주세요'
+                  error={passwordError}
+                  showPassword={showPassword}
+                  onTogglePassword={() => setShowPassword(!showPassword)}
+                  className='mt-[16px] max-[375px]:mt-0'
+                />
 
                 {/* Confirm Password Input */}
-                <div className='flex w-[520px] flex-col gap-0 max-[375px]:w-[351px]'>
-                  <label
-                    htmlFor='confirmPassword'
-                    className={`${styles.textStrong} mt-[16px] mb-2 text-[16px] leading-[26px] max-[375px]:mt-0`}
-                  >
-                    비밀번호 확인
-                  </label>
-                  <div className='relative w-[520px] max-[375px]:w-[351px]'>
-                    <input
-                      id='confirmPassword'
-                      type={showConfirmPassword ? 'text' : 'password'}
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      onBlur={handleConfirmPasswordBlur}
-                      placeholder='비밀번호를 다시 입력해 주세요'
-                      className={`h-[50px] w-[520px] rounded-[8px] bg-white px-[16px] py-[12px] pr-10 ring-1 placeholder:text-[var(--auth-placeholder)] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none max-[375px]:w-[351px] ${
-                        confirmPasswordError
-                          ? 'ring-[var(--auth-error)] focus:ring-[var(--auth-error)]'
-                          : 'ring-[var(--auth-border)]'
-                      }`}
-                      aria-invalid={!!confirmPasswordError}
-                      aria-describedby={
-                        confirmPasswordError
-                          ? 'confirm-password-error'
-                          : undefined
-                      }
-                    />
-                    <button
-                      type='button'
-                      onClick={() =>
-                        setShowConfirmPassword(!showConfirmPassword)
-                      }
-                      className='absolute top-1/2 right-3 flex h-[24px] w-[24px] -translate-y-1/2 items-center justify-center text-[#9FA6B2] transition-colors duration-200 hover:text-[#5534da]'
-                      aria-label={
-                        showConfirmPassword
-                          ? '비밀번호 숨기기'
-                          : '비밀번호 보기'
-                      }
-                      aria-pressed={showConfirmPassword}
-                    >
-                      {showConfirmPassword ? (
-                        <Image
-                          src='/auth/icon/visibility.svg'
-                          alt='비밀번호 숨기기'
-                          width={24}
-                          height={24}
-                        />
-                      ) : (
-                        <Image
-                          src='/auth/icon/visibility-off.svg'
-                          alt='비밀번호 보기'
-                          width={24}
-                          height={24}
-                        />
-                      )}
-                    </button>
-                  </div>
-                  {confirmPasswordError && (
-                    <p
-                      id='confirm-password-error'
-                      className='mt-2 text-[14px] leading-[24px] text-[var(--auth-error)] max-[375px]:mt-2 max-[375px]:mb-2'
-                      aria-live='polite'
-                    >
-                      {confirmPasswordError}
-                    </p>
-                  )}
-                </div>
+                <PasswordInput
+                  id='confirmPassword'
+                  label='비밀번호 확인'
+                  value={confirmPassword}
+                  onChange={setConfirmPassword}
+                  onBlur={handleConfirmPasswordBlur}
+                  placeholder='비밀번호를 다시 입력해 주세요'
+                  error={confirmPasswordError}
+                  showPassword={showConfirmPassword}
+                  onTogglePassword={() =>
+                    setShowConfirmPassword(!showConfirmPassword)
+                  }
+                  className='mt-[16px] max-[375px]:mt-0'
+                />
               </div>
 
               {/* Terms Agreement */}
@@ -378,18 +232,14 @@ export default function SignupPage() {
               </div>
 
               {/* Signup Button */}
-              <button
+              <AuthButton
                 type='submit'
-                aria-disabled={!isFormValid || isLoading}
-                disabled={!isFormValid || isLoading}
-                className={`h-[50px] w-[520px] shrink-0 rounded-[8px] text-center text-[18px] leading-[26px] font-[500] text-white max-[375px]:w-[351px] ${
-                  isFormValid && !isLoading
-                    ? 'cursor-pointer bg-[var(--auth-primary)] transition-opacity hover:opacity-90'
-                    : 'cursor-not-allowed bg-[var(--auth-placeholder)]'
-                }`}
+                disabled={!isFormValid}
+                isLoading={isLoading}
+                loadingText='가입 중...'
               >
-                {isLoading ? '가입 중...' : '가입하기'}
-              </button>
+                가입하기
+              </AuthButton>
 
               {/* Bottom Info */}
               <div
@@ -408,11 +258,21 @@ export default function SignupPage() {
         </div>
       </div>
 
-      {/* 회원가입 성공 모달 */}
-      <SignupSuccessModal
-        isOpen={showSuccessModal}
+      {/* 통합 모달 */}
+      <UnifiedModal
+        isOpen={showModal}
         onClose={handleModalClose}
+        message={modalMessage}
+        type={modalMessage === '가입이 완료되었습니다!' ? 'success' : 'error'}
       />
     </main>
   );
 }
+
+// 정적 생성 설정
+export const getStaticProps: GetStaticProps = async () => {
+  return {
+    props: {},
+    revalidate: false, // 완전 정적 (재생성 안함)
+  };
+};

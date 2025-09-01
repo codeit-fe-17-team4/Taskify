@@ -1,12 +1,4 @@
-// SPEC: FeatureOne 컴포넌트 - 이전 채팅 로그 기반
-// PC 1920 기준: 컨테이너 1200×600, 상단 마진 180px
-// Tablet 744px 기준: 컨테이너 664×972, 상단 마진 120px
-// 배경색: #171717
-// landing1.svg 이미지
-// 제목: "일의 우선순위를 관리하세요" (2줄)
-// Point 1과 제목 간격: 100px
-// 텍스트 컨테이너: bottom-[223px], left-[60px]
-
+// 랜딩페이지 첫 번째 기능 소개 컴포넌트
 import Image from 'next/image';
 import type { ReactElement } from 'react';
 
