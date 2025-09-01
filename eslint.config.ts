@@ -1,4 +1,5 @@
 import { sheriff, type SheriffSettings, tseslint } from 'eslint-config-sheriff';
+import storybook from 'eslint-plugin-storybook';
 
 const sheriffOptions: SheriffSettings = {
   react: true,
@@ -12,25 +13,35 @@ const sheriffOptions: SheriffSettings = {
   vitest: false,
 };
 
-export default tseslint.config(sheriff(sheriffOptions), {
-  rules: {
-    // https://typescript-eslint.io/rules/no-misused-promises/#checksvoidreturn
-    '@typescript-eslint/no-misused-promises': [
-      'error',
-      {
-        checksVoidReturn: false,
+export default tseslint.config(
+  sheriff(sheriffOptions),
+  [...storybook.configs['flat/recommended']],
+  {
+    languageOptions: {
+      parserOptions: {
+        projectService: true,
+        project: './tsconfig.json',
+        tsconfigRootDir: import.meta.dirname,
       },
-    ],
-    'no-console': 'off',
-    // 절대경로 통일을 위해 ".*" 패턴 제한
-    'no-restricted-imports': [
-      'error',
-      {
-        patterns: ['.*'],
-      },
-    ],
-    '@typescript-eslint/no-floating-promises': 'off',
-    'react-refresh/only-export-components': 'off',
-    'react/jsx-no-useless-fragment': 'off',
-  },
-});
+    },
+    rules: {
+      '@typescript-eslint/no-misused-promises': [
+        'error',
+        {
+          checksVoidReturn: false,
+        },
+      ],
+      'no-console': 'off',
+      // 절대경로 통일을 위해 ".*" 패턴 제한
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: ['.*'],
+        },
+      ],
+      '@typescript-eslint/no-floating-promises': 'off',
+      'react-refresh/only-export-components': 'off',
+      'react/jsx-no-useless-fragment': 'off',
+    },
+  }
+);
