@@ -74,7 +74,7 @@ export default function LoginPage() {
             <div className='relative h-[280px] w-[200px]'>
               <Link href='/' className='block h-full w-full'>
                 <Image
-                  src='/logo-auth.svg'
+                  src='/auth/image/login-signup-logo.svg'
                   alt='Taskify Logo'
                   fill
                   className='object-contain object-center'
@@ -163,72 +163,26 @@ export default function LoginPage() {
                     <button
                       type='button'
                       onClick={() => setShowPassword(!showPassword)}
-                      className='absolute top-1/2 right-3 flex h-[24px] w-[24px] -translate-y-1/2 items-center justify-center'
+                      className='absolute top-1/2 right-3 flex h-[24px] w-[24px] -translate-y-1/2 items-center justify-center text-[#9FA6B2] transition-colors duration-200 hover:text-[#5534da]'
                       aria-label={
                         showPassword ? '비밀번호 숨기기' : '비밀번호 보기'
                       }
                       aria-pressed={showPassword}
                     >
                       {showPassword ? (
-                        <svg
-                          width='24'
-                          height='24'
-                          viewBox='0 0 24 24'
-                          fill='none'
-                          xmlns='http://www.w3.org/2000/svg'
-                        >
-                          <path
-                            d='M12 5C7 5 2.73 8.11 1 12.5C2.73 16.89 7 20 12 20C17 20 21.27 16.89 23 12.5C21.27 16.89 17 20 12 20C7 20 2.73 16.89 1 12.5C2.73 8.11 7 5 12 5Z'
-                            stroke='currentColor'
-                            strokeWidth='2'
-                            strokeLinecap='round'
-                            strokeLinejoin='round'
-                          />
-                          <path
-                            d='M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z'
-                            stroke='currentColor'
-                            strokeWidth='2'
-                            strokeLinecap='round'
-                            strokeLinejoin='round'
-                          />
-                        </svg>
+                        <Image
+                          src='/auth/icon/visibility.svg'
+                          alt='비밀번호 숨기기'
+                          width={24}
+                          height={24}
+                        />
                       ) : (
-                        <svg
-                          width='24'
-                          height='24'
-                          viewBox='0 0 24 24'
-                          fill='none'
-                          xmlns='http://www.w3.org/2000/svg'
-                        >
-                          <path
-                            d='M17.94 17.94C16.2306 19.243 14.1491 19.9649 12 20C5 20 1 12 1 12C1 12 4.243 4.243 12 4.243C14.1491 4.23513 16.2306 4.95603 17.94 6.259'
-                            stroke='currentColor'
-                            strokeWidth='2'
-                            strokeLinecap='round'
-                            strokeLinejoin='round'
-                          />
-                          <path
-                            d='M14.12 14.12C13.8454 14.4148 13.5141 14.6512 12.1462 14.8151C12.7782 14.9791 12.3807 15.0673 11.9781 15.0744C11.5755 15.0815 11.1747 15.0074 10.801 14.8565C10.4273 14.7056 10.0867 14.4806 9.80385 14.1968C9.52097 13.913 9.30026 13.5767 9.15448 13.2084C9.0087 12.8401 8.94084 12.4463 8.95458 12.0516C8.96833 11.6569 9.06351 11.2687 9.23506 10.9107C9.40661 10.5527 9.65085 10.2329 9.95354 9.97021C10.2562 9.70753 10.6109 9.50707 10.9951 9.38251C11.3793 9.25795 11.7863 9.21157 12.1901 9.24604C12.5939 9.28052 12.9877 9.39539 13.3486 9.58396C13.7096 9.77253 14.0308 10.0309 14.2946 10.3446'
-                            stroke='currentColor'
-                            strokeWidth='2'
-                            strokeLinecap='round'
-                            strokeLinejoin='round'
-                          />
-                          <path
-                            d='M9.9 4.24C10.5883 4.0789 11.2931 3.99836 12 4C19 4 23 12 23 12C23 12 21.757 19.757 14 19.757C13.2931 19.7556 12.5883 19.6751 11.9 19.514'
-                            stroke='currentColor'
-                            strokeWidth='2'
-                            strokeLinecap='round'
-                            strokeLinejoin='round'
-                          />
-                          <path
-                            d='M14.12 14.12L1 1'
-                            stroke='currentColor'
-                            strokeWidth='2'
-                            strokeLinecap='round'
-                            strokeLinejoin='round'
-                          />
-                        </svg>
+                        <Image
+                          src='/auth/icon/visibility-off.svg'
+                          alt='비밀번호 보기'
+                          width={24}
+                          height={24}
+                        />
                       )}
                     </button>
                   </div>

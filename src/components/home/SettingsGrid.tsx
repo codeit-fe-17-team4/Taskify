@@ -24,7 +24,7 @@ const items: Item[] = [
   {
     title: '대시보드 설정',
     desc: '대시보드 사진과 이름을 변경할 수 있어요.',
-    img: '/landing3.svg',
+    img: '/auth/image/landing3.svg',
     alt: '대시보드 설정',
     w: 300,
     h: 123.87,
@@ -34,7 +34,7 @@ const items: Item[] = [
   {
     title: '초대',
     desc: '새로운 팀원을 초대할 수 있어요.',
-    img: '/landing4.svg',
+    img: '/auth/image/landing4.svg',
     alt: '초대',
     w: 300,
     h: 230.81,
@@ -44,7 +44,7 @@ const items: Item[] = [
   {
     title: '구성원',
     desc: '구성원을 초대하고 내보낼 수 있어요.',
-    img: '/landing5.svg',
+    img: '/auth/image/landing5.svg',
     alt: '구성원',
     w: 300,
     h: 195.48,
@@ -76,11 +76,11 @@ export default function SettingsGrid(): ReactElement {
                   width={it.w}
                   height={it.h}
                   className={`h-auto max-h-full w-auto max-w-full ${
-                    it.img === '/landing3.svg'
+                    it.img === '/auth/image/landing3.svg'
                       ? 'max-[375px]:h-[107.35px] max-[375px]:w-[260px]'
-                      : it.img === '/landing4.svg'
+                      : it.img === '/auth/image/landing4.svg'
                         ? 'max-[375px]:h-[200.03px] max-[375px]:w-[260px]'
-                        : it.img === '/landing5.svg'
+                        : it.img === '/auth/image/landing5.svg'
                           ? 'max-[375px]:h-[169.42px] max-[375px]:w-[260px]'
                           : ''
                   }`}

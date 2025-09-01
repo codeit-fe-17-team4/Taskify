@@ -13,7 +13,7 @@ export default function Hero(): ReactElement {
     <section className='mx-auto mt-[94px] max-w-[1200px] text-center max-[744px]:max-w-[664px] max-[375px]:mt-[42px] max-[375px]:max-w-full'>
       {/* desktop 이미지 */}
       <Image
-        src='/desktop.svg'
+        src='/auth/image/hero-desktop.svg'
         alt='메인 히어로 일러스트'
         width={722}
         height={422.76}

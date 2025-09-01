@@ -13,7 +13,7 @@ export default function Header(): ReactElement {
       {/* 로고 */}
       <div className='flex items-center'>
         <Image
-          src='/group-676.svg'
+          src='/auth/image/logo-header.svg'
           alt='Taskify 로고'
           width={121}
           height={39}

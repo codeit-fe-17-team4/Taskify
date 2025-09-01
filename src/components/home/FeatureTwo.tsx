@@ -16,7 +16,7 @@ export default function FeatureTwo(): ReactElement {
     <section className='relative mx-auto mt-[90px] h-[600px] w-full max-w-[1200px] bg-[#171717] max-[744px]:mx-[40px] max-[744px]:mt-[90px] max-[744px]:h-[972px] max-[744px]:max-w-[664px] max-[744px]:pb-[240px] max-[375px]:mt-[59px] max-[375px]:h-[686px] max-[375px]:w-[343px]'>
       {/* 배경 이미지 */}
       <Image
-        src='/landing2.svg'
+        src='/auth/image/landing2.svg'
         alt='할 일 등록 일러스트'
         width={436}
         height={502}

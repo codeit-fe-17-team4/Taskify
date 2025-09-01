@@ -15,7 +15,7 @@ export default function FeatureOne(): ReactElement {
     <section className='relative mx-auto mt-[180px] h-[600px] w-full max-w-[1200px] bg-[#171717] max-[744px]:mx-[40px] max-[744px]:mt-[180px] max-[744px]:h-[972px] max-[744px]:max-w-[664px] max-[744px]:pb-[220px] max-[375px]:mt-[76px] max-[375px]:h-[686px] max-[375px]:w-[343px] max-[375px]:pb-[194px]'>
       {/* 배경 이미지 */}
       <Image
-        src='/landing1.svg'
+        src='/auth/image/landing1.svg'
         alt='일의 우선순위 관리 일러스트'
         width={594}
         height={497.49}
