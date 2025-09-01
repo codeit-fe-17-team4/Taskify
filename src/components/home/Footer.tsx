@@ -61,7 +61,13 @@ export default function Footer(): ReactElement {
             </svg>
           </a>
           {/* Facebook 아이콘 */}
-          <a aria-label='facebook' href='#' className='text-on-inverse'>
+          <a
+            aria-label='facebook'
+            href='https://www.facebook.com'
+            target='_blank'
+            rel='noopener noreferrer'
+            className='text-on-inverse'
+          >
             <svg
               width='18'
               height='18'
@@ -77,7 +83,13 @@ export default function Footer(): ReactElement {
             </svg>
           </a>
           {/* Instagram 아이콘 */}
-          <a aria-label='instagram' href='#' className='text-on-inverse'>
+          <a
+            aria-label='instagram'
+            href='https://www.instagram.com'
+            target='_blank'
+            rel='noopener noreferrer'
+            className='text-on-inverse'
+          >
             <svg
               width='18'
               height='18'

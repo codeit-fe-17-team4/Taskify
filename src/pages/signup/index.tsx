@@ -118,7 +118,7 @@ export default function SignupPage() {
     <main
       className={`${styles.auth} ${styles.bgAuth} flex min-h-screen items-center justify-center overflow-x-auto`}
     >
-      <div className='flex h-auto min-h-[653px] w-[520px] shrink-0 flex-col items-center gap-[30px]'>
+      <div className='flex h-auto min-h-[653px] w-[520px] shrink-0 flex-col items-center gap-[30px] max-[375px]:w-[351px] max-[375px]:gap-[36px]'>
         {/* Hero Block */}
         <div className='flex h-[322px] w-[200px] flex-col items-center gap-[10px]'>
           <div className='flex h-[280px] w-[200px] flex-col items-center gap-[30px]'>
@@ -135,24 +135,24 @@ export default function SignupPage() {
             </div>
           </div>
           <p
-            className={`${styles.textStrong} mx-auto mt-[12px] h-auto w-auto overflow-visible text-center text-[20px] leading-[32px] font-[500] tracking-[-0.01em] whitespace-nowrap`}
+            className={`${styles.textStrong} mx-auto mt-[12px] h-[32px] w-[200px] overflow-visible text-center text-[20px] leading-[32px] font-[500] tracking-[-0.01em] whitespace-nowrap max-[375px]:mt-[8px] max-[375px]:flex max-[375px]:h-[26px] max-[375px]:w-[170px] max-[375px]:items-center max-[375px]:justify-center max-[375px]:text-[18px]`}
           >
             첫 방문을 환영합니다!
           </p>
         </div>
 
         {/* Form Wrapper */}
-        <div className='flex w-[520px] flex-col items-center'>
+        <div className='flex w-[520px] flex-col items-center max-[375px]:w-[351px]'>
           <form
             onSubmit={handleSubmit}
-            className='flex w-[520px] flex-col items-start'
+            className='flex w-[520px] flex-col items-start max-[375px]:w-[351px]'
           >
             {/* Form Stack - 입력 + 버튼 + 하단 안내 */}
-            <div className='flex flex-col space-y-6'>
+            <div className='flex flex-col space-y-6 max-[375px]:space-y-2'>
               {/* Input Group */}
-              <div className='flex w-[520px] flex-col items-start'>
+              <div className='flex w-[520px] flex-col items-start max-[375px]:w-[351px]'>
                 {/* Nickname Input */}
-                <div className='flex w-[520px] flex-col gap-0'>
+                <div className='flex w-[520px] flex-col gap-0 max-[375px]:w-[351px]'>
                   <label
                     htmlFor='nickname'
                     className={`${styles.textStrong} mb-2 text-[16px] leading-[26px]`}
@@ -166,7 +166,7 @@ export default function SignupPage() {
                     onChange={(e) => setNickname(e.target.value)}
                     onBlur={handleNicknameBlur}
                     placeholder='닉네임을 입력해 주세요'
-                    className={`h-[50px] w-[520px] rounded-[8px] bg-white px-[16px] py-[15px] ring-1 placeholder:text-[var(--auth-placeholder)] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none ${
+                    className={`h-[50px] w-[520px] rounded-[8px] bg-white px-[16px] py-[15px] ring-1 placeholder:text-[var(--auth-placeholder)] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none max-[375px]:w-[351px] ${
                       nicknameError
                         ? 'ring-[var(--auth-error)] focus:ring-[var(--auth-error)]'
                         : 'ring-[var(--auth-border)]'
@@ -179,7 +179,7 @@ export default function SignupPage() {
                   {nicknameError && (
                     <p
                       id='nickname-error'
-                      className='mt-2 text-[14px] leading-[24px] text-[var(--auth-error)]'
+                      className='mt-2 text-[14px] leading-[24px] text-[var(--auth-error)] max-[375px]:mt-2 max-[375px]:mb-2'
                       aria-live='polite'
                     >
                       {nicknameError}
@@ -188,10 +188,10 @@ export default function SignupPage() {
                 </div>
 
                 {/* Email Input */}
-                <div className='flex w-[520px] flex-col gap-0'>
+                <div className='flex w-[520px] flex-col gap-0 max-[375px]:w-[351px]'>
                   <label
                     htmlFor='email'
-                    className={`${styles.textStrong} mt-[16px] mb-2 text-[16px] leading-[26px]`}
+                    className={`${styles.textStrong} mt-[16px] mb-2 text-[16px] leading-[26px] max-[375px]:mt-0`}
                   >
                     이메일
                   </label>
@@ -202,7 +202,7 @@ export default function SignupPage() {
                     onChange={(e) => setEmail(e.target.value)}
                     onBlur={handleEmailBlur}
                     placeholder='이메일을 입력해 주세요'
-                    className={`h-[50px] w-[520px] rounded-[8px] bg-white px-[16px] py-[15px] ring-1 placeholder:text-[var(--auth-placeholder)] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none ${
+                    className={`h-[50px] w-[520px] rounded-[8px] bg-white px-[16px] py-[15px] ring-1 placeholder:text-[var(--auth-placeholder)] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none max-[375px]:w-[351px] ${
                       emailError
                         ? 'ring-[var(--auth-error)] focus:ring-[var(--auth-error)]'
                         : 'ring-[var(--auth-border)]'
@@ -213,7 +213,7 @@ export default function SignupPage() {
                   {emailError && (
                     <p
                       id='email-error'
-                      className='mt-2 text-[14px] leading-[24px] text-[var(--auth-error)]'
+                      className='mt-2 text-[14px] leading-[24px] text-[var(--auth-error)] max-[375px]:mt-2 max-[375px]:mb-2'
                       aria-live='polite'
                     >
                       {emailError}
@@ -222,14 +222,14 @@ export default function SignupPage() {
                 </div>
 
                 {/* Password Input */}
-                <div className='flex w-[520px] flex-col gap-0'>
+                <div className='flex w-[520px] flex-col gap-0 max-[375px]:w-[351px]'>
                   <label
                     htmlFor='password'
-                    className={`${styles.textStrong} mt-[16px] mb-2 text-[16px] leading-[26px]`}
+                    className={`${styles.textStrong} mt-[16px] mb-2 text-[16px] leading-[26px] max-[375px]:mt-0`}
                   >
                     비밀번호
                   </label>
-                  <div className='relative w-[520px]'>
+                  <div className='relative w-[520px] max-[375px]:w-[351px]'>
                     <input
                       id='password'
                       type={showPassword ? 'text' : 'password'}
@@ -237,7 +237,7 @@ export default function SignupPage() {
                       onChange={(e) => setPassword(e.target.value)}
                       onBlur={handlePasswordBlur}
                       placeholder='비밀번호를 입력해 주세요'
-                      className={`h-[50px] w-[520px] rounded-[8px] bg-white px-[16px] py-[12px] pr-10 ring-1 placeholder:text-[var(--auth-placeholder)] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none ${
+                      className={`h-[50px] w-[520px] rounded-[8px] bg-white px-[16px] py-[12px] pr-10 ring-1 placeholder:text-[var(--auth-placeholder)] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none max-[375px]:w-[351px] ${
                         passwordError
                           ? 'ring-[var(--auth-error)] focus:ring-[var(--auth-error)]'
                           : 'ring-[var(--auth-border)]'
@@ -322,7 +322,7 @@ export default function SignupPage() {
                   {passwordError && (
                     <p
                       id='password-error'
-                      className='mt-2 text-[14px] leading-[24px] text-[var(--auth-error)]'
+                      className='mt-2 text-[14px] leading-[24px] text-[var(--auth-error)] max-[375px]:mt-2 max-[375px]:mb-2'
                       aria-live='polite'
                     >
                       {passwordError}
@@ -331,14 +331,14 @@ export default function SignupPage() {
                 </div>
 
                 {/* Confirm Password Input */}
-                <div className='flex w-[520px] flex-col gap-0'>
+                <div className='flex w-[520px] flex-col gap-0 max-[375px]:w-[351px]'>
                   <label
                     htmlFor='confirmPassword'
-                    className={`${styles.textStrong} mt-[16px] mb-2 text-[16px] leading-[26px]`}
+                    className={`${styles.textStrong} mt-[16px] mb-2 text-[16px] leading-[26px] max-[375px]:mt-0`}
                   >
                     비밀번호 확인
                   </label>
-                  <div className='relative w-[520px]'>
+                  <div className='relative w-[520px] max-[375px]:w-[351px]'>
                     <input
                       id='confirmPassword'
                       type={showConfirmPassword ? 'text' : 'password'}
@@ -346,7 +346,7 @@ export default function SignupPage() {
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       onBlur={handleConfirmPasswordBlur}
                       placeholder='비밀번호를 다시 입력해 주세요'
-                      className={`h-[50px] w-[520px] rounded-[8px] bg-white px-[16px] py-[12px] pr-10 ring-1 placeholder:text-[var(--auth-placeholder)] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none ${
+                      className={`h-[50px] w-[520px] rounded-[8px] bg-white px-[16px] py-[12px] pr-10 ring-1 placeholder:text-[var(--auth-placeholder)] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none max-[375px]:w-[351px] ${
                         confirmPasswordError
                           ? 'ring-[var(--auth-error)] focus:ring-[var(--auth-error)]'
                           : 'ring-[var(--auth-border)]'
@@ -437,7 +437,7 @@ export default function SignupPage() {
                   {confirmPasswordError && (
                     <p
                       id='confirm-password-error'
-                      className='mt-2 text-[14px] leading-[24px] text-[var(--auth-error)]'
+                      className='mt-2 text-[14px] leading-[24px] text-[var(--auth-error)] max-[375px]:mt-2 max-[375px]:mb-2'
                       aria-live='polite'
                     >
                       {confirmPasswordError}
@@ -468,7 +468,7 @@ export default function SignupPage() {
                 type='submit'
                 aria-disabled={!isFormValid || isLoading}
                 disabled={!isFormValid || isLoading}
-                className={`h-[50px] w-[520px] shrink-0 rounded-[8px] text-center text-[18px] leading-[26px] font-[500] text-white ${
+                className={`h-[50px] w-[520px] shrink-0 rounded-[8px] text-center text-[18px] leading-[26px] font-[500] text-white max-[375px]:w-[351px] ${
                   isFormValid && !isLoading
                     ? 'cursor-pointer bg-[var(--auth-primary)] transition-opacity hover:opacity-90'
                     : 'cursor-not-allowed bg-[var(--auth-placeholder)]'
@@ -479,7 +479,7 @@ export default function SignupPage() {
 
               {/* Bottom Info */}
               <div
-                className={`${styles.textStrong} w-[520px] text-center text-[16px] leading-[19px]`}
+                className={`${styles.textStrong} w-[520px] text-center text-[16px] leading-[19px] max-[375px]:w-[351px]`}
               >
                 <span>이미 회원이신가요? </span>
                 <Link
