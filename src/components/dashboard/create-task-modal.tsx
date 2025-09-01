@@ -25,7 +25,6 @@ export default function CreateTaskModal({
   });
 
   const handleClose = () => {
-    // 폼 데이터 초기화
     setFormData({
       assignee: '',
       title: '',

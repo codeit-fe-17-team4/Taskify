@@ -18,19 +18,30 @@ const getTagColorClasses = (color: string) => {
   }
 };
 
-export default function ColumnTaskCard({ task }: TaskCardProps) {
+export default function ColumnTaskCard({ task, onEditTask }: TaskCardProps) {
+  const handleCardClick = () => {
+    if (onEditTask) {
+      onEditTask(task);
+    }
+  };
+
   return (
-    <div className='cursor-pointer rounded-lg border border-gray-300 bg-white'>
+    <div
+      className='cursor-pointer rounded-lg border border-gray-300 bg-white'
+      onClick={handleCardClick}
+    >
       {/* 이미지 */}
       {task.imageUrl && (
-        <div className='h-40 w-full overflow-hidden rounded-t-lg'>
-          <Image
-            src={task.imageUrl}
-            alt='카드 이미지'
-            width={300}
-            height={160}
-            className='h-full w-full object-cover'
-          />
+        <div className='p-4 pb-0'>
+          <div className='h-40 w-full overflow-hidden rounded-lg'>
+            <Image
+              src={task.imageUrl}
+              alt='카드 이미지'
+              width={300}
+              height={160}
+              className='h-full w-full object-cover'
+            />
+          </div>
         </div>
       )}
 
@@ -56,7 +67,7 @@ export default function ColumnTaskCard({ task }: TaskCardProps) {
           {/* 날짜 */}
           <div className='flex items-center gap-1.5 text-xs text-gray-500'>
             <Image
-              src='/image/calendar.svg'
+              src='/dashboard/calendar.svg'
               alt='달력'
               width={14}
               height={16}

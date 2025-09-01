@@ -2,17 +2,23 @@ import { useState } from 'react';
 import ColumnLayout from '@/components/dashboard/column-layout';
 import CreateColumnModal from '@/components/dashboard/create-column-modal';
 import ManageColumnModal from '@/components/dashboard/manage-column-modal';
+import TaskDetailModal from '@/components/dashboard/task-detail-modal';
+import EditTaskModal from '@/components/dashboard/edit-task-modal';
 import type {
   ColumnType,
   TaskType,
   CreateColumnFormData,
   ManageColumnFormData,
+  EditTaskFormData,
 } from '@/components/dashboard/type';
 
 export default function DashboardDetailPage() {
   const [isColumnModalOpen, setIsColumnModalOpen] = useState(false);
   const [isManageColumnModalOpen, setIsManageColumnModalOpen] = useState(false);
   const [selectedColumn, setSelectedColumn] = useState<ColumnType | null>(null);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<TaskType | null>(null);
+  const [isEditTaskModalOpen, setIsEditTaskModalOpen] = useState(false);
   const mockColumns: ColumnType[] = [
     {
       id: '1',
@@ -21,13 +27,14 @@ export default function DashboardDetailPage() {
         {
           id: 't1',
           title: '1234',
-          description: '1234',
+          description:
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
           tags: [
             { label: '프로젝트', color: 'orange' },
             { label: '백엔드', color: 'green' },
           ],
           dueDate: '2025-08-28 10:30',
-          imageUrl: '',
+          imageUrl: '/dashboard/sample-image.png',
           manager: {
             id: 'm1',
             name: 'te',
@@ -86,7 +93,7 @@ export default function DashboardDetailPage() {
   };
 
   const handleColumnSubmit = (columnData: CreateColumnFormData) => {
-    console.log('새 컬럼 데이터:', columnData);
+    // TODO: 컬럼 생성 API 호출
     setIsColumnModalOpen(false);
   };
 
@@ -102,13 +109,29 @@ export default function DashboardDetailPage() {
     columnId: string,
     columnData: ManageColumnFormData
   ) => {
-    console.log('컬럼 업데이트:', columnId, columnData);
+    // TODO: 컬럼 업데이트 API 호출
     setIsManageColumnModalOpen(false);
   };
 
   const handleColumnDelete = (columnId: string) => {
-    console.log('컬럼 삭제:', columnId);
+    // TODO: 컬럼 삭제 API 호출
     setIsManageColumnModalOpen(false);
+  };
+
+  const handleTaskClick = (task: TaskType) => {
+    setSelectedTask(task);
+    setIsDetailModalOpen(true);
+  };
+
+  const handleTaskEdit = (task: TaskType) => {
+    setSelectedTask(task);
+    setIsDetailModalOpen(false);
+    setIsEditTaskModalOpen(true);
+  };
+
+  const handleTaskUpdate = (taskData: EditTaskFormData) => {
+    // TODO: 태스크 업데이트 API 호출
+    setIsEditTaskModalOpen(false);
   };
 
   return (
@@ -138,11 +161,11 @@ export default function DashboardDetailPage() {
           <ColumnLayout
             columns={mockColumns}
             onAddColumnClick={handleAddColumnClick}
-            onAddTaskClick={(columnId: string) =>
-              console.log('Add task to column:', columnId)
-            }
+            onAddTaskClick={(columnId: string) => {
+              // TODO: 태스크 생성 모달 열기
+            }}
             onColumnSettingsClick={handleColumnSettingsClick}
-            onTaskClick={(task: TaskType) => console.log('Task clicked:', task)}
+            onTaskClick={handleTaskClick}
           />
         </main>
       </div>
@@ -161,6 +184,25 @@ export default function DashboardDetailPage() {
         column={selectedColumn}
         onUpdate={handleColumnUpdate}
         onDelete={handleColumnDelete}
+      />
+
+      {/* 할일 상세 모달 */}
+      <TaskDetailModal
+        isOpen={isDetailModalOpen}
+        onClose={() => setIsDetailModalOpen(false)}
+        task={selectedTask}
+        onEdit={handleTaskEdit}
+        onDelete={(taskId) => {
+          // TODO: 태스크 삭제 API 호출
+        }}
+      />
+
+      {/* 할일 수정 모달 */}
+      <EditTaskModal
+        isOpen={isEditTaskModalOpen}
+        onClose={() => setIsEditTaskModalOpen(false)}
+        onSubmit={handleTaskUpdate}
+        initialTask={selectedTask || undefined}
       />
     </div>
   );

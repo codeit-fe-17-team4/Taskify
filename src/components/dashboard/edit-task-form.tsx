@@ -1,16 +1,16 @@
 import { useState } from 'react';
 import Image from 'next/image';
-import type { CreateTaskFormData } from './type';
+import type { EditTaskFormData } from './type';
 
-interface CreateTaskFormProps {
-  formData: CreateTaskFormData;
-  setFormData: React.Dispatch<React.SetStateAction<CreateTaskFormData>>;
+interface EditTaskFormProps {
+  formData: EditTaskFormData;
+  setFormData: React.Dispatch<React.SetStateAction<EditTaskFormData>>;
 }
 
-export default function CreateTaskForm({
+export default function EditTaskForm({
   formData,
   setFormData,
-}: CreateTaskFormProps) {
+}: EditTaskFormProps) {
   const [currentTag, setCurrentTag] = useState('');
 
   const handleTagKeyDown = (e: React.KeyboardEvent) => {
@@ -37,6 +37,7 @@ export default function CreateTaskForm({
       setFormData((prev) => ({
         ...prev,
         imageFile: file,
+        existingImageUrl: undefined,
       }));
     }
   };
@@ -45,37 +46,70 @@ export default function CreateTaskForm({
     setFormData((prev) => ({
       ...prev,
       imageFile: null,
+      existingImageUrl: undefined,
     }));
   };
 
   return (
     <>
-      {/* 담당자 */}
-      <div>
-        <label htmlFor='assignee' className='mb-2 block text-lg font-medium'>
-          담당자
-        </label>
-        <div className='relative'>
-          <select
-            id='assignee'
-            name='assignee'
-            className='w-full cursor-pointer appearance-none rounded-lg border border-gray-300 p-4 pr-12 focus:outline-none'
-            value={formData.assignee}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, assignee: e.target.value }))
-            }
-          >
-            <option value=''>이름을 입력해 주세요</option>
-            <option value='user1'>사용자 1</option>
-            <option value='user2'>사용자 2</option>
-          </select>
-          <div className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4'>
-            <Image
-              src='/dashboard/input-dropdown-btn.svg'
-              alt='드롭다운'
-              width={14}
-              height={16}
-            />
+      <div className='flex gap-4'>
+        {/* 상태 */}
+        <div className='flex-1'>
+          <label htmlFor='status' className='mb-2 block text-lg font-medium'>
+            상태
+          </label>
+          <div className='relative'>
+            <select
+              id='status'
+              name='status'
+              className='w-full cursor-pointer appearance-none rounded-lg border border-gray-300 p-4 pr-12 focus:outline-none'
+              value={formData.status}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, status: e.target.value }))
+              }
+            >
+              <option value='To Do'>● To Do</option>
+              <option value='On Progress'>● On Progress</option>
+              <option value='Done'>● Done</option>
+            </select>
+            <div className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4'>
+              <Image
+                src='/dashboard/input-dropdown-btn.svg'
+                alt='드롭다운'
+                width={14}
+                height={16}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* 담당자 */}
+        <div className='flex-1'>
+          <label htmlFor='assignee' className='mb-2 block text-lg font-medium'>
+            담당자
+          </label>
+          <div className='relative'>
+            <select
+              id='assignee'
+              name='assignee'
+              className='w-full cursor-pointer appearance-none rounded-lg border border-gray-300 p-4 pr-12 focus:outline-none'
+              value={formData.assignee}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, assignee: e.target.value }))
+              }
+            >
+              <option value=''>이름을 입력해 주세요</option>
+              <option value='user1'>사용자 1</option>
+              <option value='user2'>사용자 2</option>
+            </select>
+            <div className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4'>
+              <Image
+                src='/dashboard/input-dropdown-btn.svg'
+                alt='드롭다운'
+                width={14}
+                height={16}
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -144,7 +178,6 @@ export default function CreateTaskForm({
             }
             placeholder='날짜와 시간을 선택하세요'
             onClick={(e) => {
-              // 일부 브라우저에서 datepicker를 강제로 열기 위해
               (e.currentTarget as any).showPicker?.();
             }}
           />
@@ -178,13 +211,17 @@ export default function CreateTaskForm({
           {formData.tags.map((tag, index) => (
             <span
               key={index}
-              className='flex items-center gap-2 rounded-md bg-blue-100 px-3 py-1 text-sm text-blue-600'
+              className='flex items-center gap-2 rounded-md px-3 py-1 text-sm font-medium'
+              style={{
+                backgroundColor: index === 0 ? '#FED7AA' : '#DBEAFE',
+                color: index === 0 ? '#EA580C' : '#2563EB',
+              }}
             >
               {tag}
               <button
                 type='button'
                 onClick={() => removeTag(index)}
-                className='ml-1 text-blue-400 hover:text-blue-600'
+                className='ml-1 text-gray-400 hover:text-gray-600'
               >
                 ×
               </button>
@@ -222,23 +259,32 @@ export default function CreateTaskForm({
             className='hidden'
           />
 
-          {/* 이미지가 있는 경우 */}
-          {formData.imageFile ? (
+          {/* 1. 이미지가 첨부되어 있는 경우 */}
+          {formData.existingImageUrl || formData.imageFile ? (
             <div className='group relative'>
               <div className='h-20 w-20 overflow-hidden rounded-lg'>
-                <Image
-                  src={URL.createObjectURL(formData.imageFile)}
-                  alt='할일 이미지'
-                  width={80}
-                  height={80}
-                  className='h-full w-full object-cover'
-                />
+                {formData.imageFile ? (
+                  <Image
+                    src={URL.createObjectURL(formData.imageFile)}
+                    alt='할일 이미지'
+                    width={80}
+                    height={80}
+                    className='h-full w-full object-cover'
+                  />
+                ) : formData.existingImageUrl ? (
+                  <Image
+                    src={formData.existingImageUrl}
+                    alt='할일 이미지'
+                    width={80}
+                    height={80}
+                    className='h-full w-full object-cover'
+                  />
+                ) : null}
               </div>
 
-              {/* 어두운 오버레이와 편집 버튼 */}
               <label
                 htmlFor='image-upload'
-                className='bg-opacity-40 absolute inset-0 flex cursor-pointer items-center justify-center rounded-lg bg-black opacity-0 group-hover:opacity-100'
+                className='bg-opacity-10 absolute inset-0 flex cursor-pointer items-center justify-center rounded-lg bg-black opacity-0 transition-opacity duration-200 hover:opacity-100'
               >
                 <Image
                   src='/dashboard/edit-image-btn.svg'
@@ -249,11 +295,10 @@ export default function CreateTaskForm({
                 />
               </label>
 
-              {/* 삭제 버튼 */}
               <button
                 type='button'
                 onClick={removeImage}
-                className='absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-gray-500 hover:bg-gray-600'
+                className='absolute -top-1 -right-1 flex h-5 w-5 cursor-pointer items-center justify-center rounded-full bg-gray-500 hover:bg-gray-600'
               >
                 <Image
                   src='/dashboard/close-icon.svg'
@@ -265,7 +310,7 @@ export default function CreateTaskForm({
               </button>
             </div>
           ) : (
-            /* 이미지가 없는 경우 */
+            /* 2. 이미지가 없는 경우 */
             <label
               htmlFor='image-upload'
               className='flex h-20 w-20 cursor-pointer items-center justify-center rounded-lg bg-gray-100 hover:bg-gray-200'

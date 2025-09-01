@@ -39,11 +39,9 @@ export default function DashboardColumn({
         {/* 카드 추가 버튼 */}
         <AddTaskButton onClick={handleAddTaskClick} />
 
-        {/* 보드 */}
+        {/* 할일 보드 */}
         {column.tasks.map((task) => (
-          <div key={task.id} onClick={() => onTaskClick?.(task)}>
-            <ColumnTaskCard task={task} />
-          </div>
+          <ColumnTaskCard key={task.id} task={task} onEditTask={onTaskClick} />
         ))}
       </div>
 

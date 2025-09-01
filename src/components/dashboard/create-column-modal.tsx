@@ -20,7 +20,6 @@ export default function CreateColumnModal({
   });
 
   const handleClose = () => {
-    // 폼 데이터 초기화
     setFormData({ name: '' });
     onClose();
   };

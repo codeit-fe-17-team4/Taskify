@@ -24,7 +24,7 @@ export default function CreateColumnForm({
           name='name'
           type='text'
           placeholder='새로운 프로젝트'
-          className='w-full rounded-lg border border-gray-300 p-4 focus:border-blue-500 focus:outline-none'
+          className='w-full rounded-lg border border-gray-300 p-4 focus:outline-none'
           value={formData.name}
           onChange={(e) =>
             setFormData((prev) => ({ ...prev, name: e.target.value }))

@@ -68,6 +68,17 @@ export interface CreateTaskFormData {
   imageFile: File | null;
 }
 
+export interface EditTaskFormData {
+  status: string;
+  assignee: string;
+  title: string;
+  description: string;
+  dueDate: string;
+  tags: string[];
+  imageFile: File | null;
+  existingImageUrl?: string;
+}
+
 // 모달 상태 타입
 export interface ColumnModalState {
   isOpen: boolean;
@@ -81,4 +92,25 @@ export interface TaskModalState {
   mode: 'create' | 'edit';
   columnId?: string;
   task?: TaskType;
+}
+
+// 댓글 타입
+export interface CommentType {
+  id: string;
+  content: string;
+  author: {
+    id: string;
+    name: string;
+    profileColor: string;
+  };
+  createdAt: string;
+}
+
+// 할일 상세 모달 Props
+export interface TaskDetailModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  task: TaskType | null;
+  onEdit?: (task: TaskType) => void;
+  onDelete?: (taskId: string) => void;
 }

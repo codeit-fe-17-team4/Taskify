@@ -23,12 +23,15 @@ export default function ManageColumnModal({
     name: '',
   });
 
-  // 컬럼이 변경될 때마다 폼 데이터 업데이트
   useEffect(() => {
     if (column) {
       setFormData({ name: column.title });
     }
   }, [column]);
+
+  const handleClose = () => {
+    onClose();
+  };
 
   useModalKeyHandler(isOpen, handleClose);
 
@@ -44,11 +47,6 @@ export default function ManageColumnModal({
       onDelete(column.id);
       handleClose();
     }
-  };
-
-  const handleClose = () => {
-    // 폼 데이터는 초기화하지 않음 (기존 컬럼 이름을 유지)
-    onClose();
   };
 
   const isUpdateDisabled = !formData.name.trim();

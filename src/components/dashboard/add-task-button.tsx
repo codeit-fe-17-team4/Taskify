@@ -7,7 +7,12 @@ export default function AddTaskButton({ onClick }: AddTaskButtonProps) {
       className='flex h-11 w-full cursor-pointer items-center justify-center gap-3 rounded-lg border border-gray-300 bg-white'
       onClick={onClick}
     >
-      <Image src='/image/add-btn.svg' alt='카드 추가' width={22} height={22} />
+      <Image
+        src='/dashboard/add-btn.svg'
+        alt='카드 추가'
+        width={22}
+        height={22}
+      />
     </button>
   );
 }

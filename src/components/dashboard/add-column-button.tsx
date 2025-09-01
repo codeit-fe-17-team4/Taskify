@@ -8,7 +8,12 @@ export default function AddColumnButton({ onClick }: AddColumnButtonProps) {
       onClick={onClick}
     >
       <span className='text-black-500 font-bold'>새로운 칼럼 추가하기</span>
-      <Image src='/image/add-btn.svg' alt='칼럼 추가' width={22} height={22} />
+      <Image
+        src='/dashboard/add-btn.svg'
+        alt='칼럼 추가'
+        width={22}
+        height={22}
+      />
     </button>
   );
 }

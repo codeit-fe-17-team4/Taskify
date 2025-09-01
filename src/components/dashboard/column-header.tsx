@@ -16,7 +16,7 @@ export default function ColumnHeader({
       </div>
       <button className='cursor-pointer rounded p-1' onClick={onSettingsClick}>
         <Image
-          src='/image/column-setting-icon.svg'
+          src='/dashboard/column-setting-icon.svg'
           alt='컬럼 설정'
           width={24}
           height={24}

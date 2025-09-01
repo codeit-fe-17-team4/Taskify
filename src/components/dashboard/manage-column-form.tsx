@@ -24,7 +24,7 @@ export default function ManageColumnForm({
           name='name'
           type='text'
           placeholder='컬럼 이름을 입력해 주세요'
-          className='w-full rounded-lg border border-gray-300 p-4 focus:border-blue-500 focus:outline-none'
+          className='w-full rounded-lg border border-gray-300 p-4 focus:outline-none'
           value={formData.name}
           onChange={(e) =>
             setFormData((prev) => ({ ...prev, name: e.target.value }))
