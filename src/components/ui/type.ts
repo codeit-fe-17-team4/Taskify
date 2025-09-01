@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 // 기본 컴포넌트 Props
 export interface BaseComponentProps {

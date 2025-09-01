@@ -1,18 +1,10 @@
 import { useState } from 'react';
 import Image from 'next/image';
-
-interface FormData {
-  assignee: string;
-  title: string;
-  description: string;
-  dueDate: string;
-  tags: string[];
-  imageFile: File | null;
-}
+import type { CreateTaskFormData } from './type';
 
 interface CreateTaskFormProps {
-  formData: FormData;
-  setFormData: React.Dispatch<React.SetStateAction<FormData>>;
+  formData: CreateTaskFormData;
+  setFormData: React.Dispatch<React.SetStateAction<CreateTaskFormData>>;
 }
 
 export default function CreateTaskForm({
@@ -60,7 +52,7 @@ export default function CreateTaskForm({
           <select
             id='assignee'
             name='assignee'
-            className='w-full appearance-none rounded-lg border border-gray-300 p-4 pr-12'
+            className='w-full appearance-none rounded-lg border border-gray-300 p-4 pr-12 focus:border-blue-500 focus:outline-none'
             value={formData.assignee}
             onChange={(e) =>
               setFormData((prev) => ({ ...prev, assignee: e.target.value }))
@@ -87,17 +79,14 @@ export default function CreateTaskForm({
           htmlFor='title'
           className='mb-2 block text-lg leading-6 font-medium'
         >
-          제목{' '}
-          {!formData.title && (
-            <span className='align-baseline text-lg text-indigo-600'>*</span>
-          )}
+          제목 <span className='align-baseline text-lg text-indigo-600'>*</span>
         </label>
         <input
           id='title'
           name='title'
           type='text'
           placeholder='제목을 입력해 주세요'
-          className='w-full rounded-lg border border-gray-300 p-4'
+          className='w-full rounded-lg border border-gray-300 p-4 focus:border-blue-500 focus:outline-none'
           value={formData.title}
           onChange={(e) =>
             setFormData((prev) => ({ ...prev, title: e.target.value }))
@@ -122,7 +111,7 @@ export default function CreateTaskForm({
           name='description'
           placeholder='설명을 입력해 주세요'
           rows={4}
-          className='w-full resize-none rounded-lg border border-gray-300 p-4'
+          className='w-full resize-none rounded-lg border border-gray-300 p-4 focus:border-blue-500 focus:outline-none'
           value={formData.description}
           onChange={(e) =>
             setFormData((prev) => ({
@@ -144,7 +133,7 @@ export default function CreateTaskForm({
             id='dueDate'
             name='dueDate'
             type='datetime-local'
-            className='w-full rounded-lg border border-gray-300 p-4 pl-12'
+            className='w-full rounded-lg border border-gray-300 p-4 pl-12 focus:border-blue-500 focus:outline-none'
             value={formData.dueDate}
             onChange={(e) =>
               setFormData((prev) => ({ ...prev, dueDate: e.target.value }))
@@ -171,7 +160,7 @@ export default function CreateTaskForm({
           name='tags'
           type='text'
           placeholder='입력 후 Enter'
-          className='w-full rounded-lg border border-gray-300 p-4'
+          className='w-full rounded-lg border border-gray-300 p-4 focus:border-blue-500 focus:outline-none'
           value={currentTag}
           onChange={(e) => setCurrentTag(e.target.value)}
           onKeyDown={handleTagKeyDown}
@@ -235,5 +224,3 @@ export default function CreateTaskForm({
     </>
   );
 }
-
-export type { FormData };

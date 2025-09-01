@@ -2,9 +2,12 @@ import { useState } from 'react';
 import ColumnLayout from '@/components/dashboard/column-layout';
 import CreateColumnModal from '@/components/dashboard/create-column-modal';
 import ManageColumnModal from '@/components/dashboard/manage-column-modal';
-import type { ColumnType, TaskType } from '@/components/dashboard/type';
-import { ColumnFormData } from '@/components/dashboard/create-column-form';
-import { ManageColumnFormData } from '@/components/dashboard/manage-column-form';
+import type {
+  ColumnType,
+  TaskType,
+  CreateColumnFormData,
+  ManageColumnFormData,
+} from '@/components/dashboard/type';
 
 export default function DashboardDetailPage() {
   const [isColumnModalOpen, setIsColumnModalOpen] = useState(false);
@@ -82,7 +85,7 @@ export default function DashboardDetailPage() {
     setIsColumnModalOpen(true);
   };
 
-  const handleColumnSubmit = (columnData: ColumnFormData) => {
+  const handleColumnSubmit = (columnData: CreateColumnFormData) => {
     console.log('새 컬럼 데이터:', columnData);
     setIsColumnModalOpen(false);
   };

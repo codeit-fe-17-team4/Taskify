@@ -1,11 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import BaseModal from '../ui/base-modal';
-import CreateColumnForm, { ColumnFormData } from './create-column-form';
+import CreateColumnForm from './create-column-form';
+import { useModalKeyHandler } from '@/hooks/useModal';
+import type { CreateColumnFormData } from './type';
 
 interface CreateColumnModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (columnData: ColumnFormData) => void;
+  onSubmit: (columnData: CreateColumnFormData) => void;
 }
 
 export default function CreateColumnModal({
@@ -13,37 +15,21 @@ export default function CreateColumnModal({
   onClose,
   onSubmit,
 }: CreateColumnModalProps) {
-  const [formData, setFormData] = useState<ColumnFormData>({
+  const [formData, setFormData] = useState<CreateColumnFormData>({
     name: '',
   });
-
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        handleClose();
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'hidden';
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'unset';
-    };
-  }, [isOpen]);
-
-  const handleSubmit = () => {
-    onSubmit(formData);
-    handleClose();
-  };
 
   const handleClose = () => {
     // 폼 데이터 초기화
     setFormData({ name: '' });
     onClose();
+  };
+
+  useModalKeyHandler(isOpen, handleClose);
+
+  const handleSubmit = () => {
+    onSubmit(formData);
+    handleClose();
   };
 
   const isSubmitDisabled = !formData.name.trim();

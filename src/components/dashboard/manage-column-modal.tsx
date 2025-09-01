@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import BaseModal from '../ui/base-modal';
-import ManageColumnForm, { ManageColumnFormData } from './manage-column-form';
-import type { ColumnType } from './type';
+import ManageColumnForm from './manage-column-form';
+import { useModalKeyHandler } from '@/hooks/useModal';
+import type { ColumnType, ManageColumnFormData } from './type';
 
 interface ManageColumnModalProps {
   isOpen: boolean;
@@ -29,23 +30,7 @@ export default function ManageColumnModal({
     }
   }, [column]);
 
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        handleClose();
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'hidden';
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'unset';
-    };
-  }, [isOpen]);
+  useModalKeyHandler(isOpen, handleClose);
 
   const handleUpdate = () => {
     if (column) {

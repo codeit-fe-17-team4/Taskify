@@ -52,15 +52,20 @@ export interface AddTaskButtonProps {
 
 // 폼 관련 타입
 export interface CreateColumnFormData {
-  title: string;
+  name: string;
+}
+
+export interface ManageColumnFormData {
+  name: string;
 }
 
 export interface CreateTaskFormData {
+  assignee: string;
   title: string;
-  description?: string;
-  assigneeId?: string;
-  dueDate?: string;
+  description: string;
+  dueDate: string;
   tags: string[];
+  imageFile: File | null;
 }
 
 // 모달 상태 타입

@@ -1,11 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import BaseModal from '../ui/base-modal';
-import CreateTaskForm, { FormData } from './create-task-form';
+import CreateTaskForm from './create-task-form';
+import { useModalKeyHandler } from '@/hooks/useModal';
+import type { CreateTaskFormData } from './type';
 
 interface CreateTaskModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (taskData: FormData) => void;
+  onSubmit: (taskData: CreateTaskFormData) => void;
 }
 
 export default function CreateTaskModal({
@@ -13,7 +15,7 @@ export default function CreateTaskModal({
   onClose,
   onSubmit,
 }: CreateTaskModalProps) {
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<CreateTaskFormData>({
     assignee: '',
     title: '',
     description: '',
@@ -21,29 +23,6 @@ export default function CreateTaskModal({
     tags: [],
     imageFile: null,
   });
-
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        handleClose();
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'hidden';
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'unset';
-    };
-  }, [isOpen]);
-
-  const handleSubmit = () => {
-    onSubmit(formData);
-    handleClose();
-  };
 
   const handleClose = () => {
     // 폼 데이터 초기화
@@ -56,6 +35,13 @@ export default function CreateTaskModal({
       imageFile: null,
     });
     onClose();
+  };
+
+  useModalKeyHandler(isOpen, handleClose);
+
+  const handleSubmit = () => {
+    onSubmit(formData);
+    handleClose();
   };
 
   const isSubmitDisabled =
