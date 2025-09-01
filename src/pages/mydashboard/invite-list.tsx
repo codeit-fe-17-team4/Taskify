@@ -204,10 +204,10 @@ export default function InviteList(): ReactNode {
             </div>
             {/* 초대받은 목록 */}
             <div className='tablet:pl-8 pl-12'>
-              <div className='tablet:grid-cols-[150px_80px_200px] tablet:pl-0 grid w-full grid-cols-[250px_250px_200px] gap-2 pt-5 text-sm text-gray-400'>
+              <div className='tablet:grid-cols-[150px_80px_200px] mobile:flex mobile:flex-col tablet:pl-0 grid w-full grid-cols-[250px_250px_200px] gap-2 pt-5 text-sm text-gray-400'>
                 <div>이름</div>
                 <div>초대자</div>
-                <div className='text-center'>수락 여부</div>
+                <div className='mobile:hidden text-center'>수락 여부</div>
               </div>
               {inviteData.map((invite) => {
                 return (
