@@ -2,23 +2,37 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 
 import { fn } from 'storybook/test';
 
-import { Button } from './Button';
+import Button from '@/components/ui/button';
+import { INITIAL_VIEWPORTS, MINIMAL_VIEWPORTS } from 'storybook/viewport';
 
-// More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta = {
-  title: 'Example/Button',
+  title: 'Button',
   component: Button,
   parameters: {
-    // Optional parameter to center the component in the Canvas. More info: https://storybook.js.org/docs/configure/story-layout
+    viewport: { ...MINIMAL_VIEWPORTS, ...INITIAL_VIEWPORTS },
     layout: 'centered',
   },
-  // This component will have an automatically generated Autodocs entry: https://storybook.js.org/docs/writing-docs/autodocs
   tags: ['autodocs'],
-  // More on argTypes: https://storybook.js.org/docs/api/argtypes
   argTypes: {
-    backgroundColor: { control: 'color' },
+    variant: {
+      control: { type: 'radio' },
+      options: ['primary', 'invitation', 'modal'],
+    },
+    backgroundColor: {
+      control: { type: 'radio' },
+      options: ['violet', 'white'],
+    },
+    labelColor: {
+      control: { type: 'radio' },
+      options: ['gray'],
+    },
+    label: {
+      control: 'text',
+    },
+    disabled: {
+      control: 'boolean',
+    },
   },
-  // Use `fn` to spy on the onClick arg, which will appear in the actions panel once invoked: https://storybook.js.org/docs/essentials/actions#action-args
   args: { onClick: fn() },
 } satisfies Meta<typeof Button>;
 
@@ -28,27 +42,37 @@ type Story = StoryObj<typeof meta>;
 // More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
 export const Primary: Story = {
   args: {
-    primary: true,
-    label: 'Button',
+    variant: 'primary',
+    backgroundColor: 'violet',
+    label: '로그인',
   },
 };
-
-export const Secondary: Story = {
+export const Invitation: Story = {
   args: {
-    label: 'Button',
+    variant: 'invitation',
+    backgroundColor: 'violet',
+    label: '수락',
   },
 };
-
-export const Large: Story = {
+export const WhiteInvitation: Story = {
   args: {
-    size: 'large',
-    label: 'Button',
+    variant: 'invitation',
+    backgroundColor: 'white',
+    label: '거절',
   },
 };
-
-export const Small: Story = {
+export const Modal: Story = {
   args: {
-    size: 'small',
-    label: 'Button',
+    variant: 'modal',
+    backgroundColor: 'violet',
+    label: '확인',
+  },
+};
+export const WhiteModalWithGrayLabel: Story = {
+  args: {
+    variant: 'modal',
+    backgroundColor: 'white',
+    labelColor: 'gray',
+    label: '취소',
   },
 };

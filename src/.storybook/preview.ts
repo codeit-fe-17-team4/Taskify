@@ -1,7 +1,16 @@
 import type { Preview } from '@storybook/nextjs-vite';
+import { INITIAL_VIEWPORTS, MINIMAL_VIEWPORTS } from 'storybook/viewport';
+
 import '@/styles/globals.css';
+import StorybookTemplate from './StorybookTemplate';
 const preview: Preview = {
   parameters: {
+    docs: {
+      page: StorybookTemplate,
+    },
+    viewport: {
+      options: { ...INITIAL_VIEWPORTS, ...MINIMAL_VIEWPORTS },
+    },
     controls: {
       matchers: {
         color: /(background|color)$/i,
