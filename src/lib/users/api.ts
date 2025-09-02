@@ -1,16 +1,16 @@
+import { BASE_API_URL } from '@/lib/constants';
+import customFetch from '@/lib/custom-fetch';
 import type * as i from '@/lib/users/interface';
 import {
   signupSchema,
   type SignupType,
-  userSchema,
-  type UserType,
   updateMyInfoSchema,
   type UpdateMyInfoType,
   uploadProfileImageSchema,
   type UploadProfileImageType,
+  userSchema,
+  type UserType,
 } from '@/lib/users/type';
-import { BASE_API_URL } from '@/lib/constants';
-import customFetch from '@/lib/custom-fetch';
 
 export const signup = async (params: i.SignupParams): Promise<SignupType> => {
   const { email, nickname, password } = params;
@@ -52,6 +52,7 @@ export const uploadProfileImage = async (
   const { image } = params;
 
   const formData = new FormData();
+
   formData.append('image', image);
 
   const data = await customFetch(

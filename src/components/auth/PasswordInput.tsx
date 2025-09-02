@@ -1,6 +1,6 @@
 // 인증 페이지용 비밀번호 입력 컴포넌트 (토글 버튼 포함)
-import { useState } from 'react';
 import Image from 'next/image';
+import { useState } from 'react';
 import styles from '@/styles/auth-variables.module.css';
 
 interface PasswordInputProps {
@@ -43,24 +43,24 @@ export default function PasswordInput({
           id={id}
           type={showPassword ? 'text' : 'password'}
           value={value}
-          onChange={(e) => onChange(e.target.value)}
-          onBlur={onBlur}
           placeholder={placeholder}
+          aria-invalid={Boolean(error)}
+          aria-describedby={error ? `${id}-error` : undefined}
           className={`h-[50px] w-[520px] rounded-[8px] bg-white px-[16px] py-[12px] pr-10 ring-1 placeholder:text-[var(--auth-placeholder)] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none max-[375px]:w-[351px] ${
             error
               ? 'ring-[var(--auth-error)] focus:ring-[var(--auth-error)]'
               : 'ring-[var(--auth-border)]'
           }`}
-          aria-invalid={!!error}
-          aria-describedby={error ? `${id}-error` : undefined}
+          onChange={(e) => { onChange(e.target.value); }}
+          onBlur={onBlur}
         />
         {onTogglePassword && (
           <button
             type='button'
-            onClick={onTogglePassword}
             className='absolute top-1/2 right-3 flex h-[24px] w-[24px] -translate-y-1/2 items-center justify-center text-[#9FA6B2] transition-colors duration-200 hover:text-[#5534da]'
             aria-label={showPassword ? '비밀번호 숨기기' : '비밀번호 보기'}
             aria-pressed={showPassword}
+            onClick={onTogglePassword}
           >
             {showPassword ? (
               <Image

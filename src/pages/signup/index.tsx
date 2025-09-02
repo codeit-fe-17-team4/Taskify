@@ -1,16 +1,17 @@
-import { useState } from 'react';
-import { useRouter } from 'next/router';
+import type { GetStaticProps } from 'next';
 import Link from 'next/link';
-import { GetStaticProps } from 'next';
-import styles from '@/styles/auth-variables.module.css';
+import { useRouter } from 'next/router';
+import { useCallback, useMemo, useState } from 'react';
+import AuthButton from '@/components/auth/AuthButton';
+import AuthHero from '@/components/auth/AuthHero';
+import EmailInput from '@/components/auth/EmailInput';
+import PasswordInput from '@/components/auth/PasswordInput';
+import TextInput from '@/components/auth/TextInput';
 import UnifiedModal from '@/components/auth/UnifiedModal';
 import { signup } from '@/lib/users/api';
 import type { SignupParams } from '@/lib/users/interface';
-import AuthHero from '@/components/auth/AuthHero';
-import TextInput from '@/components/auth/TextInput';
-import EmailInput from '@/components/auth/EmailInput';
-import PasswordInput from '@/components/auth/PasswordInput';
-import AuthButton from '@/components/auth/AuthButton';
+import styles from '@/styles/auth-variables.module.css';
+import { useSignupValidation } from '@/lib/validation/rules';
 
 export default function SignupPage() {
   const router = useRouter();
@@ -20,127 +21,121 @@ export default function SignupPage() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [nicknameError, setNicknameError] = useState('');
-  const [emailError, setEmailError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
-  const [confirmPasswordError, setConfirmPasswordError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
 
-  const validateNickname = (nickname: string) => {
-    return nickname.length <= 10;
-  };
+  const {
+    errors,
+    validateField,
+    confirmPasswordError,
+    validateConfirmPassword,
+    isSignupFormValid,
+  } = useSignupValidation();
 
-  const validateEmail = (email: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
+  const handleNicknameBlur = useCallback(() => {
+    validateField('nickname', nickname);
+  }, [validateField, nickname]);
 
-  const validatePassword = (password: string) => {
-    return password.length >= 8;
-  };
+  const handleEmailBlur = useCallback(() => {
+    validateField('email', email);
+  }, [validateField, email]);
 
-  const validateConfirmPassword = (
-    password: string,
-    confirmPassword: string
-  ) => {
-    return password === confirmPassword;
-  };
-
-  const handleNicknameBlur = () => {
-    if (nickname && !validateNickname(nickname)) {
-      setNicknameError('열 자 이하로 작성해주세요.');
-    } else {
-      setNicknameError('');
+  const handlePasswordBlur = useCallback(() => {
+    validateField('password', password);
+    // 비밀번호가 변경되면 확인 비밀번호도 다시 검증
+    if (confirmPassword) {
+      validateConfirmPassword(password, confirmPassword);
     }
-  };
+  }, [validateField, password, confirmPassword, validateConfirmPassword]);
 
-  const handleEmailBlur = () => {
-    if (email && !validateEmail(email)) {
-      setEmailError('이메일 형식으로 작성해 주세요.');
-    } else {
-      setEmailError('');
-    }
-  };
+  const handleConfirmPasswordBlur = useCallback(() => {
+    validateConfirmPassword(password, confirmPassword);
+  }, [validateConfirmPassword, password, confirmPassword]);
 
-  const handlePasswordBlur = () => {
-    if (password && !validatePassword(password)) {
-      setPasswordError('8자 이상 입력해주세요.');
-    } else {
-      setPasswordError('');
-    }
-  };
+  const isFormValidNow = useMemo(() => {
+    return (
+      isSignupFormValid({ nickname, email, password, confirmPassword }) &&
+      agreedToTerms
+    );
+  }, [
+    isSignupFormValid,
+    nickname,
+    email,
+    password,
+    confirmPassword,
+    agreedToTerms,
+  ]);
 
-  const handleConfirmPasswordBlur = () => {
-    if (
-      confirmPassword &&
-      !validateConfirmPassword(password, confirmPassword)
-    ) {
-      setConfirmPasswordError('비밀번호가 일치하지 않습니다.');
-    } else {
-      setConfirmPasswordError('');
-    }
-  };
-
-  const isFormValid =
-    nickname &&
-    email &&
-    password &&
-    confirmPassword &&
-    !nicknameError &&
-    !emailError &&
-    !passwordError &&
-    !confirmPasswordError &&
-    agreedToTerms;
-
-  const handleModalClose = () => {
+  const handleModalClose = useCallback(() => {
     setShowModal(false);
     setModalMessage('');
     // 성공 모달인 경우 로그인 페이지로 이동
     if (modalMessage === '가입이 완료되었습니다!') {
       router.push('/login');
     }
-  };
+  }, [modalMessage, router]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!isFormValid) return;
-
-    setIsLoading(true);
-
-    try {
-      // 회원가입 API 호출
-      const signupParams: SignupParams = {
-        nickname,
-        email,
-        password,
-      };
-
-      const response = await signup(signupParams);
-
-      console.log('회원가입 성공:', response);
-
-      // 회원가입 성공 모달 표시
-      setModalMessage('가입이 완료되었습니다!');
-      setShowModal(true);
-    } catch (error: any) {
-      // 에러 메시지 처리
-      if (error.message.includes('[409]')) {
-        setModalMessage('이미 사용중인 이메일입니다');
-        setShowModal(true);
-      } else if (error.message.includes('[400]')) {
-        setModalMessage('이미 사용중인 이메일입니다');
-        setShowModal(true);
-      } else {
-        setModalMessage('회원가입에 실패했습니다. 다시 시도해주세요.');
-        setShowModal(true);
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      if (!isFormValidNow) {
+        return;
       }
-    } finally {
-      setIsLoading(false);
-    }
-  };
+
+      setIsLoading(true);
+
+      try {
+        // 회원가입 API 호출
+        const signupParams: SignupParams = {
+          nickname,
+          email,
+          password,
+        };
+
+        const response = await signup(signupParams);
+
+        console.log('회원가입 성공:', response);
+
+        // 회원가입 성공 모달 표시
+        setModalMessage('가입이 완료되었습니다!');
+        setShowModal(true);
+      } catch (error: any) {
+        // 에러 메시지 처리
+        if (error.message.includes('[409]')) {
+          setModalMessage('이미 사용중인 이메일입니다');
+          setShowModal(true);
+        } else if (error.message.includes('[400]')) {
+          setModalMessage('이미 사용중인 이메일입니다');
+          setShowModal(true);
+        } else {
+          setModalMessage('회원가입에 실패했습니다. 다시 시도해주세요.');
+          setShowModal(true);
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [nickname, email, password, router]
+  );
+
+  // 비밀번호 표시/숨김 토글 핸들러들
+  const handleTogglePassword = useCallback(() => {
+    setShowPassword(!showPassword);
+  }, [showPassword]);
+
+  const handleToggleConfirmPassword = useCallback(() => {
+    setShowConfirmPassword(!showConfirmPassword);
+  }, [showConfirmPassword]);
+
+  // 약관 동의 체크박스 핸들러
+  const handleTermsChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setAgreedToTerms(e.target.checked);
+    },
+    []
+  );
 
   return (
     <main
@@ -153,8 +148,8 @@ export default function SignupPage() {
         {/* Form Wrapper */}
         <div className='flex w-[520px] flex-col items-center max-[375px]:w-[351px]'>
           <form
-            onSubmit={handleSubmit}
             className='flex w-[520px] flex-col items-start max-[375px]:w-[351px]'
+            onSubmit={handleSubmit}
           >
             {/* Form Stack - 입력 + 버튼 + 하단 안내 */}
             <div className='flex flex-col space-y-6 max-[375px]:space-y-2'>
@@ -165,10 +160,10 @@ export default function SignupPage() {
                   id='nickname'
                   label='닉네임'
                   value={nickname}
+                  placeholder='닉네임을 입력해 주세요'
+                  error={errors.nickname}
                   onChange={setNickname}
                   onBlur={handleNicknameBlur}
-                  placeholder='닉네임을 입력해 주세요'
-                  error={nicknameError}
                 />
 
                 {/* Email Input */}
@@ -176,11 +171,11 @@ export default function SignupPage() {
                   id='email'
                   label='이메일'
                   value={email}
+                  placeholder='이메일을 입력해 주세요'
+                  error={errors.email}
+                  className='mt-[16px] max-[375px]:mt-0'
                   onChange={setEmail}
                   onBlur={handleEmailBlur}
-                  placeholder='이메일을 입력해 주세요'
-                  error={emailError}
-                  className='mt-[16px] max-[375px]:mt-0'
                 />
 
                 {/* Password Input */}
@@ -188,13 +183,13 @@ export default function SignupPage() {
                   id='password'
                   label='비밀번호'
                   value={password}
+                  placeholder='비밀번호를 입력해 주세요'
+                  error={errors.password}
+                  showPassword={showPassword}
+                  className='mt-[16px] max-[375px]:mt-0'
                   onChange={setPassword}
                   onBlur={handlePasswordBlur}
-                  placeholder='비밀번호를 입력해 주세요'
-                  error={passwordError}
-                  showPassword={showPassword}
-                  onTogglePassword={() => setShowPassword(!showPassword)}
-                  className='mt-[16px] max-[375px]:mt-0'
+                  onTogglePassword={handleTogglePassword}
                 />
 
                 {/* Confirm Password Input */}
@@ -202,15 +197,13 @@ export default function SignupPage() {
                   id='confirmPassword'
                   label='비밀번호 확인'
                   value={confirmPassword}
-                  onChange={setConfirmPassword}
-                  onBlur={handleConfirmPasswordBlur}
                   placeholder='비밀번호를 다시 입력해 주세요'
                   error={confirmPasswordError}
                   showPassword={showConfirmPassword}
-                  onTogglePassword={() =>
-                    setShowConfirmPassword(!showConfirmPassword)
-                  }
                   className='mt-[16px] max-[375px]:mt-0'
+                  onChange={setConfirmPassword}
+                  onBlur={handleConfirmPasswordBlur}
+                  onTogglePassword={handleToggleConfirmPassword}
                 />
               </div>
 
@@ -220,8 +213,8 @@ export default function SignupPage() {
                   id='terms'
                   type='checkbox'
                   checked={agreedToTerms}
-                  onChange={(e) => setAgreedToTerms(e.target.checked)}
                   className='h-5 w-5 rounded border-gray-300 text-[var(--auth-primary)] focus:ring-[var(--auth-primary)]'
+                  onChange={handleTermsChange}
                 />
                 <label
                   htmlFor='terms'
@@ -234,7 +227,7 @@ export default function SignupPage() {
               {/* Signup Button */}
               <AuthButton
                 type='submit'
-                disabled={!isFormValid}
+                disabled={!isFormValidNow}
                 isLoading={isLoading}
                 loadingText='가입 중...'
               >
@@ -261,15 +254,17 @@ export default function SignupPage() {
       {/* 통합 모달 */}
       <UnifiedModal
         isOpen={showModal}
-        onClose={handleModalClose}
         message={modalMessage}
         type={modalMessage === '가입이 완료되었습니다!' ? 'success' : 'error'}
+        onClose={handleModalClose}
       />
     </main>
   );
 }
 
-// 정적 생성 설정
+/**
+ * 정적 생성 설정
+ */
 export const getStaticProps: GetStaticProps = async () => {
   return {
     props: {},

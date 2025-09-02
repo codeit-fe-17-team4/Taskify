@@ -1,6 +1,6 @@
 // 인증 페이지용 로고 + 제목 영역 컴포넌트
-import Link from 'next/link';
 import Image from 'next/image';
+import Link from 'next/link';
 import styles from '@/styles/auth-variables.module.css';
 
 interface AuthHeroProps {
@@ -14,11 +14,11 @@ export default function AuthHero({ title }: AuthHeroProps) {
         <div className='relative h-[280px] w-[200px]'>
           <Link href='/' className='block h-full w-full'>
             <Image
+              fill
+              priority
               src='/auth/image/login-signup-logo.svg'
               alt='Taskify Logo'
-              fill
               className='object-contain object-center'
-              priority
             />
           </Link>
         </div>

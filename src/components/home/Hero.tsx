@@ -7,13 +7,13 @@ export default function Hero(): ReactElement {
     <section className='mx-auto mt-[94px] max-w-[1200px] text-center max-[744px]:max-w-[664px] max-[375px]:mt-[42px] max-[375px]:max-w-full'>
       {/* desktop 이미지 */}
       <Image
+        priority
         src='/auth/image/hero-desktop.svg'
         alt='메인 히어로 일러스트'
         width={722}
         height={422.76}
         className='mx-auto h-auto w-[722px] object-contain max-[744px]:h-auto max-[744px]:w-[537.25px] max-[375px]:h-[168px] max-[375px]:w-[287px]'
         sizes='(max-width: 48rem) 100vw, (max-width: 80rem) 664px, 722px'
-        priority
       />
 
       {/* 제목 */}

@@ -36,16 +36,16 @@ export default function TextInput({
         id={id}
         type='text'
         value={value}
-        onChange={(e) => onChange(e.target.value)}
-        onBlur={onBlur}
         placeholder={placeholder}
+        aria-invalid={Boolean(error)}
+        aria-describedby={error ? `${id}-error` : undefined}
         className={`h-[50px] w-[520px] rounded-[8px] bg-white px-[16px] py-[15px] ring-1 placeholder:text-[var(--auth-placeholder)] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none max-[375px]:w-[351px] ${
           error
             ? 'ring-[var(--auth-error)] focus:ring-[var(--auth-error)]'
             : 'ring-[var(--auth-border)]'
         }`}
-        aria-invalid={!!error}
-        aria-describedby={error ? `${id}-error` : undefined}
+        onChange={(e) => { onChange(e.target.value); }}
+        onBlur={onBlur}
       />
       {error && (
         <p

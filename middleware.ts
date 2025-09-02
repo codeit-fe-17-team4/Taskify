@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { type NextRequest , NextResponse } from 'next/server';
+
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -19,6 +19,7 @@ export function middleware(request: NextRequest) {
     if (!accessToken) {
       // 쿠키가 없으면 로그인 페이지로 리다이렉트
       const loginUrl = new URL('/login', request.url);
+
       loginUrl.searchParams.set('next', pathname);
 
       return NextResponse.redirect(loginUrl);

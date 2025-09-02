@@ -1,54 +1,39 @@
-import { useState } from 'react';
-import { useRouter } from 'next/router';
+import type { GetStaticProps } from 'next';
 import Link from 'next/link';
-import { GetStaticProps } from 'next';
-import styles from '@/styles/auth-variables.module.css';
-import { login } from '@/lib/auth/api';
-import type { LoginParams } from '@/lib/auth/interface';
-import UnifiedModal from '@/components/auth/UnifiedModal';
+import { useRouter } from 'next/router';
+import { useState } from 'react';
+import AuthButton from '@/components/auth/AuthButton';
 import AuthHero from '@/components/auth/AuthHero';
 import EmailInput from '@/components/auth/EmailInput';
 import PasswordInput from '@/components/auth/PasswordInput';
-import AuthButton from '@/components/auth/AuthButton';
+import UnifiedModal from '@/components/auth/UnifiedModal';
+import { login } from '@/lib/auth/api';
+import type { LoginParams } from '@/lib/auth/interface';
+import styles from '@/styles/auth-variables.module.css';
+import { useFormValidation } from '@/hooks/useFormValidation';
+import { loginValidationRules } from '@/lib/validation/rules';
 
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [emailError, setEmailError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
 
-  const validateEmail = (email: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-
-  const validatePassword = (password: string) => {
-    return password.length >= 8;
-  };
+  const { errors, validateField, isFormValid } =
+    useFormValidation(loginValidationRules);
 
   const handleEmailBlur = () => {
-    if (email && !validateEmail(email)) {
-      setEmailError('이메일 형식으로 작성해 주세요.');
-    } else {
-      setEmailError('');
-    }
+    validateField('email', email);
   };
 
   const handlePasswordBlur = () => {
-    if (password && !validatePassword(password)) {
-      setPasswordError('8자 이상 입력해주세요.');
-    } else {
-      setPasswordError('');
-    }
+    validateField('password', password);
   };
 
-  const isFormValid =
-    email && password && validateEmail(email) && validatePassword(password);
+  const isFormValidNow = isFormValid({ email, password });
 
   const handleModalClose = () => {
     setShowModal(false);
@@ -57,7 +42,9 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isFormValid) return;
+    if (!isFormValidNow) {
+      return;
+    }
 
     setIsLoading(true);
 
@@ -125,8 +112,8 @@ export default function LoginPage() {
         {/* Form Wrapper */}
         <div className='flex w-[520px] flex-col items-center max-[375px]:w-[351px]'>
           <form
-            onSubmit={handleSubmit}
             className='flex w-[520px] flex-col items-start max-[375px]:w-[351px]'
+            onSubmit={handleSubmit}
           >
             {/* Form Stack - 입력 + 버튼 + 하단 안내 */}
             <div className='flex flex-col space-y-6 max-[744px]:space-y-[13px] max-[375px]:space-y-4'>
@@ -137,10 +124,10 @@ export default function LoginPage() {
                   id='email'
                   label='이메일'
                   value={email}
+                  placeholder='이메일을 입력해 주세요'
+                  error={errors.email}
                   onChange={setEmail}
                   onBlur={handleEmailBlur}
-                  placeholder='이메일을 입력해 주세요'
-                  error={emailError}
                 />
 
                 {/* Password Input */}
@@ -148,20 +135,22 @@ export default function LoginPage() {
                   id='password'
                   label='비밀번호'
                   value={password}
+                  placeholder='비밀번호를 입력해 주세요'
+                  error={errors.password}
+                  showPassword={showPassword}
+                  className='mt-[16px] max-[744px]:mt-[9px]'
                   onChange={setPassword}
                   onBlur={handlePasswordBlur}
-                  placeholder='비밀번호를 입력해 주세요'
-                  error={passwordError}
-                  showPassword={showPassword}
-                  onTogglePassword={() => setShowPassword(!showPassword)}
-                  className='mt-[16px] max-[744px]:mt-[9px]'
+                  onTogglePassword={() => {
+                    setShowPassword(!showPassword);
+                  }}
                 />
               </div>
 
               {/* Login Button */}
               <AuthButton
                 type='submit'
-                disabled={!isFormValid}
+                disabled={!isFormValidNow}
                 isLoading={isLoading}
                 loadingText='로그인 중...'
               >
@@ -188,15 +177,17 @@ export default function LoginPage() {
       {/* 통합 모달 */}
       <UnifiedModal
         isOpen={showModal}
-        onClose={handleModalClose}
         message={modalMessage}
         type='error'
+        onClose={handleModalClose}
       />
     </main>
   );
 }
 
-// 정적 생성 설정
+/**
+ * 정적 생성 설정
+ */
 export const getStaticProps: GetStaticProps = async () => {
   return {
     props: {},

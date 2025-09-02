@@ -1,8 +1,8 @@
 import type * as i from '@/lib/auth/interface';
 import {
+  changePasswordSchema,
   loginSchema,
   type LoginType,
-  changePasswordSchema,
 } from '@/lib/auth/type';
 import { BASE_API_URL } from '@/lib/constants';
 import customFetch from '@/lib/custom-fetch';

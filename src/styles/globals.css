@@ -61,6 +61,9 @@
   /** @font */
   --font-pretendard: var(--font-pretendard);
   --font-montserrat: var(--font-montserrat);
+
+  /** @radius */
+  --radius-xl: 0.75rem;
 }
 /** @break-point */
 @theme {
