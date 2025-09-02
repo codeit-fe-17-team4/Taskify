@@ -17,7 +17,7 @@ export const ChipVariants = cva(
       size: {
         sm: 'w-[1.375rem] h-[1.375rem] text-[0.625rem]',
         md: 'w-6 h-6 text-xs',
-        lg: 'w-[2.375rem] h-[2.375rem] text-lg',
+        lg: 'w-[2.375rem] h-[2.375rem] text-lg mobile:w-[2.125rem] mobile:h-[2.125rem]',
       },
     },
     defaultVariants: {

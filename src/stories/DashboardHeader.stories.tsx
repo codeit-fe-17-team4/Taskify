@@ -1,6 +1,6 @@
 import { INITIAL_VIEWPORTS, MINIMAL_VIEWPORTS } from 'storybook/viewport';
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
-import DashboardHeader from '@/components/ui/header/dashboard-header';
+import DashboardHeader from '@/components/ui/dashboard-header';
 
 const meta = {
   title: 'dashboard-header',
@@ -9,6 +9,15 @@ const meta = {
     viewport: { ...MINIMAL_VIEWPORTS, ...INITIAL_VIEWPORTS },
     layout: 'centered',
   },
+  decorators: [
+    (Story) => {
+      return (
+        <div style={{ height: '100px', width: '100dvw' }}>
+          <Story />
+        </div>
+      );
+    },
+  ],
   tags: ['autodocs'],
   argTypes: {
     title: {
