@@ -42,5 +42,6 @@ export default tseslint.config(sheriff(sheriffOptions), {
     'jsdoc/require-description-complete-sentence': 'off',
     'func-style': 'off',
     'no-negated-condition': 'off',
+    'unicorn/consistent-function-scoping': 'off',
   },
 });

@@ -65,7 +65,7 @@ export default function Button({
   children,
   label,
   labelColor,
-  additionalClass,
+  additionalClass = '',
   onClick,
   ...props
 }: ButtonProps): ReactNode {
