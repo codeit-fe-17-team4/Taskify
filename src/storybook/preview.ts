@@ -1,8 +1,8 @@
-import type { Preview } from '@storybook/nextjs-vite';
-import { INITIAL_VIEWPORTS, MINIMAL_VIEWPORTS } from 'storybook/viewport';
-
 import '@/styles/globals.css';
-import StorybookTemplate from './StorybookTemplate';
+import { INITIAL_VIEWPORTS, MINIMAL_VIEWPORTS } from 'storybook/viewport';
+import type { Preview } from '@storybook/nextjs-vite';
+import StorybookTemplate from '@/storybook/StorybookTemplate';
+
 const preview: Preview = {
   parameters: {
     docs: {

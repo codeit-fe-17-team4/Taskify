@@ -1,6 +1,7 @@
+import { cva, type VariantProps } from 'class-variance-authority';
+import type { HTMLAttributes, ReactNode } from 'react';
 import { cn } from '@/utils/cn';
-import { cva, VariantProps } from 'class-variance-authority';
-import { HTMLAttributes, ReactNode } from 'react';
+
 export const ChipVariants = cva(`flex-center gap-1.5 rounded-sm font-normal`, {
   variants: {
     color: {

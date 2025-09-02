@@ -1,7 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/nextjs-vite';
-
-import ChipState from '@/components/ui/chip-state';
 import { INITIAL_VIEWPORTS, MINIMAL_VIEWPORTS } from 'storybook/viewport';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+import ChipState from '@/components/ui/chip/chip-state';
 
 const meta = {
   title: 'chip-state',
@@ -25,13 +24,13 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const md: Story = {
+export const Md: Story = {
   args: {
     size: 'md',
     label: 'On Progress',
   },
 };
-export const lg: Story = {
+export const Lg: Story = {
   args: {
     size: 'lg',
     label: 'On Progress',

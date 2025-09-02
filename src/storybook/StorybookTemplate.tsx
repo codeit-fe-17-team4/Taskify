@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import {
   ArgTypes,
   Description,
@@ -5,9 +6,8 @@ import {
   Stories,
   Title,
 } from '@storybook/addon-docs/blocks';
-import React from 'react';
 
-const StorybookTemplate = () => {
+function StorybookTemplate(): ReactNode {
   return (
     <>
       <br />
@@ -20,6 +20,6 @@ const StorybookTemplate = () => {
       <br />
     </>
   );
-};
+}
 
 export default StorybookTemplate;

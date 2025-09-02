@@ -1,6 +1,6 @@
+import { cva, type VariantProps } from 'class-variance-authority';
+import type { ButtonHTMLAttributes, ReactNode } from 'react';
 import { cn } from '@/utils/cn';
-import { cva, VariantProps } from 'class-variance-authority';
-import { ButtonHTMLAttributes, ReactNode } from 'react';
 
 export const ButtonVariants = cva(
   `flex-center w-full p-3.5
@@ -32,9 +32,7 @@ export const ButtonVariants = cva(
 interface ButtonProps
   extends ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof ButtonVariants> {
-  /** 버튼 형태
-   * @default primary
-   */
+  /** 버튼 형태 */
   variant: 'primary' | 'invitation' | 'modal';
   /** 배경 색상 */
   backgroundColor: 'violet' | 'white';
@@ -44,9 +42,7 @@ interface ButtonProps
   label: string;
   /** 추가적인 tailwind className */
   additionalClass?: string;
-  /** button disabled 여부
-   * @default false
-   */
+  /** button disabled 여부 */
   disabled?: boolean;
   /** 클릭 이벤트 핸들러 */
   onClick?: () => void;

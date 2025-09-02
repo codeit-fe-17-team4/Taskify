@@ -1,7 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/nextjs-vite';
-
-import ChipTag from '@/components/ui/chip-tag';
 import { INITIAL_VIEWPORTS, MINIMAL_VIEWPORTS } from 'storybook/viewport';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+import ChipTag from '@/components/ui/chip/chip-tag';
 
 const meta = {
   title: 'chip-tag',
@@ -50,7 +49,7 @@ export const PinkLG: Story = {
     label: '백엔드',
   },
 };
-export const blueLG: Story = {
+export const BlueLG: Story = {
   args: {
     size: 'lg',
     color: 'blue',

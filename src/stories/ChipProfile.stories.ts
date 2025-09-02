@@ -1,7 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/nextjs-vite';
-
-import ChipProfile from '@/components/ui/chip-profile';
 import { INITIAL_VIEWPORTS, MINIMAL_VIEWPORTS } from 'storybook/viewport';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+import ChipProfile from '@/components/ui/chip/chip-profile';
 
 const meta = {
   title: 'chip-profile',
@@ -36,14 +35,14 @@ export const GreenSM: Story = {
     label: 'K',
   },
 };
-export const blueMD: Story = {
+export const BlueMD: Story = {
   args: {
     size: 'md',
     color: 'blue',
     label: 'L',
   },
 };
-export const orangeLG: Story = {
+export const OrangeLG: Story = {
   args: {
     size: 'lg',
     color: 'orange',

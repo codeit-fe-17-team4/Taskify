@@ -1,5 +1,4 @@
 import { sheriff, type SheriffSettings, tseslint } from 'eslint-config-sheriff';
-import storybook from 'eslint-plugin-storybook';
 
 const sheriffOptions: SheriffSettings = {
   react: true,
@@ -13,35 +12,35 @@ const sheriffOptions: SheriffSettings = {
   vitest: false,
 };
 
-export default tseslint.config(
-  sheriff(sheriffOptions),
-  [...storybook.configs['flat/recommended']],
-  {
-    languageOptions: {
-      parserOptions: {
-        projectService: true,
-        project: './tsconfig.json',
-        tsconfigRootDir: import.meta.dirname,
+export default tseslint.config(sheriff(sheriffOptions), {
+  languageOptions: {
+    parserOptions: {
+      projectService: true,
+      project: './tsconfig.json',
+      tsconfigRootDir: import.meta.dirname,
+    },
+  },
+  rules: {
+    '@typescript-eslint/no-misused-promises': [
+      'error',
+      {
+        checksVoidReturn: false,
       },
-    },
-    rules: {
-      '@typescript-eslint/no-misused-promises': [
-        'error',
-        {
-          checksVoidReturn: false,
-        },
-      ],
-      'no-console': 'off',
-      // 절대경로 통일을 위해 ".*" 패턴 제한
-      'no-restricted-imports': [
-        'error',
-        {
-          patterns: ['.*'],
-        },
-      ],
-      '@typescript-eslint/no-floating-promises': 'off',
-      'react-refresh/only-export-components': 'off',
-      'react/jsx-no-useless-fragment': 'off',
-    },
-  }
-);
+    ],
+    'no-console': 'off',
+    // 절대경로 통일을 위해 ".*" 패턴 제한
+    'no-restricted-imports': [
+      'error',
+      {
+        patterns: ['.*'],
+      },
+    ],
+    '@typescript-eslint/no-floating-promises': 'off',
+    'react-refresh/only-export-components': 'off',
+    'react/jsx-no-useless-fragment': 'off',
+    '@typescript-eslint/naming-convention': 'off',
+    'jsdoc/require-description-complete-sentence': 'off',
+    'func-style': 'off',
+    'no-negated-condition': 'off',
+  },
+});

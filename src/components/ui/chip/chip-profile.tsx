@@ -1,6 +1,7 @@
+import { cva, type VariantProps } from 'class-variance-authority';
+import type { HTMLAttributes, ReactNode } from 'react';
 import { cn } from '@/utils/cn';
-import { cva, VariantProps } from 'class-variance-authority';
-import { HTMLAttributes, ReactNode } from 'react';
+
 export const ChipVariants = cva(
   `flex-center rounded-full font-semibold text-lg text-white border-2 border-white`,
   {
@@ -38,8 +39,8 @@ interface ChipProps
 /** 사이즈:
  * - 'sm' : 1.375rem(22px)
  * - 'md' : 1.5rem (24px)
- * - 'lg' : 2.375rem (38px)
- * */
+ * - 'lg' : 2.375rem (38px).
+ */
 export default function ChipProfile({
   label,
   size = 'md',

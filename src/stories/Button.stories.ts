@@ -1,9 +1,7 @@
-import type { Meta, StoryObj } from '@storybook/nextjs-vite';
-
 import { fn } from 'storybook/test';
-
-import Button from '@/components/ui/button';
 import { INITIAL_VIEWPORTS, MINIMAL_VIEWPORTS } from 'storybook/viewport';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+import Button from '@/components/ui/button';
 
 const meta = {
   title: 'button',
