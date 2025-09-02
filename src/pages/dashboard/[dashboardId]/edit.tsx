@@ -18,6 +18,20 @@ export default function MydashboardEdit(): ReactNode {
     (dashboard) => dashboard.id === Number(dashboardId)
   );
 
+  // 대시보드 색상
+  const colors = [
+    { name: 'green', bgClass: 'bg-lime-500' },
+    { name: 'purple', bgClass: 'bg-purple-700' },
+    { name: 'orange', bgClass: 'bg-amber-500' },
+    { name: 'blue', bgClass: 'bg-blue-300' },
+    { name: 'pink', bgClass: 'bg-fuchsia-400' },
+  ];
+
+  const [selectedColor, setSelectedColor] = useState('');
+  const handleColorChange = (color: { name: string; bgClass: string }) => {
+    setSelectedColor(color.name);
+  };
+
   const membersName = [
     { id: 1, name: '정만철', initial: 'J' },
     { id: 2, name: '김태순', initial: 'K' },
@@ -83,37 +97,33 @@ export default function MydashboardEdit(): ReactNode {
               </div>
               <div>
                 <div className='mt-3 flex items-center gap-2'>
-                  {/* 색상 선택 */}
-                  <Image
-                    src='/icon/dot-big/greenDotBig.svg'
-                    alt='green-dot'
-                    width={25}
-                    height={25}
-                  />
-                  <Image
-                    src='/icon/dot-big/purpleDotBig.svg'
-                    alt='pruple-dot'
-                    width={25}
-                    height={25}
-                  />
-                  <Image
-                    src='/icon/dot-big/orangeDotBig.svg'
-                    alt='orange-dot'
-                    width={25}
-                    height={25}
-                  />
-                  <Image
-                    src='/icon/dot-big/blueDotBig.svg'
-                    alt='blue-dot'
-                    width={25}
-                    height={25}
-                  />
-                  <Image
-                    src='/icon/dot-big/pinkDotBig.svg'
-                    alt='pink-dot'
-                    width={25}
-                    height={25}
-                  />
+                  {colors.map((color) => {
+                    return (
+                      <button
+                        key={color.name}
+                        type='button'
+                        className={`flex h-6 w-6 cursor-pointer items-center justify-center rounded-full border-2 transition-all ${
+                          color.bgClass
+                        } ${
+                          selectedColor === color.name
+                            ? 'scale-110 border-transparent'
+                            : 'border-transparent hover:scale-110'
+                        }`}
+                        onClick={() => {
+                          handleColorChange(color);
+                        }}
+                      >
+                        {selectedColor === color.name && (
+                          <Image
+                            src='/icon/selected.svg'
+                            alt='selected'
+                            width={14}
+                            height={14}
+                          />
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
               <div className='mt-10 flex'>
@@ -279,7 +289,7 @@ export default function MydashboardEdit(): ReactNode {
         <div>
           <button
             type='submit'
-            className='mobile:w-full my-6 h-12 w-xs cursor-pointer rounded-sm border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-100'
+            className='mobile:max-w-2xs my-6 ml-40 h-12 w-xs cursor-pointer rounded-sm border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-100'
             onClick={() => {
               alert('대시보드를 삭제하시겠습니까?');
             }}
