@@ -19,7 +19,7 @@ export default function ButtonPagination({
   additionalClass = '',
 }: ButtonPaginationProps): ReactNode {
   const buttonClassName =
-    'border-gray-3 flex-center *:fill-black-2 disabled:*:fill-gray-3 h-9 w-9 cursor-pointer  border-1';
+    'border-gray-3 flex-center *:fill-black-2 disabled:*:fill-gray-3 h-9 w-9 cursor-pointer  border-1 hover:bg-gray-4 active:bg-gray-3';
   return (
     <div className={cn('flex', additionalClass)}>
       <button

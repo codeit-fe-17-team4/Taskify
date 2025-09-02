@@ -1,4 +1,5 @@
 import '@/styles/globals.css';
+import { NextPage } from 'next';
 import type { AppProps } from 'next/app';
 import { Montserrat } from 'next/font/google';
 import localFont from 'next/font/local';
@@ -11,10 +12,20 @@ const pretendardVariable = localFont({
 });
 const montserrat = Montserrat({ variable: '--font-montserrat' });
 
-export default function App({ Component, pageProps }: AppProps): ReactNode {
-  return (
+type NextPageWithLayout = NextPage & {
+  getLayout?: (page: ReactNode) => ReactNode;
+};
+export default function App({
+  Component,
+  pageProps,
+}: AppProps & {
+  Component: NextPageWithLayout;
+}): ReactNode {
+  const getLayout = Component.getLayout ?? ((page: ReactNode) => page);
+
+  return getLayout(
     <main
-      className={`${pretendardVariable.variable} ${montserrat.variable} font-pretendard`}
+      className={`${pretendardVariable.variable} font-pretendard ${montserrat.variable}`}
     >
       <Component {...pageProps} />
     </main>

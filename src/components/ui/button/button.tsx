@@ -5,7 +5,7 @@ import { cn } from '@/utils/cn';
 export const ButtonVariants = cva(
   `flex-center w-full p-3.5
   bg-violet disabled:bg-gray-2 text-white text-2lg font-medium
-  disabled:hover:scale-100 disabled:cursor-not-allowed cursor-pointer
+  disabled:hover:bg-gray-2 disabled:hover:scale-100 disabled:cursor-not-allowed cursor-pointer
   `,
   {
     variants: {
@@ -16,8 +16,9 @@ export const ButtonVariants = cva(
         modal: 'h-[2.625rem] mobile:h-12 py-3 mobile:py-3.5 rounded-lg',
       },
       backgroundColor: {
-        violet: 'bg-violet',
-        white: 'bg-white border-2 border-gray-3  text-violet',
+        violet: 'bg-violet hover:bg-violet-800 active:bg-violet-900 ',
+        white:
+          'bg-white border-2 border-gray-3  text-violet hover:bg-gray-4 active:bg-gray-3 disabled:hover:bg-white',
       },
       labelColor: {
         gray: 'text-gray-1',

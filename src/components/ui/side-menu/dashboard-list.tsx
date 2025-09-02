@@ -14,7 +14,7 @@ export default function DashboardList(): ReactNode {
             <li key={crypto.randomUUID()}>
               <button
                 className={cn(
-                  `mobile:flex-center flex w-full cursor-pointer gap-2.5 rounded-sm p-3`,
+                  `mobile:flex-center hover:bg-violet-light active:bg-violet active:*:text-gray-5 flex w-full cursor-pointer gap-2.5 rounded-sm p-3`,
                   selectedId === i && `bg-violet-light`
                 )}
                 onClick={() => {
@@ -24,7 +24,7 @@ export default function DashboardList(): ReactNode {
                 <Image
                   src={'/icon/dot/dot4.svg'}
                   alt='초록색 점'
-                  className='h-auto w-auto'
+                  className='h-2 w-2 self-center'
                   width={8}
                   height={8}
                 />
@@ -32,7 +32,7 @@ export default function DashboardList(): ReactNode {
                   <span className='text-2lg font-medium'>코드잇</span>
                   <Image
                     src={'/icon/mydashboard.svg'}
-                    className='h-auto w-auto'
+                    className='h-[14px] w-[18px] self-center'
                     alt='왕관 아이콘'
                     width={18}
                     height={14}
