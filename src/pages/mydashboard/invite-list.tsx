@@ -27,7 +27,7 @@ export default function InviteList(): ReactNode {
   // };
 
   return (
-    <div className='flex h-full min-h-screen w-full flex-col bg-gray-50'>
+    <div className='flex min-h-screen w-full flex-col bg-gray-50'>
       {/* BG global 생성되면 수정 예정 */}
       {/* 헤더 공간 */}
       <div className='mt-20'>
@@ -203,8 +203,8 @@ export default function InviteList(): ReactNode {
               />
             </div>
             {/* 초대받은 목록 */}
-            <div className='tablet:pl-8 pl-12'>
-              <div className='tablet:grid-cols-[150px_80px_200px] mobile:flex mobile:flex-col tablet:pl-0 grid w-full grid-cols-[250px_250px_200px] gap-2 pt-5 text-sm text-gray-400'>
+            <div className=''>
+              <div className='tablet:grid-cols-[150px_80px_200px] tablet:pl-8 mobile:flex mobile:flex-col grid w-full max-w-2xl min-w-2xs grid-cols-[250px_250px_200px] gap-2 pt-5 pl-12 text-sm text-gray-400'>
                 <div>이름</div>
                 <div>초대자</div>
                 <div className='mobile:hidden text-center'>수락 여부</div>
@@ -213,7 +213,7 @@ export default function InviteList(): ReactNode {
                 return (
                   <div
                     key={invite.id}
-                    className='tablet:w-lg tablet:grid-cols-[150px_80px_200px] tablet:pl-0 grid w-full grid-cols-[250px_250px_200px] items-center gap-2 border-b border-gray-200 py-5 text-sm text-gray-600'
+                    className='tablet:w-lg tablet:grid-cols-[150px_80px_200px] tablet:pl-8 grid grid-cols-[250px_250px_200px] items-center gap-2 border-b border-gray-200 py-5 pl-12 text-sm text-gray-600'
                   >
                     <div>{invite.name}</div>
                     <div>{invite.inviter}</div>

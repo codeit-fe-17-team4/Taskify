@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 interface BaseModalProps {
   isOpen: boolean;
@@ -27,7 +27,7 @@ export default function BaseModal({
   width = 'w-[40rem]',
   hideCancelButton = false,
 }: BaseModalProps) {
-  if (!isOpen) return null;
+  if (!isOpen) {return null;}
 
   const handleOverlayClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
@@ -49,11 +49,11 @@ export default function BaseModal({
     >
       <div
         className={`scrollbar-hide max-h-[90vh] ${width} overflow-y-scroll rounded-lg bg-white p-8`}
-        onClick={(e) => e.stopPropagation()}
+        onClick={(e) => { e.stopPropagation(); }}
       >
         <h2 className='mb-8 text-left text-2xl font-bold'>{title}</h2>
 
-        <form onSubmit={handleSubmit} className='space-y-6'>
+        <form className='space-y-6' onSubmit={handleSubmit}>
           {children}
 
           {/* 버튼들 */}
@@ -61,8 +61,8 @@ export default function BaseModal({
             {!hideCancelButton && (
               <button
                 type='button'
-                onClick={onCancel || onClose}
                 className='flex-1 cursor-pointer rounded-lg border border-gray-300 py-4 text-gray-600 hover:bg-gray-50'
+                onClick={onCancel || onClose}
               >
                 {cancelText}
               </button>

@@ -54,7 +54,8 @@ export default function MydashboardEdit(): ReactNode {
       {/* 헤더 공간 */}
       <div className='pt-16'>
         {/* 사이드바 공간 */}
-        <div className='ml-40'>
+        {/* w-full 로 반응형 구현을 위한 mr-120 설정 */}
+        <div className='mr-120 ml-40 min-w-2xs'>
           <div className='flex w-full max-w-4xl gap-4'>
             <Image
               src='/icon/goback.svg'
@@ -64,7 +65,7 @@ export default function MydashboardEdit(): ReactNode {
             />
             <span>돌아가기</span>
           </div>
-          <div className='tablet:w-[540px] mobile:w-[280px] mt-8 h-[340px] w-[620px] rounded-lg bg-white p-7'>
+          <div className='tablet:min-w-lg mobile:min-w-2xs tablet:w-full mobile:w-full mt-8 h-[340px] w-[620px] rounded-lg bg-white p-7'>
             <h2 className='text-xl font-bold'>{currentDashboard?.name}</h2>
             <form className='mt-4 space-y-4'>
               {/* 이름 수정 */}
@@ -126,8 +127,8 @@ export default function MydashboardEdit(): ReactNode {
             </form>
           </div>
           {/* 구성원 */}
-          <div className='tablet:w-[540px] mobile:w-[280px] mt-8 h-auto w-[620px] rounded-lg bg-white pt-5 pr-8 pl-8'>
-            <div className='flex items-center justify-between'>
+          <div className='tablet:w-full mobile:w-full tablet:min-w-lg mobile:min-w-2xs mt-8 h-[340px] w-[620px] rounded-lg bg-white pt-5'>
+            <div className='flex items-center justify-between pr-8 pl-8'>
               <h2 className='text-xl font-bold'>구성원</h2>
               <div className='flex items-center justify-end gap-2'>
                 <span className='text-xs'>1 페이지 중 1</span>
@@ -154,19 +155,19 @@ export default function MydashboardEdit(): ReactNode {
             <table className='mt-5 w-full text-center text-xs'>
               <thead>
                 <tr>
-                  <th className='text-start font-normal text-gray-400'>이름</th>
+                  <th className='pr-8 pl-8 text-start font-normal text-gray-400'>
+                    이름
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                {members.slice(0, 5).map((member, index) => {
-                  const isLastItem = index === Math.min(members.length - 1, 4);
+                {members.slice(0, 4).map((member, index, arr) => {
+                  const isLastItem = index === arr.length - 1;
 
                   return (
                     <tr
                       key={member.id}
-                      className={`flex items-center justify-between ${
-                        !isLastItem ? 'border-b border-gray-200' : ''
-                      }`}
+                      className={`flex items-center justify-between pr-8 pl-8 ${!isLastItem ? 'border-b border-gray-200' : ''}`}
                     >
                       <td className='py-3'>
                         <div className='flex items-center gap-2'>
@@ -179,7 +180,7 @@ export default function MydashboardEdit(): ReactNode {
                       <td className='py-3'>
                         <button
                           type='button'
-                          className='w-15.5 cursor-pointer rounded border border-gray-200 px-3 py-1 text-xs text-violet-500 transition-colors hover:bg-gray-50'
+                          className='mobile:w-12 w-15.5 cursor-pointer rounded border border-gray-200 px-3 py-1 text-xs text-violet-500 transition-colors hover:bg-gray-50'
                           onClick={() => {
                             handleDeleteMember(member.id);
                           }}
@@ -194,10 +195,10 @@ export default function MydashboardEdit(): ReactNode {
             </table>
           </div>
           {/* 초대 내역 */}
-          <div className='tablet:w-[540px] mobile:w-[280px] mt-8 h-auto w-[620px] rounded-lg bg-white pt-5 pr-8 pl-8'>
-            <div className='flex items-center justify-between'>
+          <div className='tablet:min-w-lg mobile:min-w-2xs tablet:w-full mobile:relative mt-8 h-[400px] w-[620px] rounded-lg bg-white pt-5'>
+            <div className='flex items-center justify-between pr-8 pl-8'>
               <h2 className='text-xl font-bold'>초대 내역</h2>
-              <div className='mobile:relative flex items-center justify-end gap-3'>
+              <div className='mobile:absolute mobile:right-5 mobile:top-5 flex items-center justify-end gap-3'>
                 <div className='flex items-center justify-end gap-3'>
                   <span className='text-xs'>1 페이지 중 1</span>
                   <div className='flex items-center justify-center'>
@@ -220,7 +221,7 @@ export default function MydashboardEdit(): ReactNode {
                   </div>
                 </div>
                 <div>
-                  <button className='mobile:absolute mobile:right-0 mobile:top-10 flex cursor-pointer gap-2 rounded-sm bg-violet-500 py-1 pr-2 pl-2 text-white hover:bg-violet-600'>
+                  <button className='mobile:absolute mobile:right-3 mobile:top-10 flex cursor-pointer gap-2 rounded-sm bg-violet-500 py-1 pr-2 pl-2 text-white hover:bg-violet-600'>
                     <Image
                       src='/icon/addmember.svg'
                       alt='add-member'
@@ -236,22 +237,19 @@ export default function MydashboardEdit(): ReactNode {
               <table className='mt-5 w-full text-center text-xs'>
                 <thead>
                   <tr>
-                    <th className='text-start font-normal text-gray-400'>
+                    <th className='pr-8 pl-8 text-start font-normal text-gray-400'>
                       이메일
                     </th>
                   </tr>
                 </thead>
                 <tbody>
-                  {membersEmails.slice(0, 5).map((member, index) => {
-                    const isLastItem =
-                      index === Math.min(members.length - 1, 4);
+                  {membersEmails.slice(0, 5).map((member, index, arr) => {
+                    const isLastItem = index === arr.length - 1;
 
                     return (
                       <tr
                         key={member.id}
-                        className={`flex items-center justify-between ${
-                          !isLastItem ? 'border-b border-gray-200' : ''
-                        }`}
+                        className={`flex items-center justify-between pr-8 pl-8 ${!isLastItem ? 'border-b border-gray-200' : ''}`}
                       >
                         <td className='py-3'>
                           <div className='flex items-center gap-2'>
@@ -261,7 +259,7 @@ export default function MydashboardEdit(): ReactNode {
                         <td className='py-3'>
                           <button
                             type='button'
-                            className='w-15.5 cursor-pointer rounded border border-gray-200 px-3 py-1 text-xs text-violet-500 transition-colors hover:bg-gray-50'
+                            className='mobile:w-12 w-16 cursor-pointer rounded border border-gray-200 px-3 py-1 text-xs text-violet-500 transition-colors hover:bg-gray-50'
                             onClick={() => {
                               handleDeleteMemberEmail(member.id);
                             }}
@@ -276,18 +274,18 @@ export default function MydashboardEdit(): ReactNode {
               </table>
             </div>
           </div>
-          {/* 대시보드 삭제 */}
-          <div>
-            <button
-              type='submit'
-              className='mobile:w-[280px] my-6 h-12 w-xs cursor-pointer rounded-sm border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-100'
-              onClick={() => {
-                alert('대시보드를 삭제하시겠습니까?');
-              }}
-            >
-              대시보드 삭제하기
-            </button>
-          </div>
+        </div>
+        {/* 대시보드 삭제 */}
+        <div>
+          <button
+            type='submit'
+            className='mobile:w-full my-6 h-12 w-xs cursor-pointer rounded-sm border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-100'
+            onClick={() => {
+              alert('대시보드를 삭제하시겠습니까?');
+            }}
+          >
+            대시보드 삭제하기
+          </button>
         </div>
       </div>
     </div>

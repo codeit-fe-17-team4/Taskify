@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
-import { useRouter } from 'next/router';
-import Link from 'next/link';
 import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 import styles from '@/styles/auth-variables.module.css';
 
 export default function LandingPage() {
@@ -33,11 +33,11 @@ export default function LandingPage() {
             <div className='relative h-[280px] w-[200px] overflow-hidden'>
               <Link href='/' className='block h-full w-full'>
                 <Image
+                  fill
+                  priority
                   src='/logo-auth.svg'
                   alt='Taskify Logo'
-                  fill
                   className='object-cover object-center'
-                  priority
                 />
               </Link>
             </div>

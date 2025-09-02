@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useEffect,useState } from 'react';
+import { useModalKeyHandler } from '@/hooks/useModal';
 import BaseModal from '../ui/base-modal';
 import ManageColumnForm from './manage-column-form';
-import { useModalKeyHandler } from '@/hooks/useModal';
 import type { ColumnType, ManageColumnFormData } from './type';
 
 interface ManageColumnModalProps {
@@ -51,19 +51,19 @@ export default function ManageColumnModal({
 
   const isUpdateDisabled = !formData.name.trim();
 
-  if (!column) return null;
+  if (!column) {return null;}
 
   return (
     <BaseModal
       isOpen={isOpen}
-      onClose={handleClose}
       title='컬럼 관리'
-      onSubmit={handleUpdate}
-      onCancel={handleDelete}
       submitText='변경'
       cancelText='삭제'
       isSubmitDisabled={isUpdateDisabled}
       width='w-[32rem]'
+      onClose={handleClose}
+      onSubmit={handleUpdate}
+      onCancel={handleDelete}
     >
       <ManageColumnForm formData={formData} setFormData={setFormData} />
     </BaseModal>

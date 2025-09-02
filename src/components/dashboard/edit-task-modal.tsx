@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useEffect,useState } from 'react';
+import { useModalKeyHandler } from '@/hooks/useModal';
 import BaseModal from '../ui/base-modal';
 import EditTaskForm from './edit-task-form';
-import { useModalKeyHandler } from '@/hooks/useModal';
 import type { EditTaskFormData, TaskType } from './type';
 
 interface EditTaskModalProps {
@@ -28,9 +28,12 @@ export default function EditTaskModal({
     existingImageUrl: undefined,
   });
 
-  // 날짜 포맷 변환 함수
+  /**
+   * 날짜 포맷 변환 함수.
+   */
   const formatDateTimeLocal = (dateString: string) => {
-    if (!dateString) return '';
+    if (!dateString) {return '';}
+
     // '2025-08-28 10:30' -> '2025-08-28T10:30' 포맷으로 변환
     return dateString.replace(' ', 'T');
   };
@@ -79,12 +82,12 @@ export default function EditTaskModal({
   return (
     <BaseModal
       isOpen={isOpen}
-      onClose={handleClose}
       title='할 일 수정'
-      onSubmit={handleSubmit}
       submitText='수정'
       cancelText='취소'
       isSubmitDisabled={isSubmitDisabled}
+      onClose={handleClose}
+      onSubmit={handleSubmit}
     >
       <EditTaskForm formData={formData} setFormData={setFormData} />
     </BaseModal>

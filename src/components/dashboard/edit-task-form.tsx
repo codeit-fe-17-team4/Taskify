@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import Image from 'next/image';
+import { useState } from 'react';
 import type { EditTaskFormData } from './type';
 
 interface EditTaskFormProps {
@@ -16,38 +16,39 @@ export default function EditTaskForm({
   const handleTagKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && currentTag.trim()) {
       e.preventDefault();
-      setFormData((prev) => ({
+      setFormData((prev) => { return {
         ...prev,
         tags: [...prev.tags, currentTag.trim()],
-      }));
+      } });
       setCurrentTag('');
     }
   };
 
   const removeTag = (indexToRemove: number) => {
-    setFormData((prev) => ({
+    setFormData((prev) => { return {
       ...prev,
       tags: prev.tags.filter((_, index) => index !== indexToRemove),
-    }));
+    } });
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+
     if (file) {
-      setFormData((prev) => ({
+      setFormData((prev) => { return {
         ...prev,
         imageFile: file,
         existingImageUrl: undefined,
-      }));
+      } });
     }
   };
 
   const removeImage = () => {
-    setFormData((prev) => ({
+    setFormData((prev) => { return {
       ...prev,
       imageFile: null,
       existingImageUrl: undefined,
-    }));
+    } });
   };
 
   return (
@@ -65,7 +66,7 @@ export default function EditTaskForm({
               className='w-full cursor-pointer appearance-none rounded-lg border border-gray-300 p-4 pr-12 focus:outline-none'
               value={formData.status}
               onChange={(e) =>
-                setFormData((prev) => ({ ...prev, status: e.target.value }))
+                { setFormData((prev) => ({ ...prev, status: e.target.value })); }
               }
             >
               <option value='To Do'>● To Do</option>
@@ -95,7 +96,7 @@ export default function EditTaskForm({
               className='w-full cursor-pointer appearance-none rounded-lg border border-gray-300 p-4 pr-12 focus:outline-none'
               value={formData.assignee}
               onChange={(e) =>
-                setFormData((prev) => ({ ...prev, assignee: e.target.value }))
+                { setFormData((prev) => ({ ...prev, assignee: e.target.value })); }
               }
             >
               <option value=''>이름을 입력해 주세요</option>
@@ -123,6 +124,7 @@ export default function EditTaskForm({
           제목 <span className='align-baseline text-lg text-indigo-600'>*</span>
         </label>
         <input
+          required
           id='title'
           name='title'
           type='text'
@@ -130,9 +132,8 @@ export default function EditTaskForm({
           className='w-full rounded-lg border border-gray-300 p-4 focus:outline-none'
           value={formData.title}
           onChange={(e) =>
-            setFormData((prev) => ({ ...prev, title: e.target.value }))
+            { setFormData((prev) => ({ ...prev, title: e.target.value })); }
           }
-          required
         />
       </div>
 
@@ -145,6 +146,7 @@ export default function EditTaskForm({
           설명 <span className='align-baseline text-lg text-indigo-600'>*</span>
         </label>
         <textarea
+          required
           id='description'
           name='description'
           placeholder='설명을 입력해 주세요'
@@ -152,12 +154,11 @@ export default function EditTaskForm({
           className='w-full resize-none rounded-lg border border-gray-300 p-4 focus:outline-none'
           value={formData.description}
           onChange={(e) =>
-            setFormData((prev) => ({
+            { setFormData((prev) => { return {
               ...prev,
               description: e.target.value,
-            }))
+            } }); }
           }
-          required
         />
       </div>
 
@@ -173,10 +174,10 @@ export default function EditTaskForm({
             type='datetime-local'
             className='w-full cursor-pointer rounded-lg border border-gray-300 p-4 pl-12 focus:outline-none'
             value={formData.dueDate}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, dueDate: e.target.value }))
-            }
             placeholder='날짜와 시간을 선택하세요'
+            onChange={(e) =>
+              { setFormData((prev) => ({ ...prev, dueDate: e.target.value })); }
+            }
             onClick={(e) => {
               (e.currentTarget as any).showPicker?.();
             }}
@@ -184,9 +185,10 @@ export default function EditTaskForm({
           <div
             className='absolute inset-y-0 left-0 flex cursor-pointer items-center pl-4'
             onClick={() => {
-              const input = document.getElementById(
-                'dueDate'
+              const input = document.querySelector(
+                '#dueDate'
               ) as HTMLInputElement;
+
               (input as any)?.showPicker?.();
               input?.focus();
             }}
@@ -208,8 +210,8 @@ export default function EditTaskForm({
         </label>
         <div className='flex min-h-[3.5rem] flex-wrap items-center gap-2 rounded-lg border border-gray-300 p-3 focus-within:border-gray-300'>
           {/* 기존 태그들 */}
-          {formData.tags.map((tag, index) => (
-            <span
+          {formData.tags.map((tag, index) => 
+            { return <span
               key={index}
               className='flex items-center gap-2 rounded-md px-3 py-1 text-sm font-medium'
               style={{
@@ -220,13 +222,13 @@ export default function EditTaskForm({
               {tag}
               <button
                 type='button'
-                onClick={() => removeTag(index)}
                 className='ml-1 text-gray-400 hover:text-gray-600'
+                onClick={() => { removeTag(index); }}
               >
                 ×
               </button>
-            </span>
-          ))}
+            </span> }
+          )}
           {/* 새 태그 입력 */}
           <input
             id='tags'
@@ -235,7 +237,7 @@ export default function EditTaskForm({
             placeholder={formData.tags.length === 0 ? '입력 후 Enter' : ''}
             className='min-w-[120px] flex-1 border-0 bg-transparent p-1 focus:outline-none'
             value={currentTag}
-            onChange={(e) => setCurrentTag(e.target.value)}
+            onChange={(e) => { setCurrentTag(e.target.value); }}
             onKeyDown={handleTagKeyDown}
           />
         </div>
@@ -255,8 +257,8 @@ export default function EditTaskForm({
             name='imageFile'
             type='file'
             accept='image/*'
-            onChange={handleImageUpload}
             className='hidden'
+            onChange={handleImageUpload}
           />
 
           {/* 1. 이미지가 첨부되어 있는 경우 */}
@@ -297,8 +299,8 @@ export default function EditTaskForm({
 
               <button
                 type='button'
-                onClick={removeImage}
                 className='absolute -top-1 -right-1 flex h-5 w-5 cursor-pointer items-center justify-center rounded-full bg-gray-500 hover:bg-gray-600'
+                onClick={removeImage}
               >
                 <Image
                   src='/dashboard/close-icon.svg'

@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import ColumnHeader from './column-header';
 import AddTaskButton from './add-task-button';
+import ColumnHeader from './column-header';
 import ColumnTaskCard from './column-task-card';
 import CreateTaskModal from './create-task-modal';
 import type { ColumnType, TaskType } from './type';
@@ -48,7 +48,7 @@ export default function DashboardColumn({
       {/* 카드 추가 모달 */}
       <CreateTaskModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => { setIsModalOpen(false); }}
         onSubmit={handleTaskSubmit}
       />
     </>
