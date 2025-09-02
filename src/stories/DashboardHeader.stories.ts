@@ -1,4 +1,3 @@
-import { fn } from 'storybook/test';
 import { INITIAL_VIEWPORTS, MINIMAL_VIEWPORTS } from 'storybook/viewport';
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import DashboardHeader from '@/components/ui/header/dashboard-header';
@@ -11,12 +10,20 @@ const meta = {
     layout: 'centered',
   },
   tags: ['autodocs'],
-  argTypes: {},
-  args: { onClick: fn() },
+  argTypes: {
+    title: {
+      control: { type: 'string' },
+    },
+    members: {},
+    me: {},
+  },
 } satisfies Meta<typeof DashboardHeader>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
 export const Default: Story = {
-  args: {},
+  args: {
+    title: '나의 대시보드',
+  },
 };

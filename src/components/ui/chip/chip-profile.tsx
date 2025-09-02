@@ -3,14 +3,14 @@ import type { HTMLAttributes, ReactNode } from 'react';
 import { cn } from '@/utils/cn';
 
 export const ChipVariants = cva(
-  `flex-center rounded-full font-semibold text-lg text-white border-2 border-white`,
+  `flex-center rounded-full font-semibold text-lg text-white border-2 border-white cursor-pointer font-montserrat`,
   {
     variants: {
       color: {
-        green: 'bg-green-300',
-        blue: 'bg-sky-300',
-        orange: 'bg-orange-300',
-        yellow: 'bg-yellow-300',
+        green: 'bg-green-500',
+        blue: 'bg-sky-400',
+        orange: 'bg-orange-400',
+        yellow: 'bg-yellow-400',
         brown: 'bg-chip-brown',
         red: 'bg-chip-red-bg text-chip-red',
       },

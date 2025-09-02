@@ -60,6 +60,7 @@
 
   /** @font */
   --font-pretendard: var(--font-pretendard);
+  --font-montserrat: var(--font-montserrat);
 }
 /** @break-point */
 @theme {
