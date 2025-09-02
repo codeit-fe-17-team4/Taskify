@@ -5,7 +5,6 @@ import { GetStaticProps } from 'next';
 import styles from '@/styles/auth-variables.module.css';
 import { login } from '@/lib/auth/api';
 import type { LoginParams } from '@/lib/auth/interface';
-import { setAccessToken, setUser } from '@/lib/auth/token';
 import UnifiedModal from '@/components/auth/UnifiedModal';
 import AuthHero from '@/components/auth/AuthHero';
 import EmailInput from '@/components/auth/EmailInput';
@@ -71,14 +70,33 @@ export default function LoginPage() {
 
       const response = await login(loginParams);
 
-      // 엑세스 토큰과 사용자 정보를 저장
-      setAccessToken(response.accessToken);
-      setUser(response.user);
+      // accessToken을 HttpOnly 쿠키로 설정
+      try {
+        const sessionResponse = await fetch('/api/session', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            accessToken: response.accessToken,
+          }),
+        });
 
-      console.log('로그인 성공:', response);
+        if (!sessionResponse.ok) {
+          throw new Error('Session creation failed');
+        }
 
-      // 로그인 성공 시 mydashboard로 이동
-      router.push('/mydashboard');
+        // 리다이렉트할 경로 가져오기
+        const nextPath = (router.query.next as string) || '/mydashboard';
+
+        // 로그인 성공 시 원래 경로로 이동
+        router.push(nextPath);
+      } catch (sessionError) {
+        setModalMessage(
+          '로그인 처리 중 오류가 발생했습니다. 다시 시도해주세요.'
+        );
+        setShowModal(true);
+      }
     } catch (error: any) {
       // 에러 메시지 처리
       if (error.message.includes('[400]')) {
@@ -98,7 +116,7 @@ export default function LoginPage() {
 
   return (
     <main
-      className={`${styles.auth} ${styles.bgAuth} flex min-h-screen items-center justify-center overflow-x-auto`}
+      className={`${styles.auth} ${styles.bgAuth} flex min-h-screen items-center justify-center`}
     >
       <div className='flex h-auto min-h-[653px] w-[520px] shrink-0 flex-col items-center gap-[30px] max-[375px]:w-[351px] max-[375px]:gap-[36px]'>
         {/* Hero Block */}

@@ -144,7 +144,7 @@ export default function SignupPage() {
 
   return (
     <main
-      className={`${styles.auth} ${styles.bgAuth} flex min-h-screen items-center justify-center overflow-x-auto`}
+      className={`${styles.auth} ${styles.bgAuth} flex min-h-screen items-center justify-center`}
     >
       <div className='flex h-auto min-h-[653px] w-[520px] shrink-0 flex-col items-center gap-[30px] max-[375px]:w-[351px] max-[375px]:gap-[36px]'>
         {/* Hero Block */}
