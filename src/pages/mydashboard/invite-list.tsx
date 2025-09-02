@@ -12,13 +12,18 @@ export default function InviteList(): ReactNode {
   ];
 
   // 추후 기능 구현 시, 내가 만든 대시보드는 왕관 아이콘 붙도록 구현
-  // const dashboardList = [
+  // const listData = [
   //   { id: 1, name: '비브리지' },
   //   { id: 2, name: '코드잇' },
   //   { id: 3, name: '3분기 계획' },
   //   { id: 4, name: '회의록' },
   //   { id: 5, name: '중요 문서함' },
   // ];
+
+  // const [listedDashboard, setListedDashboard] = useState('');
+  // const dashboardList = (list: { name: string }) => {
+  //   setListedDashboard(list.name);
+  // };
 
   // 모달 구현 확인하기!
   // const [modalStatus, setModalStatus] = useState(false);
@@ -33,7 +38,7 @@ export default function InviteList(): ReactNode {
       <div className='mt-20'>
         {/* 사이드바 공간 */}
         <div className='ml-40'>
-          <div className='tablet:w-lg w-full max-w-4xl pt-6'>
+          <div className='tablet:w-lg mobile:w-2xs w-full max-w-4xl pt-6'>
             <div className='tablet:grid-cols-2 mobile:grid-cols-1 relative grid grid-cols-3 gap-2'>
               {/* 새로운 대시보드 */}
               <button
@@ -50,6 +55,21 @@ export default function InviteList(): ReactNode {
                   height={20}
                 />
               </button>
+              {/* <div>  // api로 대시보드 내용이 전달되면 생성된 대시보드가 카드 스타일에 맞게 추가되도록 구현 필요 (고민중) 
+                <div>
+                  {listData.map((list) => {
+                    return (
+                      <button
+                        key={list.id}
+                        className={`tablet:w-3xs mobile:w-2xs flex`}
+                        onClick={() => {
+                          dashboardList(list);
+                        }}
+                      ></button>
+                    );
+                  })}
+                </div>
+              </div> */}
               <button className='tablet:w-3xs mobile:w-2xs relative flex h-[60px] w-full cursor-pointer items-center gap-3 rounded-md border border-gray-200 bg-white p-4 sm:w-2xs md:w-40 lg:w-md xl:w-3xs'>
                 <Image
                   src='/icon/dot/dot4.svg'
@@ -154,7 +174,7 @@ export default function InviteList(): ReactNode {
                   height={15}
                 />
               </button>
-              <div className='tablet:top-52 mobile:top-105 mobile:right-100 absolute end-0 top-35 flex items-center justify-end gap-2'>
+              <div className='col-span-full mt-4 flex items-center justify-end gap-2'>
                 <p className='text-xs text-gray-600'>1 페이지 중의 1</p>
                 {/* 페이지네이션 라이브러리 추가 예정 */}
                 <div className='flex'>
@@ -166,7 +186,7 @@ export default function InviteList(): ReactNode {
                       height={7}
                     />
                   </button>
-                  <button className='end-10 top-33 flex h-7 w-7 cursor-pointer items-center justify-center rounded border border-gray-200 bg-white hover:bg-gray-100'>
+                  <button className='flex h-7 w-7 cursor-pointer items-center justify-center rounded border border-gray-200 bg-white hover:bg-gray-100'>
                     <Image
                       src='/icon/nextPage.svg'
                       alt='prev'
