@@ -1,12 +1,11 @@
-import type { ReactElement } from 'react';
-import { GetStaticProps } from 'next';
-
 import FeatureOne from '@/components/home/FeatureOne';
 import FeatureTwo from '@/components/home/FeatureTwo';
 import Footer from '@/components/home/Footer';
 import Header from '@/components/home/Header';
 import Hero from '@/components/home/Hero';
 import SettingsGrid from '@/components/home/SettingsGrid';
+import type { GetStaticProps } from 'next';
+import type { ReactElement } from 'react';
 
 export default function LandingPage(): ReactElement {
   return (
@@ -26,7 +25,9 @@ export default function LandingPage(): ReactElement {
   );
 }
 
-// 정적 생성 설정
+/**
+ * 정적 생성 설정.
+ */
 export const getStaticProps: GetStaticProps = async () => {
   return {
     props: {},
