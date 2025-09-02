@@ -12,6 +12,7 @@ export const ChipVariants = cva(
         orange: 'bg-orange-300',
         yellow: 'bg-yellow-300',
         brown: 'bg-chip-brown',
+        red: 'bg-chip-red-bg text-chip-red',
       },
       size: {
         sm: 'w-[1.375rem] h-[1.375rem] text-[0.625rem]',
@@ -34,7 +35,7 @@ interface ChipProps
   /** 사이즈: 'sm' | 'md' | 'lg' */
   size: 'sm' | 'md' | 'lg';
   /** 색상: 'green' | 'blue' | 'orange' | 'yellow' | 'brown' */
-  color: 'green' | 'blue' | 'orange' | 'yellow' | 'brown';
+  color: 'green' | 'blue' | 'orange' | 'yellow' | 'brown' | 'red';
 }
 /** 사이즈:
  * - 'sm' : 1.375rem(22px)

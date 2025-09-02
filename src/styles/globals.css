@@ -36,6 +36,9 @@
   --color-chip-brown: #d58d49;
   --color-chip-brown-bg: #f9eee3;
 
+  --color-chip-red: #d25b68;
+  --color-chip-red-bg: #f4d7da;
+
   /** @text */
   --text-3xl: 2rem;
   --text-2xl: 1.5rem;

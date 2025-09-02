@@ -17,7 +17,7 @@ const meta = {
     },
     color: {
       control: 'radio',
-      options: ['green', 'blue', 'orange', 'yellow', 'brown'],
+      options: ['green', 'blue', 'orange', 'yellow', 'brown', 'red'],
     },
     label: {
       control: 'text',
@@ -42,10 +42,10 @@ export const BlueMD: Story = {
     label: 'L',
   },
 };
-export const OrangeLG: Story = {
+export const RedLG: Story = {
   args: {
     size: 'lg',
-    color: 'orange',
+    color: 'red',
     label: 'P',
   },
 };
