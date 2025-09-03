@@ -1,7 +1,7 @@
 import type { GetStaticProps } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState, useEffect } from 'react';
 import AuthButton from '@/components/auth/AuthButton';
 import AuthHero from '@/components/auth/AuthHero';
 import EmailInput from '@/components/auth/EmailInput';
@@ -44,19 +44,27 @@ export default function SignupPage() {
 
   const handlePasswordBlur = useCallback(() => {
     validateField('password', password);
-    // 비밀번호가 변경되면 확인 비밀번호도 다시 검증
-    if (confirmPassword) {
+    // 비밀번호가 변경되면 확인 비밀번호도 다시 검증 (둘 다 입력된 경우에만)
+    if (password && confirmPassword && confirmPassword.length > 0) {
       validateConfirmPassword(password, confirmPassword);
     }
   }, [validateField, password, confirmPassword, validateConfirmPassword]);
 
   const handleConfirmPasswordBlur = useCallback(() => {
-    validateConfirmPassword(password, confirmPassword);
+    // 비밀번호와 확인 비밀번호가 모두 입력된 경우에만 검증
+    if (
+      password &&
+      confirmPassword &&
+      password.length > 0 &&
+      confirmPassword.length > 0
+    ) {
+      validateConfirmPassword(password, confirmPassword);
+    }
   }, [validateConfirmPassword, password, confirmPassword]);
 
   const isFormValidNow = useMemo(() => {
     return (
-      isSignupFormValid({ nickname, email, password, confirmPassword }) &&
+      isSignupFormValid({ nickname, email, password, confirmPassword }, true) &&
       agreedToTerms
     );
   }, [
@@ -80,7 +88,14 @@ export default function SignupPage() {
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
-      if (!isFormValidNow) {
+
+      // 폼 유효성 검사
+      const isFormValid =
+        isSignupFormValid(
+          { nickname, email, password, confirmPassword },
+          false
+        ) && agreedToTerms;
+      if (!isFormValid) {
         return;
       }
 
@@ -95,8 +110,6 @@ export default function SignupPage() {
         };
 
         const response = await signup(signupParams);
-
-        console.log('회원가입 성공:', response);
 
         // 회원가입 성공 모달 표시
         setModalMessage('가입이 완료되었습니다!');
@@ -117,7 +130,14 @@ export default function SignupPage() {
         setIsLoading(false);
       }
     },
-    [nickname, email, password, router]
+    [
+      nickname,
+      email,
+      password,
+      confirmPassword,
+      agreedToTerms,
+      isSignupFormValid,
+    ]
   );
 
   // 비밀번호 표시/숨김 토글 핸들러들

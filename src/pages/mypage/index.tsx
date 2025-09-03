@@ -82,9 +82,6 @@ export default function MyPage({
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
-  const [showNewPassword, setShowNewPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // 인증되지 않은 경우 로그인 페이지로 리다이렉트
   useEffect(() => {
@@ -131,7 +128,6 @@ export default function MyPage({
           setUserInfo(updatedUserInfo);
         }
       } catch (error) {
-        console.error('프로필 이미지 업로드 실패:', error);
         showModal('이미지 업로드에 실패했습니다.', 'error');
       } finally {
         setIsLoading(false);
@@ -164,8 +160,6 @@ export default function MyPage({
       setUserInfo(updatedUserInfo);
       showModal('닉네임이 변경되었습니다.', 'success');
     } catch (error) {
-      console.error('닉네임 수정 실패:', error);
-
       // API에서 반환한 구체적인 에러 메시지 추출
       let errorMessage = '닉네임 변경에 실패했습니다.';
       if (error instanceof Error) {
@@ -220,8 +214,6 @@ export default function MyPage({
 
         showModal('비밀번호가 변경되었습니다.', 'success');
       } catch (error) {
-        console.error('비밀번호 변경 실패:', error);
-
         // API에서 반환한 구체적인 에러 메시지 추출
         let errorMessage = '비밀번호 변경에 실패했습니다.';
         if (error instanceof Error) {
@@ -250,19 +242,6 @@ export default function MyPage({
   const handleProfileImageClick = useCallback(() => {
     document.getElementById('profile-image-input')?.click();
   }, []);
-
-  // 비밀번호 표시/숨김 토글 핸들러들
-  const handleToggleCurrentPassword = useCallback(() => {
-    setShowCurrentPassword(!showCurrentPassword);
-  }, [showCurrentPassword]);
-
-  const handleToggleNewPassword = useCallback(() => {
-    setShowNewPassword(!showNewPassword);
-  }, [showNewPassword]);
-
-  const handleToggleConfirmPassword = useCallback(() => {
-    setShowConfirmPassword(!showConfirmPassword);
-  }, [showConfirmPassword]);
 
   if (!isAuthenticated) {
     return <div>인증 확인 중...</div>;
@@ -462,23 +441,14 @@ export default function MyPage({
                 >
                   현재 비밀번호
                 </label>
-                <div className='relative'>
-                  <input
-                    id='currentPassword'
-                    type={showCurrentPassword ? 'text' : 'password'}
-                    value={currentPassword}
-                    placeholder='비밀번호 입력'
-                    className='h-[50px] w-full rounded-[8px] border border-[#D9D9D9] bg-white px-[16px] py-[12px] pr-10 placeholder:text-[#9FA6B2] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none'
-                    onChange={(e) => setCurrentPassword(e.target.value)}
-                  />
-                  <button
-                    type='button'
-                    className='absolute top-1/2 right-3 flex h-[24px] w-[24px] -translate-y-1/2 items-center justify-center text-[#9FA6B2] transition-colors duration-200 hover:text-[#5534da]'
-                    onClick={handleToggleCurrentPassword}
-                  >
-                    {showCurrentPassword ? '👁️' : '👁️‍🗨️'}
-                  </button>
-                </div>
+                <input
+                  id='currentPassword'
+                  type='password'
+                  value={currentPassword}
+                  placeholder='비밀번호 입력'
+                  className='h-[50px] w-full rounded-[8px] border border-[#D9D9D9] bg-white px-[16px] py-[12px] placeholder:text-[#9FA6B2] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none'
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                />
               </div>
 
               {/* 새 비밀번호 */}
@@ -492,23 +462,14 @@ export default function MyPage({
                 >
                   새 비밀번호
                 </label>
-                <div className='relative'>
-                  <input
-                    id='newPassword'
-                    type={showNewPassword ? 'text' : 'password'}
-                    value={newPassword}
-                    placeholder='새 비밀번호 입력'
-                    className='h-[50px] w-full rounded-[8px] border border-[#D9D9D9] bg-white px-[16px] py-[12px] pr-10 placeholder:text-[#9FA6B2] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none'
-                    onChange={(e) => setNewPassword(e.target.value)}
-                  />
-                  <button
-                    type='button'
-                    className='absolute top-1/2 right-3 flex h-[24px] w-[24px] -translate-y-1/2 items-center justify-center text-[#9FA6B2] transition-colors duration-200 hover:text-[#5534da]'
-                    onClick={handleToggleNewPassword}
-                  >
-                    {showNewPassword ? '👁️' : '👁️‍🗨️'}
-                  </button>
-                </div>
+                <input
+                  id='newPassword'
+                  type='password'
+                  value={newPassword}
+                  placeholder='새 비밀번호 입력'
+                  className='h-[50px] w-full rounded-[8px] border border-[#D9D9D9] bg-white px-[16px] py-[12px] placeholder:text-[#9FA6B2] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none'
+                  onChange={(e) => setNewPassword(e.target.value)}
+                />
               </div>
 
               {/* 새 비밀번호 확인 */}
@@ -522,23 +483,14 @@ export default function MyPage({
                 >
                   새 비밀번호 확인
                 </label>
-                <div className='relative'>
-                  <input
-                    id='confirmPassword'
-                    type={showConfirmPassword ? 'text' : 'password'}
-                    value={confirmPassword}
-                    placeholder='새 비밀번호 입력'
-                    className='h-[50px] w-full rounded-[8px] border border-[#D9D9D9] bg-white px-[16px] py-[12px] pr-10 placeholder:text-[#9FA6B2] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none'
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                  />
-                  <button
-                    type='button'
-                    className='absolute top-1/2 right-3 flex h-[24px] w-[24px] -translate-y-1/2 items-center justify-center text-[#9FA6B2] transition-colors duration-200 hover:text-[#5534da]'
-                    onClick={handleToggleConfirmPassword}
-                  >
-                    {showConfirmPassword ? '👁️' : '👁️‍🗨️'}
-                  </button>
-                </div>
+                <input
+                  id='confirmPassword'
+                  type='password'
+                  value={confirmPassword}
+                  placeholder='새 비밀번호 입력'
+                  className='h-[50px] w-full rounded-[8px] border border-[#D9D9D9] bg-white px-[16px] py-[12px] placeholder:text-[#9FA6B2] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none'
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                />
               </div>
 
               {/* 변경 버튼 */}
@@ -611,7 +563,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       userInfo = await response.json();
     }
   } catch (error) {
-    console.error('서버에서 사용자 정보 조회 실패:', error);
+    // 서버에서 사용자 정보 조회 실패 시 기본값 사용
   }
 
   return {

@@ -33,6 +33,15 @@ export function useFormValidation(
       const rule = rules[fieldName];
       if (!rule) return true;
 
+      // 빈 값이면 오류를 표시하지 않음
+      if (!value.trim()) {
+        setErrors((prev) => ({
+          ...prev,
+          [fieldName]: '',
+        }));
+        return true;
+      }
+
       const isValid = rule.validator(value);
 
       setErrors((prev) => ({
@@ -53,6 +62,12 @@ export function useFormValidation(
       Object.keys(rules).forEach((fieldName) => {
         const rule = rules[fieldName];
         const value = values[fieldName] || '';
+
+        // 빈 값이면 검증하지 않음
+        if (!value.trim()) {
+          return;
+        }
+
         const isValid = rule.validator(value);
 
         if (!isValid) {
@@ -92,6 +107,10 @@ export function useFormValidation(
       return Object.keys(rules).every((fieldName) => {
         const rule = rules[fieldName];
         const value = values[fieldName] || '';
+
+        // 빈 값이면 검증하지 않음
+        if (!value.trim()) return true;
+
         return rule.validator(value);
       });
     },

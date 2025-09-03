@@ -1,7 +1,7 @@
 import type { GetStaticProps } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import AuthButton from '@/components/auth/AuthButton';
 import AuthHero from '@/components/auth/AuthHero';
 import EmailInput from '@/components/auth/EmailInput';
@@ -10,8 +10,7 @@ import UnifiedModal from '@/components/auth/UnifiedModal';
 import { login } from '@/lib/auth/api';
 import type { LoginParams } from '@/lib/auth/interface';
 import styles from '@/styles/auth-variables.module.css';
-import { useFormValidation } from '@/hooks/useFormValidation';
-import { loginValidationRules } from '@/lib/validation/rules';
+import { useLoginValidation } from '@/lib/validation/rules';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -22,84 +21,106 @@ export default function LoginPage() {
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
 
-  const { errors, validateField, isFormValid } =
-    useFormValidation(loginValidationRules);
+  const { errors, validateField, isFormValid } = useLoginValidation();
 
-  const handleEmailBlur = () => {
+  const handleEmailBlur = useCallback(() => {
     validateField('email', email);
-  };
+  }, [validateField, email]);
 
-  const handlePasswordBlur = () => {
+  const handlePasswordBlur = useCallback(() => {
     validateField('password', password);
-  };
+  }, [validateField, password]);
 
-  const isFormValidNow = isFormValid({ email, password });
+  const isFormValidNow = useMemo(() => {
+    // 로그인 폼 유효성 직접 계산
+    const isEmailValid =
+      email.trim() && /^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]+$/.test(email);
+    const isPasswordValid = password.trim() && password.length >= 8;
+    const result = isEmailValid && isPasswordValid;
+    console.log('로그인 폼 유효성:', {
+      email,
+      password,
+      isEmailValid,
+      isPasswordValid,
+      result,
+    });
+    return result;
+  }, [email, password]);
 
-  const handleModalClose = () => {
+  const handleModalClose = useCallback(() => {
     setShowModal(false);
     setModalMessage('');
-  };
+  }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!isFormValidNow) {
-      return;
-    }
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
 
-    setIsLoading(true);
+      // 로그인 폼 유효성 직접 검증
+      const isEmailValid =
+        email.trim() && /^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]+$/.test(email);
+      const isPasswordValid = password.trim() && password.length >= 8;
 
-    try {
-      // 로그인 API 호출
-      const loginParams: LoginParams = {
-        email,
-        password,
-      };
+      if (!isEmailValid || !isPasswordValid) {
+        return;
+      }
 
-      const response = await login(loginParams);
+      setIsLoading(true);
 
-      // accessToken을 HttpOnly 쿠키로 설정
       try {
-        const sessionResponse = await fetch('/api/session', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            accessToken: response.accessToken,
-          }),
-        });
+        // 로그인 API 호출
+        const loginParams: LoginParams = {
+          email,
+          password,
+        };
 
-        if (!sessionResponse.ok) {
-          throw new Error('Session creation failed');
+        const response = await login(loginParams);
+
+        // accessToken을 HttpOnly 쿠키로 설정
+        try {
+          const sessionResponse = await fetch('/api/session', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              accessToken: response.accessToken,
+            }),
+          });
+
+          if (!sessionResponse.ok) {
+            throw new Error('Session creation failed');
+          }
+
+          // 리다이렉트할 경로 가져오기
+          const nextPath = (router.query.next as string) || '/mydashboard';
+
+          // 로그인 성공 시 원래 경로로 이동
+          router.push(nextPath);
+        } catch (sessionError) {
+          setModalMessage(
+            '로그인 처리 중 오류가 발생했습니다. 다시 시도해주세요.'
+          );
+          setShowModal(true);
         }
-
-        // 리다이렉트할 경로 가져오기
-        const nextPath = (router.query.next as string) || '/mydashboard';
-
-        // 로그인 성공 시 원래 경로로 이동
-        router.push(nextPath);
-      } catch (sessionError) {
-        setModalMessage(
-          '로그인 처리 중 오류가 발생했습니다. 다시 시도해주세요.'
-        );
-        setShowModal(true);
+      } catch (error: any) {
+        // 에러 메시지 처리
+        if (error.message.includes('[400]')) {
+          setModalMessage('비밀번호가 일치하지 않습니다.');
+          setShowModal(true);
+        } else if (error.message.includes('[404]')) {
+          setModalMessage('존재하지 않는 유저입니다.');
+          setShowModal(true);
+        } else {
+          setModalMessage('로그인에 실패했습니다. 다시 시도해주세요.');
+          setShowModal(true);
+        }
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error: any) {
-      // 에러 메시지 처리
-      if (error.message.includes('[400]')) {
-        setModalMessage('비밀번호가 일치하지 않습니다.');
-        setShowModal(true);
-      } else if (error.message.includes('[404]')) {
-        setModalMessage('존재하지 않는 유저입니다.');
-        setShowModal(true);
-      } else {
-        setModalMessage('로그인에 실패했습니다. 다시 시도해주세요.');
-        setShowModal(true);
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    },
+    [email, password, router]
+  );
 
   return (
     <main
@@ -141,9 +162,9 @@ export default function LoginPage() {
                   className='mt-[16px] max-[744px]:mt-[9px]'
                   onChange={setPassword}
                   onBlur={handlePasswordBlur}
-                  onTogglePassword={() => {
+                  onTogglePassword={useCallback(() => {
                     setShowPassword(!showPassword);
-                  }}
+                  }, [showPassword])}
                 />
               </div>
 
