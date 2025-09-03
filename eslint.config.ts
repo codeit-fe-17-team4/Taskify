@@ -15,12 +15,12 @@ const sheriffOptions: SheriffSettings = {
 export default tseslint.config(sheriff(sheriffOptions), {
   languageOptions: {
     parserOptions: {
+      projectService: true,
       project: './tsconfig.json',
-      tsconfigRootDir: __dirname,
+      tsconfigRootDir: import.meta.dirname,
     },
   },
   rules: {
-    // https://typescript-eslint.io/rules/no-misused-promises/#checksvoidreturn
     '@typescript-eslint/no-misused-promises': [
       'error',
       {
@@ -38,10 +38,12 @@ export default tseslint.config(sheriff(sheriffOptions), {
     '@typescript-eslint/no-floating-promises': 'off',
     'react-refresh/only-export-components': 'off',
     'react/jsx-no-useless-fragment': 'off',
-    'react/jsx-boolean-value': 'off',
-    '@typescript-eslint/no-misused-spread': 'off',
-    'fsecond/prefer-destructured-optionals': 'off',
-    'unicorn/consistent-function-scoping': 'off',
+    '@typescript-eslint/naming-convention': 'off',
+    'jsdoc/require-description-complete-sentence': 'off',
     'func-style': 'off',
+    'no-negated-condition': 'off',
+    'unicorn/consistent-function-scoping': 'off',
+    'react/no-multi-comp': 'off',
+    '@typescript-eslint/no-use-before-define': 'off',
   },
 });
