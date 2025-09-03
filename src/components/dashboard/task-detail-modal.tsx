@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { useEffect, useRef, useState } from 'react';
+import { type ReactNode, useEffect, useRef, useState } from 'react';
 import ChipProfile from '@/components/ui/chip/chip-profile';
 import ChipState from '@/components/ui/chip/chip-state';
 import ChipTag from '@/components/ui/chip/chip-tag';
@@ -49,7 +49,7 @@ export default function TaskDetailModal({
   task,
   onEdit,
   onDelete,
-}: TaskDetailModalProps) {
+}: TaskDetailModalProps): ReactNode {
   const [newComment, setNewComment] = useState('');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
@@ -138,11 +138,23 @@ export default function TaskDetailModal({
   return (
     <div
       className='fixed inset-0 z-50 flex items-center justify-center bg-[rgba(0,0,0,0.7)]'
+      role='dialog'
+      aria-modal='true'
+      tabIndex={-1}
       onClick={handleOverlayClick}
+      onKeyDown={(e) => {
+        if (e.key === 'Escape') {
+          handleClose();
+        }
+      }}
     >
       <div
         className='scrollbar-hide max-h-[90vh] w-[40rem] overflow-y-scroll rounded-lg bg-white'
+        role='document'
         onClick={(e) => {
+          e.stopPropagation();
+        }}
+        onKeyDown={(e) => {
           e.stopPropagation();
         }}
       >
@@ -212,10 +224,10 @@ export default function TaskDetailModal({
 
             {task.tags.length > 0 && (
               <>
-                {task.tags.map((tag, index) => {
+                {task.tags.map((tag) => {
                   return (
                     <ChipTag
-                      key={index}
+                      key={tag.label}
                       label={tag.label}
                       color={getTagColor(tag.color)}
                       size='md'

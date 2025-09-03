@@ -1,4 +1,4 @@
-import { useEffect,useState } from 'react';
+import { type ReactNode, useEffect, useState } from 'react';
 import { useModalKeyHandler } from '@/hooks/useModal';
 import BaseModal from '../ui/base-modal';
 import EditTaskForm from './edit-task-form';
@@ -16,7 +16,7 @@ export default function EditTaskModal({
   onClose,
   onSubmit,
   initialTask,
-}: EditTaskModalProps) {
+}: EditTaskModalProps): ReactNode {
   const [formData, setFormData] = useState<EditTaskFormData>({
     status: 'To Do',
     assignee: '',
@@ -32,7 +32,9 @@ export default function EditTaskModal({
    * 날짜 포맷 변환 함수.
    */
   const formatDateTimeLocal = (dateString: string) => {
-    if (!dateString) {return '';}
+    if (!dateString) {
+      return '';
+    }
 
     // '2025-08-28 10:30' -> '2025-08-28T10:30' 포맷으로 변환
     return dateString.replace(' ', 'T');

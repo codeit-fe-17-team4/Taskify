@@ -1,4 +1,4 @@
-import { useEffect,useState } from 'react';
+import { type ReactNode, useEffect, useState } from 'react';
 import { useModalKeyHandler } from '@/hooks/useModal';
 import BaseModal from '../ui/base-modal';
 import ManageColumnForm from './manage-column-form';
@@ -18,7 +18,7 @@ export default function ManageColumnModal({
   column,
   onUpdate,
   onDelete,
-}: ManageColumnModalProps) {
+}: ManageColumnModalProps): ReactNode {
   const [formData, setFormData] = useState<ManageColumnFormData>({
     name: '',
   });
@@ -51,7 +51,9 @@ export default function ManageColumnModal({
 
   const isUpdateDisabled = !formData.name.trim();
 
-  if (!column) {return null;}
+  if (!column) {
+    return null;
+  }
 
   return (
     <BaseModal

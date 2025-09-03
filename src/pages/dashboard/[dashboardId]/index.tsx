@@ -4,13 +4,7 @@ import CreateColumnModal from '@/components/dashboard/create-column-modal';
 import EditTaskModal from '@/components/dashboard/edit-task-modal';
 import ManageColumnModal from '@/components/dashboard/manage-column-modal';
 import TaskDetailModal from '@/components/dashboard/task-detail-modal';
-import type {
-  ColumnType,
-  CreateColumnFormData,
-  EditTaskFormData,
-  ManageColumnFormData,
-  TaskType,
-} from '@/components/dashboard/type';
+import type { ColumnType, TaskType } from '@/components/dashboard/type';
 import DashboardHeader from '@/components/ui/dashboard-header';
 import SideMenu from '@/components/ui/side-menu';
 
@@ -94,7 +88,7 @@ export default function DashboardDetailPage(): ReactNode {
     setIsColumnModalOpen(true);
   };
 
-  const handleColumnSubmit = (columnData: CreateColumnFormData) => {
+  const handleColumnSubmit = () => {
     // TODO: 컬럼 생성 API 호출
     setIsColumnModalOpen(false);
   };
@@ -108,15 +102,12 @@ export default function DashboardDetailPage(): ReactNode {
     }
   };
 
-  const handleColumnUpdate = (
-    columnId: string,
-    columnData: ManageColumnFormData
-  ) => {
+  const handleColumnUpdate = () => {
     // TODO: 컬럼 업데이트 API 호출
     setIsManageColumnModalOpen(false);
   };
 
-  const handleColumnDelete = (columnId: string) => {
+  const handleColumnDelete = () => {
     // TODO: 컬럼 삭제 API 호출
     setIsManageColumnModalOpen(false);
   };
@@ -132,7 +123,7 @@ export default function DashboardDetailPage(): ReactNode {
     setIsEditTaskModalOpen(true);
   };
 
-  const handleTaskUpdate = (taskData: EditTaskFormData) => {
+  const handleTaskUpdate = () => {
     // TODO: 태스크 업데이트 API 호출
     setIsEditTaskModalOpen(false);
   };
@@ -154,7 +145,7 @@ export default function DashboardDetailPage(): ReactNode {
             onAddColumnClick={handleAddColumnClick}
             onColumnSettingsClick={handleColumnSettingsClick}
             onTaskClick={handleTaskClick}
-            onAddTaskClick={(columnId: string) => {
+            onAddTaskClick={() => {
               // TODO: 태스크 생성 모달 열기
             }}
           />
@@ -189,7 +180,7 @@ export default function DashboardDetailPage(): ReactNode {
         onClose={() => {
           setIsDetailModalOpen(false);
         }}
-        onDelete={(taskId) => {
+        onDelete={() => {
           // TODO: 태스크 삭제 API 호출
         }}
       />
@@ -197,7 +188,7 @@ export default function DashboardDetailPage(): ReactNode {
       {/* 할일 수정 모달 */}
       <EditTaskModal
         isOpen={isEditTaskModalOpen}
-        initialTask={selectedTask || undefined}
+        initialTask={selectedTask ?? undefined}
         onSubmit={handleTaskUpdate}
         onClose={() => {
           setIsEditTaskModalOpen(false);

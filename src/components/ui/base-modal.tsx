@@ -26,7 +26,7 @@ export default function BaseModal({
   isSubmitDisabled = false,
   width = 'w-[40rem]',
   hideCancelButton = false,
-}: BaseModalProps) {
+}: BaseModalProps): ReactNode {
   if (!isOpen) {
     return null;
   }
@@ -47,11 +47,23 @@ export default function BaseModal({
   return (
     <div
       className='fixed inset-0 z-50 flex items-center justify-center bg-[rgba(0,0,0,0.7)]'
+      role='dialog'
+      aria-modal='true'
+      tabIndex={-1}
       onClick={handleOverlayClick}
+      onKeyDown={(e) => {
+        if (e.key === 'Escape') {
+          onClose();
+        }
+      }}
     >
       <div
         className={`scrollbar-hide max-h-[90vh] ${width} overflow-y-scroll rounded-lg bg-white p-8`}
+        role='document'
         onClick={(e) => {
+          e.stopPropagation();
+        }}
+        onKeyDown={(e) => {
           e.stopPropagation();
         }}
       >
@@ -66,7 +78,7 @@ export default function BaseModal({
               <button
                 type='button'
                 className='flex-1 cursor-pointer rounded-lg border border-gray-300 py-4 text-gray-600 hover:bg-gray-50'
-                onClick={onCancel || onClose}
+                onClick={onCancel ?? onClose}
               >
                 {cancelText}
               </button>

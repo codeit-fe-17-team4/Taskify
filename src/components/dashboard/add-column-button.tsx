@@ -1,7 +1,10 @@
 import Image from 'next/image';
+import type { ReactNode } from 'react';
 import type { AddColumnButtonProps } from './type';
 
-export default function AddColumnButton({ onClick }: AddColumnButtonProps) {
+export default function AddColumnButton({
+  onClick,
+}: AddColumnButtonProps): ReactNode {
   return (
     <button
       className='flex h-[4.7rem] w-full cursor-pointer items-center justify-center gap-[0.7rem] rounded-[0.8rem] border border-gray-300 bg-white whitespace-nowrap'
