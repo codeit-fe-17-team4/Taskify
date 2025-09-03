@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import type { ReactNode } from 'react';
-import type { CreateNewboardFormData } from '@/components/dashboard/type';
+import type { CreateNewboardFormData } from '@/components/mydashboard/type';
 
 interface CreateNewboardFormProps {
   formData: CreateNewboardFormData;

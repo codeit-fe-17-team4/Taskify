@@ -1,6 +1,6 @@
 import { type ReactNode, useState } from 'react';
-import type { CreateNewboardFormData } from '@/components/dashboard/type';
 import CreateNewboardForm from '@/components/mydashboard/create-newboard-form';
+import type { CreateNewboardFormData } from '@/components/mydashboard/type';
 import BaseModal from '@/components/ui/base-modal';
 import { useModalKeyHandler } from '@/hooks/useModal';
 

@@ -1,9 +1,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { type ReactNode, useState } from 'react';
-import type { CreateNewboardFormData } from '@/components/dashboard/type';
 import DashboardLayout from '@/components/layout/dashboard-layout';
 import CreateNewboardModal from '@/components/mydashboard/create-newboard-modal';
+import type { CreateNewboardFormData } from '@/components/mydashboard/type';
 
 export default function Mydashboard(): ReactNode {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -16,7 +16,7 @@ export default function Mydashboard(): ReactNode {
     setIsModalOpen(false);
   };
 
-  const handleCreateDashboard = (formData: CreateNewboardFormData) => {
+  const handleSubmitCreateDashboard = (formData: CreateNewboardFormData) => {
     console.log('새 대시보드 생성:', formData);
     // TODO: API call to create a new dashboard
     handleCloseModal();
@@ -66,7 +66,7 @@ export default function Mydashboard(): ReactNode {
       <CreateNewboardModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        onSubmit={handleCreateDashboard}
+        onSubmit={handleSubmitCreateDashboard}
       />
     </>
   );

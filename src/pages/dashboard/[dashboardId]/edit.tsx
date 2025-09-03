@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { type ReactNode, useState } from 'react';
+import InviteMemberModal from '@/components/mydashboard/invite-member-modal';
 
 export default function MydashboardEdit(): ReactNode {
   const router = useRouter();
@@ -60,6 +61,20 @@ export default function MydashboardEdit(): ReactNode {
     setMembersEmails((prevMembersEmails) =>
       prevMembersEmails.filter((member) => member.id !== memberId)
     );
+  };
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleSubmitInviteMember = () => {
+    handleCloseModal();
   };
 
   return (
@@ -231,7 +246,10 @@ export default function MydashboardEdit(): ReactNode {
                   </div>
                 </div>
                 <div>
-                  <button className='mobile:absolute mobile:right-3 mobile:top-10 flex cursor-pointer gap-2 rounded-sm bg-violet-500 py-1 pr-2 pl-2 text-white hover:bg-violet-600'>
+                  <button
+                    className='mobile:absolute mobile:right-3 mobile:top-10 flex cursor-pointer gap-2 rounded-sm bg-violet-500 py-1 pr-2 pl-2 text-white hover:bg-violet-600'
+                    onClick={handleOpenModal}
+                  >
                     <Image
                       src='/icon/addmember.svg'
                       alt='add-member'
@@ -298,6 +316,11 @@ export default function MydashboardEdit(): ReactNode {
           </button>
         </div>
       </div>
+      <InviteMemberModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onSubmit={handleSubmitInviteMember}
+      />
     </div>
   );
 }
