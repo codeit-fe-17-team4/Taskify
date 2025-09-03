@@ -74,25 +74,21 @@
   --color-foreground: var(--foreground);
 }
 
-<<<<<<< HEAD
-html,
-body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
-=======
 @utility flex-center {
   display: flex;
   align-items: center;
   justify-content: center;
->>>>>>> ac3492a5f8383b2ede42b1b818cf8187d17281a0
 }
 
+html,
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-pretendard);
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
 }
 
 .scrollbar-hide {
