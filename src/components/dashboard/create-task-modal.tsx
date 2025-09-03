@@ -1,7 +1,7 @@
 import { useState } from 'react';
+import { useModalKeyHandler } from '@/hooks/useModal';
 import BaseModal from '../ui/base-modal';
 import CreateTaskForm from './create-task-form';
-import { useModalKeyHandler } from '@/hooks/useModal';
 import type { CreateTaskFormData } from './type';
 
 interface CreateTaskModalProps {
@@ -49,12 +49,12 @@ export default function CreateTaskModal({
   return (
     <BaseModal
       isOpen={isOpen}
-      onClose={handleClose}
       title='할 일 생성'
-      onSubmit={handleSubmit}
       submitText='생성'
       cancelText='취소'
       isSubmitDisabled={isSubmitDisabled}
+      onClose={handleClose}
+      onSubmit={handleSubmit}
     >
       <CreateTaskForm formData={formData} setFormData={setFormData} />
     </BaseModal>

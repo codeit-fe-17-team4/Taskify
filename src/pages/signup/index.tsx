@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import { useRouter } from 'next/router';
-import Link from 'next/link';
 import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useState } from 'react';
 import styles from '@/styles/auth-variables.module.css';
 
 export default function SignupPage() {
@@ -19,18 +19,19 @@ export default function SignupPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
 
-  const validateNickname = (nickname: string) => {
-    return nickname.length <= 10;
-  };
+  const validateNickname = (nickname: string) => 
+    nickname.length <= 10
+  ;
 
   const validateEmail = (email: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = /^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]+$/;
+
     return emailRegex.test(email);
   };
 
-  const validatePassword = (password: string) => {
-    return password.length >= 8;
-  };
+  const validatePassword = (password: string) => 
+    password.length >= 8
+  ;
 
   const validateConfirmPassword = (
     password: string,
@@ -91,7 +92,7 @@ export default function SignupPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isFormValid) return;
+    if (!isFormValid) {return;}
 
     setIsLoading(true);
     try {
@@ -125,11 +126,11 @@ export default function SignupPage() {
             <div className='relative h-[280px] w-[200px]'>
               <Link href='/' className='block h-full w-full'>
                 <Image
+                  fill
+                  priority
                   src='/logo-auth.svg'
                   alt='Taskify Logo'
-                  fill
                   className='object-contain object-center'
-                  priority
                 />
               </Link>
             </div>
@@ -144,8 +145,8 @@ export default function SignupPage() {
         {/* Form Wrapper */}
         <div className='flex w-[520px] flex-col items-center'>
           <form
-            onSubmit={handleSubmit}
             className='flex w-[520px] flex-col items-start'
+            onSubmit={handleSubmit}
           >
             {/* Form Stack - 입력 + 버튼 + 하단 안내 */}
             <div className='flex flex-col space-y-6'>
@@ -163,18 +164,18 @@ export default function SignupPage() {
                     id='nickname'
                     type='text'
                     value={nickname}
-                    onChange={(e) => setNickname(e.target.value)}
-                    onBlur={handleNicknameBlur}
                     placeholder='닉네임을 입력해 주세요'
+                    aria-invalid={Boolean(nicknameError)}
                     className={`h-[50px] w-[520px] rounded-[8px] bg-white px-[16px] py-[15px] ring-1 placeholder:text-[var(--auth-placeholder)] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none ${
                       nicknameError
                         ? 'ring-[var(--auth-error)] focus:ring-[var(--auth-error)]'
                         : 'ring-[var(--auth-border)]'
                     }`}
-                    aria-invalid={!!nicknameError}
                     aria-describedby={
                       nicknameError ? 'nickname-error' : undefined
                     }
+                    onChange={(e) => { setNickname(e.target.value); }}
+                    onBlur={handleNicknameBlur}
                   />
                   {nicknameError && (
                     <p
@@ -199,16 +200,16 @@ export default function SignupPage() {
                     id='email'
                     type='email'
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    onBlur={handleEmailBlur}
                     placeholder='이메일을 입력해 주세요'
+                    aria-invalid={Boolean(emailError)}
+                    aria-describedby={emailError ? 'email-error' : undefined}
                     className={`h-[50px] w-[520px] rounded-[8px] bg-white px-[16px] py-[15px] ring-1 placeholder:text-[var(--auth-placeholder)] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none ${
                       emailError
                         ? 'ring-[var(--auth-error)] focus:ring-[var(--auth-error)]'
                         : 'ring-[var(--auth-border)]'
                     }`}
-                    aria-invalid={!!emailError}
-                    aria-describedby={emailError ? 'email-error' : undefined}
+                    onChange={(e) => { setEmail(e.target.value); }}
+                    onBlur={handleEmailBlur}
                   />
                   {emailError && (
                     <p
@@ -234,27 +235,27 @@ export default function SignupPage() {
                       id='password'
                       type={showPassword ? 'text' : 'password'}
                       value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      onBlur={handlePasswordBlur}
                       placeholder='비밀번호를 입력해 주세요'
+                      aria-invalid={Boolean(passwordError)}
                       className={`h-[50px] w-[520px] rounded-[8px] bg-white px-[16px] py-[12px] pr-10 ring-1 placeholder:text-[var(--auth-placeholder)] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none ${
                         passwordError
                           ? 'ring-[var(--auth-error)] focus:ring-[var(--auth-error)]'
                           : 'ring-[var(--auth-border)]'
                       }`}
-                      aria-invalid={!!passwordError}
                       aria-describedby={
                         passwordError ? 'password-error' : undefined
                       }
+                      onChange={(e) => { setPassword(e.target.value); }}
+                      onBlur={handlePasswordBlur}
                     />
                     <button
                       type='button'
-                      onClick={() => setShowPassword(!showPassword)}
                       className='absolute top-1/2 right-3 flex h-[24px] w-[24px] -translate-y-1/2 items-center justify-center'
+                      aria-pressed={showPassword}
                       aria-label={
                         showPassword ? '비밀번호 숨기기' : '비밀번호 보기'
                       }
-                      aria-pressed={showPassword}
+                      onClick={() => { setShowPassword(!showPassword); }}
                     >
                       {showPassword ? (
                         <svg
@@ -343,33 +344,33 @@ export default function SignupPage() {
                       id='confirmPassword'
                       type={showConfirmPassword ? 'text' : 'password'}
                       value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      onBlur={handleConfirmPasswordBlur}
                       placeholder='비밀번호를 다시 입력해 주세요'
+                      aria-invalid={Boolean(confirmPasswordError)}
                       className={`h-[50px] w-[520px] rounded-[8px] bg-white px-[16px] py-[12px] pr-10 ring-1 placeholder:text-[var(--auth-placeholder)] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none ${
                         confirmPasswordError
                           ? 'ring-[var(--auth-error)] focus:ring-[var(--auth-error)]'
                           : 'ring-[var(--auth-border)]'
                       }`}
-                      aria-invalid={!!confirmPasswordError}
                       aria-describedby={
                         confirmPasswordError
                           ? 'confirm-password-error'
                           : undefined
                       }
+                      onChange={(e) => { setConfirmPassword(e.target.value); }}
+                      onBlur={handleConfirmPasswordBlur}
                     />
                     <button
                       type='button'
-                      onClick={() =>
-                        setShowConfirmPassword(!showConfirmPassword)
-                      }
                       className='absolute top-1/2 right-3 flex h-[24px] w-[24px] -translate-y-1/2 items-center justify-center'
+                      aria-pressed={showConfirmPassword}
                       aria-label={
                         showConfirmPassword
                           ? '비밀번호 숨기기'
                           : '비밀번호 보기'
                       }
-                      aria-pressed={showConfirmPassword}
+                      onClick={() =>
+                        { setShowConfirmPassword(!showConfirmPassword); }
+                      }
                     >
                       {showConfirmPassword ? (
                         <svg
@@ -452,8 +453,8 @@ export default function SignupPage() {
                   id='terms'
                   type='checkbox'
                   checked={agreedToTerms}
-                  onChange={(e) => setAgreedToTerms(e.target.checked)}
                   className='h-5 w-5 rounded border-gray-300 text-[var(--auth-primary)] focus:ring-[var(--auth-primary)]'
+                  onChange={(e) => { setAgreedToTerms(e.target.checked); }}
                 />
                 <label
                   htmlFor='terms'

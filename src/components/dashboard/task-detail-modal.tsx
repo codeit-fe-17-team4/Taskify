@@ -1,7 +1,7 @@
-import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
+import { useEffect,useRef, useState } from 'react';
 import { useModalKeyHandler } from '@/hooks/useModal';
-import type { TaskDetailModalProps, CommentType } from './type';
+import type { CommentType,TaskDetailModalProps } from './type';
 
 // 임시 댓글 데이터
 const mockComments: CommentType[] = [
@@ -19,18 +19,24 @@ const mockComments: CommentType[] = [
 
 const getTagColorClasses = (color: string) => {
   switch (color) {
-    case 'orange':
+    case 'orange': {
       return 'bg-orange-100 text-orange-600';
-    case 'green':
+    }
+    case 'green': {
       return 'bg-green-100 text-green-600';
-    case 'blue':
+    }
+    case 'blue': {
       return 'bg-blue-100 text-blue-600';
-    case 'red':
+    }
+    case 'red': {
       return 'bg-red-100 text-red-600';
-    case 'purple':
+    }
+    case 'purple': {
       return 'bg-purple-100 text-purple-600';
-    default:
+    }
+    default: {
       return 'bg-gray-100 text-gray-600';
+    }
   }
 };
 
@@ -116,7 +122,7 @@ export default function TaskDetailModal({
     }
   };
 
-  if (!isOpen || !task) return null;
+  if (!isOpen || !task) {return null;}
 
   const handleOverlayClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
@@ -131,7 +137,7 @@ export default function TaskDetailModal({
     >
       <div
         className='scrollbar-hide max-h-[90vh] w-[40rem] overflow-y-scroll rounded-lg bg-white'
-        onClick={(e) => e.stopPropagation()}
+        onClick={(e) => { e.stopPropagation(); }}
       >
         {/* 헤더 */}
         <div className='flex items-center justify-between p-6'>
@@ -140,8 +146,8 @@ export default function TaskDetailModal({
             {/* 메뉴 버튼 */}
             <div className='relative' ref={menuRef}>
               <button
-                onClick={handleMenuToggle}
                 className='flex h-8 w-8 cursor-pointer items-center justify-center rounded hover:bg-gray-100'
+                onClick={handleMenuToggle}
               >
                 <Image
                   src='/dashboard/menu-icon.svg'
@@ -158,14 +164,14 @@ export default function TaskDetailModal({
                   style={{ boxShadow: '0 .4rem 2rem 0 rgba(0, 0, 0, .08)' }}
                 >
                   <button
-                    onClick={handleEdit}
                     className='w-full cursor-pointer rounded-md px-3 py-2 text-center text-sm hover:bg-purple-100 hover:text-purple-600'
+                    onClick={handleEdit}
                   >
                     수정하기
                   </button>
                   <button
-                    onClick={handleDelete}
                     className='w-full cursor-pointer rounded-md px-3 py-2 text-center text-sm hover:bg-purple-100 hover:text-purple-600'
+                    onClick={handleDelete}
                   >
                     삭제하기
                   </button>
@@ -175,8 +181,8 @@ export default function TaskDetailModal({
 
             {/* 닫기 버튼 */}
             <button
-              onClick={handleClose}
               className='flex h-8 w-8 cursor-pointer items-center justify-center rounded hover:bg-gray-100'
+              onClick={handleClose}
             >
               <Image
                 src='/dashboard/close-icon.svg'
@@ -202,14 +208,14 @@ export default function TaskDetailModal({
 
             {task.tags.length > 0 && (
               <>
-                {task.tags.map((tag, index) => (
-                  <span
+                {task.tags.map((tag, index) => 
+                  { return <span
                     key={index}
                     className={`rounded-md px-3 py-1 text-sm font-medium ${getTagColorClasses(tag.color)}`}
                   >
                     {tag.label}
-                  </span>
-                ))}
+                  </span> }
+                )}
               </>
             )}
           </div>
@@ -282,11 +288,11 @@ export default function TaskDetailModal({
               rows={3}
               className='w-full resize-none rounded-lg border border-gray-300 p-4 pr-20 focus:outline-none'
               value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
+              onChange={(e) => { setNewComment(e.target.value); }}
             />
             <button
-              onClick={handleCommentSubmit}
               className='absolute right-4 bottom-4 cursor-pointer rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-indigo-600 hover:bg-gray-50'
+              onClick={handleCommentSubmit}
             >
               입력
             </button>
@@ -294,8 +300,8 @@ export default function TaskDetailModal({
 
           {/* 댓글 목록 */}
           <div className='space-y-4'>
-            {mockComments.map((comment) => (
-              <div key={comment.id} className='flex gap-3'>
+            {mockComments.map((comment) => 
+              { return <div key={comment.id} className='flex gap-3'>
                 <div
                   className='flex h-8 w-8 items-center justify-center rounded-full text-xs font-medium'
                   style={{
@@ -319,20 +325,20 @@ export default function TaskDetailModal({
                     <div className='space-y-3'>
                       <textarea
                         value={editingContent}
-                        onChange={(e) => setEditingContent(e.target.value)}
                         className='w-full resize-none rounded-lg border border-gray-300 p-3 text-sm focus:outline-none'
                         rows={3}
+                        onChange={(e) => { setEditingContent(e.target.value); }}
                       />
                       <div className='flex gap-3'>
                         <button
-                          onClick={handleSaveComment}
                           className='cursor-pointer text-xs text-gray-500 underline'
+                          onClick={handleSaveComment}
                         >
                           저장
                         </button>
                         <button
-                          onClick={handleCancelEdit}
                           className='cursor-pointer text-xs text-gray-500 underline'
+                          onClick={handleCancelEdit}
                         >
                           취소
                         </button>
@@ -343,10 +349,10 @@ export default function TaskDetailModal({
                       <p className='text-sm text-gray-700'>{comment.content}</p>
                       <div className='mt-2 flex gap-3'>
                         <button
-                          onClick={() =>
-                            handleEditComment(comment.id, comment.content)
-                          }
                           className='cursor-pointer text-xs text-gray-500 underline'
+                          onClick={() =>
+                            { handleEditComment(comment.id, comment.content); }
+                          }
                         >
                           수정
                         </button>
@@ -357,8 +363,8 @@ export default function TaskDetailModal({
                     </>
                   )}
                 </div>
-              </div>
-            ))}
+              </div> }
+            )}
           </div>
         </div>
       </div>

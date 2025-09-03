@@ -74,6 +74,14 @@
   --color-foreground: var(--foreground);
 }
 
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
 @utility flex-center {
   display: flex;
   align-items: center;

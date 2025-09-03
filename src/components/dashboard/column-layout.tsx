@@ -1,5 +1,5 @@
-import DashboardColumn from './dashboard-column';
 import AddColumnButton from './add-column-button';
+import DashboardColumn from './dashboard-column';
 import type { ColumnType, TaskType } from './type';
 
 interface ColumnLayoutProps {
@@ -20,8 +20,8 @@ export default function ColumnLayout({
   return (
     <div className='column-layout-container flex h-full'>
       {/* 칼럼 목록 */}
-      {columns.map((col) => (
-        <div
+      {columns.map((col) => 
+        { return <div
           key={col.id}
           className='column-container flex h-full w-80 flex-shrink-0 flex-col border-r border-[#EEEEEE] px-4 py-6'
         >
@@ -31,8 +31,8 @@ export default function ColumnLayout({
             onAddTaskClick={() => onAddTaskClick?.(col.id)}
             onTaskClick={onTaskClick}
           />
-        </div>
-      ))}
+        </div> }
+      )}
 
       {/* 칼럼 추가 버튼 */}
       <div className='add-column-container h-full w-80 flex-shrink-0 px-4 py-6'>

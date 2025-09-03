@@ -1,7 +1,7 @@
 import { useState } from 'react';
+import { useModalKeyHandler } from '@/hooks/useModal';
 import BaseModal from '../ui/base-modal';
 import CreateColumnForm from './create-column-form';
-import { useModalKeyHandler } from '@/hooks/useModal';
 import type { CreateColumnFormData } from './type';
 
 interface CreateColumnModalProps {
@@ -36,13 +36,13 @@ export default function CreateColumnModal({
   return (
     <BaseModal
       isOpen={isOpen}
-      onClose={handleClose}
       title='새 컬럼 생성'
-      onSubmit={handleSubmit}
       submitText='생성'
       cancelText='취소'
       isSubmitDisabled={isSubmitDisabled}
       width='w-[32rem]'
+      onClose={handleClose}
+      onSubmit={handleSubmit}
     >
       <CreateColumnForm formData={formData} setFormData={setFormData} />
     </BaseModal>

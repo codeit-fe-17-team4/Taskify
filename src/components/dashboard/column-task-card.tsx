@@ -3,18 +3,24 @@ import type { TaskCardProps } from './type';
 
 const getTagColorClasses = (color: string) => {
   switch (color) {
-    case 'orange':
+    case 'orange': {
       return 'bg-orange-100 text-orange-600';
-    case 'green':
+    }
+    case 'green': {
       return 'bg-green-100 text-green-600';
-    case 'blue':
+    }
+    case 'blue': {
       return 'bg-blue-100 text-blue-600';
-    case 'red':
+    }
+    case 'red': {
       return 'bg-red-100 text-red-600';
-    case 'purple':
+    }
+    case 'purple': {
       return 'bg-purple-100 text-purple-600';
-    default:
+    }
+    default: {
       return 'bg-gray-100 text-gray-600';
+    }
   }
 };
 
@@ -53,14 +59,14 @@ export default function ColumnTaskCard({ task, onEditTask }: TaskCardProps) {
 
         {/* 태그들 */}
         <div className='mb-3 flex flex-wrap gap-1.5'>
-          {task.tags.map((tag) => (
-            <span
+          {task.tags.map((tag) => 
+            { return <span
               key={tag.label}
               className={`rounded-md px-2 py-1 text-xs font-medium ${getTagColorClasses(tag.color)}`}
             >
               {tag.label}
-            </span>
-          ))}
+            </span> }
+          )}
         </div>
 
         <div className='flex items-center justify-between'>

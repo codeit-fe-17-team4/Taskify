@@ -20,6 +20,7 @@ export default function CreateColumnForm({
           이름 <span className='align-baseline text-lg text-indigo-600'>*</span>
         </label>
         <input
+          required
           id='new-column-name'
           name='name'
           type='text'
@@ -27,9 +28,8 @@ export default function CreateColumnForm({
           className='w-full rounded-lg border border-gray-300 p-4 focus:outline-none'
           value={formData.name}
           onChange={(e) =>
-            setFormData((prev) => ({ ...prev, name: e.target.value }))
+            { setFormData((prev) => ({ ...prev, name: e.target.value })); }
           }
-          required
         />
       </div>
     </>

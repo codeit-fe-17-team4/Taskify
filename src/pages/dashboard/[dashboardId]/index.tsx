@@ -1,18 +1,18 @@
-import { useState } from 'react';
+import { type ReactNode, useState } from 'react';
 import ColumnLayout from '@/components/dashboard/column-layout';
 import CreateColumnModal from '@/components/dashboard/create-column-modal';
+import EditTaskModal from '@/components/dashboard/edit-task-modal';
 import ManageColumnModal from '@/components/dashboard/manage-column-modal';
 import TaskDetailModal from '@/components/dashboard/task-detail-modal';
-import EditTaskModal from '@/components/dashboard/edit-task-modal';
 import type {
   ColumnType,
-  TaskType,
   CreateColumnFormData,
-  ManageColumnFormData,
   EditTaskFormData,
+  ManageColumnFormData,
+  TaskType,
 } from '@/components/dashboard/type';
 
-export default function DashboardDetailPage() {
+export default function DashboardDetailPage(): ReactNode {
   const [isColumnModalOpen, setIsColumnModalOpen] = useState(false);
   const [isManageColumnModalOpen, setIsManageColumnModalOpen] = useState(false);
   const [selectedColumn, setSelectedColumn] = useState<ColumnType | null>(null);
@@ -99,6 +99,7 @@ export default function DashboardDetailPage() {
 
   const handleColumnSettingsClick = (columnId: string) => {
     const column = mockColumns.find((col) => col.id === columnId);
+
     if (column) {
       setSelectedColumn(column);
       setIsManageColumnModalOpen(true);
@@ -161,11 +162,11 @@ export default function DashboardDetailPage() {
           <ColumnLayout
             columns={mockColumns}
             onAddColumnClick={handleAddColumnClick}
+            onColumnSettingsClick={handleColumnSettingsClick}
+            onTaskClick={handleTaskClick}
             onAddTaskClick={(columnId: string) => {
               // TODO: 태스크 생성 모달 열기
             }}
-            onColumnSettingsClick={handleColumnSettingsClick}
-            onTaskClick={handleTaskClick}
           />
         </main>
       </div>
@@ -173,25 +174,31 @@ export default function DashboardDetailPage() {
       {/* 컬럼 생성 모달 */}
       <CreateColumnModal
         isOpen={isColumnModalOpen}
-        onClose={() => setIsColumnModalOpen(false)}
         onSubmit={handleColumnSubmit}
+        onClose={() => {
+          setIsColumnModalOpen(false);
+        }}
       />
 
       {/* 컬럼 관리 모달 */}
       <ManageColumnModal
         isOpen={isManageColumnModalOpen}
-        onClose={() => setIsManageColumnModalOpen(false)}
         column={selectedColumn}
         onUpdate={handleColumnUpdate}
         onDelete={handleColumnDelete}
+        onClose={() => {
+          setIsManageColumnModalOpen(false);
+        }}
       />
 
       {/* 할일 상세 모달 */}
       <TaskDetailModal
         isOpen={isDetailModalOpen}
-        onClose={() => setIsDetailModalOpen(false)}
         task={selectedTask}
         onEdit={handleTaskEdit}
+        onClose={() => {
+          setIsDetailModalOpen(false);
+        }}
         onDelete={(taskId) => {
           // TODO: 태스크 삭제 API 호출
         }}
@@ -200,9 +207,11 @@ export default function DashboardDetailPage() {
       {/* 할일 수정 모달 */}
       <EditTaskModal
         isOpen={isEditTaskModalOpen}
-        onClose={() => setIsEditTaskModalOpen(false)}
-        onSubmit={handleTaskUpdate}
         initialTask={selectedTask || undefined}
+        onSubmit={handleTaskUpdate}
+        onClose={() => {
+          setIsEditTaskModalOpen(false);
+        }}
       />
     </div>
   );
