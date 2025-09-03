@@ -1,5 +1,7 @@
 import Image from 'next/image';
 import { useState } from 'react';
+import ChipTag from '@/components/ui/chip/chip-tag';
+import AssigneeDropdown from '@/components/ui/dropdown/assignee-dropdown';
 import type { CreateTaskFormData } from './type';
 
 interface CreateTaskFormProps {
@@ -16,69 +18,58 @@ export default function CreateTaskForm({
   const handleTagKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && currentTag.trim()) {
       e.preventDefault();
-      setFormData((prev) => { return {
-        ...prev,
-        tags: [...prev.tags, currentTag.trim()],
-      } });
+      setFormData((prev) => {
+        return {
+          ...prev,
+          tags: [...prev.tags, currentTag.trim()],
+        };
+      });
       setCurrentTag('');
     }
   };
 
   const removeTag = (indexToRemove: number) => {
-    setFormData((prev) => { return {
-      ...prev,
-      tags: prev.tags.filter((_, index) => index !== indexToRemove),
-    } });
+    setFormData((prev) => {
+      return {
+        ...prev,
+        tags: prev.tags.filter((_, index) => index !== indexToRemove),
+      };
+    });
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
 
     if (file) {
-      setFormData((prev) => { return {
-        ...prev,
-        imageFile: file,
-      } });
+      setFormData((prev) => {
+        return {
+          ...prev,
+          imageFile: file,
+        };
+      });
     }
   };
 
   const removeImage = () => {
-    setFormData((prev) => { return {
-      ...prev,
-      imageFile: null,
-    } });
+    setFormData((prev) => {
+      return {
+        ...prev,
+        imageFile: null,
+      };
+    });
   };
 
   return (
     <>
       {/* 담당자 */}
       <div>
-        <label htmlFor='assignee' className='mb-2 block text-lg font-medium'>
-          담당자
-        </label>
-        <div className='relative'>
-          <select
-            id='assignee'
-            name='assignee'
-            className='w-full cursor-pointer appearance-none rounded-lg border border-gray-300 p-4 pr-12 focus:outline-none'
-            value={formData.assignee}
-            onChange={(e) =>
-              { setFormData((prev) => ({ ...prev, assignee: e.target.value })); }
-            }
-          >
-            <option value=''>이름을 입력해 주세요</option>
-            <option value='user1'>사용자 1</option>
-            <option value='user2'>사용자 2</option>
-          </select>
-          <div className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4'>
-            <Image
-              src='/dashboard/input-dropdown-btn.svg'
-              alt='드롭다운'
-              width={14}
-              height={16}
-            />
-          </div>
-        </div>
+        <label className='mb-2 block text-lg font-medium'>담당자</label>
+        <AssigneeDropdown
+          value={formData.assignee}
+          onChange={(value) => {
+            setFormData((prev) => ({ ...prev, assignee: value }));
+          }}
+        />
       </div>
 
       {/* 제목 */}
@@ -97,9 +88,9 @@ export default function CreateTaskForm({
           placeholder='제목을 입력해 주세요'
           className='w-full rounded-lg border border-gray-300 p-4 focus:outline-none'
           value={formData.title}
-          onChange={(e) =>
-            { setFormData((prev) => ({ ...prev, title: e.target.value })); }
-          }
+          onChange={(e) => {
+            setFormData((prev) => ({ ...prev, title: e.target.value }));
+          }}
         />
       </div>
 
@@ -119,12 +110,14 @@ export default function CreateTaskForm({
           rows={4}
           className='w-full resize-none rounded-lg border border-gray-300 p-4 focus:outline-none'
           value={formData.description}
-          onChange={(e) =>
-            { setFormData((prev) => { return {
-              ...prev,
-              description: e.target.value,
-            } }); }
-          }
+          onChange={(e) => {
+            setFormData((prev) => {
+              return {
+                ...prev,
+                description: e.target.value,
+              };
+            });
+          }}
         />
       </div>
 
@@ -141,9 +134,9 @@ export default function CreateTaskForm({
             className='w-full cursor-pointer rounded-lg border border-gray-300 p-4 pl-12 focus:outline-none'
             value={formData.dueDate}
             placeholder='날짜와 시간을 선택하세요'
-            onChange={(e) =>
-              { setFormData((prev) => ({ ...prev, dueDate: e.target.value })); }
-            }
+            onChange={(e) => {
+              setFormData((prev) => ({ ...prev, dueDate: e.target.value }));
+            }}
             onClick={(e) => {
               // 일부 브라우저에서 datepicker를 강제로 열기 위해
               (e.currentTarget as any).showPicker?.();
@@ -177,21 +170,18 @@ export default function CreateTaskForm({
         </label>
         <div className='flex min-h-[3.5rem] flex-wrap items-center gap-2 rounded-lg border border-gray-300 p-3 focus-within:border-gray-300'>
           {/* 기존 태그들 */}
-          {formData.tags.map((tag, index) => 
-            { return <span
-              key={index}
-              className='flex items-center gap-2 rounded-md bg-blue-100 px-3 py-1 text-sm text-blue-600'
-            >
-              {tag}
+          {formData.tags.map((tag, index) => (
+            <div key={index} className='flex items-center gap-1'>
+              <ChipTag label={tag} color='blue' size='md' />
               <button
                 type='button'
                 className='ml-1 text-blue-400 hover:text-blue-600'
-                onClick={() => { removeTag(index); }}
+                onClick={() => removeTag(index)}
               >
                 ×
               </button>
-            </span> }
-          )}
+            </div>
+          ))}
           {/* 새 태그 입력 */}
           <input
             id='tags'
@@ -200,7 +190,9 @@ export default function CreateTaskForm({
             placeholder={formData.tags.length === 0 ? '입력 후 Enter' : ''}
             className='min-w-[120px] flex-1 border-0 bg-transparent p-1 focus:outline-none'
             value={currentTag}
-            onChange={(e) => { setCurrentTag(e.target.value); }}
+            onChange={(e) => {
+              setCurrentTag(e.target.value);
+            }}
             onKeyDown={handleTagKeyDown}
           />
         </div>

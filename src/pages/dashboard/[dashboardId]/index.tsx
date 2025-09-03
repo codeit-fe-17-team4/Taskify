@@ -4,8 +4,6 @@ import CreateColumnModal from '@/components/dashboard/create-column-modal';
 import EditTaskModal from '@/components/dashboard/edit-task-modal';
 import ManageColumnModal from '@/components/dashboard/manage-column-modal';
 import TaskDetailModal from '@/components/dashboard/task-detail-modal';
-import DashboardHeader from '@/components/ui/dashboard-header';
-import SideMenu from '@/components/ui/side-menu';
 import type {
   ColumnType,
   CreateColumnFormData,
@@ -13,6 +11,8 @@ import type {
   ManageColumnFormData,
   TaskType,
 } from '@/components/dashboard/type';
+import DashboardHeader from '@/components/ui/dashboard-header';
+import SideMenu from '@/components/ui/side-menu';
 
 export default function DashboardDetailPage(): ReactNode {
   const [isColumnModalOpen, setIsColumnModalOpen] = useState(false);
@@ -28,7 +28,7 @@ export default function DashboardDetailPage(): ReactNode {
       tasks: [
         {
           id: 't1',
-          title: '1234',
+          title: '새로운 일정 관리 Taskify',
           description:
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
           tags: [

@@ -1,7 +1,10 @@
 import Image from 'next/image';
-import { useEffect,useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import ChipProfile from '@/components/ui/chip/chip-profile';
+import ChipState from '@/components/ui/chip/chip-state';
+import ChipTag from '@/components/ui/chip/chip-tag';
 import { useModalKeyHandler } from '@/hooks/useModal';
-import type { CommentType,TaskDetailModalProps } from './type';
+import type { CommentType, TaskDetailModalProps } from './type';
 
 // 임시 댓글 데이터
 const mockComments: CommentType[] = [
@@ -17,25 +20,25 @@ const mockComments: CommentType[] = [
   },
 ];
 
-const getTagColorClasses = (color: string) => {
+const getTagColor = (color: string): 'blue' | 'pink' | 'green' | 'brown' => {
   switch (color) {
     case 'orange': {
-      return 'bg-orange-100 text-orange-600';
+      return 'brown';
     }
     case 'green': {
-      return 'bg-green-100 text-green-600';
+      return 'green';
     }
     case 'blue': {
-      return 'bg-blue-100 text-blue-600';
+      return 'blue';
     }
     case 'red': {
-      return 'bg-red-100 text-red-600';
+      return 'pink';
     }
     case 'purple': {
-      return 'bg-purple-100 text-purple-600';
+      return 'pink';
     }
     default: {
-      return 'bg-gray-100 text-gray-600';
+      return 'blue';
     }
   }
 };
@@ -122,7 +125,9 @@ export default function TaskDetailModal({
     }
   };
 
-  if (!isOpen || !task) {return null;}
+  if (!isOpen || !task) {
+    return null;
+  }
 
   const handleOverlayClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
@@ -137,7 +142,9 @@ export default function TaskDetailModal({
     >
       <div
         className='scrollbar-hide max-h-[90vh] w-[40rem] overflow-y-scroll rounded-lg bg-white'
-        onClick={(e) => { e.stopPropagation(); }}
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
       >
         {/* 헤더 */}
         <div className='flex items-center justify-between p-6'>
@@ -164,13 +171,13 @@ export default function TaskDetailModal({
                   style={{ boxShadow: '0 .4rem 2rem 0 rgba(0, 0, 0, .08)' }}
                 >
                   <button
-                    className='w-full cursor-pointer rounded-md px-3 py-2 text-center text-sm hover:bg-purple-100 hover:text-purple-600'
+                    className='hover:bg-violet-light hover:text-violet w-full cursor-pointer rounded-md px-3 py-2 text-center text-sm'
                     onClick={handleEdit}
                   >
                     수정하기
                   </button>
                   <button
-                    className='w-full cursor-pointer rounded-md px-3 py-2 text-center text-sm hover:bg-purple-100 hover:text-purple-600'
+                    className='hover:bg-violet-light hover:text-violet w-full cursor-pointer rounded-md px-3 py-2 text-center text-sm'
                     onClick={handleDelete}
                   >
                     삭제하기
@@ -197,10 +204,7 @@ export default function TaskDetailModal({
         {/* 카테고리와 태그 */}
         <div className='px-6 pb-6'>
           <div className='flex flex-wrap items-center gap-2'>
-            <span className='flex items-center gap-2 rounded-full bg-indigo-100 px-3 py-1 text-sm font-medium text-indigo-600'>
-              <span className='h-2 w-2 rounded-full bg-indigo-600'></span>
-              To Do
-            </span>
+            <ChipState label='To Do' size='md' />
 
             {task.tags.length > 0 && (
               <div className='h-4 w-px bg-gray-300'></div>
@@ -208,14 +212,16 @@ export default function TaskDetailModal({
 
             {task.tags.length > 0 && (
               <>
-                {task.tags.map((tag, index) => 
-                  { return <span
-                    key={index}
-                    className={`rounded-md px-3 py-1 text-sm font-medium ${getTagColorClasses(tag.color)}`}
-                  >
-                    {tag.label}
-                  </span> }
-                )}
+                {task.tags.map((tag, index) => {
+                  return (
+                    <ChipTag
+                      key={index}
+                      label={tag.label}
+                      color={getTagColor(tag.color)}
+                      size='md'
+                    />
+                  );
+                })}
               </>
             )}
           </div>
@@ -256,12 +262,11 @@ export default function TaskDetailModal({
               <div>
                 <span className='mb-2 block text-sm font-bold'>담당자</span>
                 <div className='flex items-center gap-2'>
-                  <div
-                    className='flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium text-white'
-                    style={{ backgroundColor: task.manager.profileColor }}
-                  >
-                    {task.manager.nickname.slice(0, 2)}
-                  </div>
+                  <ChipProfile
+                    label={task.manager.nickname.slice(0, 2)}
+                    size='md'
+                    color='green'
+                  />
                   <span className='text-sm font-medium'>
                     {task.manager.name}
                   </span>
@@ -288,7 +293,9 @@ export default function TaskDetailModal({
               rows={3}
               className='w-full resize-none rounded-lg border border-gray-300 p-4 pr-20 focus:outline-none'
               value={newComment}
-              onChange={(e) => { setNewComment(e.target.value); }}
+              onChange={(e) => {
+                setNewComment(e.target.value);
+              }}
             />
             <button
               className='absolute right-4 bottom-4 cursor-pointer rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-indigo-600 hover:bg-gray-50'
@@ -300,71 +307,73 @@ export default function TaskDetailModal({
 
           {/* 댓글 목록 */}
           <div className='space-y-4'>
-            {mockComments.map((comment) => 
-              { return <div key={comment.id} className='flex gap-3'>
-                <div
-                  className='flex h-8 w-8 items-center justify-center rounded-full text-xs font-medium'
-                  style={{
-                    backgroundColor: comment.author.profileColor,
-                    color: '#D97706',
-                  }}
-                >
-                  {comment.author.name.slice(0, 2)}
-                </div>
-                <div className='flex-1'>
-                  <div className='mb-1 flex items-center gap-2'>
-                    <span className='text-sm font-medium'>
-                      {comment.author.name}
-                    </span>
-                    <span className='text-xs text-gray-500'>
-                      {comment.createdAt}
-                    </span>
-                  </div>
-
-                  {editingCommentId === comment.id ? (
-                    <div className='space-y-3'>
-                      <textarea
-                        value={editingContent}
-                        className='w-full resize-none rounded-lg border border-gray-300 p-3 text-sm focus:outline-none'
-                        rows={3}
-                        onChange={(e) => { setEditingContent(e.target.value); }}
-                      />
-                      <div className='flex gap-3'>
-                        <button
-                          className='cursor-pointer text-xs text-gray-500 underline'
-                          onClick={handleSaveComment}
-                        >
-                          저장
-                        </button>
-                        <button
-                          className='cursor-pointer text-xs text-gray-500 underline'
-                          onClick={handleCancelEdit}
-                        >
-                          취소
-                        </button>
-                      </div>
+            {mockComments.map((comment) => {
+              return (
+                <div key={comment.id} className='flex gap-3'>
+                  <ChipProfile
+                    label={comment.author.name.slice(0, 2)}
+                    size='md'
+                    color='brown'
+                  />
+                  <div className='flex-1'>
+                    <div className='mb-1 flex items-center gap-2'>
+                      <span className='text-sm font-medium'>
+                        {comment.author.name}
+                      </span>
+                      <span className='text-xs text-gray-500'>
+                        {comment.createdAt}
+                      </span>
                     </div>
-                  ) : (
-                    <>
-                      <p className='text-sm text-gray-700'>{comment.content}</p>
-                      <div className='mt-2 flex gap-3'>
-                        <button
-                          className='cursor-pointer text-xs text-gray-500 underline'
-                          onClick={() =>
-                            { handleEditComment(comment.id, comment.content); }
-                          }
-                        >
-                          수정
-                        </button>
-                        <button className='cursor-pointer text-xs text-gray-500 underline'>
-                          삭제
-                        </button>
+
+                    {editingCommentId === comment.id ? (
+                      <div className='space-y-3'>
+                        <textarea
+                          value={editingContent}
+                          className='w-full resize-none rounded-lg border border-gray-300 p-3 text-sm focus:outline-none'
+                          rows={3}
+                          onChange={(e) => {
+                            setEditingContent(e.target.value);
+                          }}
+                        />
+                        <div className='flex gap-3'>
+                          <button
+                            className='cursor-pointer text-xs text-gray-500 underline'
+                            onClick={handleSaveComment}
+                          >
+                            저장
+                          </button>
+                          <button
+                            className='cursor-pointer text-xs text-gray-500 underline'
+                            onClick={handleCancelEdit}
+                          >
+                            취소
+                          </button>
+                        </div>
                       </div>
-                    </>
-                  )}
+                    ) : (
+                      <>
+                        <p className='text-sm text-gray-700'>
+                          {comment.content}
+                        </p>
+                        <div className='mt-2 flex gap-3'>
+                          <button
+                            className='cursor-pointer text-xs text-gray-500 underline'
+                            onClick={() => {
+                              handleEditComment(comment.id, comment.content);
+                            }}
+                          >
+                            수정
+                          </button>
+                          <button className='cursor-pointer text-xs text-gray-500 underline'>
+                            삭제
+                          </button>
+                        </div>
+                      </>
+                    )}
+                  </div>
                 </div>
-              </div> }
-            )}
+              );
+            })}
           </div>
         </div>
       </div>

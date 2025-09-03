@@ -1,25 +1,27 @@
 import Image from 'next/image';
+import ChipProfile from '@/components/ui/chip/chip-profile';
+import ChipTag from '@/components/ui/chip/chip-tag';
 import type { TaskCardProps } from './type';
 
-const getTagColorClasses = (color: string) => {
+const getTagColor = (color: string): 'blue' | 'pink' | 'green' | 'brown' => {
   switch (color) {
     case 'orange': {
-      return 'bg-orange-100 text-orange-600';
+      return 'brown';
     }
     case 'green': {
-      return 'bg-green-100 text-green-600';
+      return 'green';
     }
     case 'blue': {
-      return 'bg-blue-100 text-blue-600';
+      return 'blue';
     }
     case 'red': {
-      return 'bg-red-100 text-red-600';
+      return 'pink';
     }
     case 'purple': {
-      return 'bg-purple-100 text-purple-600';
+      return 'pink';
     }
     default: {
-      return 'bg-gray-100 text-gray-600';
+      return 'blue';
     }
   }
 };
@@ -59,14 +61,14 @@ export default function ColumnTaskCard({ task, onEditTask }: TaskCardProps) {
 
         {/* 태그들 */}
         <div className='mb-3 flex flex-wrap gap-1.5'>
-          {task.tags.map((tag) => 
-            { return <span
+          {task.tags.map((tag) => (
+            <ChipTag
               key={tag.label}
-              className={`rounded-md px-2 py-1 text-xs font-medium ${getTagColorClasses(tag.color)}`}
-            >
-              {tag.label}
-            </span> }
-          )}
+              label={tag.label}
+              color={getTagColor(tag.color)}
+              size='md'
+            />
+          ))}
         </div>
 
         <div className='flex items-center justify-between'>
@@ -83,12 +85,11 @@ export default function ColumnTaskCard({ task, onEditTask }: TaskCardProps) {
 
           {/* 담당자 */}
           <div className='flex items-center'>
-            <div
-              className='flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium text-white'
-              style={{ backgroundColor: task.manager.profileColor }}
-            >
-              {task.manager.nickname.slice(0, 2)}
-            </div>
+            <ChipProfile
+              label={task.manager.nickname.slice(0, 2)}
+              size='sm'
+              color='green'
+            />
           </div>
         </div>
       </div>

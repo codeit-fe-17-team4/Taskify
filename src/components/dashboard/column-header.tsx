@@ -1,16 +1,17 @@
 import Image from 'next/image';
+import type { ReactNode } from 'react';
 import type { ColumnHeaderProps } from './type';
 
 export default function ColumnHeader({
   column,
   onSettingsClick,
-}: ColumnHeaderProps) {
+}: ColumnHeaderProps): ReactNode {
   return (
     <header className='flex items-center justify-between'>
       <div className='flex items-center gap-3'>
-        <div className='h-2 w-2 rounded-full bg-violet-500'></div>
+        <div className='bg-violet h-2 w-2 rounded-full'></div>
         <h2 className='text-lg font-bold text-gray-800'>{column.title}</h2>
-        <span className='flex min-w-[24px] items-center justify-center rounded-md bg-gray-200 px-2 py-1 text-center text-sm font-medium text-gray-500'>
+        <span className='bg-gray-4 text-gray-1 flex size-[20px] items-center justify-center rounded-[6px] text-xs'>
           {column.tasks.length}
         </span>
       </div>
