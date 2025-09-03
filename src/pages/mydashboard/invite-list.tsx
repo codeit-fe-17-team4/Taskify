@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import type { ReactNode } from 'react';
+import { type ReactNode, useState } from 'react';
 
 export default function InviteList(): ReactNode {
   const inviteData = [
@@ -11,25 +11,12 @@ export default function InviteList(): ReactNode {
     { id: 6, name: '유닛 D', inviter: '김태현' },
   ];
 
-  // 추후 기능 구현 시, 내가 만든 대시보드는 왕관 아이콘 붙도록 구현
-  // const listData = [
-  //   { id: 1, name: '비브리지' },
-  //   { id: 2, name: '코드잇' },
-  //   { id: 3, name: '3분기 계획' },
-  //   { id: 4, name: '회의록' },
-  //   { id: 5, name: '중요 문서함' },
-  // ];
-
-  // const [listedDashboard, setListedDashboard] = useState('');
-  // const dashboardList = (list: { name: string }) => {
-  //   setListedDashboard(list.name);
-  // };
-
-  // 모달 구현 확인하기!
-  // const [modalStatus, setModalStatus] = useState(false);
-  // const generateDashboard = () => {
-  //   setModalStatus(!modalStatus);
-  // };
+  const [listData, setListData] = useState(inviteData);
+  const handleDeleteList = (listId: number) => {
+    setListData((prevListDate) =>
+      prevListDate.filter((list) => list.id !== listId)
+    );
+  };
 
   return (
     <div className='flex min-h-screen w-full flex-col bg-gray-50'>
@@ -229,7 +216,7 @@ export default function InviteList(): ReactNode {
                 <div>초대자</div>
                 <div className='mobile:hidden text-center'>수락 여부</div>
               </div>
-              {inviteData.map((invite) => {
+              {listData.map((invite) => {
                 return (
                   <div
                     key={invite.id}
@@ -251,7 +238,12 @@ export default function InviteList(): ReactNode {
                       <button className='mobile:w-full w-20 cursor-pointer rounded bg-violet-500 py-1 text-sm text-white hover:bg-violet-600'>
                         수락
                       </button>
-                      <button className='mobile:w-full w-20 cursor-pointer rounded border border-gray-300 bg-white py-1 text-sm text-violet-500 hover:bg-gray-100'>
+                      <button
+                        className='mobile:w-full w-20 cursor-pointer rounded border border-gray-300 bg-white py-1 text-sm text-violet-500 hover:bg-gray-100'
+                        onClick={() => {
+                          handleDeleteList(invite.id);
+                        }}
+                      >
                         거절
                       </button>
                     </div>
