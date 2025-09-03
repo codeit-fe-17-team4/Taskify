@@ -1,5 +1,5 @@
 import '@/styles/globals.css';
-import { NextPage } from 'next';
+import type { NextPage } from 'next';
 import type { AppProps } from 'next/app';
 import { Montserrat } from 'next/font/google';
 import localFont from 'next/font/local';

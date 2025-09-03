@@ -43,5 +43,7 @@ export default tseslint.config(sheriff(sheriffOptions), {
     'func-style': 'off',
     'no-negated-condition': 'off',
     'unicorn/consistent-function-scoping': 'off',
+    'react/no-multi-comp': 'off',
+    '@typescript-eslint/no-use-before-define': 'off',
   },
 });
