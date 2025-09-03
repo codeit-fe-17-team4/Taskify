@@ -1,6 +1,13 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import type { ReactNode } from 'react';
+import { useRouter } from 'next/router';
+import {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import ChipProfile from '@/components/ui/chip/chip-profile';
 import ProfileList from '@/components/ui/dashboard-header/profile-list';
 
@@ -8,27 +15,74 @@ const buttonClass =
   'flex-center border-gray-3 text-md mobile:px-3 mobile:py-1.5 h-9 cursor-pointer gap-2 rounded-lg border-1 px-4 py-2.5 hover:bg-gray-4 active:bg-gray-3';
 
 export default function DashboardHeader(): ReactNode {
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement | null>(null);
   const dashboardId = 1;
-  const isMyDashBoard = true;
+
+  const toggle = useCallback(() => {
+    setOpen((v) => !v);
+  }, []);
+  const close = useCallback(() => {
+    setOpen(false);
+  }, []);
+
+  useEffect(() => {
+    const handleDocClick = (e: MouseEvent) => {
+      if (!menuRef.current) {
+        return;
+      }
+      if (!menuRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleDocClick);
+
+    return () => {
+      document.removeEventListener('mousedown', handleDocClick);
+    };
+  }, []);
+
+  // 이재준 작성 - 내 정보 페이지로 이동하는 기능 추가
+  const goMyPage = useCallback(() => {
+    close();
+    router.push('/mypage');
+  }, [close, router]);
+
+  // 이재준 작성 - 내 대시보드 페이지로 이동하는 기능 추가
+  const goMyDashboard = useCallback(() => {
+    close();
+    router.push('/mydashboard');
+  }, [close, router]);
+
+  // 이재준 작성 - 로그아웃 기능 추가
+  const doLogout = useCallback(async () => {
+    try {
+      await fetch('/api/logout', { method: 'POST' });
+    } catch {
+      // 로그아웃 실패 시 무시
+    }
+    close();
+    router.push('/');
+  }, [close, router]);
 
   return (
     <header className='mobile:h-[3.75rem] border-gray-3 tablet:pl-48 mobile:pl-12 tablet:justify-end fixed top-0 right-0 left-0 z-50 flex h-[4.375rem] w-full items-center justify-between border-b-1 bg-white pl-96'>
       <div className='tablet:hidden flex gap-2 text-xl font-bold text-black'>
         <h1>내 대시보드</h1>
-        {isMyDashBoard && (
-          <Image
-            className='h-4 w-5 self-center'
-            src={'/icon/mydashboard.svg'}
-            alt='왕관: 내 대시보드 아이콘'
-            width={20}
-            height={16}
-          />
-        )}
+        <Image
+          className='h-4 w-5 self-center'
+          src={'/icon/mydashboard.svg'}
+          alt='왕관: 내 대시보드 아이콘'
+          width={20}
+          height={16}
+        />
       </div>
       <nav className='mobile:gap-2 flex h-full items-center gap-8'>
         <div className='mobile:gap-1.5 flex gap-3'>
           <Link
-            href={`/dashboard/${dashboardId}/edit`}
+            href={`/dashboard/${String(dashboardId)}/edit`}
             className={buttonClass}
             aria-label='대시보드 관리 페이지로 이동'
           >
@@ -46,14 +100,66 @@ export default function DashboardHeader(): ReactNode {
         </div>
         <div className='mobile:gap-3 flex h-full gap-6'>
           <ProfileList />
-          <Link
-            href={'/mypage'}
-            aria-label='마이 페이지로 이동'
-            className='border-l-gray-3 mobile:pl-3 hover:bg-gray-4 active:bg-gray-3 tablet:pr-8 mobile:pr-2 flex cursor-pointer items-center gap-3 border-l-1 pr-20 pl-6'
+          <div
+            ref={menuRef}
+            className='border-l-gray-3 mobile:pl-3 tablet:pr-8 mobile:pr-2 relative flex items-center border-l-1 pr-20 pl-6'
           >
-            <ChipProfile label={'K'} size='lg' color='green' />
-            <span className='mobile:hidden font-medium'>권수형</span>
-          </Link>
+            <button
+              type='button'
+              aria-haspopup='menu'
+              aria-expanded={open}
+              className='hover:bg-gray-4 active:bg-gray-3 flex cursor-pointer items-center gap-3 rounded-md px-2 py-1'
+              onClick={toggle}
+            >
+              <ChipProfile label={'K'} size='lg' color='green' />
+              <span className='mobile:hidden font-medium'>권수형</span>
+            </button>
+
+            {/* 이재준 작성 - 프로필 드롭다운 메뉴 추가 (로그아웃, 내 정보, 내 대시보드) */}
+            {open && (
+              <div
+                role='menu'
+                aria-label='사용자 메뉴'
+                className='shadow-1 absolute top-full right-6 mt-2 w-44 overflow-hidden rounded-md border border-gray-200 bg-white shadow'
+              >
+                <button
+                  role='menuitem'
+                  className='w-full px-4 py-2 text-left text-sm hover:bg-gray-100'
+                  onClick={doLogout}
+                >
+                  로그아웃
+                </button>
+                {(() => {
+                  const path = router.pathname || '';
+                  const onMyPage = path.startsWith('/mypage');
+                  const onMyDashboard = path.startsWith('/mydashboard');
+
+                  return (
+                    <>
+                      {!onMyPage && (
+                        <button
+                          role='menuitem'
+                          className='w-full px-4 py-2 text-left text-sm hover:bg-gray-100'
+                          onClick={goMyPage}
+                        >
+                          내 정보
+                        </button>
+                      )}
+                      {!onMyDashboard && (
+                        <button
+                          role='menuitem'
+                          className='w-full px-4 py-2 text-left text-sm hover:bg-gray-100'
+                          onClick={goMyDashboard}
+                        >
+                          내 대시보드
+                        </button>
+                      )}
+                    </>
+                  );
+                })()}
+              </div>
+            )}
+          </div>
         </div>
       </nav>
     </header>

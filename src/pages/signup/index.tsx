@@ -1,7 +1,7 @@
-import type { GetStaticProps } from 'next';
+import type { GetServerSideProps } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useCallback, useMemo, useState, useEffect } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import AuthButton from '@/components/auth/AuthButton';
 import AuthHero from '@/components/auth/AuthHero';
 import EmailInput from '@/components/auth/EmailInput';
@@ -10,10 +10,12 @@ import TextInput from '@/components/auth/TextInput';
 import UnifiedModal from '@/components/auth/UnifiedModal';
 import { signup } from '@/lib/users/api';
 import type { SignupParams } from '@/lib/users/interface';
-import styles from '@/styles/auth-variables.module.css';
 import { useSignupValidation } from '@/lib/validation/rules';
+import styles from '@/styles/auth-variables.module.css';
 
-export default function SignupPage() {
+const SUCCESS_MESSAGE = '가입이 완료되었습니다!';
+
+export default function SignupPage(): React.JSX.Element {
   const router = useRouter();
   const [nickname, setNickname] = useState('');
   const [email, setEmail] = useState('');
@@ -64,8 +66,10 @@ export default function SignupPage() {
 
   const isFormValidNow = useMemo(() => {
     return (
-      isSignupFormValid({ nickname, email, password, confirmPassword }, true) &&
-      agreedToTerms
+      isSignupFormValid(
+        { nickname, email, password, confirmPassword },
+        { skipConfirmPassword: true }
+      ) && agreedToTerms
     );
   }, [
     isSignupFormValid,
@@ -80,7 +84,7 @@ export default function SignupPage() {
     setShowModal(false);
     setModalMessage('');
     // 성공 모달인 경우 로그인 페이지로 이동
-    if (modalMessage === '가입이 완료되었습니다!') {
+    if (modalMessage === SUCCESS_MESSAGE) {
       router.push('/login');
     }
   }, [modalMessage, router]);
@@ -93,8 +97,9 @@ export default function SignupPage() {
       const isFormValid =
         isSignupFormValid(
           { nickname, email, password, confirmPassword },
-          false
+          { skipConfirmPassword: false }
         ) && agreedToTerms;
+
       if (!isFormValid) {
         return;
       }
@@ -109,17 +114,16 @@ export default function SignupPage() {
           password,
         };
 
-        const response = await signup(signupParams);
+        await signup(signupParams);
 
         // 회원가입 성공 모달 표시
-        setModalMessage('가입이 완료되었습니다!');
+        setModalMessage(SUCCESS_MESSAGE);
         setShowModal(true);
-      } catch (error: any) {
+      } catch (error: unknown) {
         // 에러 메시지 처리
-        if (error.message.includes('[409]')) {
-          setModalMessage('이미 사용중인 이메일입니다');
-          setShowModal(true);
-        } else if (error.message.includes('[400]')) {
+        const errorMessage = error instanceof Error ? error.message : '';
+
+        if (errorMessage.includes('[409]') || errorMessage.includes('[400]')) {
           setModalMessage('이미 사용중인 이메일입니다');
           setShowModal(true);
         } else {
@@ -275,7 +279,7 @@ export default function SignupPage() {
       <UnifiedModal
         isOpen={showModal}
         message={modalMessage}
-        type={modalMessage === '가입이 완료되었습니다!' ? 'success' : 'error'}
+        type={modalMessage === SUCCESS_MESSAGE ? 'success' : 'error'}
         onClose={handleModalClose}
       />
     </main>
@@ -285,9 +289,18 @@ export default function SignupPage() {
 /**
  * 정적 생성 설정
  */
-export const getStaticProps: GetStaticProps = async () => {
-  return {
-    props: {},
-    revalidate: false, // 완전 정적 (재생성 안함)
-  };
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { req } = context;
+  const accessToken = req.cookies.access_token;
+
+  if (accessToken) {
+    return {
+      redirect: {
+        destination: '/mydashboard',
+        permanent: false,
+      },
+    };
+  }
+
+  return { props: {} };
 };

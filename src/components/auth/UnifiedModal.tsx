@@ -13,9 +13,10 @@ export default function UnifiedModal({
   isOpen,
   onClose,
   message,
-  type = 'success',
 }: UnifiedModalProps): React.ReactElement | null {
-  if (!isOpen) {return null;}
+  if (!isOpen) {
+    return null;
+  }
 
   const modalContent = (
     <div
@@ -25,9 +26,17 @@ export default function UnifiedModal({
       onClick={onClose}
     >
       {/* 모달 컨테이너 */}
-      <div
+      <button
+        type='button'
         className='relative h-[192px] w-[368px] rounded-lg bg-white shadow-lg max-[375px]:h-[220px] max-[375px]:w-[327px]'
-        onClick={(e) => { e.stopPropagation(); }}
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+        onKeyDown={(e) => {
+          if (e.key === 'Escape') {
+            onClose();
+          }
+        }}
       >
         {/* 모달 내용 */}
         <div className='flex h-full flex-col items-center justify-center px-16 py-10 max-[375px]:px-0 max-[375px]:py-0'>
@@ -48,7 +57,7 @@ export default function UnifiedModal({
             </button>
           </div>
         </div>
-      </div>
+      </button>
     </div>
   );
 

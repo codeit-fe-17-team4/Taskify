@@ -21,7 +21,7 @@ export default function TextInput({
   placeholder,
   error,
   className = '',
-}: TextInputProps) {
+}: TextInputProps): React.JSX.Element {
   return (
     <div
       className={`flex w-[520px] flex-col gap-0 max-[375px]:w-[351px] ${className}`}
@@ -44,8 +44,10 @@ export default function TextInput({
             ? 'ring-[var(--auth-error)] focus:ring-[var(--auth-error)]'
             : 'ring-[var(--auth-border)]'
         }`}
-        onChange={(e) => { onChange(e.target.value); }}
         onBlur={onBlur}
+        onChange={(e) => {
+          onChange(e.target.value);
+        }}
       />
       {error && (
         <p

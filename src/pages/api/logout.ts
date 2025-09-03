@@ -1,10 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+export default function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+): void {
   if (req.method !== 'POST') {
     res.status(405).json({ message: 'Method not allowed' });
 
- return;
+    return;
   }
 
   // access_token 쿠키 만료

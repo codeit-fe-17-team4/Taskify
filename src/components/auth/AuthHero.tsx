@@ -7,7 +7,7 @@ interface AuthHeroProps {
   title: string;
 }
 
-export default function AuthHero({ title }: AuthHeroProps) {
+export default function AuthHero({ title }: AuthHeroProps): React.JSX.Element {
   return (
     <div className='flex h-[322px] w-[200px] flex-col items-center gap-[10px]'>
       <div className='flex h-[280px] w-[200px] flex-col items-center gap-[30px]'>

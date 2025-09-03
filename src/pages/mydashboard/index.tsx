@@ -1,9 +1,7 @@
 import type { GetServerSideProps } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { type ReactNode, useState } from 'react';
-import UnifiedModal from '@/components/auth/UnifiedModal';
+import type { ReactNode } from 'react';
 import DashboardLayout from '@/components/layout/dashboard-layout';
 
 // 인증 상태를 받기 위한 props 타입 정의
@@ -17,20 +15,6 @@ interface MydashboardProps {
 export default function Mydashboard({
   isLoggedIn,
 }: MydashboardProps): ReactNode {
-  const router = useRouter();
-
-  // 로그인하지 않은 상태라면 모달을 표시하도록 초기값 설정
-  const [showLoginModal, setShowLoginModal] = useState(!isLoggedIn);
-
-  /**
-   * 로그인 모달을 닫고 로그인 페이지로 리다이렉트하는 함수
-   */
-  const handleLoginModalClose = () => {
-    setShowLoginModal(false);
-    // 로그인 성공 후 원래 페이지로 돌아올 수 있도록 next 파라미터 추가
-    router.push('/login?next=/mydashboard');
-  };
-
   return (
     <div className='min-h-screen bg-gray-50'>
       {/* BG global 생성되면 수정 예정 */}
@@ -69,13 +53,7 @@ export default function Mydashboard({
         </div>
       </div>
 
-      {/* 로그인하지 않은 사용자에게 표시되는 모달 */}
-      <UnifiedModal
-        isOpen={showLoginModal}
-        message='로그인을 해야합니다'
-        type='error'
-        onClose={handleLoginModalClose}
-      />
+      {/* 비로그인 시 서버사이드에서 로그인 페이지로 리다이렉트되므로 모달 없음 */}
     </div>
   );
 }
@@ -88,15 +66,19 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   // HttpOnly 쿠키에서 access_token 확인
   const accessToken = req.cookies.access_token;
-  /**
-   * 토큰이 있으면 로그인 상태, 없으면 비로그인 상태
-   */
-  const isLoggedIn = Boolean(accessToken);
 
-  // 클라이언트 컴포넌트에 로그인 상태를 props로 전달
+  if (!accessToken) {
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    };
+  }
+
   return {
     props: {
-      isLoggedIn,
+      isLoggedIn: true,
     },
   };
 };

@@ -1,7 +1,6 @@
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { useCallback } from 'react';
-import type { ReactNode } from 'react';
+import { type ReactNode, useCallback } from 'react';
 
 interface BackButtonProps {
   /** 클릭 시 이동할 경로 (기본값: 이전 페이지) */
@@ -27,12 +26,12 @@ export default function BackButton({
   return (
     <button
       type='button'
-      onClick={handleClick}
       className={`flex cursor-pointer items-center gap-2 transition-opacity hover:opacity-80 ${className}`}
       style={{
         width: '84px',
         height: '26px',
       }}
+      onClick={handleClick}
     >
       <Image src='/icon/goback.svg' alt='go-back' width={10} height={10} />
       <span

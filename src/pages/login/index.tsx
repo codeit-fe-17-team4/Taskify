@@ -1,7 +1,7 @@
-import type { GetStaticProps } from 'next';
+import type { GetServerSideProps } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useState, useCallback, useMemo } from 'react';
+import { type JSX, useCallback, useMemo, useState } from 'react';
 import AuthButton from '@/components/auth/AuthButton';
 import AuthHero from '@/components/auth/AuthHero';
 import EmailInput from '@/components/auth/EmailInput';
@@ -9,10 +9,10 @@ import PasswordInput from '@/components/auth/PasswordInput';
 import UnifiedModal from '@/components/auth/UnifiedModal';
 import { login } from '@/lib/auth/api';
 import type { LoginParams } from '@/lib/auth/interface';
-import styles from '@/styles/auth-variables.module.css';
 import { useLoginValidation } from '@/lib/validation/rules';
+import styles from '@/styles/auth-variables.module.css';
 
-export default function LoginPage() {
+export default function LoginPage(): JSX.Element {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -21,7 +21,7 @@ export default function LoginPage() {
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
 
-  const { errors, validateField, isFormValid } = useLoginValidation();
+  const { errors, validateField } = useLoginValidation();
 
   const handleEmailBlur = useCallback(() => {
     validateField('email', email);
@@ -37,6 +37,7 @@ export default function LoginPage() {
       email.trim() && /^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]+$/.test(email);
     const isPasswordValid = password.trim() && password.length >= 8;
     const result = isEmailValid && isPasswordValid;
+
     console.log('로그인 폼 유효성:', {
       email,
       password,
@@ -44,6 +45,7 @@ export default function LoginPage() {
       isPasswordValid,
       result,
     });
+
     return result;
   }, [email, password]);
 
@@ -92,23 +94,29 @@ export default function LoginPage() {
             throw new Error('Session creation failed');
           }
 
-          // 리다이렉트할 경로 가져오기
-          const nextPath = (router.query.next as string) || '/mydashboard';
+          // 리다이렉트 경로 결정: 대시보드 경로로 향하던 경우에도 디폴트는 mydashboard
+          const nextParam = router.query.next as string | undefined;
+          const nextPath =
+            nextParam && !nextParam.startsWith('/dashboard')
+              ? nextParam
+              : '/mydashboard';
 
-          // 로그인 성공 시 원래 경로로 이동
           router.push(nextPath);
-        } catch (sessionError) {
+        } catch {
           setModalMessage(
             '로그인 처리 중 오류가 발생했습니다. 다시 시도해주세요.'
           );
           setShowModal(true);
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         // 에러 메시지 처리
-        if (error.message.includes('[400]')) {
+        const errorMessage =
+          error instanceof Error ? error.message : '알 수 없는 오류';
+
+        if (errorMessage.includes('[400]')) {
           setModalMessage('비밀번호가 일치하지 않습니다.');
           setShowModal(true);
-        } else if (error.message.includes('[404]')) {
+        } else if (errorMessage.includes('[404]')) {
           setModalMessage('존재하지 않는 유저입니다.');
           setShowModal(true);
         } else {
@@ -209,9 +217,19 @@ export default function LoginPage() {
 /**
  * 정적 생성 설정
  */
-export const getStaticProps: GetStaticProps = async () => {
-  return {
-    props: {},
-    revalidate: false, // 완전 정적 (재생성 안함)
-  };
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { req } = context;
+  const accessToken = req.cookies.access_token;
+
+  if (accessToken) {
+    // 이미 로그인 상태: mydashboard로 보냄
+    return Promise.resolve({
+      redirect: {
+        destination: '/mydashboard',
+        permanent: false,
+      },
+    });
+  }
+
+  return Promise.resolve({ props: {} });
 };

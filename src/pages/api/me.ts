@@ -1,8 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+export default function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+): void {
   if (req.method !== 'GET') {
     res.status(405).json({ message: 'Method not allowed' });
+
     return;
   }
 
@@ -11,6 +15,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
   if (!accessToken) {
     res.status(401).json({ message: 'Unauthorized' });
+
     return;
   }
 

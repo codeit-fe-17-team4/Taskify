@@ -1,6 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+export default function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+): void {
   if (req.method !== 'POST') {
     res.status(405).json({ message: 'Method not allowed' });
 
@@ -17,11 +20,11 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
   // HttpOnly 쿠키 설정
   const cookieOptions = [
-    `access_token=${accessToken}`,
+    `access_token=${String(accessToken)}`,
     'HttpOnly',
     'SameSite=Lax',
     'Path=/',
-    `Max-Age=${24 * 60 * 60}`, // 1일
+    `Max-Age=${String(24 * 60 * 60)}`, // 1일
     // 배포 시 Secure 옵션 추가: 'Secure'
   ].join('; ');
 

@@ -68,15 +68,32 @@ export default function SettingsGrid(): ReactElement {
                   alt={it.alt}
                   width={it.w}
                   height={it.h}
-                  className={`h-auto max-h-full w-auto max-w-full ${
-                    it.img === '/auth/image/landing3.svg'
-                      ? 'max-[375px]:h-[107.35px] max-[375px]:w-[260px]'
-                      : it.img === '/auth/image/landing4.svg'
-                        ? 'max-[375px]:h-[200.03px] max-[375px]:w-[260px]'
-                        : it.img === '/auth/image/landing5.svg'
-                          ? 'max-[375px]:h-[169.42px] max-[375px]:w-[260px]'
-                          : ''
-                  }`}
+                  className={(() => {
+                    let mobileClass = '';
+
+                    switch (it.img) {
+                      case '/auth/image/landing3.svg': {
+                        mobileClass =
+                          'max-[375px]:h-[107.35px] max-[375px]:w-[260px]';
+                        break;
+                      }
+                      case '/auth/image/landing4.svg': {
+                        mobileClass =
+                          'max-[375px]:h-[200.03px] max-[375px]:w-[260px]';
+                        break;
+                      }
+                      case '/auth/image/landing5.svg': {
+                        mobileClass =
+                          'max-[375px]:h-[169.42px] max-[375px]:w-[260px]';
+                        break;
+                      }
+                      default: {
+                        break;
+                      }
+                    }
+
+                    return `h-auto max-h-full w-auto max-w-full ${mobileClass}`;
+                  })()}
                 />
               </div>
               <div className='h-[124px] w-[378px] rounded-b-[8px] bg-[#171717] px-8 py-6 max-[744px]:w-[378px] max-[375px]:h-[112.52px] max-[375px]:w-[343px]'>

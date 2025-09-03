@@ -1,8 +1,22 @@
 // 랜딩페이지 메인 히어로 섹션 컴포넌트 (로고 + 제목 + 로그인 버튼)
 import Image from 'next/image';
-import type { ReactElement } from 'react';
+import { type ReactElement, useEffect, useState } from 'react';
 
 export default function Hero(): ReactElement {
+  const [isAuth, setIsAuth] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch('/api/me');
+
+        setIsAuth(res.ok);
+      } catch {
+        setIsAuth(false);
+      }
+    })();
+  }, []);
+
   return (
     <section className='mx-auto mt-[94px] max-w-[1200px] text-center max-[744px]:max-w-[664px] max-[375px]:mt-[42px] max-[375px]:max-w-full'>
       {/* desktop 이미지 */}
@@ -28,7 +42,7 @@ export default function Hero(): ReactElement {
 
       {/* 로그인하기 버튼 */}
       <a
-        href='/login'
+        href={isAuth ? '/mydashboard' : '/login'}
         className='mx-auto mt-[111px] inline-flex h-[54px] w-[280px] items-center justify-center rounded-[8px] bg-[#5534da] text-[18px] leading-[26px] font-[500] text-white hover:opacity-90 focus:ring-2 focus:ring-[#5534da] focus:ring-offset-2 focus:ring-offset-black focus:outline-none max-[744px]:mt-[111px] max-[375px]:mt-[101px] max-[375px]:h-[46px] max-[375px]:w-[235px]'
         aria-label='로그인 페이지로 이동'
       >

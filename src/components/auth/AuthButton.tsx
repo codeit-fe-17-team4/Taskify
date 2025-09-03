@@ -15,7 +15,7 @@ export default function AuthButton({
   loadingText,
   children,
   className = '',
-}: AuthButtonProps) {
+}: AuthButtonProps): React.JSX.Element {
   const isDisabled = disabled || isLoading;
 
   return (

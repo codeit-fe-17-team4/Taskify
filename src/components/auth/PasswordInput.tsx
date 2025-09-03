@@ -1,6 +1,5 @@
 // 인증 페이지용 비밀번호 입력 컴포넌트 (토글 버튼 포함)
 import Image from 'next/image';
-import { useState } from 'react';
 import styles from '@/styles/auth-variables.module.css';
 
 interface PasswordInputProps {
@@ -27,7 +26,7 @@ export default function PasswordInput({
   showPassword = false,
   onTogglePassword,
   className = '',
-}: PasswordInputProps) {
+}: PasswordInputProps): React.JSX.Element {
   return (
     <div
       className={`flex w-[520px] flex-col gap-0 max-[375px]:w-[351px] ${className}`}
@@ -51,8 +50,10 @@ export default function PasswordInput({
               ? 'ring-[var(--auth-error)] focus:ring-[var(--auth-error)]'
               : 'ring-[var(--auth-border)]'
           }`}
-          onChange={(e) => { onChange(e.target.value); }}
           onBlur={onBlur}
+          onChange={(e) => {
+            onChange(e.target.value);
+          }}
         />
         {onTogglePassword && (
           <button

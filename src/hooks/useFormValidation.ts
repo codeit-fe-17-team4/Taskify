@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useCallback, useState } from 'react';
 
 export interface ValidationRule {
   validator: (value: string) => boolean;
@@ -31,23 +31,32 @@ export function useFormValidation(
   const validateField = useCallback(
     (fieldName: string, value: string): boolean => {
       const rule = rules[fieldName];
-      if (!rule) return true;
+
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      if (!rule) {
+        return true;
+      }
 
       // 빈 값이면 오류를 표시하지 않음
       if (!value.trim()) {
-        setErrors((prev) => ({
-          ...prev,
-          [fieldName]: '',
-        }));
+        setErrors((prev) => {
+          return {
+            ...prev,
+            [fieldName]: '',
+          };
+        });
+
         return true;
       }
 
       const isValid = rule.validator(value);
 
-      setErrors((prev) => ({
-        ...prev,
-        [fieldName]: isValid ? '' : rule.errorMessage,
-      }));
+      setErrors((prev) => {
+        return {
+          ...prev,
+          [fieldName]: isValid ? '' : rule.errorMessage,
+        };
+      });
 
       return isValid;
     },
@@ -77,16 +86,19 @@ export function useFormValidation(
       });
 
       setErrors(newErrors);
+
       return allValid;
     },
     [rules]
   );
 
   const clearError = useCallback((fieldName: string) => {
-    setErrors((prev) => ({
-      ...prev,
-      [fieldName]: '',
-    }));
+    setErrors((prev) => {
+      return {
+        ...prev,
+        [fieldName]: '',
+      };
+    });
   }, []);
 
   const clearAllErrors = useCallback(() => {
@@ -96,7 +108,12 @@ export function useFormValidation(
   const isFieldValid = useCallback(
     (fieldName: string, value: string): boolean => {
       const rule = rules[fieldName];
-      if (!rule) return true;
+
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      if (!rule) {
+        return true;
+      }
+
       return rule.validator(value);
     },
     [rules]
@@ -109,7 +126,9 @@ export function useFormValidation(
         const value = values[fieldName] || '';
 
         // 빈 값이면 검증하지 않음
-        if (!value.trim()) return true;
+        if (!value.trim()) {
+          return true;
+        }
 
         return rule.validator(value);
       });
