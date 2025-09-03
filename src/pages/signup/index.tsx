@@ -19,14 +19,28 @@ export default function SignupPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
 
+<<<<<<< HEAD
   const validateNickname = (nickname: string) => nickname.length <= 10;
+=======
+  const validateNickname = (nickname: string) => 
+    nickname.length <= 10
+  ;
+
+>>>>>>> 1ea5a2a00ec76608737efee51ea5d1abf8eef9bb
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]+$/;
 
     return emailRegex.test(email);
   };
 
+<<<<<<< HEAD
   const validatePassword = (password: string) => password.length >= 8;
+=======
+  const validatePassword = (password: string) => 
+    password.length >= 8
+  ;
+
+>>>>>>> 1ea5a2a00ec76608737efee51ea5d1abf8eef9bb
   const validateConfirmPassword = (
     password: string,
     confirmPassword: string
@@ -86,9 +100,13 @@ export default function SignupPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+<<<<<<< HEAD
     if (!isFormValid) {
       return;
     }
+=======
+    if (!isFormValid) {return;}
+>>>>>>> 1ea5a2a00ec76608737efee51ea5d1abf8eef9bb
 
     setIsLoading(true);
     try {
@@ -170,10 +188,15 @@ export default function SignupPage() {
                     aria-describedby={
                       nicknameError ? 'nickname-error' : undefined
                     }
+<<<<<<< HEAD
                     onBlur={handleNicknameBlur}
                     onChange={(e) => {
                       setNickname(e.target.value);
                     }}
+=======
+                    onChange={(e) => { setNickname(e.target.value); }}
+                    onBlur={handleNicknameBlur}
+>>>>>>> 1ea5a2a00ec76608737efee51ea5d1abf8eef9bb
                   />
                   {nicknameError && (
                     <p
@@ -206,10 +229,15 @@ export default function SignupPage() {
                         ? 'ring-[var(--auth-error)] focus:ring-[var(--auth-error)]'
                         : 'ring-[var(--auth-border)]'
                     }`}
+<<<<<<< HEAD
                     onBlur={handleEmailBlur}
                     onChange={(e) => {
                       setEmail(e.target.value);
                     }}
+=======
+                    onChange={(e) => { setEmail(e.target.value); }}
+                    onBlur={handleEmailBlur}
+>>>>>>> 1ea5a2a00ec76608737efee51ea5d1abf8eef9bb
                   />
                   {emailError && (
                     <p
@@ -245,10 +273,15 @@ export default function SignupPage() {
                       aria-describedby={
                         passwordError ? 'password-error' : undefined
                       }
+<<<<<<< HEAD
                       onBlur={handlePasswordBlur}
                       onChange={(e) => {
                         setPassword(e.target.value);
                       }}
+=======
+                      onChange={(e) => { setPassword(e.target.value); }}
+                      onBlur={handlePasswordBlur}
+>>>>>>> 1ea5a2a00ec76608737efee51ea5d1abf8eef9bb
                     />
                     <button
                       type='button'
@@ -257,9 +290,13 @@ export default function SignupPage() {
                       aria-label={
                         showPassword ? '비밀번호 숨기기' : '비밀번호 보기'
                       }
+<<<<<<< HEAD
                       onClick={() => {
                         setShowPassword(!showPassword);
                       }}
+=======
+                      onClick={() => { setShowPassword(!showPassword); }}
+>>>>>>> 1ea5a2a00ec76608737efee51ea5d1abf8eef9bb
                     >
                       {showPassword ? (
                         <svg
@@ -360,10 +397,15 @@ export default function SignupPage() {
                           ? 'confirm-password-error'
                           : undefined
                       }
+<<<<<<< HEAD
                       onBlur={handleConfirmPasswordBlur}
                       onChange={(e) => {
                         setConfirmPassword(e.target.value);
                       }}
+=======
+                      onChange={(e) => { setConfirmPassword(e.target.value); }}
+                      onBlur={handleConfirmPasswordBlur}
+>>>>>>> 1ea5a2a00ec76608737efee51ea5d1abf8eef9bb
                     />
                     <button
                       type='button'
@@ -374,9 +416,15 @@ export default function SignupPage() {
                           ? '비밀번호 숨기기'
                           : '비밀번호 보기'
                       }
+<<<<<<< HEAD
                       onClick={() => {
                         setShowConfirmPassword(!showConfirmPassword);
                       }}
+=======
+                      onClick={() =>
+                        { setShowConfirmPassword(!showConfirmPassword); }
+                      }
+>>>>>>> 1ea5a2a00ec76608737efee51ea5d1abf8eef9bb
                     >
                       {showConfirmPassword ? (
                         <svg
@@ -460,9 +508,13 @@ export default function SignupPage() {
                   type='checkbox'
                   checked={agreedToTerms}
                   className='h-5 w-5 rounded border-gray-300 text-[var(--auth-primary)] focus:ring-[var(--auth-primary)]'
+<<<<<<< HEAD
                   onChange={(e) => {
                     setAgreedToTerms(e.target.checked);
                   }}
+=======
+                  onChange={(e) => { setAgreedToTerms(e.target.checked); }}
+>>>>>>> 1ea5a2a00ec76608737efee51ea5d1abf8eef9bb
                 />
                 <label
                   htmlFor='terms'

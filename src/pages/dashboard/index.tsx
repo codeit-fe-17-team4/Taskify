@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
+import type { ReactNode } from 'react';
 
-export default function DashboardPage() {
+export default function DashboardPage(): ReactNode {
   const router = useRouter();
   const { dashboardid } = router.query;
 
@@ -20,6 +21,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-
-

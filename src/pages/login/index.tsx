@@ -1,7 +1,11 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+<<<<<<< HEAD
 import { useEffect, useState } from 'react';
+=======
+import { useEffect,useState } from 'react';
+>>>>>>> 1ea5a2a00ec76608737efee51ea5d1abf8eef9bb
 import styles from '@/styles/auth-variables.module.css';
 
 export default function LoginPage() {
@@ -19,7 +23,14 @@ export default function LoginPage() {
     return emailRegex.test(email);
   };
 
+<<<<<<< HEAD
   const validatePassword = (password: string) => password.length >= 8;
+=======
+  const validatePassword = (password: string) => 
+    password.length >= 8
+  ;
+
+>>>>>>> 1ea5a2a00ec76608737efee51ea5d1abf8eef9bb
   const handleEmailBlur = () => {
     if (email && !validateEmail(email)) {
       setEmailError('이메일 형식으로 작성해 주세요.');
@@ -41,9 +52,13 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+<<<<<<< HEAD
     if (!isFormValid) {
       return;
     }
+=======
+    if (!isFormValid) {return;}
+>>>>>>> 1ea5a2a00ec76608737efee51ea5d1abf8eef9bb
 
     setIsLoading(true);
     try {
@@ -120,9 +135,13 @@ export default function LoginPage() {
                         ? 'ring-[var(--auth-error)] focus:ring-[var(--auth-error)]'
                         : 'ring-[var(--auth-border)]'
                     }`}
+<<<<<<< HEAD
                     onChange={(e) => {
                       setEmail(e.target.value);
                     }}
+=======
+                    onChange={(e) => { setEmail(e.target.value); }}
+>>>>>>> 1ea5a2a00ec76608737efee51ea5d1abf8eef9bb
                     onBlur={handleEmailBlur}
                   />
                   {emailError && (
@@ -159,9 +178,13 @@ export default function LoginPage() {
                       aria-describedby={
                         passwordError ? 'password-error' : undefined
                       }
+<<<<<<< HEAD
                       onChange={(e) => {
                         setPassword(e.target.value);
                       }}
+=======
+                      onChange={(e) => { setPassword(e.target.value); }}
+>>>>>>> 1ea5a2a00ec76608737efee51ea5d1abf8eef9bb
                       onBlur={handlePasswordBlur}
                     />
                     <button
@@ -171,9 +194,13 @@ export default function LoginPage() {
                       aria-label={
                         showPassword ? '비밀번호 숨기기' : '비밀번호 보기'
                       }
+<<<<<<< HEAD
                       onClick={() => {
                         setShowPassword(!showPassword);
                       }}
+=======
+                      onClick={() => { setShowPassword(!showPassword); }}
+>>>>>>> 1ea5a2a00ec76608737efee51ea5d1abf8eef9bb
                     >
                       {showPassword ? (
                         <svg
