@@ -46,7 +46,7 @@ export default function BaseModal({
 
   return (
     <div
-      className='fixed inset-0 z-50 flex items-center justify-center bg-[rgba(0,0,0,0.7)]'
+      className='mobile:w-full mobile:min-w-xs fixed inset-0 z-50 flex items-center justify-center bg-[rgba(0,0,0,0.7)]'
       onClick={handleOverlayClick}
     >
       <div
