@@ -1,0 +1,51 @@
+import { type ReactNode, useState } from 'react';
+import type { CreateNewboardFormData } from '@/components/dashboard/type';
+import CreateNewboardForm from '@/components/mydashboard/create-newboard-form';
+import BaseModal from '@/components/ui/base-modal';
+import { useModalKeyHandler } from '@/hooks/useModal';
+
+interface CreateNewboardModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (formData: CreateNewboardFormData) => void;
+}
+
+export default function CreateNewboardModal({
+  isOpen,
+  onClose,
+  onSubmit,
+}: CreateNewboardModalProps): ReactNode {
+  const [formData, setFormData] = useState<CreateNewboardFormData>({
+    name: '',
+    color: 'green', // 기본 색상 설정
+  });
+
+  const handleClose = () => {
+    setFormData({ name: '', color: 'green' }); // 초기화
+    onClose();
+  };
+
+  useModalKeyHandler(isOpen, handleClose);
+
+  const handleSubmit = () => {
+    onSubmit(formData);
+    handleClose();
+  };
+
+  const isSubmitDisabled = !formData.name.trim();
+
+  return (
+    <BaseModal
+      isOpen={isOpen}
+      title='새로운 대시보드'
+      submitText='생성'
+      cancelText='취소'
+      isSubmitDisabled={isSubmitDisabled}
+      width='w-[32rem]'
+      onClose={handleClose}
+      onSubmit={handleSubmit}
+    >
+      <CreateNewboardForm formData={formData} setFormData={setFormData} />
+    </BaseModal>
+  );
+}

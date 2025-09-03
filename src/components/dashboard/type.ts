@@ -51,6 +51,11 @@ export interface AddTaskButtonProps {
 }
 
 // 폼 관련 타입
+export interface CreateNewboardFormData {
+  name: string;
+  color: string;
+}
+
 export interface CreateColumnFormData {
   name: string;
 }
