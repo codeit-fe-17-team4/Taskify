@@ -4,6 +4,8 @@ import CreateColumnModal from '@/components/dashboard/create-column-modal';
 import EditTaskModal from '@/components/dashboard/edit-task-modal';
 import ManageColumnModal from '@/components/dashboard/manage-column-modal';
 import TaskDetailModal from '@/components/dashboard/task-detail-modal';
+import DashboardHeader from '@/components/ui/dashboard-header';
+import SideMenu from '@/components/ui/side-menu';
 import type {
   ColumnType,
   CreateColumnFormData,
@@ -137,25 +139,13 @@ export default function DashboardDetailPage(): ReactNode {
 
   return (
     <div className='min-h-screen bg-gray-50'>
-      {/* 사이드바 영역 */}
-      <aside className='fixed top-0 left-0 z-50 h-screen w-[18.75rem] border-r border-gray-200 bg-white'>
-        <div className='h-full bg-blue-100 p-4'>
-          <div className='text-sm text-gray-600'>
-            사이드바 영역 (18.75rem = 300px)
-          </div>
-        </div>
-      </aside>
+      {/* 사이드바 */}
+      <SideMenu />
 
       {/* 메인 콘텐츠 */}
-      <div className='ml-[18.75rem]'>
+      <div className='tablet:pl-40 mobile:pl-[4rem] pt-16 pl-[18.75rem]'>
         {/* 상단 네비게이션 헤더 */}
-        <header className='flex h-[4.375rem] items-center border-b border-gray-200 bg-green-100'>
-          <div className='flex h-full items-center px-4'>
-            <span className='text-sm text-gray-600'>
-              헤더 영역 (4.375rem = 70px)
-            </span>
-          </div>
-        </header>
+        <DashboardHeader />
 
         {/* 대시보드 메인 콘텐츠 */}
         <main className='layout-children h-[calc(100vh-4.375rem)] bg-gray-50'>
