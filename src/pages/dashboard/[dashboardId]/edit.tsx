@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { type ReactNode, useState } from 'react';
 import DashboardLayout from '@/components/layout/dashboard-layout';
@@ -7,6 +8,7 @@ import InviteMemberModal from '@/components/mydashboard/invite-member-modal';
 export default function MydashboardEdit(): ReactNode {
   const router = useRouter();
   const { dashboardId } = router.query;
+
   const dashboardData = [
     { id: 1, name: '비브리지' },
     { id: 2, name: '코드잇' },
@@ -80,13 +82,19 @@ export default function MydashboardEdit(): ReactNode {
 
   return (
     <div className='min-h-screen bg-gray-50'>
-      {/* BG global 생성되면 수정 예정 */}
       {/* w-full 로 반응형 구현을 위한 mr-120 설정 */}
       <div className='mr-120 ml-5 min-w-2xs pt-5'>
-        <div className='flex w-full max-w-4xl gap-4'>
-          <Image src='/icon/goback.svg' alt='go-back' width={10} height={10} />
-          <span>돌아가기</span>
-        </div>
+        <Link href='/dashboard/${dashboardId}'>
+          <div className='flex w-full max-w-4xl gap-4'>
+            <Image
+              src='/icon/goback.svg'
+              alt='go-back'
+              width={10}
+              height={10}
+            />
+            <span className='cursor-pointer'>돌아가기</span>
+          </div>{' '}
+        </Link>
         <div className='tablet:min-w-lg mobile:min-w-2xs tablet:w-full mobile:w-full mt-8 h-[340px] w-[620px] rounded-lg bg-white p-7'>
           <h2 className='text-xl font-bold'>{currentDashboard?.name}</h2>
           <form className='mt-4 space-y-4'>
