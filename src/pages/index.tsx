@@ -43,7 +43,7 @@ export default function LandingPage() {
             </div>
           </div>
           <p
-            className={`${styles.textStrong} mx-auto mt-[12px] w-[200px] max-w-[200px] overflow-hidden whitespace-nowrap text-center text-[20px] font-[500] leading-[32px] tracking-[-0.01em] max-[1279px]:mt-[10px]`}
+            className={`${styles.textStrong} mx-auto mt-[12px] w-[200px] max-w-[200px] overflow-hidden text-center text-[20px] leading-[32px] font-[500] tracking-[-0.01em] whitespace-nowrap max-[1279px]:mt-[10px]`}
           >
             오늘도 만나서 반가워요!
           </p>
@@ -53,13 +53,13 @@ export default function LandingPage() {
         <div className='flex w-[520px] flex-col items-center gap-[24px]'>
           <Link
             href='/login'
-            className='flex h-[50px] w-[520px] items-center justify-center rounded-[8px] bg-[var(--auth-primary)] text-center text-[18px] font-[500] leading-[26px] text-white transition-opacity hover:opacity-90'
+            className='flex h-[50px] w-[520px] items-center justify-center rounded-[8px] bg-[var(--auth-primary)] text-center text-[18px] leading-[26px] font-[500] text-white transition-opacity hover:opacity-90'
           >
             로그인
           </Link>
           <Link
             href='/signup'
-            className='flex h-[50px] w-[520px] items-center justify-center rounded-[8px] border border-[var(--auth-border)] text-center text-[18px] font-[500] leading-[26px] text-[var(--auth-text-strong)] transition-colors hover:bg-gray-50'
+            className='flex h-[50px] w-[520px] items-center justify-center rounded-[8px] border border-[var(--auth-border)] text-center text-[18px] leading-[26px] font-[500] text-[var(--auth-text-strong)] transition-colors hover:bg-gray-50'
           >
             회원가입
           </Link>
