@@ -17,7 +17,8 @@ export default function CreateColumnForm({
           htmlFor='new-column-name'
           className='mb-2 block text-lg leading-6 font-medium'
         >
-          이름 <span className='align-baseline text-lg text-indigo-600'>*</span>
+          대시보드 이름
+          <span className='align-baseline text-lg text-indigo-600'>*</span>
         </label>
         <input
           required
@@ -27,9 +28,9 @@ export default function CreateColumnForm({
           placeholder='새로운 프로젝트'
           className='w-full rounded-lg border border-gray-300 p-4 focus:outline-none'
           value={formData.name}
-          onChange={(e) =>
-            { setFormData((prev) => ({ ...prev, name: e.target.value })); }
-          }
+          onChange={(e) => {
+            setFormData((prev) => ({ ...prev, name: e.target.value }));
+          }}
         />
       </div>
     </>

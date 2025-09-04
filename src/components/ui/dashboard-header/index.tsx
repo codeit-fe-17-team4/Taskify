@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import type { ReactNode } from 'react';
+import { type ReactNode, useState } from 'react';
+import InviteMemberModal from '@/components/mydashboard/invite-member-modal';
 import ChipProfile from '@/components/ui/chip/chip-profile';
 import ProfileList from '@/components/ui/dashboard-header/profile-list';
 
@@ -9,6 +10,19 @@ const buttonClass =
 
 export default function DashboardHeader(): ReactNode {
   const dashboardId = 1;
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleSubmitInviteMember = () => {
+    handleCloseModal();
+  };
 
   return (
     <header className='mobile:h-[3.75rem] border-gray-3 tablet:pl-48 mobile:pl-12 tablet:justify-end fixed top-0 right-0 left-0 z-50 flex h-[4.375rem] w-full items-center justify-between border-b-1 bg-white pl-96'>
@@ -34,7 +48,7 @@ export default function DashboardHeader(): ReactNode {
             </span>
             <span>관리</span>
           </Link>
-          <button className={buttonClass}>
+          <button className={buttonClass} onClick={handleOpenModal}>
             <span className='mobile:hidden *:fill-gray-1'>
               <AddBoxIcon />
             </span>
@@ -52,6 +66,11 @@ export default function DashboardHeader(): ReactNode {
             <span className='mobile:hidden font-medium'>권수형</span>
           </Link>
         </div>
+        <InviteMemberModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          onSubmit={handleSubmitInviteMember}
+        />
       </nav>
     </header>
   );

@@ -27,7 +27,9 @@ export default function BaseModal({
   width = 'w-[40rem]',
   hideCancelButton = false,
 }: BaseModalProps) {
-  if (!isOpen) {return null;}
+  if (!isOpen) {
+    return null;
+  }
 
   const handleOverlayClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
@@ -44,12 +46,14 @@ export default function BaseModal({
 
   return (
     <div
-      className='fixed inset-0 z-50 flex items-center justify-center bg-[rgba(0,0,0,0.7)]'
+      className='mobile:min-w-xs fixed inset-0 z-50 flex items-center justify-center bg-[rgba(0,0,0,0.7)]'
       onClick={handleOverlayClick}
     >
       <div
         className={`scrollbar-hide max-h-[90vh] ${width} overflow-y-scroll rounded-lg bg-white p-8`}
-        onClick={(e) => { e.stopPropagation(); }}
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
       >
         <h2 className='mb-8 text-left text-2xl font-bold'>{title}</h2>
 
