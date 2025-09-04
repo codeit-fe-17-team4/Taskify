@@ -8,77 +8,74 @@ import {
   useRef,
   useState,
 } from 'react';
+import InviteMemberModal from '@/components/mydashboard/invite-member-modal';
 import ChipProfile from '@/components/ui/chip/chip-profile';
 import ProfileList from '@/components/ui/dashboard-header/profile-list';
-import InviteMemberModal from '@/components/mydashboard/invite-member-modal';
+import Dropdown from '../dropdown';
 
 const buttonClass =
   'flex-center border-gray-3 text-md mobile:px-3 mobile:py-1.5 h-9 cursor-pointer gap-2 rounded-lg border-1 px-4 py-2.5 hover:bg-gray-4 active:bg-gray-3';
 
 export default function DashboardHeader(): ReactNode {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  // const [isModalOpen, setIsModalOpen] = useState(false);
   const router = useRouter();
-  const [open, setOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement | null>(null);
+  // const [open, setOpen] = useState(false);
+  // const menuRef = useRef<HTMLDivElement | null>(null);
+
   const dashboardId = 1;
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
+  // const handleOpenModal = () => {
+  //   setIsModalOpen(true);
+  // };
 
-  const handleSubmitInviteMember = () => {
-    handleCloseModal();
-  };
+  // const handleCloseModal = () => {
+  //   setIsModalOpen(false);
+  // };
 
-  const toggle = useCallback(() => {
-    setOpen((v) => !v);
-  }, []);
-  const close = useCallback(() => {
-    setOpen(false);
-  }, []);
+  // const handleSubmitInviteMember = () => {
+  //   handleCloseModal();
+  // };
 
-  useEffect(() => {
-    const handleDocClick = (e: MouseEvent) => {
-      if (!menuRef.current) {
-        return;
-      }
-      if (!menuRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    };
+  // const toggle = useCallback(() => {
+  //   setOpen((v) => !v);
+  // }, []);
+  // const close = useCallback(() => {
+  //   setOpen(false);
+  // }, []);
 
-    document.addEventListener('mousedown', handleDocClick);
+  // useEffect(() => {
+  //   const handleDocClick = (e: MouseEvent) => {
+  //     if (!menuRef.current) {
+  //       return;
+  //     }
+  //     if (!menuRef.current.contains(e.target as Node)) {
+  //       setOpen(false);
+  //     }
+  //   };
 
-    return () => {
-      document.removeEventListener('mousedown', handleDocClick);
-    };
-  }, []);
+  //   document.addEventListener('mousedown', handleDocClick);
 
-  // 이재준 작성 - 내 정보 페이지로 이동하는 기능 추가
-  const goMyPage = useCallback(() => {
-    close();
+  //   return () => {
+  //     document.removeEventListener('mousedown', handleDocClick);
+  //   };
+  // }, []);
+
+  const handleMyPageButton = useCallback(() => {
     router.push('/mypage');
-  }, [close, router]);
+  }, [router]);
 
-  // 이재준 작성 - 내 대시보드 페이지로 이동하는 기능 추가
-  const goMyDashboard = useCallback(() => {
-    close();
+  const handleMyDashboardButton = useCallback(() => {
     router.push('/mydashboard');
-  }, [close, router]);
+  }, [router]);
 
-  // 이재준 작성 - 로그아웃 기능 추가
-  const doLogout = useCallback(async () => {
+  const handleLogoutButton = useCallback(async () => {
     try {
       await fetch('/api/logout', { method: 'POST' });
     } catch {
       // 로그아웃 실패 시 무시
     }
-    close();
     router.push('/');
-  }, [close, router]);
+  }, [router]);
 
   return (
     <header className='mobile:h-[3.75rem] border-gray-3 tablet:pl-48 mobile:pl-12 tablet:justify-end fixed top-0 right-0 left-0 z-50 flex h-[4.375rem] w-full items-center justify-between border-b-1 bg-white pl-96'>
@@ -104,7 +101,7 @@ export default function DashboardHeader(): ReactNode {
             </span>
             <span>관리</span>
           </Link>
-          <button className={buttonClass} onClick={handleOpenModal}>
+          <button className={buttonClass}>
             <span className='mobile:hidden *:fill-gray-1'>
               <AddBoxIcon />
             </span>
@@ -113,20 +110,35 @@ export default function DashboardHeader(): ReactNode {
         </div>
         <div className='mobile:gap-3 flex h-full gap-6'>
           <ProfileList />
-          <Link
-            href={'/mypage'}
-            aria-label='마이 페이지로 이동'
-            className='border-l-gray-3 mobile:pl-3 hover:bg-gray-4 active:bg-gray-3 tablet:pr-8 mobile:pr-2 flex cursor-pointer items-center gap-3 border-l-1 pr-20 pl-6'
-          >
-            <ChipProfile label={'K'} size='lg' color='green' />
-            <span className='mobile:hidden font-medium'>권수형</span>
-          </Link>
+          <Dropdown>
+            <Dropdown.Toggle>
+              <div
+                // href={'/mypage'}
+                // aria-label='마이 페이지로 이동'
+                className='border-l-gray-3 mobile:pl-3 hover:bg-gray-4 active:bg-gray-3 tablet:pr-8 mobile:pr-2 flex cursor-pointer items-center gap-3 border-l-1 pr-20 pl-6'
+              >
+                <ChipProfile label={'K'} size='lg' color='green' />
+                <span className='mobile:hidden font-medium'>권수형</span>
+              </div>
+            </Dropdown.Toggle>
+            <Dropdown.List>
+              <Dropdown.Item onClick={handleLogoutButton}>
+                로그아웃
+              </Dropdown.Item>
+              <Dropdown.Item onClick={handleMyPageButton}>
+                내 정보
+              </Dropdown.Item>
+              <Dropdown.Item onClick={handleMyDashboardButton}>
+                내 대시보드
+              </Dropdown.Item>
+            </Dropdown.List>
+          </Dropdown>
         </div>
-        <InviteMemberModal
+        {/* <InviteMemberModal
           isOpen={isModalOpen}
           onClose={handleCloseModal}
           onSubmit={handleSubmitInviteMember}
-        />
+        /> */}
       </nav>
     </header>
   );

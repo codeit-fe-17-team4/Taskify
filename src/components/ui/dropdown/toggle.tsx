@@ -1,0 +1,31 @@
+import { type ReactNode, useContext } from 'react';
+import { DropdownContext } from '@/components/ui/dropdown';
+
+export default function Toggle({
+  children,
+}: {
+  children: ReactNode;
+}): ReactNode {
+  const context = useContext(DropdownContext);
+
+  if (!context) {
+    throw new Error('Dropdown Context 내부에서 호출해야 합니다');
+  }
+  const { isOpen, setIsOpen } = context;
+  const handleToggle = () => {
+    setIsOpen((prev) => !prev);
+  };
+
+  return (
+    <div
+      role='button'
+      tabIndex={0}
+      aria-haspopup='menu'
+      aria-expanded={isOpen}
+      className='flex-center hover:bg-gray-4 active:bg-gray-3 relative w-full'
+      onClick={handleToggle}
+    >
+      {children}
+    </div>
+  );
+}
