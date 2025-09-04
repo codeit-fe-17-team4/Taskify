@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react';
 import ChipState from '@/components/ui/chip/chip-state';
-import CustomDropdown, type { DropdownOption } from './custom-dropdown';
-
+import CustomDropdown, { type DropdownOption } from './custom-dropdown';
 
 interface StatusDropdownProps {
   value: string;
