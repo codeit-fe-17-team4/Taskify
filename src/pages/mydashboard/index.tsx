@@ -1,11 +1,20 @@
+import type { GetServerSideProps } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { type ReactNode, useState } from 'react';
 import DashboardLayout from '@/components/layout/dashboard-layout';
 import CreateNewboardModal from '@/components/mydashboard/create-newboard-modal';
 import type { CreateNewboardFormData } from '@/components/mydashboard/type';
-
-export default function Mydashboard(): ReactNode {
+// 인증 상태를 받기 위한 props 타입 정의
+interface MydashboardProps {
+  /**
+   * 서버에서 전달받은 로그인 상태
+   */
+  isLoggedIn: boolean;
+}
+export default function Mydashboard({
+  isLoggedIn,
+}: MydashboardProps): ReactNode {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleOpenModal = () => {
@@ -71,6 +80,31 @@ export default function Mydashboard(): ReactNode {
     </>
   );
 }
+/**
+ * 서버 사이드에서 실행되는 함수 - 페이지 렌더링 전에 로그인 상태 확인
+ */
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { req } = context;
+
+  // HttpOnly 쿠키에서 access_token 확인
+  const accessToken = req.cookies.access_token;
+
+  if (!accessToken) {
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      isLoggedIn: true,
+    },
+  };
+};
+
 Mydashboard.getLayout = function getLayout(page: ReactNode) {
   return <DashboardLayout>{page}</DashboardLayout>;
 };

@@ -8,10 +8,13 @@ export const userSchema = z.object({
   createdAt: z.string(),
   updatedAt: z.string(),
 });
+
 export const loginSchema = z.object({
+  user: userSchema,
   accessToken: z.string(),
-  user: z.object(userSchema),
 });
+
+export const changePasswordSchema = z.object({});
 
 export type UserType = z.infer<typeof userSchema>;
 export type LoginType = z.infer<typeof loginSchema>;
