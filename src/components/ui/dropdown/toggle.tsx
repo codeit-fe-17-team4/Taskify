@@ -23,7 +23,7 @@ export default function Toggle({
       tabIndex={0}
       aria-haspopup='menu'
       aria-expanded={isOpen}
-      className='flex-center hover:bg-gray-4 active:bg-gray-3 relative w-full'
+      className='flex-center relative h-full w-full'
       onClick={handleToggle}
     >
       {children}

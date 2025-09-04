@@ -44,12 +44,15 @@ export default function HeaderDropdown({
   return (
     <Dropdown>
       <Dropdown.Toggle>
-        <div className='border-l-gray-3 mobile:pl-3 tablet:pr-8 mobile:pr-2 flex cursor-pointer items-center gap-3 border-l-1 pr-20 pl-6'>
+        <div className='border-l-gray-3 hover:bg-gray-4 active:bg-gray-3 mobile:pl-3 tablet:pr-8 mobile:pr-2 flex h-full cursor-pointer items-center gap-3 border-l-1 pr-20 pl-6'>
           <ChipProfile label={profileLabel} size='lg' color={profileColor} />
           <span className='mobile:hidden font-medium'>{nickname}</span>
         </div>
       </Dropdown.Toggle>
-      <Dropdown.List>
+      <Dropdown.List
+        positionClassName='top-3 right-3 w-fit'
+        ariaLabel='사용자 메뉴'
+      >
         <Dropdown.Item onClick={handleLogoutButton}>로그아웃</Dropdown.Item>
         <Dropdown.Item onClick={handleMyPageButton}>내 정보</Dropdown.Item>
         <Dropdown.Item onClick={handleMyDashboardButton}>

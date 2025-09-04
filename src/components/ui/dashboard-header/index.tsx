@@ -57,13 +57,11 @@ export default function DashboardHeader(): ReactNode {
         </div>
         <div className='mobile:gap-3 flex h-full gap-6'>
           <ProfileList />
-          <div className='hover:bg-gray-4 active:bg-gray-3 flex-center'>
-            <HeaderDropdown
-              nickname={'권수형'}
-              profileColor={'red'}
-              profileLabel={'K'}
-            />
-          </div>
+          <HeaderDropdown
+            nickname={'권수형'}
+            profileColor={'red'}
+            profileLabel={'K'}
+          />
         </div>
         <InviteMemberModal
           isOpen={isModalOpen}

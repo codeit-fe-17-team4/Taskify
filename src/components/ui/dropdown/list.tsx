@@ -1,7 +1,17 @@
 import { type ReactNode, useContext } from 'react';
 import { DropdownContext } from '@/components/ui/dropdown';
+import { cn } from '@/utils/cn';
 
-export default function List({ children }: { children: ReactNode }): ReactNode {
+interface DropdownListProps {
+  children: ReactNode;
+  positionClassName?: string;
+  ariaLabel?: string;
+}
+export default function List({
+  children,
+  positionClassName,
+  ariaLabel = '메뉴',
+}: DropdownListProps): ReactNode {
   const context = useContext(DropdownContext);
 
   if (!context) {
@@ -13,8 +23,11 @@ export default function List({ children }: { children: ReactNode }): ReactNode {
     isOpen && (
       <ul
         role='menu'
-        aria-label='사용자 메뉴'
-        className='text-md absolute top-full right-4 mt-2 overflow-hidden rounded-md border border-gray-200 bg-white p-1.5 font-medium'
+        aria-label={ariaLabel}
+        className={cn(
+          `text-md absolute top-0 right-0 mt-2 w-full translate-y-1/2 overflow-hidden rounded-md border border-gray-200 bg-white p-1.5 font-medium`,
+          positionClassName
+        )}
       >
         {children}
       </ul>

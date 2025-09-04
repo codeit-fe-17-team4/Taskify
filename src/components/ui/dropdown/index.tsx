@@ -8,6 +8,7 @@ interface ContextType {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
+
 export const DropdownContext = createContext<ContextType | null>(null);
 
 export default function Dropdown({
@@ -23,7 +24,7 @@ export default function Dropdown({
 
   return (
     <DropdownContext.Provider value={{ isOpen, setIsOpen }}>
-      <div className='flex-center' ref={dropdownRef}>
+      <div className='flex-center relative w-full' ref={dropdownRef}>
         {children}
       </div>
     </DropdownContext.Provider>
