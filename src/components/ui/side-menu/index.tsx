@@ -13,7 +13,7 @@ export default function SideMenu(): ReactNode {
   };
 
   return (
-    <section className='tablet:w-[10rem] mobile:w-auto mobile:min-w-10 border-gray-3 fixed top-0 bottom-0 left-0 z-50 flex w-[18.75rem] flex-col gap-14 border-r-1 bg-white px-3 py-5'>
+    <section className='border-gray-3 tablet:w-[10rem] mobile:w-[4rem] fixed top-0 bottom-0 left-0 z-50 flex w-[18.75rem] flex-col gap-14 border-r-1 bg-white px-3 py-5'>
       <Link
         href={'/'}
         className='flex-center tablet:self-center justify-center self-start'
@@ -30,14 +30,14 @@ export default function SideMenu(): ReactNode {
           priority
           src={'/side-menu/Taskify.svg'}
           alt='Taskify'
-          className='mobile:hidden h-auto w-auto'
+          className='tablet:hidden h-auto w-auto'
           width={80}
           height={22}
         />
       </Link>
       <nav className='text-gray-1 flex flex-col gap-3'>
-        <div className='mobile:justify-center flex justify-between'>
-          <span className='mobile:hidden text-xs font-semibold'>
+        <div className='tablet:justify-center flex justify-between'>
+          <span className='tablet:hidden text-xs font-semibold'>
             DashBoards
           </span>
           <button className='cursor-pointer'>
@@ -52,7 +52,7 @@ export default function SideMenu(): ReactNode {
         <DashboardList />
         <div className='mt-3'>
           <ButtonPagination
-            additionalClass='mobile:hidden'
+            additionalClass='tablet:hidden'
             onPrevClick={handleClickPrev}
             onNextClick={handleClickNext}
           />

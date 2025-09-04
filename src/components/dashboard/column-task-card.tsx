@@ -35,14 +35,15 @@ export default function ColumnTaskCard({ task, onEditTask }: TaskCardProps) {
 
   return (
     <div
-      className='cursor-pointer rounded-lg border border-gray-300 bg-white'
+      className='tablet:flex tablet:p-4 cursor-pointer rounded-lg border border-gray-300 bg-white p-4'
       onClick={handleCardClick}
     >
-      {/* 이미지 */}
+      {/* 이미지 - 모바일에서는 위에, 태블릿에서는 좌측에 배치 */}
       {task.imageUrl && (
-        <div className='p-4 pb-0'>
-          <div className='h-40 w-full overflow-hidden rounded-lg'>
+        <div className='tablet:mr-4 tablet:flex-shrink-0 tablet:w-20 tablet:h-20 tablet:overflow-hidden tablet:rounded-lg tablet:mb-0 mb-4'>
+          <div className='tablet:h-full h-40 w-full overflow-hidden rounded-lg'>
             <Image
+              priority
               src={task.imageUrl}
               alt='카드 이미지'
               width={300}
@@ -53,8 +54,8 @@ export default function ColumnTaskCard({ task, onEditTask }: TaskCardProps) {
         </div>
       )}
 
-      {/* 본문 */}
-      <div className='p-4'>
+      {/* 본문 - 모바일에서는 세로, 태블릿에서는 우측에 배치 */}
+      <div className='tablet:flex-1 tablet:p-0'>
         <h3 className='mb-3 line-clamp-2 text-base font-medium text-gray-900'>
           {task.title}
         </h3>

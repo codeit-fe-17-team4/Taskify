@@ -76,6 +76,7 @@ export default function MydashboardEdit(): ReactNode {
               alt='go-back'
               width={10}
               height={10}
+              style={{ width: 'auto', height: 'auto' }}
             />
             <span>돌아가기</span>
           </div>
@@ -149,6 +150,7 @@ export default function MydashboardEdit(): ReactNode {
                       alt='prev'
                       width={7}
                       height={7}
+                      style={{ width: 'auto', height: 'auto' }}
                     />
                   </button>
                   <button className='flex h-7 w-7 cursor-pointer items-center justify-center rounded border border-gray-200 bg-white hover:bg-gray-100'>
@@ -157,6 +159,7 @@ export default function MydashboardEdit(): ReactNode {
                       alt='prev'
                       width={7}
                       height={7}
+                      style={{ width: 'auto', height: 'auto' }}
                     />
                   </button>
                 </div>

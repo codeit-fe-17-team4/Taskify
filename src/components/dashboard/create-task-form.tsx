@@ -170,18 +170,18 @@ export default function CreateTaskForm({
         </label>
         <div className='flex min-h-[3.5rem] flex-wrap items-center gap-2 rounded-lg border border-gray-300 p-3 focus-within:border-gray-300'>
           {/* 기존 태그들 */}
-          {formData.tags.map((tag, index) => (
-            <div key={index} className='flex items-center gap-1'>
+          {formData.tags.map((tag, index) => 
+            { return <div key={index} className='flex items-center gap-1'>
               <ChipTag label={tag} color='blue' size='md' />
               <button
                 type='button'
                 className='ml-1 text-blue-400 hover:text-blue-600'
-                onClick={() => removeTag(index)}
+                onClick={() => { removeTag(index); }}
               >
                 ×
               </button>
-            </div>
-          ))}
+            </div> }
+          )}
           {/* 새 태그 입력 */}
           <input
             id='tags'
@@ -190,10 +190,10 @@ export default function CreateTaskForm({
             placeholder={formData.tags.length === 0 ? '입력 후 Enter' : ''}
             className='min-w-[120px] flex-1 border-0 bg-transparent p-1 focus:outline-none'
             value={currentTag}
+            onKeyDown={handleTagKeyDown}
             onChange={(e) => {
               setCurrentTag(e.target.value);
             }}
-            onKeyDown={handleTagKeyDown}
           />
         </div>
       </div>

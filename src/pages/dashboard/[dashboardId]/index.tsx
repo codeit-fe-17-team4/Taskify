@@ -134,12 +134,12 @@ export default function DashboardDetailPage(): ReactNode {
       <SideMenu />
 
       {/* 메인 콘텐츠 */}
-      <div className='tablet:pl-40 mobile:pl-[4rem] pt-16 pl-[18.75rem]'>
+      <div className='tablet:pl-[10rem] mobile:pl-[4rem] pt-16 pl-[18.75rem]'>
         {/* 상단 네비게이션 헤더 */}
         <DashboardHeader />
 
         {/* 대시보드 메인 콘텐츠 */}
-        <main className='layout-children h-[calc(100vh-4.375rem)] bg-gray-50'>
+        <main className='layout-children tablet:overflow-x-hidden tablet:overflow-y-auto h-[calc(100vh-4.375rem)] bg-gray-50'>
           <ColumnLayout
             columns={mockColumns}
             onAddColumnClick={handleAddColumnClick}

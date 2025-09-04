@@ -19,13 +19,13 @@ export default function ColumnLayout({
   onTaskClick,
 }: ColumnLayoutProps): ReactNode {
   return (
-    <div className='column-layout-container flex h-full'>
+    <div className='tablet:flex-col tablet:gap-2 flex h-full'>
       {/* 칼럼 목록 */}
       {columns.map((col) => {
         return (
           <div
             key={col.id}
-            className='column-container flex h-full w-80 flex-shrink-0 flex-col border-r border-[#EEEEEE] px-4 py-6'
+            className='column-container tablet:w-full tablet:border-r-0 tablet:border-b tablet:border-[#EEEEEE] tablet:px-4 tablet:py-4 tablet:h-auto tablet:min-h-[300px] flex h-full w-80 flex-shrink-0 flex-col border-r border-[#EEEEEE] px-4 py-6'
           >
             <DashboardColumn
               column={col}
@@ -38,8 +38,8 @@ export default function ColumnLayout({
       })}
 
       {/* 칼럼 추가 버튼 */}
-      <div className='add-column-container h-full w-80 flex-shrink-0 px-4 py-6'>
-        <div className='mt-12'>
+      <div className='add-column-container tablet:w-full tablet:px-4 tablet:py-4 tablet:h-auto tablet:min-h-0 h-full w-80 flex-shrink-0 px-4 py-6'>
+        <div className='tablet:mt-2 mt-12'>
           <AddColumnButton onClick={onAddColumnClick} />
         </div>
       </div>

@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
-import CustomDropdown from './custom-dropdown';
 import ChipState from '@/components/ui/chip/chip-state';
-import type { DropdownOption } from './custom-dropdown';
+import CustomDropdown, type { DropdownOption } from './custom-dropdown';
+
 
 interface StatusDropdownProps {
   value: string;
@@ -38,10 +38,10 @@ export default function StatusDropdown({
     <CustomDropdown
       options={statusOptions}
       value={value}
-      onChange={onChange}
       placeholder='상태를 선택해주세요'
       className={className}
       disabled={disabled}
+      onChange={onChange}
     />
   );
 }
