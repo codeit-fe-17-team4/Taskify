@@ -1,0 +1,160 @@
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
+import ChipProfile from '@/components/ui/chip/chip-profile';
+import ProfileList from '@/components/ui/dashboard-header/profile-list';
+import InviteMemberModal from '@/components/mydashboard/invite-member-modal';
+
+const buttonClass =
+  'flex-center border-gray-3 text-md mobile:px-3 mobile:py-1.5 h-9 cursor-pointer gap-2 rounded-lg border-1 px-4 py-2.5 hover:bg-gray-4 active:bg-gray-3';
+
+export default function DashboardHeader(): ReactNode {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement | null>(null);
+  const dashboardId = 1;
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleSubmitInviteMember = () => {
+    handleCloseModal();
+  };
+
+  const toggle = useCallback(() => {
+    setOpen((v) => !v);
+  }, []);
+  const close = useCallback(() => {
+    setOpen(false);
+  }, []);
+
+  useEffect(() => {
+    const handleDocClick = (e: MouseEvent) => {
+      if (!menuRef.current) {
+        return;
+      }
+      if (!menuRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleDocClick);
+
+    return () => {
+      document.removeEventListener('mousedown', handleDocClick);
+    };
+  }, []);
+
+  // 이재준 작성 - 내 정보 페이지로 이동하는 기능 추가
+  const goMyPage = useCallback(() => {
+    close();
+    router.push('/mypage');
+  }, [close, router]);
+
+  // 이재준 작성 - 내 대시보드 페이지로 이동하는 기능 추가
+  const goMyDashboard = useCallback(() => {
+    close();
+    router.push('/mydashboard');
+  }, [close, router]);
+
+  // 이재준 작성 - 로그아웃 기능 추가
+  const doLogout = useCallback(async () => {
+    try {
+      await fetch('/api/logout', { method: 'POST' });
+    } catch {
+      // 로그아웃 실패 시 무시
+    }
+    close();
+    router.push('/');
+  }, [close, router]);
+
+  return (
+    <header className='mobile:h-[3.75rem] border-gray-3 tablet:pl-48 mobile:pl-12 tablet:justify-end fixed top-0 right-0 left-0 z-50 flex h-[4.375rem] w-full items-center justify-between border-b-1 bg-white pl-96'>
+      <div className='tablet:hidden flex gap-2 text-xl font-bold text-black'>
+        <h1>내 대시보드</h1>
+        <Image
+          className='h-4 w-5 self-center'
+          src={'/icon/mydashboard.svg'}
+          alt='왕관: 내 대시보드 아이콘'
+          width={20}
+          height={16}
+        />
+      </div>
+      <nav className='mobile:gap-2 flex h-full items-center gap-8'>
+        <div className='mobile:gap-1.5 flex gap-3'>
+          <Link
+            href={`/dashboard/${String(dashboardId)}/edit`}
+            className={buttonClass}
+            aria-label='대시보드 관리 페이지로 이동'
+          >
+            <span className='mobile:hidden *:fill-gray-1'>
+              <SettingIcon />
+            </span>
+            <span>관리</span>
+          </Link>
+          <button className={buttonClass} onClick={handleOpenModal}>
+            <span className='mobile:hidden *:fill-gray-1'>
+              <AddBoxIcon />
+            </span>
+            <span>초대하기</span>
+          </button>
+        </div>
+        <div className='mobile:gap-3 flex h-full gap-6'>
+          <ProfileList />
+          <Link
+            href={'/mypage'}
+            aria-label='마이 페이지로 이동'
+            className='border-l-gray-3 mobile:pl-3 hover:bg-gray-4 active:bg-gray-3 tablet:pr-8 mobile:pr-2 flex cursor-pointer items-center gap-3 border-l-1 pr-20 pl-6'
+          >
+            <ChipProfile label={'K'} size='lg' color='green' />
+            <span className='mobile:hidden font-medium'>권수형</span>
+          </Link>
+        </div>
+        <InviteMemberModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          onSubmit={handleSubmitInviteMember}
+        />
+      </nav>
+    </header>
+  );
+}
+
+function SettingIcon() {
+  return (
+    <svg
+      width='20'
+      height='20'
+      viewBox='0 0 20 20'
+      fill='none'
+      xmlns='http://www.w3.org/2000/svg'
+    >
+      <path d='M8.73414 17.9153C8.54717 17.9153 8.38531 17.8526 8.24856 17.727C8.11181 17.6015 8.02954 17.4452 8.00176 17.2583L7.75979 15.3769C7.53649 15.3021 7.30759 15.1974 7.07308 15.0628C6.83856 14.9281 6.62889 14.7839 6.44406 14.6301L4.70368 15.364C4.52526 15.442 4.34818 15.4511 4.17243 15.3913C3.99668 15.3314 3.85859 15.2193 3.75816 15.0547L2.50499 12.8721C2.4099 12.7075 2.38051 12.5318 2.41685 12.3448C2.45317 12.1579 2.54665 12.0072 2.69728 11.8929L4.2037 10.7535C4.18447 10.6296 4.17084 10.5051 4.16283 10.3801C4.15481 10.2551 4.15081 10.1306 4.15081 10.0067C4.15081 9.8881 4.15481 9.76764 4.16283 9.6453C4.17084 9.52297 4.18447 9.38916 4.2037 9.24387L2.69728 8.10443C2.54665 7.99012 2.45183 7.83948 2.41285 7.65251C2.37385 7.46555 2.40456 7.28981 2.50499 7.12528L3.75816 4.95866C3.85859 4.79413 3.99535 4.68195 4.16843 4.62212C4.3415 4.56228 4.51724 4.57136 4.69566 4.64936L6.43604 5.37532C6.6369 5.21613 6.85138 5.07056 7.07947 4.93862C7.30758 4.80666 7.53168 4.70062 7.75176 4.62049L8.00176 2.73909C8.02954 2.55212 8.11181 2.39587 8.24856 2.27034C8.38531 2.1448 8.54717 2.08203 8.73414 2.08203H11.2581C11.4451 2.08203 11.6083 2.1448 11.7477 2.27034C11.8871 2.39587 11.9707 2.55212 11.9985 2.73909L12.2405 4.62851C12.4905 4.71932 12.7167 4.82535 12.9192 4.94661C13.1217 5.06788 13.326 5.21078 13.5322 5.37532L15.3046 4.64936C15.483 4.57136 15.6588 4.56095 15.8318 4.61811C16.0049 4.67527 16.1417 4.78611 16.2421 4.95064L17.4953 7.12528C17.5957 7.28981 17.6264 7.46555 17.5874 7.65251C17.5484 7.83948 17.4536 7.99012 17.303 8.10443L15.7645 9.26789C15.7945 9.40251 15.8107 9.52832 15.8134 9.6453C15.8161 9.76229 15.8174 9.88008 15.8174 9.99868C15.8174 10.1119 15.8147 10.227 15.8094 10.344C15.8041 10.461 15.7848 10.5948 15.7517 10.7455L17.2741 11.8929C17.4248 12.0072 17.5196 12.1579 17.5586 12.3448C17.5976 12.5318 17.5669 12.7075 17.4665 12.8721L16.2133 15.0419C16.1128 15.2064 15.9726 15.3194 15.7926 15.3808C15.6126 15.4423 15.4333 15.434 15.2549 15.356L13.5322 14.622C13.326 14.7866 13.1155 14.9321 12.9008 15.0587C12.686 15.1854 12.4659 15.2887 12.2405 15.3688L11.9985 17.2583C11.9707 17.4452 11.8871 17.6015 11.7477 17.727C11.6083 17.8526 11.4451 17.9153 11.2581 17.9153H8.73414ZM9.16681 16.6653H10.8046L11.1043 14.433C11.5295 14.3219 11.9181 14.164 12.2702 13.9594C12.6222 13.7548 12.9617 13.4917 13.2886 13.1702L15.3591 14.0403L16.1796 12.6237L14.3719 11.2615C14.4414 11.0457 14.4887 10.8342 14.5138 10.6269C14.5389 10.4196 14.5514 10.2102 14.5514 9.99868C14.5514 9.7818 14.5389 9.5724 14.5138 9.37047C14.4887 9.16855 14.4414 8.96236 14.3719 8.75189L16.1957 7.37368L15.3751 5.95701L13.2806 6.84003C13.0017 6.54195 12.6676 6.27859 12.2782 6.04997C11.8888 5.82133 11.4948 5.65947 11.0963 5.56439L10.8335 3.33201H9.17962L8.90399 5.55637C8.47877 5.6568 8.08614 5.81064 7.7261 6.01791C7.36606 6.22517 7.02258 6.49227 6.69566 6.8192L4.62514 5.95701L3.80462 7.37368L5.60431 8.71503C5.53486 8.91267 5.48625 9.11833 5.45847 9.33201C5.43069 9.54569 5.41681 9.77059 5.41681 10.0067C5.41681 10.2236 5.43069 10.4362 5.45847 10.6445C5.48625 10.8528 5.53219 11.0585 5.59628 11.2615L3.80462 12.6237L4.62514 14.0403L6.68764 13.1653C7.00388 13.4901 7.34201 13.7562 7.70206 13.9634C8.0621 14.1707 8.46007 14.3299 8.89597 14.441L9.16681 16.6653ZM10.0097 12.4987C10.7031 12.4987 11.2931 12.2553 11.7798 11.7687C12.2664 11.282 12.5097 10.692 12.5097 9.99868C12.5097 9.30532 12.2664 8.71531 11.7798 8.22866C11.2931 7.74202 10.7031 7.4987 10.0097 7.4987C9.30784 7.4987 8.7157 7.74202 8.23333 8.22866C7.75097 8.71531 7.50979 9.30532 7.50979 9.99868C7.50979 10.692 7.75097 11.282 8.23333 11.7687C8.7157 12.2553 9.30784 12.4987 10.0097 12.4987Z' />
+    </svg>
+  );
+}
+function AddBoxIcon() {
+  return (
+    <svg
+      width='20'
+      height='20'
+      viewBox='0 0 20 20'
+      fill='none'
+      xmlns='http://www.w3.org/2000/svg'
+    >
+      <path d='M9.37533 10.7083V13.4166C9.37533 13.594 9.43515 13.7425 9.55481 13.8621C9.67446 13.9818 9.82296 14.0416 10.0003 14.0416C10.1777 14.0416 10.3262 13.9818 10.4458 13.8621C10.5655 13.7425 10.6253 13.594 10.6253 13.4166V10.7083H13.3336C13.511 10.7083 13.6595 10.6485 13.7791 10.5288C13.8988 10.4092 13.9586 10.2607 13.9586 10.0833C13.9586 9.90597 13.8988 9.75747 13.7791 9.63781C13.6595 9.51816 13.511 9.45833 13.3336 9.45833H10.6253V6.74998C10.6253 6.57263 10.5655 6.42413 10.4458 6.30448C10.3262 6.18483 10.1777 6.125 10.0003 6.125C9.82296 6.125 9.67446 6.18483 9.55481 6.30448C9.43515 6.42413 9.37533 6.57263 9.37533 6.74998V9.45833H6.66697C6.48962 9.45833 6.34112 9.51816 6.22147 9.63781C6.10182 9.75747 6.04199 9.90597 6.04199 10.0833C6.04199 10.2607 6.10182 10.4092 6.22147 10.5288C6.34112 10.6485 6.48962 10.7083 6.66697 10.7083H9.37533ZM4.42341 17.1666C4.00246 17.1666 3.64616 17.0208 3.35449 16.7291C3.06283 16.4375 2.91699 16.0812 2.91699 15.6602V4.50642C2.91699 4.08547 3.06283 3.72917 3.35449 3.4375C3.64616 3.14583 4.00246 3 4.42341 3H15.5772C15.9981 3 16.3545 3.14583 16.6461 3.4375C16.9378 3.72917 17.0836 4.08547 17.0836 4.50642V15.6602C17.0836 16.0812 16.9378 16.4375 16.6461 16.7291C16.3545 17.0208 15.9981 17.1666 15.5772 17.1666H4.42341ZM4.42341 15.9166H15.5772C15.6413 15.9166 15.7001 15.8899 15.7535 15.8365C15.8069 15.7831 15.8336 15.7243 15.8336 15.6602V4.50642C15.8336 4.44231 15.8069 4.38354 15.7535 4.3301C15.7001 4.27669 15.6413 4.24998 15.5772 4.24998H4.42341C4.3593 4.24998 4.30053 4.27669 4.2471 4.3301C4.19368 4.38354 4.16697 4.44231 4.16697 4.50642V15.6602C4.16697 15.7243 4.19368 15.7831 4.2471 15.8365C4.30053 15.8899 4.3593 15.9166 4.42341 15.9166Z' />
+    </svg>
+  );
+}

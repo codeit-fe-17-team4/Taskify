@@ -1,0 +1,38 @@
+import { INITIAL_VIEWPORTS, MINIMAL_VIEWPORTS } from 'storybook/viewport';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+import DashboardHeader from '@/components/ui/dashboard-header';
+
+const meta = {
+  title: 'dashboard-header',
+  component: DashboardHeader,
+  parameters: {
+    viewport: { ...MINIMAL_VIEWPORTS, ...INITIAL_VIEWPORTS },
+    layout: 'centered',
+  },
+  decorators: [
+    (Story) => {
+      return (
+        <div style={{ height: '100px', width: '100dvw' }}>
+          <Story />
+        </div>
+      );
+    },
+  ],
+  tags: ['autodocs'],
+  argTypes: {
+    title: {
+      control: { type: 'string' },
+    },
+    members: {},
+    me: {},
+  },
+} satisfies Meta<typeof DashboardHeader>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {
+  args: {
+    title: '나의 대시보드',
+  },
+};
