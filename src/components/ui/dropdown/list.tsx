@@ -14,7 +14,7 @@ export default function List({ children }: { children: ReactNode }): ReactNode {
       <ul
         role='menu'
         aria-label='사용자 메뉴'
-        className='absolute top-full right-4 mt-2 overflow-hidden rounded-md border border-gray-200 bg-white'
+        className='text-md absolute top-full right-4 mt-2 overflow-hidden rounded-md border border-gray-200 bg-white p-1.5 font-medium'
       >
         {children}
       </ul>

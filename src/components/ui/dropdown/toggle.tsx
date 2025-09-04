@@ -17,6 +17,7 @@ export default function Toggle({
   };
 
   return (
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events
     <div
       role='button'
       tabIndex={0}

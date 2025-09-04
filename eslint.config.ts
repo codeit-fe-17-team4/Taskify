@@ -35,6 +35,7 @@ export default tseslint.config(sheriff(sheriffOptions), {
         patterns: ['.*'],
       },
     ],
+    '@typescript-eslint/no-unused-vars': 'warn',
     '@typescript-eslint/no-floating-promises': 'off',
     'react-refresh/only-export-components': 'off',
     'react/jsx-no-useless-fragment': 'off',
@@ -46,5 +47,7 @@ export default tseslint.config(sheriff(sheriffOptions), {
     'react/no-multi-comp': 'off',
     '@typescript-eslint/no-use-before-define': 'off',
     '@typescript-eslint/require-await': 'off',
+    'tsdoc/syntax': 'off',
+    'fsecond/valid-event-listener': 'off',
   },
 });

@@ -2,6 +2,7 @@ import { createContext, type ReactNode, useState } from 'react';
 import Item from '@/components/ui/dropdown/item';
 import List from '@/components/ui/dropdown/list';
 import Toggle from '@/components/ui/dropdown/toggle';
+import useExitWhenClickOutSide from '@/hooks/useExitWhenClickOutSide';
 
 interface ContextType {
   isOpen: boolean;
@@ -15,10 +16,16 @@ export default function Dropdown({
   children: ReactNode;
 }): ReactNode {
   const [isOpen, setIsOpen] = useState(false);
+  const handleClose = () => {
+    setIsOpen(false);
+  };
+  const dropdownRef = useExitWhenClickOutSide(handleClose);
 
   return (
     <DropdownContext.Provider value={{ isOpen, setIsOpen }}>
-      {children}
+      <div className='flex-center' ref={dropdownRef}>
+        {children}
+      </div>
     </DropdownContext.Provider>
   );
 }
