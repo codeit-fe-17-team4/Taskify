@@ -2,7 +2,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { type ReactNode, useState } from 'react';
-import { useInView } from 'react-intersection-observer';
 import DashboardLayout from '@/components/layout/dashboard-layout';
 import InviteMemberModal from '@/components/mydashboard/invite-member-modal';
 
