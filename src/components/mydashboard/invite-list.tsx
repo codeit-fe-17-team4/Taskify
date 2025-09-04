@@ -36,21 +36,6 @@ export default function InviteList({ inviteData }: InviteListProps): ReactNode {
               height={20}
             />
           </button>
-          {/* <div>  // api로 대시보드 내용이 전달되면 생성된 대시보드가 카드 스타일에 맞게 추가되도록 구현 필요 (고민중) 
-                <div>
-                  {listData.map((list) => {
-                    return (
-                      <button
-                        key={list.id}
-                        className={`tablet:w-3xs mobile:w-2xs flex`}
-                        onClick={() => {
-                          dashboardList(list);
-                        }}
-                      ></button>
-                    );
-                  })}
-                </div>
-              </div> */}
           <button className='tablet:w-3xs mobile:w-2xs relative flex h-[60px] w-full cursor-pointer items-center gap-3 rounded-md border border-gray-200 bg-white p-4 sm:w-2xs md:w-40 lg:w-md xl:w-3xs'>
             <Image
               src='/icon/dot/dot4.svg'

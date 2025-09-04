@@ -1,9 +1,9 @@
 ---
 name: 기능 구현 및 제안 이슈
 about: 기능 구현 및 제안 이슈
-title: "[페이지이름 or 공통]: "
-labels: "Feature"
-assignees: ""
+title: '[페이지이름 or 공통]: '
+labels: 'Feature'
+assignees: ''
 ---
 
 ## #️⃣ Related Issue

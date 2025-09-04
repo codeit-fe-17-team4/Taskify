@@ -45,5 +45,6 @@ export default tseslint.config(sheriff(sheriffOptions), {
     'unicorn/consistent-function-scoping': 'off',
     'react/no-multi-comp': 'off',
     '@typescript-eslint/no-use-before-define': 'off',
+    '@typescript-eslint/require-await': 'off',
   },
 });

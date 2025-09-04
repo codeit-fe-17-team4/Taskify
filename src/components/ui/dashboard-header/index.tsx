@@ -9,9 +9,8 @@ const buttonClass =
   'flex-center border-gray-3 text-md mobile:px-3 mobile:py-1.5 h-9 cursor-pointer gap-2 rounded-lg border-1 px-4 py-2.5 hover:bg-gray-4 active:bg-gray-3';
 
 export default function DashboardHeader(): ReactNode {
-  const dashboardId = 1;
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const dashboardId = 1;
   const handleOpenModal = () => {
     setIsModalOpen(true);
   };

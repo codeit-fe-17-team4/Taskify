@@ -1,0 +1,51 @@
+/* ===== 랜딩 페이지 전용 토큰 ===== */
+/* SPEC: 채팅 로그 기반 랜딩 페이지 스타일 변수 */
+/* 전역 오염 방지를 위한 명확한 네이밍 */
+
+:root {
+  --landing-brand-violet: #5534da;
+  --landing-black-000: #000000;
+  --landing-black-171: #171717;
+  --landing-gray-9fa: #9fa6b2;
+  --landing-radius-lg: 8px;
+
+  /* ===== [landing] footer tokens ===== */
+  --color-inverse: #000000; /* footer bg (Figma) */
+  --on-inverse: #ffffff; /* text on black */
+  --muted-on-inverse: #9fa6b2; /* subtle text on black (Figma text color) */
+}
+
+/* ===== 랜딩 페이지 전용 유틸리티 ===== */
+@layer utilities {
+  .bg-brand {
+    background: var(--landing-brand-violet) !important;
+  }
+
+  .text-brand {
+    color: var(--landing-brand-violet) !important;
+  }
+
+  .bg-black-171 {
+    background: var(--landing-black-171) !important;
+  }
+
+  .text-gray-9fa {
+    color: var(--landing-gray-9fa) !important;
+  }
+
+  /* [landing] 한글 줄바꿈 제어 */
+  .break-keep {
+    word-break: keep-all !important;
+  } /* 한글/동아시아 단어 중간 줄바꿈 금지 */
+
+  /* ===== [landing] footer utilities ===== */
+  .bg-inverse {
+    background: var(--color-inverse);
+  }
+  .text-on-inverse {
+    color: var(--on-inverse);
+  }
+  .text-muted-on-inverse {
+    color: var(--muted-on-inverse);
+  }
+}
