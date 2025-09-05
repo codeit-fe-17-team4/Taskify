@@ -3,11 +3,13 @@ import type { ManageColumnFormData } from './type';
 interface ManageColumnFormProps {
   formData: ManageColumnFormData;
   setFormData: React.Dispatch<React.SetStateAction<ManageColumnFormData>>;
+  hasError?: boolean;
 }
 
 export default function ManageColumnForm({
   formData,
   setFormData,
+  hasError = false,
 }: ManageColumnFormProps) {
   return (
     <>
@@ -17,7 +19,7 @@ export default function ManageColumnForm({
           htmlFor='column-name'
           className='mb-2 block text-lg leading-6 font-medium'
         >
-          이름 <span className='align-baseline text-lg text-indigo-600'>*</span>
+          이름 <span className='text-violet align-baseline text-lg'>*</span>
         </label>
         <input
           required
@@ -25,11 +27,15 @@ export default function ManageColumnForm({
           name='name'
           type='text'
           placeholder='컬럼 이름을 입력해 주세요'
-          className='w-full rounded-lg border border-gray-300 p-4 focus:outline-none'
           value={formData.name}
-          onChange={(e) =>
-            { setFormData((prev) => ({ ...prev, name: e.target.value })); }
-          }
+          className={`w-full rounded-lg border p-4 focus:outline-none ${
+            hasError
+              ? 'border-red-500 focus:border-red-500'
+              : 'focus:border-violet border-gray-300'
+          }`}
+          onChange={(e) => {
+            setFormData((prev) => ({ ...prev, name: e.target.value }));
+          }}
         />
       </div>
     </>

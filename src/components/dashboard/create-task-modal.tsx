@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useModalKeyHandler } from '@/hooks/useModal';
+import type { UserType } from '@/lib/users/type';
 import BaseModal from '../ui/base-modal';
 import CreateTaskForm from './create-task-form';
 import type { CreateTaskFormData } from './type';
@@ -8,12 +9,14 @@ interface CreateTaskModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (taskData: CreateTaskFormData) => void;
+  userInfo: UserType | null;
 }
 
 export default function CreateTaskModal({
   isOpen,
   onClose,
   onSubmit,
+  userInfo,
 }: CreateTaskModalProps) {
   const [formData, setFormData] = useState<CreateTaskFormData>({
     assignee: '',
@@ -25,6 +28,7 @@ export default function CreateTaskModal({
   });
 
   const handleClose = () => {
+    console.log('CreateTaskModal handleClose called');
     setFormData({
       assignee: '',
       title: '',
@@ -33,13 +37,16 @@ export default function CreateTaskModal({
       tags: [],
       imageFile: null,
     });
+    console.log('Calling onClose');
     onClose();
   };
 
   useModalKeyHandler(isOpen, handleClose);
 
   const handleSubmit = () => {
+    console.log('CreateTaskModal handleSubmit called');
     onSubmit(formData);
+    console.log('Calling handleClose');
     handleClose();
   };
 
@@ -56,7 +63,11 @@ export default function CreateTaskModal({
       onClose={handleClose}
       onSubmit={handleSubmit}
     >
-      <CreateTaskForm formData={formData} setFormData={setFormData} />
+      <CreateTaskForm
+        formData={formData}
+        setFormData={setFormData}
+        userInfo={userInfo}
+      />
     </BaseModal>
   );
 }

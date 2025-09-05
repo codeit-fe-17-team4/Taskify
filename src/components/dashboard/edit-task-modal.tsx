@@ -1,5 +1,6 @@
-import { useEffect,useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useModalKeyHandler } from '@/hooks/useModal';
+import type { UserType } from '@/lib/users/type';
 import BaseModal from '../ui/base-modal';
 import EditTaskForm from './edit-task-form';
 import type { EditTaskFormData, TaskType } from './type';
@@ -9,6 +10,9 @@ interface EditTaskModalProps {
   onClose: () => void;
   onSubmit: (taskData: EditTaskFormData) => void;
   initialTask?: TaskType;
+  columns?: { id: string; title: string }[];
+  currentColumnTitle?: string;
+  userInfo: UserType | null;
 }
 
 export default function EditTaskModal({
@@ -16,9 +20,12 @@ export default function EditTaskModal({
   onClose,
   onSubmit,
   initialTask,
+  columns = [],
+  currentColumnTitle,
+  userInfo,
 }: EditTaskModalProps) {
   const [formData, setFormData] = useState<EditTaskFormData>({
-    status: 'To Do',
+    status: currentColumnTitle || 'To Do',
     assignee: '',
     title: '',
     description: '',
@@ -32,7 +39,9 @@ export default function EditTaskModal({
    * 날짜 포맷 변환 함수.
    */
   const formatDateTimeLocal = (dateString: string) => {
-    if (!dateString) {return '';}
+    if (!dateString) {
+      return '';
+    }
 
     // '2025-08-28 10:30' -> '2025-08-28T10:30' 포맷으로 변환
     return dateString.replace(' ', 'T');
@@ -42,12 +51,12 @@ export default function EditTaskModal({
   useEffect(() => {
     if (initialTask && isOpen) {
       setFormData({
-        status: 'To Do', // 기본값, 실제로는 태스크의 컬럼 상태에 따라 설정
+        status: currentColumnTitle || 'To Do', // 현재 컬럼명 사용
         assignee: initialTask.manager.name,
         title: initialTask.title,
         description: initialTask.description || '',
         dueDate: formatDateTimeLocal(initialTask.dueDate || ''),
-        tags: initialTask.tags.map((tag) => tag.label),
+        tags: initialTask.tags,
         imageFile: null,
         existingImageUrl: initialTask.imageUrl,
       });
@@ -76,8 +85,25 @@ export default function EditTaskModal({
     handleClose();
   };
 
+  /**
+   * 원본 데이터와 비교하여 변경사항이 있는지 확인
+   */
+  const hasChanges = () => {
+    if (!initialTask) {return false;}
+
+    return (
+      formData.title !== initialTask.title ||
+      formData.description !== (initialTask.description || '') ||
+      formData.assignee !== initialTask.manager.name ||
+      formData.dueDate !== formatDateTimeLocal(initialTask.dueDate || '') ||
+      formData.status !== currentColumnTitle ||
+      JSON.stringify(formData.tags) !== JSON.stringify(initialTask.tags) ||
+      formData.imageFile !== null // 새 이미지가 업로드된 경우
+    );
+  };
+
   const isSubmitDisabled =
-    !formData.title.trim() || !formData.description.trim();
+    !formData.title.trim() || !formData.description.trim() || !hasChanges();
 
   return (
     <BaseModal
@@ -89,7 +115,12 @@ export default function EditTaskModal({
       onClose={handleClose}
       onSubmit={handleSubmit}
     >
-      <EditTaskForm formData={formData} setFormData={setFormData} />
+      <EditTaskForm
+        formData={formData}
+        setFormData={setFormData}
+        columns={columns}
+        userInfo={userInfo}
+      />
     </BaseModal>
   );
 }

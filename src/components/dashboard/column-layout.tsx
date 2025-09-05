@@ -8,6 +8,7 @@ interface ColumnLayoutProps {
   onColumnSettingsClick?: (columnId: string) => void;
   onAddTaskClick?: (columnId: string) => void;
   onTaskClick?: (task: TaskType) => void;
+  maxColumns?: number;
 }
 
 export default function ColumnLayout({
@@ -16,6 +17,7 @@ export default function ColumnLayout({
   onColumnSettingsClick,
   onAddTaskClick,
   onTaskClick,
+  maxColumns = 10,
 }: ColumnLayoutProps) {
   return (
     <div className='column-layout-container flex h-full'>
@@ -36,12 +38,14 @@ export default function ColumnLayout({
         );
       })}
 
-      {/* 칼럼 추가 버튼 */}
-      <div className='add-column-container h-full w-80 flex-shrink-0 px-4 py-6'>
-        <div className='mt-12'>
-          <AddColumnButton onClick={onAddColumnClick} />
+      {/* 칼럼 추가 버튼 (최대 개수 미달 시에만 표시) */}
+      {columns.length < maxColumns && (
+        <div className='add-column-container h-full w-80 flex-shrink-0 px-4 py-6'>
+          <div className='mt-12'>
+            <AddColumnButton onClick={onAddColumnClick} />
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
