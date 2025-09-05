@@ -1,59 +1,46 @@
 import Image from 'next/image';
-import { useEffect,useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import type {
+  CommentType,
+  TaskDetailModalProps,
+} from '@/components/dashboard/type';
+import ChipProfile from '@/components/ui/chip/chip-profile';
+import ChipTag from '@/components/ui/chip/chip-tag';
 import { useModalKeyHandler } from '@/hooks/useModal';
-import type { CommentType,TaskDetailModalProps } from './type';
+import { getProfileColor } from '@/utils/profile-color';
 
-// 임시 댓글 데이터
-const mockComments: CommentType[] = [
-  {
-    id: '1',
-    content: '오늘안에 CCC 까지 만들 수 있을까요?',
-    author: {
-      id: '1',
-      name: '정만철',
-      profileColor: '#FEF3C7',
-    },
-    createdAt: '2022.12.27 14:00',
-  },
-];
-
-const getTagColorClasses = (color: string) => {
-  switch (color) {
-    case 'orange': {
-      return 'bg-orange-100 text-orange-600';
-    }
-    case 'green': {
-      return 'bg-green-100 text-green-600';
-    }
-    case 'blue': {
-      return 'bg-blue-100 text-blue-600';
-    }
-    case 'red': {
-      return 'bg-red-100 text-red-600';
-    }
-    case 'purple': {
-      return 'bg-purple-100 text-purple-600';
-    }
-    default: {
-      return 'bg-gray-100 text-gray-600';
-    }
+const formatDueDate = (dueDate: string) => {
+  if (!dueDate) {
+    return '';
   }
+
+  const date = new Date(dueDate);
+  const year = String(date.getFullYear());
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+
+  return `${year}-${month}-${day} ${hours}:${minutes}`;
 };
 
 export default function TaskDetailModal({
   isOpen,
   onClose,
   task,
+  columnTitle,
+  currentUser,
   onEdit,
   onDelete,
-}: TaskDetailModalProps) {
+}: TaskDetailModalProps): React.ReactElement | null {
   const [newComment, setNewComment] = useState('');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editingContent, setEditingContent] = useState('');
+  const [comments, setComments] = useState<CommentType[]>([]);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  const handleClose = () => {
+  const handleClose = (): void => {
     setNewComment('');
     setIsMenuOpen(false);
     setEditingCommentId(null);
@@ -62,11 +49,11 @@ export default function TaskDetailModal({
   };
 
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
+    const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setIsMenuOpen(false);
       }
-    }
+    };
 
     if (isMenuOpen) {
       document.addEventListener('mousedown', handleClickOutside);
@@ -80,10 +67,32 @@ export default function TaskDetailModal({
   useModalKeyHandler(isOpen, handleClose);
 
   const handleCommentSubmit = () => {
-    if (newComment.trim()) {
-      console.log('New comment:', newComment);
-      setNewComment('');
+    if (!newComment.trim()) {
+      return;
     }
+
+    const newCommentObj: CommentType = {
+      id: `comment_${String(Date.now())}_${Math.random().toString(36).slice(2, 11)}`,
+      content: newComment.trim(),
+      author: {
+        id: currentUser?.id || 'current-user',
+        name: currentUser?.name || '사용자',
+        profileColor: currentUser?.profileColor || '#8B5CF6',
+      },
+      createdAt: new Date()
+        .toLocaleString('ko-KR', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+        })
+        .replaceAll('.', '.')
+        .replaceAll(',', ''),
+    };
+
+    setComments((prev) => [...prev, newCommentObj]);
+    setNewComment('');
   };
 
   const handleEditComment = (commentId: string, content: string) => {
@@ -91,11 +100,25 @@ export default function TaskDetailModal({
     setEditingContent(content);
   };
 
-  const handleSaveComment = () => {
-    if (editingContent.trim()) {
-      console.log('Save comment:', editingCommentId, editingContent);
-      setEditingCommentId(null);
-      setEditingContent('');
+  const handleUpdateComment = () => {
+    if (!editingCommentId || !editingContent.trim()) {
+      return;
+    }
+
+    setComments((prev) => {
+      return prev.map((comment) => {
+        return comment.id === editingCommentId
+          ? { ...comment, content: editingContent.trim() }
+          : comment;
+      });
+    });
+    setEditingCommentId(null);
+    setEditingContent('');
+  };
+
+  const handleDeleteComment = (commentId: string) => {
+    if (window.confirm('댓글을 삭제하시겠습니까?')) {
+      setComments((prev) => prev.filter((comment) => comment.id !== commentId));
     }
   };
 
@@ -109,20 +132,26 @@ export default function TaskDetailModal({
   };
 
   const handleEdit = () => {
-    if (task && onEdit) {
-      onEdit(task);
-      handleClose();
+    if (!task || !onEdit) {
+      return;
     }
+
+    onEdit(task);
+    handleClose();
   };
 
   const handleDelete = () => {
-    if (task && onDelete) {
-      onDelete(task.id);
-      handleClose();
+    if (!task || !onDelete) {
+      return;
     }
+
+    onDelete(task.id);
+    handleClose();
   };
 
-  if (!isOpen || !task) {return null;}
+  if (!isOpen || !task) {
+    return null;
+  }
 
   const handleOverlayClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
@@ -133,11 +162,19 @@ export default function TaskDetailModal({
   return (
     <div
       className='fixed inset-0 z-50 flex items-center justify-center bg-[rgba(0,0,0,0.7)]'
-      onClick={handleOverlayClick}
+      role='dialog'
+      tabIndex={-1}
     >
+      <button
+        className='absolute inset-0 h-full w-full'
+        aria-label='모달 닫기'
+        type='button'
+        onClick={handleOverlayClick}
+      />
       <div
         className='scrollbar-hide max-h-[90vh] w-[40rem] overflow-y-scroll rounded-lg bg-white'
-        onClick={(e) => { e.stopPropagation(); }}
+        role='document'
+        tabIndex={-1}
       >
         {/* 헤더 */}
         <div className='flex items-center justify-between p-6'>
@@ -164,13 +201,13 @@ export default function TaskDetailModal({
                   style={{ boxShadow: '0 .4rem 2rem 0 rgba(0, 0, 0, .08)' }}
                 >
                   <button
-                    className='w-full cursor-pointer rounded-md px-3 py-2 text-center text-sm hover:bg-purple-100 hover:text-purple-600'
+                    className='hover:bg-violet-light hover:text-violet w-full cursor-pointer rounded-md px-3 py-2 text-center text-sm'
                     onClick={handleEdit}
                   >
                     수정하기
                   </button>
                   <button
-                    className='w-full cursor-pointer rounded-md px-3 py-2 text-center text-sm hover:bg-purple-100 hover:text-purple-600'
+                    className='hover:bg-violet-light hover:text-violet w-full cursor-pointer rounded-md px-3 py-2 text-center text-sm'
                     onClick={handleDelete}
                   >
                     삭제하기
@@ -197,25 +234,26 @@ export default function TaskDetailModal({
         {/* 카테고리와 태그 */}
         <div className='px-6 pb-6'>
           <div className='flex flex-wrap items-center gap-2'>
-            <span className='flex items-center gap-2 rounded-full bg-indigo-100 px-3 py-1 text-sm font-medium text-indigo-600'>
-              <span className='h-2 w-2 rounded-full bg-indigo-600'></span>
-              To Do
+            <span className='bg-violet-light text-violet flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium'>
+              <span className='bg-violet h-2 w-2 rounded-full' />
+              {columnTitle || 'To Do'}
             </span>
 
             {task.tags.length > 0 && (
-              <div className='h-4 w-px bg-gray-300'></div>
-            )}
-
-            {task.tags.length > 0 && (
               <>
-                {task.tags.map((tag, index) => 
-                  { return <span
-                    key={index}
-                    className={`rounded-md px-3 py-1 text-sm font-medium ${getTagColorClasses(tag.color)}`}
-                  >
-                    {tag.label}
-                  </span> }
-                )}
+                <div className='h-4 w-px bg-gray-300' />
+                {task.tags.map((tag) => {
+                  return (
+                    <ChipTag
+                      key={tag.label}
+                      label={tag.label}
+                      size='md'
+                      color={
+                        tag.color as 'blue' | 'pink' | 'green' | 'brown' | 'red'
+                      }
+                    />
+                  );
+                })}
               </>
             )}
           </div>
@@ -245,23 +283,19 @@ export default function TaskDetailModal({
               )}
             </div>
 
-            <div
-              className='w-52 self-start rounded-lg border border-gray-300 p-4'
-              style={{
-                gap: '1.5rem',
-                display: 'flex',
-                flexDirection: 'column',
-              }}
-            >
+            <div className='flex w-52 flex-col gap-6 self-start rounded-lg border border-gray-300 p-4'>
               <div>
                 <span className='mb-2 block text-sm font-bold'>담당자</span>
                 <div className='flex items-center gap-2'>
-                  <div
-                    className='flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium text-white'
-                    style={{ backgroundColor: task.manager.profileColor }}
-                  >
-                    {task.manager.nickname.slice(0, 2)}
-                  </div>
+                  <ChipProfile
+                    color={getProfileColor(task.manager.profileColor)}
+                    size='md'
+                    label={
+                      typeof task.manager.nickname === 'string'
+                        ? task.manager.nickname.slice(0, 1)
+                        : ''
+                    }
+                  />
                   <span className='text-sm font-medium'>
                     {task.manager.name}
                   </span>
@@ -271,7 +305,9 @@ export default function TaskDetailModal({
               {task.dueDate && (
                 <div>
                   <span className='mb-2 block text-sm font-bold'>마감일</span>
-                  <p className='text-sm font-medium'>{task.dueDate}</p>
+                  <p className='text-sm font-medium'>
+                    {formatDueDate(task.dueDate)}
+                  </p>
                 </div>
               )}
             </div>
@@ -282,16 +318,18 @@ export default function TaskDetailModal({
         <div className='px-6 pt-6 pb-6'>
           <h3 className='mb-4 text-lg font-medium'>댓글</h3>
 
-          <div className='relative mb-6'>
+          <div className='relative'>
             <textarea
               placeholder='댓글 작성하기'
               rows={3}
-              className='w-full resize-none rounded-lg border border-gray-300 p-4 pr-20 focus:outline-none'
+              className='focus:border-violet w-full resize-none overflow-hidden rounded-lg border border-gray-300 p-4 pr-20 focus:outline-none'
               value={newComment}
-              onChange={(e) => { setNewComment(e.target.value); }}
+              onChange={(e) => {
+                setNewComment(e.target.value);
+              }}
             />
             <button
-              className='absolute right-4 bottom-4 cursor-pointer rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-indigo-600 hover:bg-gray-50'
+              className='text-violet absolute right-4 bottom-4 cursor-pointer rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium hover:bg-gray-50'
               onClick={handleCommentSubmit}
             >
               입력
@@ -299,73 +337,82 @@ export default function TaskDetailModal({
           </div>
 
           {/* 댓글 목록 */}
-          <div className='space-y-4'>
-            {mockComments.map((comment) => 
-              { return <div key={comment.id} className='flex gap-3'>
-                <div
-                  className='flex h-8 w-8 items-center justify-center rounded-full text-xs font-medium'
-                  style={{
-                    backgroundColor: comment.author.profileColor,
-                    color: '#D97706',
-                  }}
-                >
-                  {comment.author.name.slice(0, 2)}
-                </div>
-                <div className='flex-1'>
-                  <div className='mb-1 flex items-center gap-2'>
-                    <span className='text-sm font-medium'>
-                      {comment.author.name}
-                    </span>
-                    <span className='text-xs text-gray-500'>
-                      {comment.createdAt}
-                    </span>
-                  </div>
+          {comments.length > 0 && (
+            <div className='mt-6 space-y-6'>
+              {comments.map((comment) => {
+                return (
+                  <div key={comment.id} className='flex gap-3'>
+                    <ChipProfile
+                      label={(comment.author.name || '').slice(0, 1)}
+                      color={getProfileColor(comment.author.profileColor)}
+                      size='md'
+                    />
+                    <div className='flex-1'>
+                      <div className='mb-1 flex items-center gap-2'>
+                        <span className='text-sm font-medium'>
+                          {comment.author.name}
+                        </span>
+                        <span className='text-xs text-gray-500'>
+                          {comment.createdAt}
+                        </span>
+                      </div>
 
-                  {editingCommentId === comment.id ? (
-                    <div className='space-y-3'>
-                      <textarea
-                        value={editingContent}
-                        className='w-full resize-none rounded-lg border border-gray-300 p-3 text-sm focus:outline-none'
-                        rows={3}
-                        onChange={(e) => { setEditingContent(e.target.value); }}
-                      />
-                      <div className='flex gap-3'>
-                        <button
-                          className='cursor-pointer text-xs text-gray-500 underline'
-                          onClick={handleSaveComment}
-                        >
-                          저장
-                        </button>
-                        <button
-                          className='cursor-pointer text-xs text-gray-500 underline'
-                          onClick={handleCancelEdit}
-                        >
-                          취소
-                        </button>
-                      </div>
+                      {editingCommentId === comment.id ? (
+                        <div className='space-y-3'>
+                          <textarea
+                            value={editingContent}
+                            className='focus:border-violet w-full resize-none rounded-lg border border-gray-300 p-3 text-sm focus:outline-none'
+                            rows={3}
+                            onChange={(e) => {
+                              setEditingContent(e.target.value);
+                            }}
+                          />
+                          <div className='flex gap-3'>
+                            <button
+                              className='cursor-pointer text-xs text-gray-500 underline'
+                              onClick={handleUpdateComment}
+                            >
+                              저장
+                            </button>
+                            <button
+                              className='cursor-pointer text-xs text-gray-500 underline'
+                              onClick={handleCancelEdit}
+                            >
+                              취소
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          <p className='text-sm text-gray-700'>
+                            {comment.content}
+                          </p>
+                          <div className='mt-2 flex gap-3'>
+                            <button
+                              className='cursor-pointer text-xs text-gray-500 underline'
+                              onClick={() => {
+                                handleEditComment(comment.id, comment.content);
+                              }}
+                            >
+                              수정
+                            </button>
+                            <button
+                              className='cursor-pointer text-xs text-gray-500 underline'
+                              onClick={() => {
+                                handleDeleteComment(comment.id);
+                              }}
+                            >
+                              삭제
+                            </button>
+                          </div>
+                        </>
+                      )}
                     </div>
-                  ) : (
-                    <>
-                      <p className='text-sm text-gray-700'>{comment.content}</p>
-                      <div className='mt-2 flex gap-3'>
-                        <button
-                          className='cursor-pointer text-xs text-gray-500 underline'
-                          onClick={() =>
-                            { handleEditComment(comment.id, comment.content); }
-                          }
-                        >
-                          수정
-                        </button>
-                        <button className='cursor-pointer text-xs text-gray-500 underline'>
-                          삭제
-                        </button>
-                      </div>
-                    </>
-                  )}
-                </div>
-              </div> }
-            )}
-          </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
     </div>

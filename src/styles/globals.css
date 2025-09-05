@@ -35,7 +35,6 @@
   --color-chip-green-bg: #e7f7db;
   --color-chip-brown: #d58d49;
   --color-chip-brown-bg: #f9eee3;
-
   --color-chip-red: #d25b68;
   --color-chip-red-bg: #f4d7da;
 
@@ -76,15 +75,6 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 }
-
-html,
-body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
-}
-
 @utility flex-center {
   display: flex;
   align-items: center;
@@ -101,7 +91,9 @@ body {
   padding: 0;
   overflow-x: hidden;
 }
-
+button {
+  cursor: pointer;
+}
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
