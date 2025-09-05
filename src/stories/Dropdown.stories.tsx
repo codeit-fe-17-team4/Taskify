@@ -1,5 +1,4 @@
 import type { ComponentType } from 'react';
-import { fn } from 'storybook/test';
 import { INITIAL_VIEWPORTS, MINIMAL_VIEWPORTS } from 'storybook/viewport';
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import Dropdown from '@/components/ui/dropdown';
