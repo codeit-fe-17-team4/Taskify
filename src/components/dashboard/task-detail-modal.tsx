@@ -6,6 +6,7 @@ import type {
 } from '@/components/dashboard/type';
 import ChipProfile from '@/components/ui/chip/chip-profile';
 import ChipTag from '@/components/ui/chip/chip-tag';
+import Dropdown from '@/components/ui/dropdown';
 import { useModalKeyHandler } from '@/hooks/useModal';
 import { getProfileColor } from '@/utils/profile-color';
 
@@ -182,41 +183,32 @@ export default function TaskDetailModal({
           <h2 className='text-xl font-bold'>{task.title}</h2>
           <div className='flex items-center gap-3'>
             {/* 메뉴 버튼 */}
-            <div className='relative' ref={menuRef}>
-              <button
-                className='flex h-8 w-8 cursor-pointer items-center justify-center rounded hover:bg-gray-100'
-                onClick={handleMenuToggle}
-              >
-                <Image
-                  src='/dashboard/menu-icon.svg'
-                  alt='메뉴'
-                  width={28}
-                  height={28}
-                />
-              </button>
-
-              {/* 드롭다운 메뉴 */}
-              {isMenuOpen && (
-                <div
-                  className='absolute top-10 right-0 z-10 w-24 rounded-lg border border-gray-200 bg-white p-1'
-                  style={{ boxShadow: '0 .4rem 2rem 0 rgba(0, 0, 0, .08)' }}
-                >
-                  <button
-                    className='hover:bg-violet-light hover:text-violet w-full cursor-pointer rounded-md px-3 py-2 text-center text-sm'
-                    onClick={handleEdit}
-                  >
-                    수정하기
-                  </button>
-                  <button
-                    className='hover:bg-violet-light hover:text-violet w-full cursor-pointer rounded-md px-3 py-2 text-center text-sm'
-                    onClick={handleDelete}
-                  >
-                    삭제하기
-                  </button>
+            <Dropdown>
+              <Dropdown.Toggle onClick={handleMenuToggle}>
+                <div className='flex-center h-8 w-8 rounded hover:bg-gray-100'>
+                  <Image
+                    src='/dashboard/menu-icon.svg'
+                    alt='메뉴'
+                    width={28}
+                    height={28}
+                  />
                 </div>
-              )}
-            </div>
-
+              </Dropdown.Toggle>
+              <Dropdown.List additionalClassName='w-24 top-1 -left-16'>
+                <Dropdown.Item
+                  additionalClassName='justify-center py-1'
+                  onClick={handleEdit}
+                >
+                  <div className='text-sm'>수정하기</div>
+                </Dropdown.Item>
+                <Dropdown.Item
+                  additionalClassName='justify-center py-1'
+                  onClick={handleDelete}
+                >
+                  <div className='text-sm'>삭제하기</div>
+                </Dropdown.Item>
+              </Dropdown.List>
+            </Dropdown>
             {/* 닫기 버튼 */}
             <button
               className='flex h-8 w-8 cursor-pointer items-center justify-center rounded hover:bg-gray-100'
@@ -249,9 +241,7 @@ export default function TaskDetailModal({
                       key={tag.label}
                       label={tag.label}
                       size='md'
-                      color={
-                        tag.color as 'blue' | 'pink' | 'green' | 'brown' | 'red'
-                      }
+                      color={tag.color}
                     />
                   );
                 })}

@@ -49,6 +49,11 @@ export default function CreateColumnModal({
 
   const isSubmitDisabled =
     !formData.name.trim() || isDuplicate || isMaxColumnsReached;
+  const errorMessage = isMaxColumnsReached
+    ? `최대 ${String(maxColumns)}개까지만 생성할 수 있습니다.`
+    : isDuplicate
+      ? '중복된 컬럼 이름입니다.'
+      : undefined;
 
   return (
     <BaseModal
@@ -58,13 +63,7 @@ export default function CreateColumnModal({
       cancelText='취소'
       isSubmitDisabled={isSubmitDisabled}
       width='w-[32rem]'
-      errorMessage={
-        isMaxColumnsReached
-          ? `최대 ${String(maxColumns)}개까지만 생성할 수 있습니다.`
-          : isDuplicate
-            ? '중복된 컬럼 이름입니다.'
-            : undefined
-      }
+      errorMessage={errorMessage}
       onClose={handleClose}
       onSubmit={handleSubmit}
     >

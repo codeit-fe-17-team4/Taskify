@@ -4,7 +4,7 @@ import ChipProfile from '@/components/ui/chip/chip-profile';
 import ChipTag from '@/components/ui/chip/chip-tag';
 import { getProfileColor } from '@/utils/profile-color';
 
-const formatDueDate = (dueDate: string) => {
+const formatDueDate = (dueDate: string | undefined) => {
   if (!dueDate) {
     return '';
   }
@@ -27,7 +27,7 @@ export default function ColumnTaskCard({ task, onEditTask }: TaskCardProps) {
   };
 
   return (
-    <div
+    <button
       className='flex cursor-pointer flex-col gap-4 rounded-lg border border-gray-300 bg-white p-4'
       onClick={handleCardClick}
     >
@@ -47,7 +47,7 @@ export default function ColumnTaskCard({ task, onEditTask }: TaskCardProps) {
       {/* 본문 */}
       <div className='flex flex-col justify-between'>
         <div>
-          <h3 className='mb-3 line-clamp-2 text-base font-medium text-gray-900'>
+          <h3 className='mb-3 line-clamp-2 text-left text-base font-medium text-gray-900'>
             {task.title}
           </h3>
 
@@ -89,6 +89,6 @@ export default function ColumnTaskCard({ task, onEditTask }: TaskCardProps) {
           </div>
         </div>
       </div>
-    </div>
+    </button>
   );
 }

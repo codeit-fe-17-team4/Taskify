@@ -11,7 +11,7 @@ export const TAG_COLORS = ['blue', 'pink', 'green', 'brown', 'red'] as const;
 /**
  * 랜덤 태그 색상 선택 함수
  */
-export const getRandomTagColor = (): string => {
+export const getRandomTagColor = (): chipTagColor => {
   const randomIndex = Math.floor(Math.random() * TAG_COLORS.length);
 
   return TAG_COLORS[randomIndex];
