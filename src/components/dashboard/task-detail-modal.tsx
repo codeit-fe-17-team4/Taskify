@@ -39,7 +39,7 @@ export default function TaskDetailModal({
   const [editingContent, setEditingContent] = useState('');
   const [comments, setComments] = useState<CommentType[]>([]);
   const menuRef = useRef<HTMLDivElement>(null);
-
+  const overlayRef = useRef<HTMLDivElement>(null);
   const handleClose = (): void => {
     setNewComment('');
     setIsMenuOpen(false);
@@ -154,27 +154,28 @@ export default function TaskDetailModal({
   }
 
   const handleOverlayClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      handleClose();
+    if (!overlayRef.current) {
+      return;
+    }
+    if (e.target === overlayRef.current) {
+      onClose();
     }
   };
 
   return (
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events
     <div
       className='fixed inset-0 z-50 flex items-center justify-center bg-[rgba(0,0,0,0.7)]'
-      role='dialog'
-      tabIndex={-1}
+      role='button'
+      aria-label='모달 오버레이: 클릭하면 모달이 종료됩니다.'
+      tabIndex={0}
+      ref={overlayRef}
+      onClick={handleOverlayClick}
     >
-      <button
-        className='absolute inset-0 h-full w-full'
-        aria-label='모달 닫기'
-        type='button'
-        onClick={handleOverlayClick}
-      />
       <div
         className='scrollbar-hide max-h-[90vh] w-[40rem] overflow-y-scroll rounded-lg bg-white'
-        role='document'
-        tabIndex={-1}
+        role='dialog'
+        aria-modal='true'
       >
         {/* 헤더 */}
         <div className='flex items-center justify-between p-6'>

@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { type ReactNode, useRef } from 'react';
 
 interface BaseModalProps {
   isOpen: boolean;
@@ -29,12 +29,9 @@ export default function BaseModal({
   hideCancelButton = false,
   errorMessage,
 }: BaseModalProps) {
-  if (!isOpen) {
-    return null;
-  }
-
+  const overlayRef = useRef<HTMLDivElement>(null);
   const handleOverlayClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
+    if (e.target === overlayRef.current) {
       onClose();
     }
   };
@@ -46,29 +43,37 @@ export default function BaseModal({
     }
   };
 
+  if (!isOpen) {
+    return null;
+  }
+
   return (
-    <>
-      <div
-        role='button'
-        aria-label='모달 바깥 화면: 클릭하면 모달이 종료됩니다.'
-        tabIndex={0}
-        className='mobile:min-w-xs fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)]'
-        onClick={handleOverlayClick}
-      />
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events
+    <div
+      role='button'
+      aria-label='모달 오버레이: 클릭하면 모달이 종료됩니다.'
+      tabIndex={0}
+      className='mobile:min-w-xs fixed inset-0 z-50 flex items-center justify-center bg-[rgba(0,0,0,0.5)]'
+      ref={overlayRef}
+      onClick={handleOverlayClick}
+    >
       <div
         role='dialog'
         aria-modal='true'
-        className={`scrollbar-hide max-h-[90vh] ${width} z-50 overflow-y-scroll rounded-lg bg-white p-8`}
+        className={`scrollbar-hide max-h-[90vh] ${width} overflow-y-scroll rounded-lg bg-white p-8`}
       >
         <h2 className='mb-8 text-left text-2xl font-bold'>{title}</h2>
+
         <form onSubmit={handleSubmit}>
           <div className='space-y-6'>
             {children}
+
             {/* 에러 메시지 */}
             {errorMessage && (
               <div className='-mt-2 text-sm text-red-500'>{errorMessage}</div>
             )}
           </div>
+
           {/* 버튼들 */}
           <div className='mt-6 flex gap-3'>
             {!hideCancelButton && (
@@ -94,6 +99,6 @@ export default function BaseModal({
           </div>
         </form>
       </div>
-    </>
+    </div>
   );
 }
