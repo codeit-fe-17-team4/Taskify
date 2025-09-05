@@ -2,7 +2,7 @@ import { createContext, type ReactNode, useState } from 'react';
 import Item from '@/components/ui/dropdown/item';
 import List from '@/components/ui/dropdown/list';
 import Toggle from '@/components/ui/dropdown/toggle';
-import useExitWhenClickOutSide from '@/hooks/useExitWhenClickOutSide';
+import useCallbackWhenClickOutSide from '@/hooks/useCallbackWhenClickOutSide';
 
 interface ContextType {
   isOpen: boolean;
@@ -20,7 +20,7 @@ export default function Dropdown({
   const handleClose = () => {
     setIsOpen(false);
   };
-  const dropdownRef = useExitWhenClickOutSide(handleClose);
+  const dropdownRef = useCallbackWhenClickOutSide(handleClose);
 
   return (
     <DropdownContext.Provider value={{ isOpen, setIsOpen }}>

@@ -1,11 +1,12 @@
 import Image from 'next/image';
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import {
   type CreateTaskFormData,
   getRandomTagColor,
 } from '@/components/dashboard/type';
 import ChipProfile from '@/components/ui/chip/chip-profile';
 import ChipTag from '@/components/ui/chip/chip-tag';
+import Dropdown from '@/components/ui/dropdown';
 import { mockProfileColors } from '@/lib/dashboard-mock-data';
 import type { UserType } from '@/lib/users/type';
 import { getProfileColor } from '@/utils/profile-color';
@@ -27,7 +28,6 @@ export default function CreateTaskForm({
 }: CreateTaskFormProps): React.ReactElement {
   const [currentTag, setCurrentTag] = useState('');
   const [isAssigneeDropdownOpen, setIsAssigneeDropdownOpen] = useState(false);
-  const assigneeDropdownRef = useRef<HTMLDivElement>(null);
 
   const assigneeOptions = [
     {
@@ -46,29 +46,17 @@ export default function CreateTaskForm({
       profileColor: mockProfileColors[2],
     },
   ];
-
+  const chipProfileLabel = (
+    assigneeOptions.find((opt) => opt.value === formData.assignee)?.label || ''
+  ).slice(0, 1);
+  const chipProfileColor = getProfileColor(
+    assigneeOptions.find((opt) => opt.value === formData.assignee)
+      ?.profileColor || '#10b981'
+  );
   const handleAssigneeSelect = (assignee: string) => {
     setFormData((prev) => ({ ...prev, assignee }));
     setIsAssigneeDropdownOpen(false);
   };
-
-  // 드롭다운 외부 클릭 시 닫기
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        assigneeDropdownRef.current &&
-        !assigneeDropdownRef.current.contains(event.target as Node)
-      ) {
-        setIsAssigneeDropdownOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
 
   const handleTagKeyDown = (e: React.KeyboardEvent) => {
     if (e.key !== 'Enter') {
@@ -128,92 +116,73 @@ export default function CreateTaskForm({
         <label htmlFor='assignee' className='mb-2 block text-lg font-medium'>
           담당자
         </label>
-        <div className='relative' ref={assigneeDropdownRef}>
-          <button
-            type='button'
-            className='flex w-full cursor-pointer appearance-none items-center justify-between rounded-lg border border-gray-300 p-4 pr-4 text-left focus:outline-none'
+        <Dropdown>
+          <Dropdown.Toggle
             onClick={() => {
               setIsAssigneeDropdownOpen(!isAssigneeDropdownOpen);
             }}
           >
-            <div className='flex items-center gap-2'>
-              {formData.assignee ? (
-                <>
-                  <ChipProfile
-                    size='md'
-                    label={
-                      (
-                        assigneeOptions.find(
-                          (opt) => opt.value === formData.assignee
-                        )?.label || ''
-                      ).slice(0, 1) || '배'
-                    }
-                    color={getProfileColor(
-                      assigneeOptions.find(
+            <div className='flex w-full appearance-none items-center justify-between rounded-lg border border-gray-300 p-4 pr-4 text-left focus:outline-none'>
+              <div className='flex items-center gap-2'>
+                {formData.assignee ? (
+                  <>
+                    <ChipProfile
+                      size='md'
+                      label={chipProfileLabel}
+                      color={chipProfileColor}
+                    />
+                    <span>
+                      {assigneeOptions.find(
                         (opt) => opt.value === formData.assignee
-                      )?.profileColor || '#10b981'
-                    )}
-                  />
-                  <span>
-                    {assigneeOptions.find(
-                      (opt) => opt.value === formData.assignee
-                    )?.label || '이름을 입력해 주세요'}
-                  </span>
-                </>
-              ) : (
-                <span className='text-gray-500'>이름을 입력해 주세요</span>
-              )}
+                      )?.label || '이름을 입력해 주세요'}
+                    </span>
+                  </>
+                ) : (
+                  <span className='text-gray-500'>이름을 입력해 주세요</span>
+                )}
+              </div>
+              <Image
+                src='/dashboard/input-dropdown-btn.svg'
+                alt='드롭다운'
+                width={14}
+                height={16}
+                className={`transition-transform ${isAssigneeDropdownOpen ? 'rotate-180' : ''}`}
+              />
             </div>
-            <Image
-              src='/dashboard/input-dropdown-btn.svg'
-              alt='드롭다운'
-              width={14}
-              height={16}
-              className={`transition-transform ${isAssigneeDropdownOpen ? 'rotate-180' : ''}`}
-            />
-          </button>
-
-          {/* 드롭다운 옵션들 */}
-          {isAssigneeDropdownOpen && (
-            <div className='absolute top-full right-0 left-0 z-10 mt-1 overflow-hidden rounded-lg border border-gray-300 bg-white shadow-lg'>
-              {assigneeOptions.map((option, index) => {
-                return (
-                  <button
-                    key={option.value}
-                    type='button'
-                    className={`flex w-full cursor-pointer items-center gap-2 px-4 py-3 text-left hover:bg-gray-50 ${
-                      index === 0 ? 'rounded-t-lg' : ''
-                    } ${
-                      index === assigneeOptions.length - 1 ? 'rounded-b-lg' : ''
-                    }`}
-                    onClick={() => {
-                      handleAssigneeSelect(String(option.value));
-                    }}
-                  >
-                    <div className='flex h-[10px] w-[14px] items-center justify-center'>
-                      {formData.assignee === option.value && (
-                        <Image
-                          src='/dashboard/check-icon.svg'
-                          alt='선택됨'
-                          width={14}
-                          height={10}
-                        />
-                      )}
-                    </div>
-                    <div className='flex items-center gap-2'>
-                      <ChipProfile
-                        label={(option.label || '').slice(0, 1)}
-                        color={getProfileColor(option.profileColor)}
-                        size='md'
+          </Dropdown.Toggle>
+          <Dropdown.List>
+            {assigneeOptions.map((option) => {
+              return (
+                <Dropdown.Item
+                  key={option.value}
+                  additionalClassName='gap-2 px-4 py-3 items-center'
+                  onClick={() => {
+                    handleAssigneeSelect(String(option.value));
+                  }}
+                >
+                  <div className='flex h-[10px] w-[14px] items-center justify-center'>
+                    {formData.assignee === option.value && (
+                      <Image
+                        src='/dashboard/check-icon.svg'
+                        alt='선택됨'
+                        width={14}
+                        height={10}
                       />
-                      <span>{option.label}</span>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          )}
-        </div>
+                    )}
+                  </div>
+                  <div className='flex items-center gap-2'>
+                    <ChipProfile
+                      label={(option.label || '').slice(0, 1)}
+                      color={getProfileColor(option.profileColor)}
+                      size='md'
+                    />
+                    <span>{option.label}</span>
+                  </div>
+                </Dropdown.Item>
+              );
+            })}
+          </Dropdown.List>
+        </Dropdown>
       </div>
 
       {/* 제목 */}
