@@ -1,13 +1,14 @@
 import Image from 'next/image';
-import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
+import {
+  type CreateTaskFormData,
+  getRandomTagColor,
+} from '@/components/dashboard/type';
 import ChipProfile from '@/components/ui/chip/chip-profile';
 import ChipTag from '@/components/ui/chip/chip-tag';
 import { mockProfileColors } from '@/lib/dashboard-mock-data';
 import type { UserType } from '@/lib/users/type';
 import { getProfileColor } from '@/utils/profile-color';
-import type { CreateTaskFormData } from './type';
-import { getRandomTagColor } from './type';
 
 interface CreateTaskFormProps {
   formData: CreateTaskFormData;
@@ -70,24 +71,32 @@ export default function CreateTaskForm({
   }, []);
 
   const handleTagKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && currentTag.trim()) {
-      e.preventDefault();
-      setFormData((prev) => ({
+    if (e.key !== 'Enter') {
+      return;
+    }
+    if (!currentTag.trim()) {
+      return;
+    }
+    e.preventDefault();
+    setFormData((prev) => {
+      return {
         ...prev,
         tags: [
           ...prev.tags,
           { label: currentTag.trim(), color: getRandomTagColor() },
         ],
-      }));
-      setCurrentTag('');
-    }
+      };
+    });
+    setCurrentTag('');
   };
 
   const removeTag = (indexToRemove: number) => {
-    setFormData((prev) => ({
-      ...prev,
-      tags: prev.tags.filter((_, index) => index !== indexToRemove),
-    }));
+    setFormData((prev) => {
+      return {
+        ...prev,
+        tags: prev.tags.filter((_, index) => index !== indexToRemove),
+      };
+    });
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -178,7 +187,7 @@ export default function CreateTaskForm({
                       index === assigneeOptions.length - 1 ? 'rounded-b-lg' : ''
                     }`}
                     onClick={() => {
-                      handleAssigneeSelect(option.value);
+                      handleAssigneeSelect(String(option.value));
                     }}
                   >
                     <div className='flex h-[10px] w-[14px] items-center justify-center'>
@@ -283,6 +292,7 @@ export default function CreateTaskForm({
               const input = document.querySelector(
                 '#dueDate'
               ) as HTMLInputElement;
+
               input.showPicker();
               input.focus();
             }}
@@ -309,10 +319,10 @@ export default function CreateTaskForm({
               <div key={tag.label} className='flex items-center gap-1'>
                 <ChipTag
                   label={tag.label}
+                  size='md'
                   color={
                     tag.color as 'blue' | 'pink' | 'green' | 'brown' | 'red'
                   }
-                  size='md'
                 />
                 <button
                   type='button'

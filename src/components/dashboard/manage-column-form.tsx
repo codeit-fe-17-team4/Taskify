@@ -1,4 +1,4 @@
-import type { ManageColumnFormData } from './type';
+import type { ManageColumnFormData } from '@/components/dashboard/type';
 
 interface ManageColumnFormProps {
   formData: ManageColumnFormData;

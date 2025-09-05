@@ -1,4 +1,5 @@
-import type { CreateColumnFormData } from './type';
+import type { ReactNode } from 'react';
+import type { CreateColumnFormData } from '@/components/dashboard/type';
 
 interface CreateColumnFormProps {
   formData: CreateColumnFormData;
@@ -10,7 +11,7 @@ export default function CreateColumnForm({
   formData,
   setFormData,
   hasError = false,
-}: CreateColumnFormProps): JSX.Element {
+}: CreateColumnFormProps): ReactNode {
   return (
     <>
       {/* 이름 */}

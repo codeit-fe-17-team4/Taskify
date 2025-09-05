@@ -1,4 +1,4 @@
-import BaseModal from '../ui/base-modal';
+import BaseModal from '@/components/ui/modal/modal-base';
 
 interface DeleteColumnModalProps {
   isOpen: boolean;

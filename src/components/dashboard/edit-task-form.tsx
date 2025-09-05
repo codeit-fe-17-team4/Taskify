@@ -1,13 +1,15 @@
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
+import {
+  type EditTaskFormData,
+  getRandomTagColor,
+} from '@/components/dashboard/type';
 import ChipProfile from '@/components/ui/chip/chip-profile';
 import ChipState from '@/components/ui/chip/chip-state';
 import ChipTag from '@/components/ui/chip/chip-tag';
 import { mockProfileColors } from '@/lib/dashboard-mock-data';
 import type { UserType } from '@/lib/users/type';
 import { getProfileColor } from '@/utils/profile-color';
-import { type EditTaskFormData , getRandomTagColor } from './type';
-
 
 interface EditTaskFormProps {
   formData: EditTaskFormData;
@@ -30,10 +32,12 @@ export default function EditTaskForm({
   const statusDropdownRef = useRef<HTMLDivElement>(null);
   const assigneeDropdownRef = useRef<HTMLDivElement>(null);
 
-  const statusOptions = columns.map((column) => { return {
-    value: column.title,
-    label: column.title,
-  } });
+  const statusOptions = columns.map((column) => {
+    return {
+      value: column.title,
+      label: column.title,
+    };
+  });
 
   const assigneeOptions = [
     {
@@ -90,44 +94,56 @@ export default function EditTaskForm({
   }, [isStatusDropdownOpen, isAssigneeDropdownOpen]);
 
   const handleTagKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && currentTag.trim()) {
-      e.preventDefault();
-      setFormData((prev) => { return {
+    if (e.key !== 'Enter') {
+      return;
+    }
+    if (!currentTag.trim()) {
+      return;
+    }
+    e.preventDefault();
+    setFormData((prev) => {
+      return {
         ...prev,
         tags: [
           ...prev.tags,
           { label: currentTag.trim(), color: getRandomTagColor() },
         ],
-      } });
-      setCurrentTag('');
-    }
+      };
+    });
+    setCurrentTag('');
   };
 
   const removeTag = (indexToRemove: number) => {
-    setFormData((prev) => { return {
-      ...prev,
-      tags: prev.tags.filter((_, index) => index !== indexToRemove),
-    } });
+    setFormData((prev) => {
+      return {
+        ...prev,
+        tags: prev.tags.filter((_, index) => index !== indexToRemove),
+      };
+    });
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
 
     if (file) {
-      setFormData((prev) => { return {
-        ...prev,
-        imageFile: file,
-        existingImageUrl: undefined,
-      } });
+      setFormData((prev) => {
+        return {
+          ...prev,
+          imageFile: file,
+          existingImageUrl: undefined,
+        };
+      });
     }
   };
 
   const removeImage = () => {
-    setFormData((prev) => { return {
-      ...prev,
-      imageFile: null,
-      existingImageUrl: undefined,
-    } });
+    setFormData((prev) => {
+      return {
+        ...prev,
+        imageFile: null,
+        existingImageUrl: undefined,
+      };
+    });
   };
 
   return (
@@ -159,30 +175,34 @@ export default function EditTaskForm({
             {/* 드롭다운 옵션들 */}
             {isStatusDropdownOpen && (
               <div className='absolute top-full right-0 left-0 z-10 mt-1 overflow-hidden rounded-lg border border-gray-300 bg-white shadow-lg'>
-                {statusOptions.map((option, index) => 
-                  { return <button
-                    key={option.value}
-                    type='button'
-                    className={`flex w-full cursor-pointer items-center gap-2 px-4 py-3 text-left hover:bg-gray-50 ${
-                      index === 0 ? 'rounded-t-lg' : ''
-                    } ${
-                      index === statusOptions.length - 1 ? 'rounded-b-lg' : ''
-                    }`}
-                    onClick={() => { handleStatusSelect(option.value); }}
-                  >
-                    <div className='flex h-[10px] w-[14px] items-center justify-center'>
-                      {formData.status === option.value && (
-                        <Image
-                          src='/dashboard/check-icon.svg'
-                          alt='선택됨'
-                          width={14}
-                          height={10}
-                        />
-                      )}
-                    </div>
-                    <ChipState label={option.label} size='md' />
-                  </button> }
-                )}
+                {statusOptions.map((option, index) => {
+                  return (
+                    <button
+                      key={option.value}
+                      type='button'
+                      className={`flex w-full cursor-pointer items-center gap-2 px-4 py-3 text-left hover:bg-gray-50 ${
+                        index === 0 ? 'rounded-t-lg' : ''
+                      } ${
+                        index === statusOptions.length - 1 ? 'rounded-b-lg' : ''
+                      }`}
+                      onClick={() => {
+                        handleStatusSelect(option.value);
+                      }}
+                    >
+                      <div className='flex h-[10px] w-[14px] items-center justify-center'>
+                        {formData.status === option.value && (
+                          <Image
+                            src='/dashboard/check-icon.svg'
+                            alt='선택됨'
+                            width={14}
+                            height={10}
+                          />
+                        )}
+                      </div>
+                      <ChipState label={option.label} size='md' />
+                    </button>
+                  );
+                })}
               </div>
             )}
           </div>
@@ -207,7 +227,7 @@ export default function EditTaskForm({
                     <ChipProfile
                       size='md'
                       label={
-                        String(
+                        (
                           assigneeOptions.find(
                             (opt) => opt.value === formData.assignee
                           )?.label || ''
@@ -241,37 +261,43 @@ export default function EditTaskForm({
             {/* 드롭다운 옵션들 */}
             {isAssigneeDropdownOpen && (
               <div className='absolute top-full right-0 left-0 z-10 mt-1 overflow-hidden rounded-lg border border-gray-300 bg-white shadow-lg'>
-                {assigneeOptions.map((option, index) => 
-                  { return <button
-                    key={option.value}
-                    type='button'
-                    className={`flex w-full cursor-pointer items-center gap-2 px-4 py-3 text-left hover:bg-gray-50 ${
-                      index === 0 ? 'rounded-t-lg' : ''
-                    } ${
-                      index === assigneeOptions.length - 1 ? 'rounded-b-lg' : ''
-                    }`}
-                    onClick={() => { handleAssigneeSelect(option.value); }}
-                  >
-                    <div className='flex h-[10px] w-[14px] items-center justify-center'>
-                      {formData.assignee === option.value && (
-                        <Image
-                          src='/dashboard/check-icon.svg'
-                          alt='선택됨'
-                          width={14}
-                          height={10}
+                {assigneeOptions.map((option, index) => {
+                  return (
+                    <button
+                      key={option.value}
+                      type='button'
+                      className={`flex w-full cursor-pointer items-center gap-2 px-4 py-3 text-left hover:bg-gray-50 ${
+                        index === 0 ? 'rounded-t-lg' : ''
+                      } ${
+                        index === assigneeOptions.length - 1
+                          ? 'rounded-b-lg'
+                          : ''
+                      }`}
+                      onClick={() => {
+                        handleAssigneeSelect(String(option.value));
+                      }}
+                    >
+                      <div className='flex h-[10px] w-[14px] items-center justify-center'>
+                        {formData.assignee === option.value && (
+                          <Image
+                            src='/dashboard/check-icon.svg'
+                            alt='선택됨'
+                            width={14}
+                            height={10}
+                          />
+                        )}
+                      </div>
+                      <div className='flex items-center gap-2'>
+                        <ChipProfile
+                          label={(option.label || '').slice(0, 1)}
+                          color={getProfileColor(option.profileColor)}
+                          size='md'
                         />
-                      )}
-                    </div>
-                    <div className='flex items-center gap-2'>
-                      <ChipProfile
-                        label={String(option.label || '').slice(0, 1)}
-                        color={getProfileColor(option.profileColor)}
-                        size='md'
-                      />
-                      <span>{option.label}</span>
-                    </div>
-                  </button> }
-                )}
+                        <span>{option.label}</span>
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
             )}
           </div>
@@ -317,10 +343,12 @@ export default function EditTaskForm({
           className='focus:border-violet w-full resize-none rounded-lg border border-gray-300 p-4 focus:outline-none'
           value={formData.description}
           onChange={(e) => {
-            setFormData((prev) => { return {
-              ...prev,
-              description: e.target.value,
-            } });
+            setFormData((prev) => {
+              return {
+                ...prev,
+                description: e.target.value,
+              };
+            });
           }}
         />
       </div>
@@ -342,7 +370,7 @@ export default function EditTaskForm({
               setFormData((prev) => ({ ...prev, dueDate: e.target.value }));
             }}
             onClick={(e) => {
-              (e.currentTarget as HTMLInputElement).showPicker?.();
+              (e.currentTarget as HTMLInputElement).showPicker();
             }}
           />
           <div
@@ -352,8 +380,8 @@ export default function EditTaskForm({
                 '#dueDate'
               ) as HTMLInputElement;
 
-              input?.showPicker?.();
-              input?.focus();
+              input.showPicker();
+              input.focus();
             }}
           >
             <Image
@@ -373,20 +401,25 @@ export default function EditTaskForm({
         </label>
         <div className='flex min-h-[3.5rem] flex-wrap items-center gap-2 rounded-lg border border-gray-300 p-3 focus-within:border-gray-300'>
           {/* 기존 태그들 */}
-          {formData.tags.map((tag, index) => 
-            { return <div key={index} className='flex items-center gap-1'>
-              <ChipTag label={tag.label} color={tag.color} size='md' />
-              <button
-                type='button'
-                className='ml-1 text-gray-400 hover:text-gray-600'
-                onClick={() => {
-                  removeTag(index);
-                }}
+          {formData.tags.map((tag, index) => {
+            return (
+              <div
+                key={`${crypto.randomUUID()}-${tag.label}`}
+                className='flex items-center gap-1'
               >
-                ×
-              </button>
-            </div> }
-          )}
+                <ChipTag label={tag.label} color={tag.color} size='md' />
+                <button
+                  type='button'
+                  className='ml-1 text-gray-400 hover:text-gray-600'
+                  onClick={() => {
+                    removeTag(index);
+                  }}
+                >
+                  ×
+                </button>
+              </div>
+            );
+          })}
           {/* 새 태그 입력 */}
           <input
             id='tags'

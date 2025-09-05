@@ -1,7 +1,7 @@
 import { type ReactNode, useState } from 'react';
 import CreateNewboardForm from '@/components/mydashboard/create-newboard-form';
 import type { CreateNewboardFormData } from '@/components/mydashboard/type';
-import BaseModal from '@/components/ui/base-modal';
+import BaseModal from '@/components/ui/modal/modal-base';
 import { useModalKeyHandler } from '@/hooks/useModal';
 
 interface CreateNewboardModalProps {

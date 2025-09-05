@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import type { ColumnHeaderProps } from './type';
+import type { ColumnHeaderProps } from '@/components/dashboard/type';
 
 export default function ColumnHeader({
   column,

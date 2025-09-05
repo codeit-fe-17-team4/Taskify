@@ -1,8 +1,8 @@
 import { useState } from 'react';
+import CreateColumnForm from '@/components/dashboard/create-column-form';
+import type { CreateColumnFormData } from '@/components/dashboard/type';
+import BaseModal from '@/components/ui/modal/modal-base';
 import { useModalKeyHandler } from '@/hooks/useModal';
-import BaseModal from '../ui/base-modal';
-import CreateColumnForm from './create-column-form';
-import type { CreateColumnFormData } from './type';
 
 interface CreateColumnModalProps {
   isOpen: boolean;
@@ -37,10 +37,14 @@ export default function CreateColumnModal({
   const isMaxColumnsReached = existingColumns.length >= maxColumns;
 
   const handleSubmit = () => {
-    if (!isDuplicate && !isMaxColumnsReached) {
-      onSubmit(formData);
-      handleClose();
+    if (isDuplicate) {
+      return;
     }
+    if (isMaxColumnsReached) {
+      return;
+    }
+    onSubmit(formData);
+    handleClose();
   };
 
   const isSubmitDisabled =
@@ -56,7 +60,7 @@ export default function CreateColumnModal({
       width='w-[32rem]'
       errorMessage={
         isMaxColumnsReached
-          ? `최대 ${maxColumns}개까지만 생성할 수 있습니다.`
+          ? `최대 ${String(maxColumns)}개까지만 생성할 수 있습니다.`
           : isDuplicate
             ? '중복된 컬럼 이름입니다.'
             : undefined

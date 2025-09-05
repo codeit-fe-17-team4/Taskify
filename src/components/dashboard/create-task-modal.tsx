@@ -1,9 +1,9 @@
 import { useState } from 'react';
+import CreateTaskForm from '@/components/dashboard/create-task-form';
+import type { CreateTaskFormData } from '@/components/dashboard/type';
+import BaseModal from '@/components/ui/modal/modal-base';
 import { useModalKeyHandler } from '@/hooks/useModal';
 import type { UserType } from '@/lib/users/type';
-import BaseModal from '../ui/base-modal';
-import CreateTaskForm from './create-task-form';
-import type { CreateTaskFormData } from './type';
 
 interface CreateTaskModalProps {
   isOpen: boolean;

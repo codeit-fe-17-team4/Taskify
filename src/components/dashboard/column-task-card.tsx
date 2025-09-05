@@ -1,11 +1,13 @@
 import Image from 'next/image';
+import type { TaskCardProps } from '@/components/dashboard/type';
 import ChipProfile from '@/components/ui/chip/chip-profile';
 import ChipTag from '@/components/ui/chip/chip-tag';
 import { getProfileColor } from '@/utils/profile-color';
-import type { TaskCardProps } from './type';
 
 const formatDueDate = (dueDate: string) => {
-  if (!dueDate) {return '';}
+  if (!dueDate) {
+    return '';
+  }
 
   const date = new Date(dueDate);
   const year = date.getFullYear();
@@ -14,7 +16,7 @@ const formatDueDate = (dueDate: string) => {
   const hours = String(date.getHours()).padStart(2, '0');
   const minutes = String(date.getMinutes()).padStart(2, '0');
 
-  return `${year}-${month}-${day} ${hours}:${minutes}`;
+  return `${String(year)}-${month}-${day} ${hours}:${minutes}`;
 };
 
 export default function ColumnTaskCard({ task, onEditTask }: TaskCardProps) {
@@ -51,14 +53,18 @@ export default function ColumnTaskCard({ task, onEditTask }: TaskCardProps) {
 
           {/* 태그들 */}
           <div className='mb-3 flex flex-wrap items-center gap-1.5'>
-            {task.tags.map((tag) => 
-              { return <ChipTag
-                key={tag.label}
-                label={tag.label}
-                color={tag.color as 'blue' | 'pink' | 'green' | 'brown' | 'red'}
-                size='md'
-              /> }
-            )}
+            {task.tags.map((tag) => {
+              return (
+                <ChipTag
+                  key={tag.label}
+                  label={tag.label}
+                  size='md'
+                  color={
+                    tag.color as 'blue' | 'pink' | 'green' | 'brown' | 'red'
+                  }
+                />
+              );
+            })}
           </div>
 
           {/* 날짜와 담당자 */}
@@ -75,7 +81,7 @@ export default function ColumnTaskCard({ task, onEditTask }: TaskCardProps) {
 
             <div className='flex items-center'>
               <ChipProfile
-                label={String(task.manager.nickname || '').slice(0, 1)}
+                label={(task.manager.nickname || '').slice(0, 1)}
                 color={getProfileColor(task.manager.profileColor)}
                 size='sm'
               />
