@@ -5,4 +5,5 @@ export interface CreateNewboardFormData {
 
 export interface InviteMemberFormData {
   email: string;
+  nickname: string;
 }

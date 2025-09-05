@@ -1,11 +1,13 @@
 import type { GetServerSideProps } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { type ReactNode, useState } from 'react';
 import DashboardLayout from '@/components/layout/dashboard-layout';
 import CreateNewboardModal from '@/components/mydashboard/create-newboard-modal';
 import type { CreateNewboardFormData } from '@/components/mydashboard/type';
 import { createDashBoard } from '@/lib/dashboards/api';
+import type { InvitationType } from '@/lib/dashboards/type';
 import {
   mydashboardInviteMockData,
   mydashboardMockData,
@@ -24,19 +26,13 @@ interface DashboardList {
   dotcolor: string;
 }
 
-interface InviteList {
-  id: number;
-  title: string;
-  inviter: string;
-}
-
 export default function Mydashboard({
   isLoggedIn,
 }: MydashboardProps): ReactNode {
   // mock 데이터 파일 분리해서 활용 !
   const [dashboardData, setDashboardData] =
     useState<DashboardList[]>(mydashboardMockData);
-  const inviteData: InviteList[] = mydashboardInviteMockData;
+  const inviteData: InvitationType[] = mydashboardInviteMockData.invitations;
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleOpenModal = () => {
@@ -75,15 +71,12 @@ export default function Mydashboard({
    * api 주고받기 ..?
    */
 
-  // 생성 api
+  // 새로운 대시보드 생성 api
+  const router = useRouter();
   const [isCreating, setIsCreating] = useState(false);
   const handleCreateDashboard = async (formData: CreateNewboardFormData) => {
     try {
       setIsCreating(true);
-      const body = {
-        name: formData.title,
-        color: formData.color,
-      };
 
       // API 호출 - createDashBoard 컴포넌트 활용 ...
       const newDashboard = await createDashBoard(formData);
@@ -101,13 +94,14 @@ export default function Mydashboard({
 
       console.log('새 대시보드 생성 성공:', newDashboard);
       handleCloseModal();
+      // id 가 number 타입인데 아래와 같이 사용하려니까 오류가 나서 해결 방법을 찾아보니 직접 타입을 명시해줘야 한다고 하여 toString으로 명시했습니다. 흠
+      router.push(`/dashboard/${newDashboard.id.toString()}`);
     } catch (error) {
       console.error('대시보드 생성 실패:', error);
     } finally {
       setIsCreating(false);
     }
   };
-
   const handleAcceptInvitation = (inviteId: number) => {
     console.log('초대 수락:', inviteId);
   };
@@ -267,7 +261,7 @@ export default function Mydashboard({
                                 이름
                               </p>
                               <span className='mobile:ml-4'>
-                                {invite.title}
+                                {invite.dashboard.title}
                               </span>
                             </div>
                             <div className='mobile:flex mobile:w-full'>
@@ -275,7 +269,7 @@ export default function Mydashboard({
                                 초대자
                               </p>
                               <span className='mobile:ml-4'>
-                                {invite.inviter}
+                                {invite.inviter.nickname}
                               </span>
                             </div>
                             <div className='mobile:flex mobile:mt-2 mobile:w-full mobile:mr-8 flex items-center justify-center gap-2'>
