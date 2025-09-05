@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import CreateTaskForm from '@/components/dashboard/create-task-form';
+import CreateTaskForm from '@/components/dashboard/modal/create-task-form';
 import type { CreateTaskFormData } from '@/components/dashboard/type';
 import ButtonModal from '@/components/ui/modal/modal-button';
 import { useModalKeyHandler } from '@/hooks/useModal';

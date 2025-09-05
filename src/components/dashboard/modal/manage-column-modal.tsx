@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import DeleteColumnModal from '@/components/dashboard/delete-column-modal';
-import ManageColumnForm from '@/components/dashboard/manage-column-form';
+import DeleteColumnModal from '@/components/dashboard/modal/delete-column-modal';
+import ManageColumnForm from '@/components/dashboard/modal/manage-column-form';
 import type {
   ColumnType,
   ManageColumnFormData,

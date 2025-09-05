@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import EditTaskForm from '@/components/dashboard/edit-task-form';
+import EditTaskForm from '@/components/dashboard/modal/edit-task-form';
 import type { EditTaskFormData, TaskType } from '@/components/dashboard/type';
 import ButtonModal from '@/components/ui/modal/modal-button';
 import { useModalKeyHandler } from '@/hooks/useModal';

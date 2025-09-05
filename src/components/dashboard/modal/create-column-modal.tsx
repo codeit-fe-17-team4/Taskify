@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import CreateColumnForm from '@/components/dashboard/create-column-form';
+import CreateColumnForm from '@/components/dashboard/modal/create-column-form';
 import type { CreateColumnFormData } from '@/components/dashboard/type';
 import ButtonModal from '@/components/ui/modal/modal-button';
 import { useModalKeyHandler } from '@/hooks/useModal';
