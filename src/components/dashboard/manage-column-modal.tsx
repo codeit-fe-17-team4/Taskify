@@ -1,6 +1,7 @@
-import { useEffect,useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useModalKeyHandler } from '@/hooks/useModal';
 import BaseModal from '../ui/base-modal';
+import DeleteColumnModal from './delete-column-modal';
 import ManageColumnForm from './manage-column-form';
 import type { ColumnType, ManageColumnFormData } from './type';
 
@@ -10,6 +11,7 @@ interface ManageColumnModalProps {
   column: ColumnType | null;
   onUpdate: (columnId: string, columnData: ManageColumnFormData) => void;
   onDelete: (columnId: string) => void;
+  existingColumns?: string[];
 }
 
 export default function ManageColumnModal({
@@ -18,10 +20,12 @@ export default function ManageColumnModal({
   column,
   onUpdate,
   onDelete,
+  existingColumns = [],
 }: ManageColumnModalProps) {
   const [formData, setFormData] = useState<ManageColumnFormData>({
     name: '',
   });
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   useEffect(() => {
     if (column) {
@@ -43,29 +47,55 @@ export default function ManageColumnModal({
   };
 
   const handleDelete = () => {
+    handleClose(); // 기존 모달 먼저 닫기
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
     if (column) {
       onDelete(column.id);
       handleClose();
     }
   };
 
-  const isUpdateDisabled = !formData.name.trim();
+  // 중복 검사 (현재 컬럼 제외)
+  const isDuplicate = existingColumns
+    .filter((colName) => colName !== column?.title)
+    .some((colName) => colName.toLowerCase() === formData.name.toLowerCase());
 
-  if (!column) {return null;}
+  const isUpdateDisabled = !formData.name.trim() || isDuplicate;
+
+  if (!column) {
+    return null;
+  }
 
   return (
-    <BaseModal
-      isOpen={isOpen}
-      title='컬럼 관리'
-      submitText='변경'
-      cancelText='삭제'
-      isSubmitDisabled={isUpdateDisabled}
-      width='w-[32rem]'
-      onClose={handleClose}
-      onSubmit={handleUpdate}
-      onCancel={handleDelete}
-    >
-      <ManageColumnForm formData={formData} setFormData={setFormData} />
-    </BaseModal>
+    <>
+      <BaseModal
+        isOpen={isOpen}
+        title='컬럼 관리'
+        submitText='변경'
+        cancelText='삭제'
+        isSubmitDisabled={isUpdateDisabled}
+        width='w-[32rem]'
+        errorMessage={isDuplicate ? '중복된 컬럼 이름입니다.' : undefined}
+        onClose={handleClose}
+        onSubmit={handleUpdate}
+        onCancel={handleDelete}
+      >
+        <ManageColumnForm
+          formData={formData}
+          setFormData={setFormData}
+          hasError={isDuplicate}
+        />
+      </BaseModal>
+
+      <DeleteColumnModal
+        isOpen={isDeleteModalOpen}
+        columnTitle={column.title}
+        onClose={() => { setIsDeleteModalOpen(false); }}
+        onConfirm={handleConfirmDelete}
+      />
+    </>
   );
 }

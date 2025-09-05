@@ -1,27 +1,20 @@
 import Image from 'next/image';
+import ChipProfile from '@/components/ui/chip/chip-profile';
+import ChipTag from '@/components/ui/chip/chip-tag';
+import { getProfileColor } from '@/utils/profile-color';
 import type { TaskCardProps } from './type';
 
-const getTagColorClasses = (color: string) => {
-  switch (color) {
-    case 'orange': {
-      return 'bg-orange-100 text-orange-600';
-    }
-    case 'green': {
-      return 'bg-green-100 text-green-600';
-    }
-    case 'blue': {
-      return 'bg-blue-100 text-blue-600';
-    }
-    case 'red': {
-      return 'bg-red-100 text-red-600';
-    }
-    case 'purple': {
-      return 'bg-purple-100 text-purple-600';
-    }
-    default: {
-      return 'bg-gray-100 text-gray-600';
-    }
-  }
+const formatDueDate = (dueDate: string) => {
+  if (!dueDate) {return '';}
+
+  const date = new Date(dueDate);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+
+  return `${year}-${month}-${day} ${hours}:${minutes}`;
 };
 
 export default function ColumnTaskCard({ task, onEditTask }: TaskCardProps) {
@@ -33,61 +26,59 @@ export default function ColumnTaskCard({ task, onEditTask }: TaskCardProps) {
 
   return (
     <div
-      className='cursor-pointer rounded-lg border border-gray-300 bg-white'
+      className='flex cursor-pointer flex-col gap-4 rounded-lg border border-gray-300 bg-white p-4'
       onClick={handleCardClick}
     >
-      {/* 이미지 */}
+      {/* 썸네일 */}
       {task.imageUrl && (
-        <div className='p-4 pb-0'>
-          <div className='h-40 w-full overflow-hidden rounded-lg'>
-            <Image
-              src={task.imageUrl}
-              alt='카드 이미지'
-              width={300}
-              height={160}
-              className='h-full w-full object-cover'
-            />
-          </div>
+        <div className='h-40 w-full overflow-hidden rounded-lg'>
+          <Image
+            src={task.imageUrl}
+            alt='카드 이미지'
+            width={300}
+            height={160}
+            className='h-full w-full object-cover'
+          />
         </div>
       )}
 
       {/* 본문 */}
-      <div className='p-4'>
-        <h3 className='mb-3 line-clamp-2 text-base font-medium text-gray-900'>
-          {task.title}
-        </h3>
+      <div className='flex flex-col justify-between'>
+        <div>
+          <h3 className='mb-3 line-clamp-2 text-base font-medium text-gray-900'>
+            {task.title}
+          </h3>
 
-        {/* 태그들 */}
-        <div className='mb-3 flex flex-wrap gap-1.5'>
-          {task.tags.map((tag) => 
-            { return <span
-              key={tag.label}
-              className={`rounded-md px-2 py-1 text-xs font-medium ${getTagColorClasses(tag.color)}`}
-            >
-              {tag.label}
-            </span> }
-          )}
-        </div>
-
-        <div className='flex items-center justify-between'>
-          {/* 날짜 */}
-          <div className='flex items-center gap-1.5 text-xs text-gray-500'>
-            <Image
-              src='/dashboard/calendar.svg'
-              alt='달력'
-              width={14}
-              height={16}
-            />
-            <span>{task.dueDate}</span>
+          {/* 태그들 */}
+          <div className='mb-3 flex flex-wrap items-center gap-1.5'>
+            {task.tags.map((tag) => 
+              { return <ChipTag
+                key={tag.label}
+                label={tag.label}
+                color={tag.color as 'blue' | 'pink' | 'green' | 'brown' | 'red'}
+                size='md'
+              /> }
+            )}
           </div>
 
-          {/* 담당자 */}
-          <div className='flex items-center'>
-            <div
-              className='flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium text-white'
-              style={{ backgroundColor: task.manager.profileColor }}
-            >
-              {task.manager.nickname.slice(0, 2)}
+          {/* 날짜와 담당자 */}
+          <div className='flex items-center justify-between'>
+            <div className='flex items-center gap-1.5 text-xs text-gray-500'>
+              <Image
+                src='/dashboard/calendar.svg'
+                alt='달력'
+                width={14}
+                height={16}
+              />
+              <span>{formatDueDate(task.dueDate)}</span>
+            </div>
+
+            <div className='flex items-center'>
+              <ChipProfile
+                label={String(task.manager.nickname || '').slice(0, 1)}
+                color={getProfileColor(task.manager.profileColor)}
+                size='sm'
+              />
             </div>
           </div>
         </div>
