@@ -1,52 +1,115 @@
 import Image from 'next/image';
-import { useState } from 'react';
+import type React from 'react';
+import { useEffect, useRef, useState } from 'react';
+import ChipProfile from '@/components/ui/chip/chip-profile';
+import ChipTag from '@/components/ui/chip/chip-tag';
+import { mockProfileColors } from '@/lib/dashboard-mock-data';
+import type { UserType } from '@/lib/users/type';
+import { getProfileColor } from '@/utils/profile-color';
 import type { CreateTaskFormData } from './type';
+import { getRandomTagColor } from './type';
 
 interface CreateTaskFormProps {
   formData: CreateTaskFormData;
-  setFormData: React.Dispatch<React.SetStateAction<CreateTaskFormData>>;
+  setFormData: (
+    data:
+      | CreateTaskFormData
+      | ((prev: CreateTaskFormData) => CreateTaskFormData)
+  ) => void;
+  userInfo: UserType | null;
 }
 
 export default function CreateTaskForm({
   formData,
   setFormData,
-}: CreateTaskFormProps) {
+  userInfo,
+}: CreateTaskFormProps): React.ReactElement {
   const [currentTag, setCurrentTag] = useState('');
+  const [isAssigneeDropdownOpen, setIsAssigneeDropdownOpen] = useState(false);
+  const assigneeDropdownRef = useRef<HTMLDivElement>(null);
+
+  const assigneeOptions = [
+    {
+      value: userInfo?.id ?? 'user-1',
+      label: userInfo?.nickname ?? '사용자',
+      profileColor: mockProfileColors[0],
+    },
+    {
+      value: 'user-2',
+      label: '테스터',
+      profileColor: mockProfileColors[1],
+    },
+    {
+      value: 'user-3',
+      label: '관리자',
+      profileColor: mockProfileColors[2],
+    },
+  ];
+
+  const handleAssigneeSelect = (assignee: string) => {
+    setFormData((prev) => ({ ...prev, assignee }));
+    setIsAssigneeDropdownOpen(false);
+  };
+
+  // 드롭다운 외부 클릭 시 닫기
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        assigneeDropdownRef.current &&
+        !assigneeDropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsAssigneeDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const handleTagKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && currentTag.trim()) {
       e.preventDefault();
-      setFormData((prev) => { return {
+      setFormData((prev) => ({
         ...prev,
-        tags: [...prev.tags, currentTag.trim()],
-      } });
+        tags: [
+          ...prev.tags,
+          { label: currentTag.trim(), color: getRandomTagColor() },
+        ],
+      }));
       setCurrentTag('');
     }
   };
 
   const removeTag = (indexToRemove: number) => {
-    setFormData((prev) => { return {
+    setFormData((prev) => ({
       ...prev,
       tags: prev.tags.filter((_, index) => index !== indexToRemove),
-    } });
+    }));
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
 
     if (file) {
-      setFormData((prev) => { return {
-        ...prev,
-        imageFile: file,
-      } });
+      setFormData((prev) => {
+        return {
+          ...prev,
+          imageFile: file,
+        };
+      });
     }
   };
 
   const removeImage = () => {
-    setFormData((prev) => { return {
-      ...prev,
-      imageFile: null,
-    } });
+    setFormData((prev) => {
+      return {
+        ...prev,
+        imageFile: null,
+      };
+    });
   };
 
   return (
@@ -56,28 +119,91 @@ export default function CreateTaskForm({
         <label htmlFor='assignee' className='mb-2 block text-lg font-medium'>
           담당자
         </label>
-        <div className='relative'>
-          <select
-            id='assignee'
-            name='assignee'
-            className='w-full cursor-pointer appearance-none rounded-lg border border-gray-300 p-4 pr-12 focus:outline-none'
-            value={formData.assignee}
-            onChange={(e) =>
-              { setFormData((prev) => ({ ...prev, assignee: e.target.value })); }
-            }
+        <div className='relative' ref={assigneeDropdownRef}>
+          <button
+            type='button'
+            className='flex w-full cursor-pointer appearance-none items-center justify-between rounded-lg border border-gray-300 p-4 pr-4 text-left focus:outline-none'
+            onClick={() => {
+              setIsAssigneeDropdownOpen(!isAssigneeDropdownOpen);
+            }}
           >
-            <option value=''>이름을 입력해 주세요</option>
-            <option value='user1'>사용자 1</option>
-            <option value='user2'>사용자 2</option>
-          </select>
-          <div className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4'>
+            <div className='flex items-center gap-2'>
+              {formData.assignee ? (
+                <>
+                  <ChipProfile
+                    size='md'
+                    label={
+                      (
+                        assigneeOptions.find(
+                          (opt) => opt.value === formData.assignee
+                        )?.label || ''
+                      ).slice(0, 1) || '배'
+                    }
+                    color={getProfileColor(
+                      assigneeOptions.find(
+                        (opt) => opt.value === formData.assignee
+                      )?.profileColor || '#10b981'
+                    )}
+                  />
+                  <span>
+                    {assigneeOptions.find(
+                      (opt) => opt.value === formData.assignee
+                    )?.label || '이름을 입력해 주세요'}
+                  </span>
+                </>
+              ) : (
+                <span className='text-gray-500'>이름을 입력해 주세요</span>
+              )}
+            </div>
             <Image
               src='/dashboard/input-dropdown-btn.svg'
               alt='드롭다운'
               width={14}
               height={16}
+              className={`transition-transform ${isAssigneeDropdownOpen ? 'rotate-180' : ''}`}
             />
-          </div>
+          </button>
+
+          {/* 드롭다운 옵션들 */}
+          {isAssigneeDropdownOpen && (
+            <div className='absolute top-full right-0 left-0 z-10 mt-1 overflow-hidden rounded-lg border border-gray-300 bg-white shadow-lg'>
+              {assigneeOptions.map((option, index) => {
+                return (
+                  <button
+                    key={option.value}
+                    type='button'
+                    className={`flex w-full cursor-pointer items-center gap-2 px-4 py-3 text-left hover:bg-gray-50 ${
+                      index === 0 ? 'rounded-t-lg' : ''
+                    } ${
+                      index === assigneeOptions.length - 1 ? 'rounded-b-lg' : ''
+                    }`}
+                    onClick={() => {
+                      handleAssigneeSelect(option.value);
+                    }}
+                  >
+                    <div className='flex h-[10px] w-[14px] items-center justify-center'>
+                      {formData.assignee === option.value && (
+                        <Image
+                          src='/dashboard/check-icon.svg'
+                          alt='선택됨'
+                          width={14}
+                          height={10}
+                        />
+                      )}
+                    </div>
+                    <div className='flex items-center gap-2'>
+                      <ChipProfile
+                        label={(option.label || '').slice(0, 1)}
+                        color={getProfileColor(option.profileColor)}
+                        size='md'
+                      />
+                      <span>{option.label}</span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
 
@@ -87,7 +213,7 @@ export default function CreateTaskForm({
           htmlFor='title'
           className='mb-2 block text-lg leading-6 font-medium'
         >
-          제목 <span className='align-baseline text-lg text-indigo-600'>*</span>
+          제목 <span className='text-violet align-baseline text-lg'>*</span>
         </label>
         <input
           required
@@ -95,11 +221,11 @@ export default function CreateTaskForm({
           name='title'
           type='text'
           placeholder='제목을 입력해 주세요'
-          className='w-full rounded-lg border border-gray-300 p-4 focus:outline-none'
+          className='focus:border-violet w-full rounded-lg border border-gray-300 p-4 focus:outline-none'
           value={formData.title}
-          onChange={(e) =>
-            { setFormData((prev) => ({ ...prev, title: e.target.value })); }
-          }
+          onChange={(e) => {
+            setFormData((prev) => ({ ...prev, title: e.target.value }));
+          }}
         />
       </div>
 
@@ -109,7 +235,7 @@ export default function CreateTaskForm({
           htmlFor='description'
           className='mb-2 block text-lg leading-6 font-medium'
         >
-          설명 <span className='align-baseline text-lg text-indigo-600'>*</span>
+          설명 <span className='text-violet align-baseline text-lg'>*</span>
         </label>
         <textarea
           required
@@ -117,14 +243,16 @@ export default function CreateTaskForm({
           name='description'
           placeholder='설명을 입력해 주세요'
           rows={4}
-          className='w-full resize-none rounded-lg border border-gray-300 p-4 focus:outline-none'
+          className='focus:border-violet w-full resize-none rounded-lg border border-gray-300 p-4 focus:outline-none'
           value={formData.description}
-          onChange={(e) =>
-            { setFormData((prev) => { return {
-              ...prev,
-              description: e.target.value,
-            } }); }
-          }
+          onChange={(e) => {
+            setFormData((prev) => {
+              return {
+                ...prev,
+                description: e.target.value,
+              };
+            });
+          }}
         />
       </div>
 
@@ -138,26 +266,25 @@ export default function CreateTaskForm({
             id='dueDate'
             name='dueDate'
             type='datetime-local'
-            className='w-full cursor-pointer rounded-lg border border-gray-300 p-4 pl-12 focus:outline-none'
+            className='focus:border-violet w-full cursor-pointer rounded-lg border border-gray-300 p-4 pl-12 focus:outline-none'
             value={formData.dueDate}
             placeholder='날짜와 시간을 선택하세요'
-            onChange={(e) =>
-              { setFormData((prev) => ({ ...prev, dueDate: e.target.value })); }
-            }
+            onChange={(e) => {
+              setFormData((prev) => ({ ...prev, dueDate: e.target.value }));
+            }}
             onClick={(e) => {
-              // 일부 브라우저에서 datepicker를 강제로 열기 위해
-              (e.currentTarget as any).showPicker?.();
+              (e.currentTarget as HTMLInputElement).showPicker();
             }}
           />
-          <div
+          <button
+            type='button'
             className='absolute inset-y-0 left-0 flex cursor-pointer items-center pl-4'
             onClick={() => {
               const input = document.querySelector(
                 '#dueDate'
               ) as HTMLInputElement;
-
-              (input as any)?.showPicker?.();
-              input?.focus();
+              input.showPicker();
+              input.focus();
             }}
           >
             <Image
@@ -166,7 +293,7 @@ export default function CreateTaskForm({
               width={14}
               height={16}
             />
-          </div>
+          </button>
         </div>
       </div>
 
@@ -177,21 +304,28 @@ export default function CreateTaskForm({
         </label>
         <div className='flex min-h-[3.5rem] flex-wrap items-center gap-2 rounded-lg border border-gray-300 p-3 focus-within:border-gray-300'>
           {/* 기존 태그들 */}
-          {formData.tags.map((tag, index) => 
-            { return <span
-              key={index}
-              className='flex items-center gap-2 rounded-md bg-blue-100 px-3 py-1 text-sm text-blue-600'
-            >
-              {tag}
-              <button
-                type='button'
-                className='ml-1 text-blue-400 hover:text-blue-600'
-                onClick={() => { removeTag(index); }}
-              >
-                ×
-              </button>
-            </span> }
-          )}
+          {formData.tags.map((tag, index) => {
+            return (
+              <div key={tag.label} className='flex items-center gap-1'>
+                <ChipTag
+                  label={tag.label}
+                  color={
+                    tag.color as 'blue' | 'pink' | 'green' | 'brown' | 'red'
+                  }
+                  size='md'
+                />
+                <button
+                  type='button'
+                  className='ml-1 text-blue-400 hover:text-blue-600'
+                  onClick={() => {
+                    removeTag(index);
+                  }}
+                >
+                  ×
+                </button>
+              </div>
+            );
+          })}
           {/* 새 태그 입력 */}
           <input
             id='tags'
@@ -200,8 +334,10 @@ export default function CreateTaskForm({
             placeholder={formData.tags.length === 0 ? '입력 후 Enter' : ''}
             className='min-w-[120px] flex-1 border-0 bg-transparent p-1 focus:outline-none'
             value={currentTag}
-            onChange={(e) => { setCurrentTag(e.target.value); }}
             onKeyDown={handleTagKeyDown}
+            onChange={(e) => {
+              setCurrentTag(e.target.value);
+            }}
           />
         </div>
       </div>

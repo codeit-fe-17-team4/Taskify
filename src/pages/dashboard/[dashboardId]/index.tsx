@@ -1,105 +1,57 @@
-import { type ReactNode, useState } from 'react';
+import type { GetServerSideProps } from 'next';
+import React, { useState } from 'react';
 import ColumnLayout from '@/components/dashboard/column-layout';
 import CreateColumnModal from '@/components/dashboard/create-column-modal';
+import CreateTaskModal from '@/components/dashboard/create-task-modal';
 import EditTaskModal from '@/components/dashboard/edit-task-modal';
 import ManageColumnModal from '@/components/dashboard/manage-column-modal';
 import TaskDetailModal from '@/components/dashboard/task-detail-modal';
-import DashboardLayout from '@/components/layout/dashboard-layout';
 import type {
   ColumnType,
   CreateColumnFormData,
+  CreateTaskFormData,
   EditTaskFormData,
   ManageColumnFormData,
   TaskType,
 } from '@/components/dashboard/type';
+import DashboardLayout from '@/components/layout/dashboard-layout';
+import { mockColumns, mockProfileColors } from '@/lib/dashboard-mock-data';
+import type { UserType } from '@/lib/users/type';
 
-export default function DashboardDetailPage(): ReactNode {
+interface DashboardDetailPageProps {
+  userInfo: UserType | null;
+}
+
+export default function DashboardDetailPage({
+  userInfo,
+}: DashboardDetailPageProps): React.ReactElement {
   const [isColumnModalOpen, setIsColumnModalOpen] = useState(false);
   const [isManageColumnModalOpen, setIsManageColumnModalOpen] = useState(false);
   const [selectedColumn, setSelectedColumn] = useState<ColumnType | null>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<TaskType | null>(null);
   const [isEditTaskModalOpen, setIsEditTaskModalOpen] = useState(false);
-  const mockColumns: ColumnType[] = [
-    {
-      id: '1',
-      title: 'To do',
-      tasks: [
-        {
-          id: 't1',
-          title: '1234',
-          description:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-          tags: [
-            { label: '프로젝트', color: 'orange' },
-            { label: '백엔드', color: 'green' },
-          ],
-          dueDate: '2025-08-28 10:30',
-          imageUrl: '/dashboard/sample-image.png',
-          manager: {
-            id: 'm1',
-            name: 'te',
-            nickname: 'te',
-            profileColor: '#8B5CF6',
-          },
-        },
-        {
-          id: 't3',
-          title: '123433333',
-          description: '123433333',
-          tags: [
-            { label: '프로젝트', color: 'orange' },
-            { label: '백엔드', color: 'green' },
-          ],
-          dueDate: '2025-08-28 10:00',
-          imageUrl: '',
-          manager: {
-            id: 'm3',
-            name: 'te',
-            nickname: 'te',
-            profileColor: '#8B5CF6',
-          },
-        },
-      ],
-    },
-    {
-      id: '2',
-      title: 'On progress',
-      tasks: [
-        {
-          id: 't2',
-          title: '2222',
-          description: '2222',
-          tags: [{ label: '프로젝트', color: 'orange' }],
-          dueDate: '2025-08-28 10:30',
-          imageUrl: '',
-          manager: {
-            id: 'm2',
-            name: 'te',
-            nickname: 'te',
-            profileColor: '#8B5CF6',
-          },
-        },
-      ],
-    },
-    {
-      id: '3',
-      title: 'Done',
-      tasks: [],
-    },
-  ];
+  const [isCreateTaskModalOpen, setIsCreateTaskModalOpen] = useState(false);
+  const [selectedColumnId, setSelectedColumnId] = useState<string | null>(null);
+  const [columns, setColumns] = useState<ColumnType[]>(mockColumns);
 
   const handleAddColumnClick = () => {
     setIsColumnModalOpen(true);
   };
 
   const handleColumnSubmit = (columnData: CreateColumnFormData) => {
-    // TODO: 컬럼 생성 API 호출
+    const newColumn: ColumnType = {
+      id: Date.now().toString(),
+      title: columnData.name,
+      tasks: [],
+    };
+
+    setColumns((prevColumns) => [...prevColumns, newColumn]);
     setIsColumnModalOpen(false);
   };
 
   const handleColumnSettingsClick = (columnId: string) => {
-    const column = mockColumns.find((col) => col.id === columnId);
+    const column = columns.find((col) => col.id === columnId);
 
     if (column) {
       setSelectedColumn(column);
@@ -111,18 +63,34 @@ export default function DashboardDetailPage(): ReactNode {
     columnId: string,
     columnData: ManageColumnFormData
   ) => {
-    // TODO: 컬럼 업데이트 API 호출
+    setColumns((prevColumns) => {
+      return prevColumns.map((col) =>
+        col.id === columnId ? { ...col, title: columnData.name } : col
+      );
+    });
     setIsManageColumnModalOpen(false);
   };
 
   const handleColumnDelete = (columnId: string) => {
-    // TODO: 컬럼 삭제 API 호출
+    setColumns((prevColumns) =>
+      prevColumns.filter((col) => col.id !== columnId)
+    );
     setIsManageColumnModalOpen(false);
   };
 
   const handleTaskClick = (task: TaskType) => {
     setSelectedTask(task);
     setIsDetailModalOpen(true);
+  };
+
+  const getSelectedTaskColumn = () => {
+    if (!selectedTask) {
+      return null;
+    }
+
+    return columns.find((col) =>
+      col.tasks.some((task) => task.id === selectedTask.id)
+    );
   };
 
   const handleTaskEdit = (task: TaskType) => {
@@ -132,8 +100,103 @@ export default function DashboardDetailPage(): ReactNode {
   };
 
   const handleTaskUpdate = (taskData: EditTaskFormData) => {
-    // TODO: 태스크 업데이트 API 호출
+    if (!selectedTask) {
+      return;
+    }
+
+    const updatedTask: TaskType = {
+      ...selectedTask,
+      title: taskData.title,
+      description: taskData.description,
+      tags: taskData.tags,
+      dueDate: taskData.dueDate,
+      imageUrl: taskData.imageFile
+        ? URL.createObjectURL(taskData.imageFile)
+        : (taskData.existingImageUrl ?? ''),
+      manager: {
+        ...selectedTask.manager,
+        name: taskData.assignee,
+        nickname: taskData.assignee,
+      },
+    };
+
+    const currentColumn = columns.find((col) =>
+      col.tasks.some((task) => task.id === selectedTask.id)
+    );
+    const targetColumn = columns.find((col) => col.title === taskData.status);
+
+    setColumns((prevColumns) => {
+      if (
+        currentColumn &&
+        targetColumn &&
+        currentColumn.id !== targetColumn.id
+      ) {
+        return prevColumns.map((col) => {
+          if (col.id === currentColumn.id) {
+            return {
+              ...col,
+              tasks: col.tasks.filter((task) => task.id !== selectedTask.id),
+            };
+          }
+          if (col.id === targetColumn.id) {
+            return {
+              ...col,
+              tasks: [...col.tasks, updatedTask],
+            };
+          }
+
+          return col;
+        });
+      }
+
+      return prevColumns.map((col) => {
+        return {
+          ...col,
+          tasks: col.tasks.map((task) =>
+            task.id === selectedTask.id ? updatedTask : task
+          ),
+        };
+      });
+    });
+
     setIsEditTaskModalOpen(false);
+    setSelectedTask(null);
+  };
+
+  const handleAddTaskClick = (columnId: string) => {
+    setSelectedColumnId(columnId);
+    setIsCreateTaskModalOpen(true);
+  };
+
+  const handleCreateTask = (taskData: CreateTaskFormData) => {
+    if (!selectedColumnId) {
+      return;
+    }
+
+    const newTask: TaskType = {
+      id: `task_${String(Date.now())}_${Math.random().toString(36).slice(2, 11)}`,
+      title: taskData.title,
+      description: taskData.description,
+      tags: taskData.tags,
+      dueDate: taskData.dueDate,
+      imageUrl: taskData.imageFile
+        ? URL.createObjectURL(taskData.imageFile)
+        : '',
+      manager: {
+        id: 'm1',
+        name: taskData.assignee,
+        nickname: taskData.assignee,
+        profileColor: mockProfileColors[0],
+      },
+    };
+
+    setColumns((prevColumns) => {
+      return prevColumns.map((col) => {
+        return col.id === selectedColumnId
+          ? { ...col, tasks: [...col.tasks, newTask] }
+          : col;
+      });
+    });
   };
 
   return (
@@ -141,22 +204,34 @@ export default function DashboardDetailPage(): ReactNode {
       {/* 대시보드 메인 콘텐츠 */}
       <main className='h-screen bg-gray-50'>
         <ColumnLayout
-          columns={mockColumns}
+          columns={columns}
+          maxColumns={10}
           onAddColumnClick={handleAddColumnClick}
           onColumnSettingsClick={handleColumnSettingsClick}
           onTaskClick={handleTaskClick}
-          onAddTaskClick={(columnId: string) => {
-            // TODO: 태스크 생성 모달 열기
-          }}
+          onAddTaskClick={handleAddTaskClick}
         />
       </main>
 
       {/* 컬럼 생성 모달 */}
       <CreateColumnModal
         isOpen={isColumnModalOpen}
+        existingColumns={columns.map((col) => col.title)}
+        maxColumns={10}
         onSubmit={handleColumnSubmit}
         onClose={() => {
           setIsColumnModalOpen(false);
+        }}
+      />
+
+      {/* 태스크 생성 모달 */}
+      <CreateTaskModal
+        isOpen={isCreateTaskModalOpen}
+        userInfo={userInfo}
+        onSubmit={handleCreateTask}
+        onClose={() => {
+          setIsCreateTaskModalOpen(false);
+          setSelectedColumnId(null);
         }}
       />
 
@@ -164,6 +239,7 @@ export default function DashboardDetailPage(): ReactNode {
       <ManageColumnModal
         isOpen={isManageColumnModalOpen}
         column={selectedColumn}
+        existingColumns={columns.map((col) => col.title)}
         onUpdate={handleColumnUpdate}
         onDelete={handleColumnDelete}
         onClose={() => {
@@ -175,19 +251,37 @@ export default function DashboardDetailPage(): ReactNode {
       <TaskDetailModal
         isOpen={isDetailModalOpen}
         task={selectedTask}
+        columnTitle={getSelectedTaskColumn()?.title}
+        currentUser={{
+          id: String(userInfo?.id ?? 'user-1'),
+          name: userInfo?.nickname ?? '사용자',
+          profileColor: mockProfileColors[1],
+        }}
         onEdit={handleTaskEdit}
         onClose={() => {
           setIsDetailModalOpen(false);
         }}
         onDelete={(taskId) => {
-          // TODO: 태스크 삭제 API 호출
+          setColumns((prevColumns) => {
+            return prevColumns.map((col) => {
+              return {
+                ...col,
+                tasks: col.tasks.filter((task) => task.id !== taskId),
+              };
+            });
+          });
+          setIsDetailModalOpen(false);
+          setSelectedTask(null);
         }}
       />
 
       {/* 할일 수정 모달 */}
       <EditTaskModal
         isOpen={isEditTaskModalOpen}
-        initialTask={selectedTask || undefined}
+        initialTask={selectedTask ?? undefined}
+        columns={columns.map((col) => ({ id: col.id, title: col.title }))}
+        currentColumnTitle={getSelectedTaskColumn()?.title ?? undefined}
+        userInfo={userInfo}
         onSubmit={handleTaskUpdate}
         onClose={() => {
           setIsEditTaskModalOpen(false);
@@ -197,6 +291,45 @@ export default function DashboardDetailPage(): ReactNode {
   );
 }
 
-DashboardDetailPage.getLayout = function getLayout(page: ReactNode) {
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { req } = context;
+
+  const accessToken = req.cookies.access_token;
+  const isAuthenticated = Boolean(accessToken);
+
+  if (!isAuthenticated) {
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    };
+  }
+
+  let userInfo = null;
+
+  try {
+    const response = await fetch(`/api/users/me`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${String(accessToken)}`,
+      },
+    });
+
+    if (response.ok) {
+      userInfo = await response.json();
+    }
+  } catch {
+    // 서버에서 사용자 정보 조회 실패 시 기본값 사용
+  }
+
+  return {
+    props: {
+      userInfo,
+    },
+  };
+};
+
+DashboardDetailPage.getLayout = function getLayout(page: React.ReactElement) {
   return <DashboardLayout>{page}</DashboardLayout>;
 };

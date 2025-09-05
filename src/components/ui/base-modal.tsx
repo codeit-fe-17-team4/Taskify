@@ -12,6 +12,7 @@ interface BaseModalProps {
   isSubmitDisabled?: boolean;
   width?: string;
   hideCancelButton?: boolean;
+  errorMessage?: string;
 }
 
 export default function BaseModal({
@@ -26,6 +27,7 @@ export default function BaseModal({
   isSubmitDisabled = false,
   width = 'w-[40rem]',
   hideCancelButton = false,
+  errorMessage,
 }: BaseModalProps) {
   if (!isOpen) {
     return null;
@@ -46,7 +48,7 @@ export default function BaseModal({
 
   return (
     <div
-      className='mobile:min-w-xs fixed inset-0 z-50 flex items-center justify-center bg-[rgba(0,0,0,0.7)]'
+      className='mobile:min-w-xs fixed inset-0 z-50 flex items-center justify-center bg-[rgba(0,0,0,0.5)]'
       onClick={handleOverlayClick}
     >
       <div
@@ -57,11 +59,18 @@ export default function BaseModal({
       >
         <h2 className='mb-8 text-left text-2xl font-bold'>{title}</h2>
 
-        <form className='space-y-6' onSubmit={handleSubmit}>
-          {children}
+        <form onSubmit={handleSubmit}>
+          <div className='space-y-6'>
+            {children}
+
+            {/* 에러 메시지 */}
+            {errorMessage && (
+              <div className='-mt-2 text-sm text-red-500'>{errorMessage}</div>
+            )}
+          </div>
 
           {/* 버튼들 */}
-          <div className='flex gap-3'>
+          <div className='mt-6 flex gap-3'>
             {!hideCancelButton && (
               <button
                 type='button'
@@ -77,7 +86,7 @@ export default function BaseModal({
               className={`${hideCancelButton ? 'w-full' : 'flex-1'} cursor-pointer rounded-lg py-4 text-white ${
                 isSubmitDisabled
                   ? 'cursor-not-allowed bg-gray-400'
-                  : 'bg-indigo-600 hover:bg-indigo-700'
+                  : 'bg-violet hover:bg-violet-800'
               }`}
             >
               {submitText}

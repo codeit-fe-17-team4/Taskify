@@ -1,8 +1,6 @@
-import { useState } from 'react';
 import AddTaskButton from './add-task-button';
 import ColumnHeader from './column-header';
 import ColumnTaskCard from './column-task-card';
-import CreateTaskModal from './create-task-modal';
 import type { ColumnType, TaskType } from './type';
 
 interface ColumnProps {
@@ -18,39 +16,32 @@ export default function DashboardColumn({
   onAddTaskClick,
   onTaskClick,
 }: ColumnProps) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
   const handleAddTaskClick = () => {
-    setIsModalOpen(true);
     onAddTaskClick?.();
-  };
-
-  const handleTaskSubmit = (taskData: any) => {
-    console.log('새 태스크 데이터:', taskData);
-    setIsModalOpen(false);
   };
 
   return (
     <>
-      <div className='column-content flex h-full flex-col gap-4 overflow-y-auto'>
+      <div className='column-content tablet:min-h-0 flex h-full flex-col gap-4'>
         {/* 헤더 */}
         <ColumnHeader column={column} onSettingsClick={onSettingsClick} />
 
         {/* 카드 추가 버튼 */}
         <AddTaskButton onClick={handleAddTaskClick} />
 
-        {/* 할일 보드 */}
-        {column.tasks.map((task) => (
-          <ColumnTaskCard key={task.id} task={task} onEditTask={onTaskClick} />
-        ))}
+        {/* 할일 보드 - 스크롤 가능한 영역 */}
+        <div className='scrollbar-hide flex-1 overflow-y-auto'>
+          <div className='flex flex-col gap-4'>
+            {column.tasks.map((task) => 
+              { return <ColumnTaskCard
+                key={task.id}
+                task={task}
+                onEditTask={onTaskClick}
+              /> }
+            )}
+          </div>
+        </div>
       </div>
-
-      {/* 카드 추가 모달 */}
-      <CreateTaskModal
-        isOpen={isModalOpen}
-        onClose={() => { setIsModalOpen(false); }}
-        onSubmit={handleTaskSubmit}
-      />
     </>
   );
 }
