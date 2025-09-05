@@ -32,7 +32,9 @@ export default function Mydashboard({
   // mock 데이터 파일 분리해서 활용 !
   const [dashboardData, setDashboardData] =
     useState<DashboardList[]>(mydashboardMockData);
-  const inviteData: InvitationType[] = mydashboardInviteMockData.invitations;
+  const [inviteData, setInviteDate] = useState<InvitationType[]>(
+    mydashboardInviteMockData.invitations
+  );
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleOpenModal = () => {
@@ -77,7 +79,6 @@ export default function Mydashboard({
   const handleCreateDashboard = async (formData: CreateNewboardFormData) => {
     try {
       setIsCreating(true);
-
       // API 호출 - createDashBoard 컴포넌트 활용 ...
       const newDashboard = await createDashBoard(formData);
 
@@ -87,7 +88,7 @@ export default function Mydashboard({
           {
             id: newDashboard.id,
             title: newDashboard.title,
-            dotcolor: newDashboard.color || 'bg-blue-500',
+            dotcolor: newDashboard.color,
           },
         ];
       });
@@ -235,13 +236,16 @@ export default function Mydashboard({
                           height={20}
                         />
                       </div>
-                      <input
-                        id='search'
-                        type='text'
-                        name='search'
-                        placeholder='검색'
-                        className='h-[40px] w-full rounded border border-gray-300 pr-4 pl-10 text-sm focus:ring-1 focus:ring-gray-300 focus:outline-none'
-                      />
+                      <div>
+                        <input
+                          id='search'
+                          type='text'
+                          name='search'
+                          placeholder='검색'
+                          className='h-[40px] w-full rounded border border-gray-300 pr-4 pl-10 text-sm focus:ring-1 focus:ring-gray-300 focus:outline-none'
+                        />
+                        <ul></ul>
+                      </div>
                     </div>
 
                     <div className='mobile:hidden tablet:grid-cols-[150px_80px_200px] tablet:pl-8 grid w-full max-w-2xl min-w-2xs grid-cols-[250px_250px_200px] gap-2 pt-5 pl-12 text-sm text-gray-400'>
