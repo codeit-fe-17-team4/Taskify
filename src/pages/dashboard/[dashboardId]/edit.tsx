@@ -4,63 +4,36 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { type ReactNode, useState } from 'react';
 import DashboardLayout from '@/components/layout/dashboard-layout';
-import InviteMemberModal from '@/components/ui/dashboard-header/invite-member-modal';
+import InviteMemberModal from '@/components/mydashboard/invite-member-modal';
+import {
+  dashboardColors,
+  dashboardEditMockData,
+  membersEmailMockData,
+  membersNameMockData,
+} from '@/lib/mydashboard-mock-data';
 
 export default function MydashboardEdit(): ReactNode {
   const router = useRouter();
   const { dashboardId } = router.query;
 
-  const dashboardData = [
-    { id: 1, name: '비브리지' },
-    { id: 2, name: '코드잇' },
-    { id: 3, name: '3분기 계획' },
-    { id: 4, name: '회의록' },
-    { id: 5, name: '중요 문서함' },
-  ];
-
   // 대시보드 이름 불러오기
-  const currentDashboard = dashboardData.find(
+  const currentDashboard = dashboardEditMockData.find(
     (dashboard) => dashboard.id === Number(dashboardId)
   );
-
-  // 대시보드 색상
-  const colors = [
-    { name: 'green', bgClass: 'bg-lime-500' },
-    { name: 'purple', bgClass: 'bg-purple-700' },
-    { name: 'orange', bgClass: 'bg-amber-500' },
-    { name: 'blue', bgClass: 'bg-blue-300' },
-    { name: 'pink', bgClass: 'bg-fuchsia-400' },
-  ];
 
   const [selectedColor, setSelectedColor] = useState('');
   const handleColorChange = (color: { name: string; bgClass: string }) => {
     setSelectedColor(color.name);
   };
 
-  const membersName = [
-    { id: 1, name: '정만철', initial: 'J' },
-    { id: 2, name: '김태순', initial: 'K' },
-    { id: 3, name: '최주협', initial: 'C' },
-    { id: 4, name: '윤지현', initial: 'Y' },
-    { id: 5, name: '심예진', initial: 'S' },
-  ];
-
-  const [members, setMembers] = useState(membersName);
+  const [members, setMembers] = useState(membersNameMockData);
   const handleDeleteMember = (memberId: number) => {
     setMembers((prevMembers) =>
       prevMembers.filter((member) => member.id !== memberId)
     );
   };
 
-  const membersEmail = [
-    { id: 1, email: 'codeitA@codeit.com' },
-    { id: 2, email: 'codeitB@codeit.com' },
-    { id: 3, email: 'codeitC@codeit.com' },
-    { id: 4, email: 'codeitD@codeit.com' },
-    { id: 5, email: 'codeitE@codeit.com' },
-  ];
-
-  const [membersEmails, setMembersEmails] = useState(membersEmail);
+  const [membersEmails, setMembersEmails] = useState(membersEmailMockData);
   const handleDeleteMemberEmail = (memberId: number) => {
     setMembersEmails((prevMembersEmails) =>
       prevMembersEmails.filter((member) => member.id !== memberId)
@@ -114,7 +87,7 @@ export default function MydashboardEdit(): ReactNode {
             </div>
             <div>
               <div className='mt-3 flex items-center gap-2'>
-                {colors.map((color) => {
+                {dashboardColors.map((color) => {
                   return (
                     <button
                       key={color.name}

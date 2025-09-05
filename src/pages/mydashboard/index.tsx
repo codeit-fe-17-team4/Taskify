@@ -4,6 +4,10 @@ import { type ReactNode, useState } from 'react';
 import DashboardLayout from '@/components/layout/dashboard-layout';
 import CreateNewboardModal from '@/components/mydashboard/create-newboard-modal';
 import type { CreateNewboardFormData } from '@/components/mydashboard/type';
+import {
+  mydashboardInviteMockData,
+  mydashboardMockData,
+} from '@/lib/mydashboard-mock-data';
 // 인증 상태를 받기 위한 props 타입 정의
 interface MydashboardProps {
   /**
@@ -27,30 +31,9 @@ interface InviteList {
 export default function Mydashboard({
   isLoggedIn,
 }: MydashboardProps): ReactNode {
-  const dashboardData: DashboardList[] = [
-    { id: 1, title: '비브리지', dotcolor: 'bg-lime-500' },
-    { id: 2, title: '코드잇', dotcolor: 'bg-purple-700' },
-    { id: 3, title: '3분기 계획', dotcolor: 'bg-amber-500' },
-    { id: 4, title: '회의록', dotcolor: 'bg-blue-300' },
-    { id: 5, title: '중요 문서함', dotcolor: 'bg-fuchsia-400' },
-    { id: 6, title: '프로덕트 디자인', dotcolor: 'bg-lime-500' },
-    { id: 7, title: '새로운 기획 문서', dotcolor: 'bg-purple-700' },
-    { id: 8, title: '유닛 A', dotcolor: 'bg-amber-500' },
-    { id: 9, title: '유닛 B', dotcolor: 'bg-blue-300' },
-  ];
-
-  const inviteData: InviteList[] = [
-    { id: 1, title: '프로덕트 디자인', inviter: '손동희' },
-    { id: 2, title: '새로운 기획 문서', inviter: '안귀영' },
-    { id: 3, title: '유닛 A', inviter: '장혁' },
-    { id: 4, title: '유닛 B', inviter: '강나무' },
-    { id: 5, title: '유닛 C', inviter: '김태현' },
-    { id: 6, title: '유닛 D', inviter: '김태현' },
-    { id: 7, title: '유닛 E', inviter: '권수형' },
-    { id: 8, title: '유닛 F', inviter: '박서현' },
-    { id: 9, title: '유닛 G', inviter: '심예진' },
-    { id: 10, title: '유닛 H', inviter: '이재준' },
-  ];
+  // mock 데이터 활용 !
+  const dashboardData: DashboardList[] = mydashboardMockData;
+  const inviteData: InviteList[] = mydashboardInviteMockData;
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleOpenModal = () => {
