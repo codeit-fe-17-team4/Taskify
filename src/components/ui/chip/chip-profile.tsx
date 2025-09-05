@@ -26,7 +26,7 @@ export const ChipVariants = cva(
     },
   }
 );
-interface ChipProps
+export interface ChipProfileProps
   extends HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof ChipVariants> {
   children?: ReactNode;
@@ -47,7 +47,7 @@ export default function ChipProfile({
   size = 'md',
   color = 'green',
   ...props
-}: ChipProps): ReactNode {
+}: ChipProfileProps): ReactNode {
   return (
     <>
       <div className={cn(ChipVariants({ color, size }))} {...props}>

@@ -3,6 +3,18 @@ export interface TagType {
   color: string;
 }
 
+// 사용 가능한 태그 색상 목록 (global CSS의 color-chip 색상만 사용)
+export const TAG_COLORS = ['blue', 'pink', 'green', 'brown', 'red'] as const;
+
+/**
+ * 랜덤 태그 색상 선택 함수
+ */
+export const getRandomTagColor = (): string => {
+  const randomIndex = Math.floor(Math.random() * TAG_COLORS.length);
+
+  return TAG_COLORS[randomIndex];
+};
+
 export interface TaskType {
   id: string;
   title: string;
@@ -64,7 +76,7 @@ export interface CreateTaskFormData {
   title: string;
   description: string;
   dueDate: string;
-  tags: string[];
+  tags: TagType[];
   imageFile: File | null;
 }
 
@@ -74,7 +86,7 @@ export interface EditTaskFormData {
   title: string;
   description: string;
   dueDate: string;
-  tags: string[];
+  tags: TagType[];
   imageFile: File | null;
   existingImageUrl?: string;
 }
@@ -111,6 +123,12 @@ export interface TaskDetailModalProps {
   isOpen: boolean;
   onClose: () => void;
   task: TaskType | null;
+  columnTitle?: string;
+  currentUser?: {
+    id: string;
+    name: string;
+    profileColor: string;
+  };
   onEdit?: (task: TaskType) => void;
   onDelete?: (taskId: string) => void;
 }

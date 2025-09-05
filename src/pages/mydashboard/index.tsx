@@ -33,6 +33,10 @@ export default function Mydashboard({
     { id: 3, title: '3분기 계획', dotcolor: 'bg-amber-500' },
     { id: 4, title: '회의록', dotcolor: 'bg-blue-300' },
     { id: 5, title: '중요 문서함', dotcolor: 'bg-fuchsia-400' },
+    { id: 6, title: '프로덕트 디자인', dotcolor: 'bg-lime-500' },
+    { id: 7, title: '새로운 기획 문서', dotcolor: 'bg-purple-700' },
+    { id: 8, title: '유닛 A', dotcolor: 'bg-amber-500' },
+    { id: 9, title: '유닛 B', dotcolor: 'bg-blue-300' },
   ];
 
   const inviteData: InviteList[] = [
@@ -55,6 +59,29 @@ export default function Mydashboard({
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
+  };
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+  const totalPages = Math.ceil(dashboardData.length / itemsPerPage);
+
+  const getCurrentPageData = () => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+
+    return dashboardData.slice(startIndex, endIndex);
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prevPage) => prevPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage((prevPage) => prevPage + 1);
+    }
   };
 
   /**
@@ -116,7 +143,7 @@ export default function Mydashboard({
                     height={20}
                   />
                 </button>
-                {dashboardData.map((dashboard) => {
+                {getCurrentPageData().map((dashboard) => {
                   return (
                     <button
                       key={dashboard.id}
@@ -124,9 +151,47 @@ export default function Mydashboard({
                       onClick={() => {
                         handleDashboardClick(dashboard);
                       }}
-                    ></button>
+                    >
+                      <div
+                        className={`h-2 w-2 rounded-full ${dashboard.dotcolor}`}
+                      />
+                      <span className='text-sm font-bold text-gray-600'>
+                        {dashboard.title}
+                      </span>
+                    </button>
                   );
                 })}
+                <div className='col-span-full mt-4 flex items-center justify-end gap-2'>
+                  <p className='text-xs text-gray-600'>
+                    {totalPages} 페이지 중 {currentPage}
+                  </p>
+                  <div className='flex'>
+                    <button
+                      className='flex h-7 w-7 cursor-pointer items-center justify-center rounded border border-gray-200 bg-white hover:bg-gray-100 disabled:cursor-not-allowed'
+                      disabled={currentPage === 1}
+                      onClick={handlePrevPage}
+                    >
+                      <Image
+                        src='/icon/prevPage.svg'
+                        alt='이전 페이지'
+                        width={7}
+                        height={7}
+                      />
+                    </button>
+                    <button
+                      className='flex h-7 w-7 cursor-pointer items-center justify-center rounded border border-gray-200 bg-white hover:bg-gray-100 disabled:cursor-not-allowed'
+                      disabled={currentPage === totalPages}
+                      onClick={handleNextPage}
+                    >
+                      <Image
+                        src='/icon/nextPage.svg'
+                        alt='다음 페이지'
+                        width={7}
+                        height={7}
+                      />
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           )}
