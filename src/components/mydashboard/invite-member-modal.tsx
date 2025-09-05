@@ -15,7 +15,7 @@ export default function InviteMemberModal({
   onClose,
   onSubmit,
 }: InviteMemberModalProps): ReactNode {
-  const initialFormData: InviteMemberFormData = { email: '' };
+  const initialFormData: InviteMemberFormData = { nickname: '', email: '' };
 
   const [formData, setFormData] =
     useState<InviteMemberFormData>(initialFormData);
