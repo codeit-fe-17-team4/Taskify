@@ -1,15 +1,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import {
-  type ReactNode,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
-import InviteMemberModal from '@/components/mydashboard/invite-member-modal';
-import ChipProfile from '@/components/ui/chip/chip-profile';
+
+import { type ReactNode, useState } from 'react';
+import HeaderDropdown from '@/components/ui/dashboard-header/header-dropdown';
+import InviteMemberModal from '@/components/ui/dashboard-header/invite-member-modal';
 import ProfileList from '@/components/ui/dashboard-header/profile-list';
 
 const buttonClass =
@@ -17,10 +11,8 @@ const buttonClass =
 
 export default function DashboardHeader(): ReactNode {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const router = useRouter();
-  const [open, setOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement | null>(null);
   const dashboardId = 1;
+
   const handleOpenModal = () => {
     setIsModalOpen(true);
   };
@@ -32,53 +24,6 @@ export default function DashboardHeader(): ReactNode {
   const handleSubmitInviteMember = () => {
     handleCloseModal();
   };
-
-  const toggle = useCallback(() => {
-    setOpen((v) => !v);
-  }, []);
-  const close = useCallback(() => {
-    setOpen(false);
-  }, []);
-
-  useEffect(() => {
-    const handleDocClick = (e: MouseEvent) => {
-      if (!menuRef.current) {
-        return;
-      }
-      if (!menuRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleDocClick);
-
-    return () => {
-      document.removeEventListener('mousedown', handleDocClick);
-    };
-  }, []);
-
-  // 이재준 작성 - 내 정보 페이지로 이동하는 기능 추가
-  const goMyPage = useCallback(() => {
-    close();
-    router.push('/mypage');
-  }, [close, router]);
-
-  // 이재준 작성 - 내 대시보드 페이지로 이동하는 기능 추가
-  const goMyDashboard = useCallback(() => {
-    close();
-    router.push('/mydashboard');
-  }, [close, router]);
-
-  // 이재준 작성 - 로그아웃 기능 추가
-  const doLogout = useCallback(async () => {
-    try {
-      await fetch('/api/logout', { method: 'POST' });
-    } catch {
-      // 로그아웃 실패 시 무시
-    }
-    close();
-    router.push('/');
-  }, [close, router]);
 
   return (
     <header className='border-gray-3 fixed top-0 right-0 left-0 z-50 flex h-[4.375rem] w-full items-center justify-between border-b-1 bg-white pl-96'>
@@ -113,14 +58,11 @@ export default function DashboardHeader(): ReactNode {
         </div>
         <div className='flex h-full gap-6'>
           <ProfileList />
-          <Link
-            href={'/mypage'}
-            aria-label='마이 페이지로 이동'
-            className='border-l-gray-3 hover:bg-gray-4 active:bg-gray-3 flex cursor-pointer items-center gap-3 border-l-1 pr-20 pl-6'
-          >
-            <ChipProfile label={'K'} size='lg' color='green' />
-            <span className='font-medium'>권수형</span>
-          </Link>
+          <HeaderDropdown
+            nickname={'권수형'}
+            profileColor={'red'}
+            profileLabel={'K'}
+          />
         </div>
         <InviteMemberModal
           isOpen={isModalOpen}
