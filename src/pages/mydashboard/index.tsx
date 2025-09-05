@@ -5,6 +5,7 @@ import { type ReactNode, useState } from 'react';
 import DashboardLayout from '@/components/layout/dashboard-layout';
 import CreateNewboardModal from '@/components/mydashboard/create-newboard-modal';
 import type { CreateNewboardFormData } from '@/components/mydashboard/type';
+import { createDashBoard } from '@/lib/dashboards/api';
 import {
   mydashboardInviteMockData,
   mydashboardMockData,
@@ -32,8 +33,9 @@ interface InviteList {
 export default function Mydashboard({
   isLoggedIn,
 }: MydashboardProps): ReactNode {
-  // mock 데이터 활용 !
-  const dashboardData: DashboardList[] = mydashboardMockData;
+  // mock 데이터 파일 분리해서 활용 !
+  const [dashboardData, setDashboardData] =
+    useState<DashboardList[]>(mydashboardMockData);
   const inviteData: InviteList[] = mydashboardInviteMockData;
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -45,6 +47,7 @@ export default function Mydashboard({
     setIsModalOpen(false);
   };
 
+  // 페이지네이션 라이브러리 없이 사용해보고자 했습니다..!
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
   const totalPages = Math.ceil(dashboardData.length / itemsPerPage);
@@ -72,9 +75,37 @@ export default function Mydashboard({
    * api 주고받기 ..?
    */
 
-  const handleSubmitCreateDashboard = (formData: CreateNewboardFormData) => {
-    console.log('새 대시보드 생성:', formData);
-    handleCloseModal();
+  // 생성 api
+  const [isCreating, setIsCreating] = useState(false);
+  const handleCreateDashboard = async (formData: CreateNewboardFormData) => {
+    try {
+      setIsCreating(true);
+      const body = {
+        name: formData.title,
+        color: formData.color,
+      };
+
+      // API 호출 - createDashBoard 컴포넌트 활용 ...
+      const newDashboard = await createDashBoard(formData);
+
+      setDashboardData((prev) => {
+        return [
+          ...prev,
+          {
+            id: newDashboard.id,
+            title: newDashboard.title,
+            dotcolor: newDashboard.color || 'bg-blue-500',
+          },
+        ];
+      });
+
+      console.log('새 대시보드 생성 성공:', newDashboard);
+      handleCloseModal();
+    } catch (error) {
+      console.error('대시보드 생성 실패:', error);
+    } finally {
+      setIsCreating(false);
+    }
   };
 
   const handleAcceptInvitation = (inviteId: number) => {
@@ -279,7 +310,7 @@ export default function Mydashboard({
       <CreateNewboardModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        onSubmit={handleSubmitCreateDashboard}
+        onSubmit={handleCreateDashboard}
       />
     </>
   );

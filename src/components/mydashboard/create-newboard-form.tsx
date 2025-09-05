@@ -36,9 +36,9 @@ export default function CreateNewboardForm({
           type='text'
           placeholder='새로운 대시보드'
           className='w-full rounded-lg border border-gray-300 p-4 focus:outline-none'
-          value={formData.name}
+          value={formData.title}
           onChange={(e) => {
-            setFormData((prev) => ({ ...prev, name: e.target.value }));
+            setFormData((prev) => ({ ...prev, title: e.target.value }));
           }}
         />
       </div>

@@ -1,6 +1,5 @@
 export interface CreateNewboardFormData {
-  id: number;
-  name: string;
+  title: string;
   color: string;
 }
 
