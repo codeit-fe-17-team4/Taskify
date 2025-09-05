@@ -7,7 +7,6 @@ export default function useExitWhenClickOutSide(
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      console.log(ref.current, e.target);
       if (!ref.current) {
         return;
       }

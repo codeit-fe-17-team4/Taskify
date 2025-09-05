@@ -49,5 +49,8 @@ export default tseslint.config(sheriff(sheriffOptions), {
     '@typescript-eslint/require-await': 'off',
     'tsdoc/syntax': 'off',
     'fsecond/valid-event-listener': 'off',
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
+    'fsecond/prefer-destructured-optionals': 'off',
+    '@typescript-eslint/no-misused-spread': 'off',
   },
 });
