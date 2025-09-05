@@ -1,5 +1,6 @@
 import type { GetServerSideProps } from 'next';
 import Image from 'next/image';
+import Link from 'next/link';
 import { type ReactNode, useState } from 'react';
 import DashboardLayout from '@/components/layout/dashboard-layout';
 import CreateNewboardModal from '@/components/mydashboard/create-newboard-modal';
@@ -76,10 +77,6 @@ export default function Mydashboard({
     handleCloseModal();
   };
 
-  const handleDashboardClick = (dashboard: DashboardList) => {
-    console.log('대시보드 클릭:', dashboard);
-  };
-
   const handleAcceptInvitation = (inviteId: number) => {
     console.log('초대 수락:', inviteId);
   };
@@ -126,24 +123,22 @@ export default function Mydashboard({
                     height={20}
                   />
                 </button>
+
                 {getCurrentPageData().map((dashboard) => {
                   return (
-                    <button
-                      key={dashboard.id}
-                      className='tablet:w-3xs mobile:w-2xs relative flex h-[60px] w-full cursor-pointer items-center gap-3 rounded-md border border-gray-200 bg-white p-4 hover:bg-gray-100'
-                      onClick={() => {
-                        handleDashboardClick(dashboard);
-                      }}
-                    >
-                      <div
-                        className={`h-2 w-2 rounded-full ${dashboard.dotcolor}`}
-                      />
-                      <span className='text-sm font-bold text-gray-600'>
-                        {dashboard.title}
-                      </span>
-                    </button>
+                    <Link key={dashboard.id} href='/dashboard/${dashboardId}'>
+                      <button className='tablet:w-3xs mobile:w-2xs relative flex h-[60px] w-full cursor-pointer items-center gap-3 rounded-md border border-gray-200 bg-white p-4 hover:bg-gray-100'>
+                        <div
+                          className={`h-2 w-2 rounded-full ${dashboard.dotcolor}`}
+                        />
+                        <span className='text-sm font-bold text-gray-600'>
+                          {dashboard.title}
+                        </span>
+                      </button>
+                    </Link>
                   );
                 })}
+
                 <div className='col-span-full mt-4 flex items-center justify-end gap-2'>
                   <p className='text-xs text-gray-600'>
                     {totalPages} 페이지 중 {currentPage}
