@@ -7,7 +7,7 @@ export interface BaseComponentProps {
 }
 
 // 모달 관련 타입
-export interface BaseModalProps extends BaseComponentProps {
+export interface ButtonModalProps extends BaseComponentProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
@@ -18,6 +18,7 @@ export interface BaseModalProps extends BaseComponentProps {
   isSubmitDisabled?: boolean;
   width?: string;
   hideCancelButton?: boolean;
+  errorMessage?: string;
 }
 
 // 버튼 타입

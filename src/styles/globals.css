@@ -94,6 +94,9 @@ body {
 button {
   cursor: pointer;
 }
+button:disabled {
+  cursor: not-allowed;
+}
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;

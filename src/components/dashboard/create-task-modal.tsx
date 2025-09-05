@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import CreateTaskForm from '@/components/dashboard/create-task-form';
 import type { CreateTaskFormData } from '@/components/dashboard/type';
-import BaseModal from '@/components/ui/modal/modal-base';
+import ButtonModal from '@/components/ui/modal/modal-button';
 import { useModalKeyHandler } from '@/hooks/useModal';
 import type { UserType } from '@/lib/users/type';
 
@@ -28,7 +28,6 @@ export default function CreateTaskModal({
   });
 
   const handleClose = () => {
-    console.log('CreateTaskModal handleClose called');
     setFormData({
       assignee: '',
       title: '',
@@ -37,7 +36,6 @@ export default function CreateTaskModal({
       tags: [],
       imageFile: null,
     });
-    console.log('Calling onClose');
     onClose();
   };
 
@@ -54,7 +52,7 @@ export default function CreateTaskModal({
     !formData.title.trim() || !formData.description.trim();
 
   return (
-    <BaseModal
+    <ButtonModal
       isOpen={isOpen}
       title='할 일 생성'
       submitText='생성'
@@ -68,6 +66,6 @@ export default function CreateTaskModal({
         setFormData={setFormData}
         userInfo={userInfo}
       />
-    </BaseModal>
+    </ButtonModal>
   );
 }

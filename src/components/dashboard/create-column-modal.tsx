@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import CreateColumnForm from '@/components/dashboard/create-column-form';
 import type { CreateColumnFormData } from '@/components/dashboard/type';
-import BaseModal from '@/components/ui/modal/modal-base';
+import ButtonModal from '@/components/ui/modal/modal-button';
 import { useModalKeyHandler } from '@/hooks/useModal';
 
 interface CreateColumnModalProps {
@@ -56,7 +56,7 @@ export default function CreateColumnModal({
       : undefined;
 
   return (
-    <BaseModal
+    <ButtonModal
       isOpen={isOpen}
       title='새 컬럼 생성'
       submitText='생성'
@@ -72,6 +72,6 @@ export default function CreateColumnModal({
         setFormData={setFormData}
         hasError={isDuplicate}
       />
-    </BaseModal>
+    </ButtonModal>
   );
 }

@@ -5,7 +5,7 @@ import type {
   ColumnType,
   ManageColumnFormData,
 } from '@/components/dashboard/type';
-import BaseModal from '@/components/ui/modal/modal-base';
+import ButtonModal from '@/components/ui/modal/modal-button';
 import { useModalKeyHandler } from '@/hooks/useModal';
 
 interface ManageColumnModalProps {
@@ -76,7 +76,7 @@ export default function ManageColumnModal({
 
   return (
     <>
-      <BaseModal
+      <ButtonModal
         isOpen={isOpen}
         title='컬럼 관리'
         submitText='변경'
@@ -93,7 +93,7 @@ export default function ManageColumnModal({
           setFormData={setFormData}
           hasError={isDuplicate}
         />
-      </BaseModal>
+      </ButtonModal>
 
       <DeleteColumnModal
         isOpen={isDeleteModalOpen}

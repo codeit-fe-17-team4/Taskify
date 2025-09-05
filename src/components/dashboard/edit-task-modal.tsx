@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import EditTaskForm from '@/components/dashboard/edit-task-form';
 import type { EditTaskFormData, TaskType } from '@/components/dashboard/type';
-import BaseModal from '@/components/ui/modal/modal-base';
+import ButtonModal from '@/components/ui/modal/modal-button';
 import { useModalKeyHandler } from '@/hooks/useModal';
 import type { UserType } from '@/lib/users/type';
 
@@ -108,7 +108,7 @@ export default function EditTaskModal({
     !formData.title.trim() || !formData.description.trim() || !hasChanges();
 
   return (
-    <BaseModal
+    <ButtonModal
       isOpen={isOpen}
       title='할 일 수정'
       submitText='수정'
@@ -123,6 +123,6 @@ export default function EditTaskModal({
         columns={columns}
         userInfo={userInfo}
       />
-    </BaseModal>
+    </ButtonModal>
   );
 }

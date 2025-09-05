@@ -1,7 +1,7 @@
 import { type ReactNode, useState } from 'react';
 import CreateNewboardForm from '@/components/mydashboard/create-newboard-form';
 import type { CreateNewboardFormData } from '@/components/mydashboard/type';
-import BaseModal from '@/components/ui/modal/modal-base';
+import ButtonModal from '@/components/ui/modal/modal-button';
 import { useModalKeyHandler } from '@/hooks/useModal';
 
 interface CreateNewboardModalProps {
@@ -35,7 +35,7 @@ export default function CreateNewboardModal({
   const isSubmitDisabled = !formData.name.trim();
 
   return (
-    <BaseModal
+    <ButtonModal
       isOpen={isOpen}
       title='새로운 대시보드'
       submitText='생성'
@@ -46,6 +46,6 @@ export default function CreateNewboardModal({
       onSubmit={handleSubmit}
     >
       <CreateNewboardForm formData={formData} setFormData={setFormData} />
-    </BaseModal>
+    </ButtonModal>
   );
 }
