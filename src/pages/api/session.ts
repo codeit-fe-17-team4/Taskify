@@ -18,10 +18,9 @@ export default function handler(
     return;
   }
 
-  // HttpOnly 쿠키 설정
+  // 일반 쿠키 설정 (클라이언트에서 접근 가능)
   const cookieOptions = [
     `access_token=${String(accessToken)}`,
-    'HttpOnly',
     'SameSite=Lax',
     'Path=/',
     `Max-Age=${String(24 * 60 * 60)}`, // 1일

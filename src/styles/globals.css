@@ -35,7 +35,6 @@
   --color-chip-green-bg: #e7f7db;
   --color-chip-brown: #d58d49;
   --color-chip-brown-bg: #f9eee3;
-
   --color-chip-red: #d25b68;
   --color-chip-red-bg: #f4d7da;
 
@@ -76,15 +75,38 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 }
-
 @utility flex-center {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
+html,
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-pretendard);
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+button {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: not-allowed;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+input[type='datetime-local']::-webkit-calendar-picker-indicator {
+  display: none;
+  -webkit-appearance: none;
 }

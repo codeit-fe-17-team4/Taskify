@@ -16,7 +16,6 @@ const montserrat = Montserrat({ variable: '--font-montserrat' });
 type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactNode) => ReactNode;
 };
-
 export default function App({
   Component,
   pageProps,

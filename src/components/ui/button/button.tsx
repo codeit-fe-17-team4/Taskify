@@ -4,7 +4,7 @@ import { cn } from '@/utils/cn';
 
 export const ButtonVariants = cva(
   `flex-center w-full p-3.5
-  bg-violet disabled:bg-gray-2 text-white text-2lg font-medium
+  bg-violet disabled:bg-gray-2 text-white text-lg font-semibold
   disabled:hover:bg-gray-2 disabled:hover:scale-100 disabled:cursor-not-allowed cursor-pointer
   `,
   {
@@ -18,7 +18,7 @@ export const ButtonVariants = cva(
       backgroundColor: {
         violet: 'bg-violet hover:bg-violet-800 active:bg-violet-900 ',
         white:
-          'bg-white border-2 border-gray-3  text-violet hover:bg-gray-4 active:bg-gray-3 disabled:hover:bg-white',
+          'bg-white border border-gray-300 text-violet hover:bg-gray-4 active:bg-gray-3 disabled:hover:bg-white',
       },
       labelColor: {
         gray: 'text-gray-1',

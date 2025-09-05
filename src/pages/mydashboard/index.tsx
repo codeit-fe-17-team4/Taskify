@@ -1,9 +1,10 @@
 import type { GetServerSideProps } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import type { ReactNode } from 'react';
+import { type ReactNode, useState } from 'react';
 import DashboardLayout from '@/components/layout/dashboard-layout';
-
+import CreateNewboardModal from '@/components/mydashboard/create-newboard-modal';
+import type { CreateNewboardFormData } from '@/components/mydashboard/type';
 // 인증 상태를 받기 위한 props 타입 정의
 interface MydashboardProps {
   /**
@@ -11,18 +12,35 @@ interface MydashboardProps {
    */
   isLoggedIn: boolean;
 }
-
 export default function Mydashboard({
   isLoggedIn,
 }: MydashboardProps): ReactNode {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleSubmitCreateDashboard = (formData: CreateNewboardFormData) => {
+    console.log('새 대시보드 생성:', formData);
+    // TODO: API call to create a new dashboard
+    handleCloseModal();
+  };
+
   return (
-    <div className='min-h-screen bg-gray-50'>
-      {/* BG global 생성되면 수정 예정 */}
-      {/* 새로운 대시보드 */}
-      <div className='max-w-7xl p-6'>
-        <Link href='../components/mydashboard/invite-list.tsx'>
-          <button className='flex h-11 w-full cursor-pointer items-center justify-center gap-1 rounded border border-gray-200 bg-white sm:w-2xs md:w-40 lg:w-md xl:w-3xs'>
-            <span className='text-xs font-bold text-gray-600'>
+    <>
+      <div className='flex h-full min-h-screen w-full flex-col bg-gray-50'>
+        {/* 새로운 대시보드 */}
+        <div className='max-w-7xl p-6'>
+          <button
+            className='tablet:w-3xs mobile:w-3xs flex h-[60px] w-2xs cursor-pointer items-center justify-center gap-1 rounded-lg border border-gray-200 bg-white hover:bg-gray-100'
+            onClick={handleOpenModal}
+          >
+            <span className='text-sm font-bold text-gray-600'>
               새로운 대시보드
             </span>
             <Image
@@ -32,32 +50,36 @@ export default function Mydashboard({
               height={15}
             />
           </button>
-        </Link>
-        {/* 초대받은 대시보드 */}
-        <div className='mt-10 flex h-[280px] w-full max-w-4xl flex-col rounded-lg border-0 bg-white sm:w-2xs md:w-sm lg:w-md xl:w-3xl'>
-          <h2 className='pt-4 pl-[28px] text-lg font-bold text-gray-600'>
-            초대받은 대시보드
-          </h2>
-          {/* 빈 상태 표시 */}
-          <div className='flex flex-grow flex-col items-center justify-center gap-2'>
-            <Image
-              src='/icon/inviteEmpty.svg'
-              alt='초대받은 대시보드'
-              width={80}
-              height={80}
-            />
-            <p className='pt-5 text-xs text-gray-400'>
-              아직 초대받은 대시보드가 없어요
-            </p>
+          {/* 초대받은 대시보드 */}
+          <div className='tablet:w-lg mobile:w-3xs mt-10 flex h-[280px] w-2xl flex-col rounded-lg border-0 bg-white'>
+            <Link href='/mydashboard/invite-list'>
+              <h2 className='pt-4 pl-[28px] text-lg font-bold text-gray-600 transition-colors hover:text-violet-500'>
+                초대받은 대시보드
+              </h2>
+            </Link>
+            {/* 빈 상태 표시 */}
+            <div className='flex flex-grow flex-col items-center justify-center gap-2'>
+              <Image
+                src='/icon/inviteEmpty.svg'
+                alt='초대받은 대시보드'
+                width={80}
+                height={80}
+              />
+              <p className='pt-5 text-xs text-gray-400'>
+                아직 초대받은 대시보드가 없어요
+              </p>
+            </div>
           </div>
         </div>
       </div>
-
-      {/* 비로그인 시 서버사이드에서 로그인 페이지로 리다이렉트되므로 모달 없음 */}
-    </div>
+      <CreateNewboardModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onSubmit={handleSubmitCreateDashboard}
+      />
+    </>
   );
 }
-
 /**
  * 서버 사이드에서 실행되는 함수 - 페이지 렌더링 전에 로그인 상태 확인
  */
