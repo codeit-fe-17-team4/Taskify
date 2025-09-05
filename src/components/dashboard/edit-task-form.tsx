@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import {
   type EditTaskFormData,
   getRandomTagColor,
@@ -7,6 +7,7 @@ import {
 import ChipProfile from '@/components/ui/chip/chip-profile';
 import ChipState from '@/components/ui/chip/chip-state';
 import ChipTag from '@/components/ui/chip/chip-tag';
+import Dropdown from '@/components/ui/dropdown';
 import { mockProfileColors } from '@/lib/dashboard-mock-data';
 import type { UserType } from '@/lib/users/type';
 import { getProfileColor } from '@/utils/profile-color';
@@ -29,8 +30,6 @@ export default function EditTaskForm({
   const [currentTag, setCurrentTag] = useState('');
   const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
   const [isAssigneeDropdownOpen, setIsAssigneeDropdownOpen] = useState(false);
-  const statusDropdownRef = useRef<HTMLDivElement>(null);
-  const assigneeDropdownRef = useRef<HTMLDivElement>(null);
 
   const statusOptions = columns.map((column) => {
     return {
@@ -66,32 +65,6 @@ export default function EditTaskForm({
     setFormData((prev) => ({ ...prev, assignee }));
     setIsAssigneeDropdownOpen(false);
   };
-
-  // 드롭다운 외부 클릭 시 닫기
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        statusDropdownRef.current &&
-        !statusDropdownRef.current.contains(event.target as Node)
-      ) {
-        setIsStatusDropdownOpen(false);
-      }
-      if (
-        assigneeDropdownRef.current &&
-        !assigneeDropdownRef.current.contains(event.target as Node)
-      ) {
-        setIsAssigneeDropdownOpen(false);
-      }
-    };
-
-    if (isStatusDropdownOpen || isAssigneeDropdownOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isStatusDropdownOpen, isAssigneeDropdownOpen]);
 
   const handleTagKeyDown = (e: React.KeyboardEvent) => {
     if (e.key !== 'Enter') {
@@ -151,45 +124,35 @@ export default function EditTaskForm({
       <div className='flex gap-4'>
         {/* 상태 */}
         <div className='flex-1'>
-          <label htmlFor='status' className='mb-2 block text-lg font-medium'>
-            상태
-          </label>
-          <div className='relative' ref={statusDropdownRef}>
-            <button
-              type='button'
-              className='flex w-full cursor-pointer appearance-none items-center justify-between rounded-lg border border-gray-300 p-4 pr-4 text-left focus:outline-none'
+          <span className='mb-2 block text-lg font-medium'>상태</span>
+          <Dropdown>
+            <Dropdown.Toggle
               onClick={() => {
                 setIsStatusDropdownOpen(!isStatusDropdownOpen);
               }}
             >
-              <ChipState label={formData.status} size='md' />
-              <Image
-                src='/dashboard/input-dropdown-btn.svg'
-                alt='드롭다운'
-                width={14}
-                height={16}
-                className={`transition-transform ${isStatusDropdownOpen ? 'rotate-180' : ''}`}
-              />
-            </button>
-
-            {/* 드롭다운 옵션들 */}
-            {isStatusDropdownOpen && (
-              <div className='absolute top-full right-0 left-0 z-10 mt-1 overflow-hidden rounded-lg border border-gray-300 bg-white shadow-lg'>
-                {statusOptions.map((option, index) => {
-                  return (
-                    <button
-                      key={option.value}
-                      type='button'
-                      className={`flex w-full cursor-pointer items-center gap-2 px-4 py-3 text-left hover:bg-gray-50 ${
-                        index === 0 ? 'rounded-t-lg' : ''
-                      } ${
-                        index === statusOptions.length - 1 ? 'rounded-b-lg' : ''
-                      }`}
-                      onClick={() => {
-                        handleStatusSelect(option.value);
-                      }}
-                    >
-                      <div className='flex h-[10px] w-[14px] items-center justify-center'>
+              <div className='flex w-full cursor-pointer appearance-none items-center justify-between rounded-lg border border-gray-300 p-4 pr-4 text-left focus:outline-none'>
+                <ChipState label={formData.status} size='md' />
+                <Image
+                  src='/dashboard/input-dropdown-btn.svg'
+                  alt='드롭다운'
+                  width={14}
+                  height={16}
+                  className={`transition-transform ${isStatusDropdownOpen ? 'rotate-180' : ''}`}
+                />
+              </div>
+            </Dropdown.Toggle>
+            <Dropdown.List>
+              {statusOptions.map((option) => {
+                return (
+                  <Dropdown.Item
+                    key={option.value}
+                    onClick={() => {
+                      handleStatusSelect(option.value);
+                    }}
+                  >
+                    <div className={`flex items-center gap-2 px-4`}>
+                      <div className='flex-center h-[10px] w-[14px]'>
                         {formData.status === option.value && (
                           <Image
                             src='/dashboard/check-icon.svg'
@@ -200,84 +163,73 @@ export default function EditTaskForm({
                         )}
                       </div>
                       <ChipState label={option.label} size='md' />
-                    </button>
-                  );
-                })}
-              </div>
-            )}
-          </div>
+                    </div>
+                  </Dropdown.Item>
+                );
+              })}
+            </Dropdown.List>
+          </Dropdown>
         </div>
-
         {/* 담당자 */}
         <div className='flex-1'>
           <label htmlFor='assignee' className='mb-2 block text-lg font-medium'>
             담당자
           </label>
-          <div className='relative' ref={assigneeDropdownRef}>
-            <button
-              type='button'
-              className='flex w-full cursor-pointer appearance-none items-center justify-between rounded-lg border border-gray-300 p-4 pr-4 text-left focus:outline-none'
+          <Dropdown>
+            <Dropdown.Toggle
               onClick={() => {
                 setIsAssigneeDropdownOpen(!isAssigneeDropdownOpen);
               }}
             >
-              <div className='flex items-center gap-2'>
-                {formData.assignee ? (
-                  <>
-                    <ChipProfile
-                      size='md'
-                      label={
-                        (
+              <div className='flex w-full cursor-pointer appearance-none items-center justify-between rounded-lg border border-gray-300 p-4 pr-4 text-left focus:outline-none'>
+                <div className='flex items-center gap-2'>
+                  {formData.assignee ? (
+                    <>
+                      <ChipProfile
+                        size='md'
+                        label={
+                          (
+                            assigneeOptions.find(
+                              (opt) => opt.value === formData.assignee
+                            )?.label || ''
+                          ).slice(0, 1) || '배'
+                        }
+                        color={getProfileColor(
                           assigneeOptions.find(
                             (opt) => opt.value === formData.assignee
-                          )?.label || ''
-                        ).slice(0, 1) || '배'
-                      }
-                      color={getProfileColor(
-                        assigneeOptions.find(
+                          )?.profileColor || mockProfileColors[0]
+                        )}
+                      />
+                      <span>
+                        {assigneeOptions.find(
                           (opt) => opt.value === formData.assignee
-                        )?.profileColor || mockProfileColors[0]
-                      )}
-                    />
-                    <span>
-                      {assigneeOptions.find(
-                        (opt) => opt.value === formData.assignee
-                      )?.label || '이름을 입력해 주세요'}
-                    </span>
-                  </>
-                ) : (
-                  <span className='text-gray-500'>이름을 입력해 주세요</span>
-                )}
+                        )?.label || '이름을 입력해 주세요'}
+                      </span>
+                    </>
+                  ) : (
+                    <span className='text-gray-500'>이름을 입력해 주세요</span>
+                  )}
+                </div>
+                <Image
+                  src='/dashboard/input-dropdown-btn.svg'
+                  alt='드롭다운'
+                  width={14}
+                  height={16}
+                  className={`transition-transform ${isAssigneeDropdownOpen ? 'rotate-180' : ''}`}
+                />
               </div>
-              <Image
-                src='/dashboard/input-dropdown-btn.svg'
-                alt='드롭다운'
-                width={14}
-                height={16}
-                className={`transition-transform ${isAssigneeDropdownOpen ? 'rotate-180' : ''}`}
-              />
-            </button>
-
-            {/* 드롭다운 옵션들 */}
-            {isAssigneeDropdownOpen && (
-              <div className='absolute top-full right-0 left-0 z-10 mt-1 overflow-hidden rounded-lg border border-gray-300 bg-white shadow-lg'>
-                {assigneeOptions.map((option, index) => {
-                  return (
-                    <button
-                      key={option.value}
-                      type='button'
-                      className={`flex w-full cursor-pointer items-center gap-2 px-4 py-3 text-left hover:bg-gray-50 ${
-                        index === 0 ? 'rounded-t-lg' : ''
-                      } ${
-                        index === assigneeOptions.length - 1
-                          ? 'rounded-b-lg'
-                          : ''
-                      }`}
-                      onClick={() => {
-                        handleAssigneeSelect(String(option.value));
-                      }}
-                    >
-                      <div className='flex h-[10px] w-[14px] items-center justify-center'>
+            </Dropdown.Toggle>
+            <Dropdown.List>
+              {assigneeOptions.map((option) => {
+                return (
+                  <Dropdown.Item
+                    key={option.value}
+                    onClick={() => {
+                      handleAssigneeSelect(String(option.value));
+                    }}
+                  >
+                    <div className={`flex items-center gap-2 px-4`}>
+                      <div className='flex-center h-[10px] w-[14px]'>
                         {formData.assignee === option.value && (
                           <Image
                             src='/dashboard/check-icon.svg'
@@ -295,12 +247,12 @@ export default function EditTaskForm({
                         />
                         <span>{option.label}</span>
                       </div>
-                    </button>
-                  );
-                })}
-              </div>
-            )}
-          </div>
+                    </div>
+                  </Dropdown.Item>
+                );
+              })}
+            </Dropdown.List>
+          </Dropdown>
         </div>
       </div>
 
@@ -373,7 +325,7 @@ export default function EditTaskForm({
               (e.currentTarget as HTMLInputElement).showPicker();
             }}
           />
-          <div
+          <button
             className='absolute inset-y-0 left-0 flex cursor-pointer items-center pl-4'
             onClick={() => {
               const input = document.querySelector(
@@ -390,7 +342,7 @@ export default function EditTaskForm({
               width={14}
               height={16}
             />
-          </div>
+          </button>
         </div>
       </div>
 
@@ -458,7 +410,7 @@ export default function EditTaskForm({
           {formData.existingImageUrl || formData.imageFile ? (
             <div className='group relative'>
               <div className='h-20 w-20 overflow-hidden rounded-lg'>
-                {formData.imageFile ? (
+                {formData.imageFile && (
                   <Image
                     src={URL.createObjectURL(formData.imageFile)}
                     alt='할일 이미지'
@@ -466,7 +418,8 @@ export default function EditTaskForm({
                     height={80}
                     className='h-full w-full object-cover'
                   />
-                ) : formData.existingImageUrl ? (
+                )}
+                {!formData.imageFile && formData.existingImageUrl && (
                   <Image
                     src={formData.existingImageUrl}
                     alt='할일 이미지'
@@ -474,7 +427,7 @@ export default function EditTaskForm({
                     height={80}
                     className='h-full w-full object-cover'
                   />
-                ) : null}
+                )}
               </div>
 
               <label

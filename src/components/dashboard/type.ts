@@ -1,6 +1,8 @@
+import type { chipTagColor } from '@/components/ui/chip/chip-tag';
+
 export interface TagType {
   label: string;
-  color: string;
+  color: chipTagColor;
 }
 
 // 사용 가능한 태그 색상 목록 (global CSS의 color-chip 색상만 사용)

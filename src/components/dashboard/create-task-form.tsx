@@ -113,9 +113,7 @@ export default function CreateTaskForm({
     <>
       {/* 담당자 */}
       <div>
-        <label htmlFor='assignee' className='mb-2 block text-lg font-medium'>
-          담당자
-        </label>
+        <span className='mb-2 block text-lg font-medium'>담당자</span>
         <Dropdown>
           <Dropdown.Toggle
             onClick={() => {
