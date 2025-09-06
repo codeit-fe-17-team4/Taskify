@@ -1,23 +1,21 @@
 import Image from 'next/image';
-import { type ReactNode, useState } from 'react';
+import type { ReactNode } from 'react';
 import DashboardLayout from '@/components/layout/dashboard-layout';
 
-export default function InviteList(): ReactNode {
-  const inviteData = [
-    { id: 1, name: '프로덕트 디자인', inviter: '손동희' },
-    { id: 2, name: '새로운 기획 문서', inviter: '안귀영' },
-    { id: 3, name: '유닛 A', inviter: '장혁' },
-    { id: 4, name: '유닛 B', inviter: '강나무' },
-    { id: 5, name: '유닛 C', inviter: '김태현' },
-    { id: 6, name: '유닛 D', inviter: '김태현' },
-  ];
-
-  const [listData, setListData] = useState(inviteData);
-  const handleDeleteList = (listId: number) => {
-    setListData((prevListDate) =>
-      prevListDate.filter((list) => list.id !== listId)
-    );
-  };
+interface InviteList {
+  id: number;
+  name: string;
+  inviter: string;
+}
+interface InviteListProps {
+  inviteData: InviteList[];
+}
+export default function InviteList({ inviteData }: InviteListProps): ReactNode {
+  // const handleDeleteList = (listId: number) => {
+  //   setListData((prevListDate) =>
+  //     prevListDate.filter((list) => list.id !== listId)
+  //   );
+  // };
 
   return (
     <div className='flex min-h-screen w-full flex-col bg-gray-50'>
@@ -38,21 +36,6 @@ export default function InviteList(): ReactNode {
               height={20}
             />
           </button>
-          {/* <div>  // api로 대시보드 내용이 전달되면 생성된 대시보드가 카드 스타일에 맞게 추가되도록 구현 필요 (고민중) 
-                <div>
-                  {listData.map((list) => {
-                    return (
-                      <button
-                        key={list.id}
-                        className={`tablet:w-3xs mobile:w-2xs flex`}
-                        onClick={() => {
-                          dashboardList(list);
-                        }}
-                      ></button>
-                    );
-                  })}
-                </div>
-              </div> */}
           <button className='tablet:w-3xs mobile:w-2xs relative flex h-[60px] w-full cursor-pointer items-center gap-3 rounded-md border border-gray-200 bg-white p-4 sm:w-2xs md:w-40 lg:w-md xl:w-3xs'>
             <Image
               src='/icon/dot/dot4.svg'
@@ -190,7 +173,7 @@ export default function InviteList(): ReactNode {
               <div>초대자</div>
               <div className='mobile:hidden text-center'>수락 여부</div>
             </div>
-            {listData.map((invite) => {
+            {inviteData.map((invite) => {
               return (
                 <div
                   key={invite.id}
@@ -215,7 +198,7 @@ export default function InviteList(): ReactNode {
                     <button
                       className='mobile:w-full w-20 cursor-pointer rounded border border-gray-300 bg-white py-1 text-sm text-violet-500 hover:bg-gray-100'
                       onClick={() => {
-                        handleDeleteList(invite.id);
+                        // handleDeleteList(invite.id);
                       }}
                     >
                       거절

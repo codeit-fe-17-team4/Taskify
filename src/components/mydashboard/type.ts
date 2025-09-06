@@ -1,8 +1,9 @@
 export interface CreateNewboardFormData {
-  name: string;
+  title: string;
   color: string;
 }
 
 export interface InviteMemberFormData {
   email: string;
+  nickname: string;
 }
