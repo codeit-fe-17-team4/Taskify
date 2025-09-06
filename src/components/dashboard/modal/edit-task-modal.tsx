@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
+import EditTaskForm from '@/components/dashboard/modal/edit-task-form';
+import type { EditTaskFormData, TaskType } from '@/components/dashboard/type';
+import ButtonModal from '@/components/ui/modal/modal-button';
 import { useModalKeyHandler } from '@/hooks/useModal';
 import type { UserType } from '@/lib/users/type';
-import BaseModal from '../ui/base-modal';
-import EditTaskForm from './edit-task-form';
-import type { EditTaskFormData, TaskType } from './type';
 
 interface EditTaskModalProps {
   isOpen: boolean;
@@ -89,7 +89,9 @@ export default function EditTaskModal({
    * 원본 데이터와 비교하여 변경사항이 있는지 확인
    */
   const hasChanges = () => {
-    if (!initialTask) {return false;}
+    if (!initialTask) {
+      return false;
+    }
 
     return (
       formData.title !== initialTask.title ||
@@ -106,7 +108,7 @@ export default function EditTaskModal({
     !formData.title.trim() || !formData.description.trim() || !hasChanges();
 
   return (
-    <BaseModal
+    <ButtonModal
       isOpen={isOpen}
       title='할 일 수정'
       submitText='수정'
@@ -121,6 +123,6 @@ export default function EditTaskModal({
         columns={columns}
         userInfo={userInfo}
       />
-    </BaseModal>
+    </ButtonModal>
   );
 }

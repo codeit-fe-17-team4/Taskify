@@ -1,4 +1,4 @@
-import BaseModal from '../ui/base-modal';
+import ButtonModal from '@/components/ui/modal/modal-button';
 
 interface DeleteColumnModalProps {
   isOpen: boolean;
@@ -19,7 +19,7 @@ export default function DeleteColumnModal({
   };
 
   return (
-    <BaseModal
+    <ButtonModal
       isOpen={isOpen}
       title=''
       submitText='삭제'
@@ -34,6 +34,6 @@ export default function DeleteColumnModal({
           컬럼의 모든 카드가 삭제됩니다.
         </p>
       </div>
-    </BaseModal>
+    </ButtonModal>
   );
 }

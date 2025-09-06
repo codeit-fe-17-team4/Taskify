@@ -1,11 +1,11 @@
 import type { GetServerSideProps } from 'next';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import ColumnLayout from '@/components/dashboard/column-layout';
-import CreateColumnModal from '@/components/dashboard/create-column-modal';
-import CreateTaskModal from '@/components/dashboard/create-task-modal';
-import EditTaskModal from '@/components/dashboard/edit-task-modal';
-import ManageColumnModal from '@/components/dashboard/manage-column-modal';
-import TaskDetailModal from '@/components/dashboard/task-detail-modal';
+import CreateColumnModal from '@/components/dashboard/modal/create-column-modal';
+import CreateTaskModal from '@/components/dashboard/modal/create-task-modal';
+import EditTaskModal from '@/components/dashboard/modal/edit-task-modal';
+import ManageColumnModal from '@/components/dashboard/modal/manage-column-modal';
+import TaskDetailModal from '@/components/dashboard/modal/task-detail-modal';
 import type {
   ColumnType,
   CreateColumnFormData,

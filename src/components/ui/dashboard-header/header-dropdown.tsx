@@ -50,12 +50,25 @@ export default function HeaderDropdown({
         </div>
       </Dropdown.Toggle>
       <Dropdown.List
-        positionClassName='top-3 right-3 w-fit'
+        additionalClassName='w-32 mobile:w-28 -top-1'
         ariaLabel='사용자 메뉴'
       >
-        <Dropdown.Item onClick={handleLogoutButton}>로그아웃</Dropdown.Item>
-        <Dropdown.Item onClick={handleMyPageButton}>내 정보</Dropdown.Item>
-        <Dropdown.Item onClick={handleMyDashboardButton}>
+        <Dropdown.Item
+          additionalClassName='justify-center'
+          onClick={handleLogoutButton}
+        >
+          로그아웃
+        </Dropdown.Item>
+        <Dropdown.Item
+          additionalClassName='justify-center'
+          onClick={handleMyPageButton}
+        >
+          내 정보
+        </Dropdown.Item>
+        <Dropdown.Item
+          additionalClassName='justify-center'
+          onClick={handleMyDashboardButton}
+        >
           내 대시보드
         </Dropdown.Item>
       </Dropdown.List>

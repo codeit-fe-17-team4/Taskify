@@ -1,6 +1,8 @@
+import type { chipTagColor } from '@/components/ui/chip/chip-tag';
+
 export interface TagType {
   label: string;
-  color: string;
+  color: chipTagColor;
 }
 
 // 사용 가능한 태그 색상 목록 (global CSS의 color-chip 색상만 사용)
@@ -9,7 +11,7 @@ export const TAG_COLORS = ['blue', 'pink', 'green', 'brown', 'red'] as const;
 /**
  * 랜덤 태그 색상 선택 함수
  */
-export const getRandomTagColor = (): string => {
+export const getRandomTagColor = (): chipTagColor => {
   const randomIndex = Math.floor(Math.random() * TAG_COLORS.length);
 
   return TAG_COLORS[randomIndex];
