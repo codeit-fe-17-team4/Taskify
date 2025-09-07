@@ -14,6 +14,7 @@ import DashboardLayout from '@/components/layout/dashboard-layout';
 import { BASE_API_URL } from '@/lib/constants';
 import type { UserType } from '@/lib/users/type';
 import styles from '@/styles/auth-variables.module.css';
+import mypageStyles from '@/styles/mypage.module.css';
 
 // 상수들
 const ERROR_MESSAGES = {
@@ -339,40 +340,47 @@ export default function MyPage({
 
   return (
     <div
-      className='bg-gray-5 tablet:left-40 mobile:left-10 tablet:top-[4.375rem] mobile:top-[3.75rem] fixed top-[4.375rem] right-0 bottom-0 left-[18.75rem]'
-      style={{ zIndex: 1 }}
+      className='bg-gray-5 tablet:left-40 mobile:left-10 tablet:top-[4.375rem] mobile:top-[3.75rem] fixed top-[4.375rem] right-0 left-[18.75rem] overflow-y-auto'
+      style={{ zIndex: 1, height: 'calc(100vh - 4.375rem)' }}
     >
       <div className='pt-5 pl-5'>
         <BackButton />
       </div>
 
-      {/* 메인 컨테이너 */}
+      {/* 메인 컨테이너 - 최대 레이아웃, 오른쪽 간격 20px일 때부터 줄어듦 */}
       <div
-        className='mt-[29px] ml-5'
+        className='mt-[29px] mr-3 ml-3 max-[375px]:mt-[6px]'
         style={{
-          width: '672.01px',
+          width: 'calc(100% - 24px)', // 좌우 마진 12px씩 제외
+          maxWidth: '672.01px',
           height: '856px',
           padding: '0px',
         }}
       >
         {/* 프로필 컨테이너 */}
         <div
-          className='w-full'
+          className={`${mypageStyles.mobilePaddingOverride} ${mypageStyles.mobileProfileContainer} w-full`}
           style={{
             ...COMMON_STYLES.container,
             height: '366px',
           }}
         >
-          <h2 className='mb-4' style={COMMON_STYLES.title}>
+          <h2
+            className={`${mypageStyles.mobileTitleFont} mb-4 max-[375px]:mb-10`}
+            style={COMMON_STYLES.title}
+          >
             프로필
           </h2>
 
           {/* 프로필 영역 */}
-          <div className='flex' style={{ marginTop: '24px' }}>
+          <div
+            className='flex max-[375px]:flex-col max-[375px]:gap-4'
+            style={{ marginTop: '24px' }}
+          >
             {/* 프로필 정사각형 상자 */}
             <button
               type='button'
-              className='relative flex cursor-pointer items-center justify-center'
+              className={`${mypageStyles.mobileProfileImage} relative flex cursor-pointer items-center justify-center max-[375px]:mx-auto`}
               style={{
                 width: '182px',
                 height: '182px',
@@ -409,7 +417,7 @@ export default function MyPage({
 
             {/* 프로필 폼 */}
             <div
-              className='flex flex-col'
+              className={`${mypageStyles.mobileProfileForm} flex flex-col max-[375px]:ml-0 max-[375px]:w-full`}
               style={{
                 marginLeft: '42px',
                 width: '424px',
@@ -417,10 +425,13 @@ export default function MyPage({
               }}
             >
               {/* 이메일 */}
-              <div className='flex flex-col gap-0' style={{ marginTop: '0px' }}>
+              <div
+                className={`${mypageStyles.mobileEmailField} flex flex-col gap-0 max-[375px]:mt-10`}
+                style={{ marginTop: '0px' }}
+              >
                 <label
                   htmlFor='email'
-                  className={`${styles.textStrong} mb-2 text-[16px] leading-[26px]`}
+                  className={`${styles.textStrong} ${mypageStyles.mobileLabelFont} mb-2 text-[16px] leading-[26px]`}
                 >
                   이메일
                 </label>
@@ -430,7 +441,7 @@ export default function MyPage({
                   type='email'
                   value={userInfo?.email || ''}
                   placeholder='이메일 입력'
-                  className='h-[50px] w-full cursor-not-allowed rounded-[8px] border border-[#D9D9D9] bg-gray-100 px-[16px] py-[12px] text-gray-500 placeholder:text-[#9FA6B2]'
+                  className={`${mypageStyles.mobileInputFont} h-[50px] w-full cursor-not-allowed rounded-[8px] border border-[#D9D9D9] bg-gray-100 px-[16px] py-[12px] text-gray-500 placeholder:text-[#9FA6B2]`}
                 />
               </div>
 
@@ -441,7 +452,7 @@ export default function MyPage({
               >
                 <label
                   htmlFor='nickname'
-                  className={`${styles.textStrong} mb-2 text-[16px] leading-[26px]`}
+                  className={`${styles.textStrong} ${mypageStyles.mobileLabelFont} mb-2 text-[16px] leading-[26px]`}
                 >
                   닉네임
                 </label>
@@ -450,7 +461,7 @@ export default function MyPage({
                   type='text'
                   value={nickname}
                   placeholder='닉네임 입력'
-                  className='h-[50px] w-full rounded-[8px] border border-[#D9D9D9] bg-white px-[16px] py-[12px] placeholder:text-[#9FA6B2] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none'
+                  className={`${mypageStyles.mobileInputFont} h-[50px] w-full rounded-[8px] border border-[#D9D9D9] bg-white px-[16px] py-[12px] placeholder:text-[#9FA6B2] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none`}
                   onChange={(e) => {
                     setNickname(e.target.value);
                   }}
@@ -477,13 +488,18 @@ export default function MyPage({
 
         {/* 비밀번호 변경 컨테이너 */}
         <div
-          className='mt-6 w-full'
+          className={`${mypageStyles.mobilePaddingOverride} mt-6 w-full max-[375px]:mt-4`}
           style={{
             ...COMMON_STYLES.container,
             height: '466px',
           }}
         >
-          <h2 style={COMMON_STYLES.title}>비밀번호 변경</h2>
+          <h2
+            className={mypageStyles.mobileTitleFont}
+            style={COMMON_STYLES.title}
+          >
+            비밀번호 변경
+          </h2>
 
           {/* 비밀번호 변경 폼 */}
           <form
@@ -495,7 +511,7 @@ export default function MyPage({
             <div className='flex flex-col gap-0' style={{ marginTop: '24px' }}>
               <label
                 htmlFor='currentPassword'
-                className={`${styles.textStrong} mb-2 text-[16px] leading-[26px]`}
+                className={`${styles.textStrong} ${mypageStyles.mobileLabelFont} mb-2 text-[16px] leading-[26px]`}
               >
                 현재 비밀번호
               </label>
@@ -504,7 +520,7 @@ export default function MyPage({
                 type='password'
                 value={currentPassword}
                 placeholder='비밀번호 입력'
-                className='h-[50px] w-full rounded-[8px] border border-[#D9D9D9] bg-white px-[16px] py-[12px] placeholder:text-[#9FA6B2] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none'
+                className={`${mypageStyles.mobileInputFont} h-[50px] w-full rounded-[8px] border border-[#D9D9D9] bg-white px-[16px] py-[12px] placeholder:text-[#9FA6B2] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none`}
                 onChange={(e) => {
                   setCurrentPassword(e.target.value);
                 }}
@@ -515,7 +531,7 @@ export default function MyPage({
             <div className='flex flex-col gap-0' style={{ marginTop: '16px' }}>
               <label
                 htmlFor='newPassword'
-                className={`${styles.textStrong} mb-2 text-[16px] leading-[26px]`}
+                className={`${styles.textStrong} ${mypageStyles.mobileLabelFont} mb-2 text-[16px] leading-[26px]`}
               >
                 새 비밀번호
               </label>
@@ -524,7 +540,7 @@ export default function MyPage({
                 type='password'
                 value={newPassword}
                 placeholder='새 비밀번호 입력'
-                className='h-[50px] w-full rounded-[8px] border border-[#D9D9D9] bg-white px-[16px] py-[12px] placeholder:text-[#9FA6B2] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none'
+                className={`${mypageStyles.mobileInputFont} h-[50px] w-full rounded-[8px] border border-[#D9D9D9] bg-white px-[16px] py-[12px] placeholder:text-[#9FA6B2] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none`}
                 onChange={(e) => {
                   setNewPassword(e.target.value);
                 }}
@@ -535,7 +551,7 @@ export default function MyPage({
             <div className='flex flex-col gap-0' style={{ marginTop: '16px' }}>
               <label
                 htmlFor='confirmPassword'
-                className={`${styles.textStrong} mb-2 text-[16px] leading-[26px]`}
+                className={`${styles.textStrong} ${mypageStyles.mobileLabelFont} mb-2 text-[16px] leading-[26px]`}
               >
                 새 비밀번호 확인
               </label>
@@ -544,7 +560,7 @@ export default function MyPage({
                 type='password'
                 value={confirmPassword}
                 placeholder='새 비밀번호 입력'
-                className='h-[50px] w-full rounded-[8px] border border-[#D9D9D9] bg-white px-[16px] py-[12px] placeholder:text-[#9FA6B2] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none'
+                className={`${mypageStyles.mobileInputFont} h-[50px] w-full rounded-[8px] border border-[#D9D9D9] bg-white px-[16px] py-[12px] placeholder:text-[#9FA6B2] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none`}
                 onChange={(e) => {
                   setConfirmPassword(e.target.value);
                 }}
@@ -573,6 +589,9 @@ export default function MyPage({
           </form>
         </div>
       </div>
+
+      {/* 디자인 시안에 따른 하단 여백 79px */}
+      <div style={{ height: '79px' }} />
 
       {/* 모달 */}
       <UnifiedModal

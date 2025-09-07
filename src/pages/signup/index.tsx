@@ -184,7 +184,11 @@ export default function SignupPage(): React.JSX.Element {
 
   return (
     <main
-      className={`${styles.auth} ${styles.bgAuth} flex min-h-screen items-center justify-center`}
+      className={`${styles.auth} ${styles.bgAuth} flex items-center justify-center`}
+      style={{
+        height: '1211px',
+        minHeight: '1211px',
+      }}
     >
       <div className='flex h-auto min-h-[653px] w-[520px] shrink-0 flex-col items-center gap-[30px] max-[375px]:w-[351px] max-[375px]:gap-[36px]'>
         {/* Hero Block */}
