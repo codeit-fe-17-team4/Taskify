@@ -11,11 +11,11 @@ import {
   membersEmailMockData,
   membersNameMockData,
 } from '@/lib/mydashboard-mock-data';
+import { getStringFromQuery } from '@/utils/getContextQuery';
 
 export default function MydashboardEdit(): ReactNode {
   const router = useRouter();
-  const { dashboardId } = router.query;
-
+  const dashboardId = getStringFromQuery(router.query, 'dashboardId');
   // 대시보드 이름 불러오기
   const currentDashboard = dashboardEditMockData.find(
     (dashboard) => dashboard.id === Number(dashboardId)
@@ -53,6 +53,12 @@ export default function MydashboardEdit(): ReactNode {
   const handleSubmitInviteMember = () => {
     handleCloseModal();
   };
+
+  if (!dashboardId) {
+    router.push('/');
+
+    return;
+  }
 
   return (
     <div className='min-h-screen bg-gray-50'>

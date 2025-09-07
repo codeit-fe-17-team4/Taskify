@@ -32,7 +32,7 @@ export default function Mydashboard({
   // mock 데이터 파일 분리해서 활용 !
   const [dashboardData, setDashboardData] =
     useState<DashboardList[]>(mydashboardMockData);
-  const [inviteData, setInviteDate] = useState<InvitationType[]>(
+  const [inviteData, setInviteData] = useState<InvitationType[]>(
     mydashboardInviteMockData.invitations
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
