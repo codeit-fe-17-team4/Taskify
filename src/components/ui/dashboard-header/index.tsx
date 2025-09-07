@@ -4,11 +4,17 @@ import { type ReactNode, useState } from 'react';
 import HeaderDropdown from '@/components/ui/dashboard-header/header-dropdown';
 import InviteMemberModal from '@/components/ui/dashboard-header/invite-member-modal';
 import ProfileList from '@/components/ui/dashboard-header/profile-list';
+import { useFetch } from '@/hooks/useAsync';
+import { getMemberList } from '@/lib/members/api';
 
 const buttonClass =
   'flex-center border-gray-3 text-md mobile:px-3 mobile:py-1.5 h-9 cursor-pointer gap-2 rounded-lg border-1 px-4 py-2.5 hover:bg-gray-4 active:bg-gray-3';
 
 export default function DashboardHeader(): ReactNode {
+  const { data, loading, error, refetch } = useFetch({
+    asyncFunction: () => getMemberList({ dashboardId: 1 }),
+    deps: [],
+  });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const dashboardId = 1;
 
@@ -25,7 +31,7 @@ export default function DashboardHeader(): ReactNode {
   };
 
   return (
-    <header className='mobile:h-[3.75rem] border-gray-3 tablet:pl-48 mobile:pl-12 tablet:justify-end fixed top-0 right-0 left-0 z-50 flex h-[4.375rem] w-full items-center justify-between border-b-1 bg-white pl-96'>
+    <header className='mobile:h-[3.75rem] border-gray-3 tablet:pl-48 mobile:pl-12 tablet:justify-end fixed top-0 right-0 left-0 z-20 flex h-[4.375rem] w-full items-center justify-between border-b-1 bg-white pl-96'>
       <div className='tablet:hidden flex gap-2 text-xl font-bold text-black'>
         <h1>내 대시보드</h1>
         <Image
