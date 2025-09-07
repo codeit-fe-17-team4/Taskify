@@ -6,11 +6,11 @@ export const cardSchema = z.object({
   description: z.string(),
   tags: z.array(z.string()),
   dueDate: z.string(),
-  assignee: {
+  assignee: z.object({
     profileImageUrl: z.string(),
     nickname: z.string(),
     id: z.number(),
-  },
+  }),
   imageUrl: z.string(),
   teamId: z.string(),
   columnId: z.number(),
