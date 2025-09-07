@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 
 interface useFetchParams<T> {
   asyncFunction: () => Promise<T>;
-  deps: unknown[];
+  deps?: unknown[];
   immediate?: boolean;
 }
 interface fetchStateInterface<T> {
@@ -68,10 +68,7 @@ export function useFetch<T>({
   });
 }
 
-export function useMutation<T>({
-  asyncFunction,
-  deps = [],
-}: useFetchParams<T>) {
+export function useMutate<T>({ asyncFunction, deps = [] }: useFetchParams<T>) {
   const {
     data,
     loading,

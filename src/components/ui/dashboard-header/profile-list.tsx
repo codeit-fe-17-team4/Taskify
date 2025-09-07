@@ -1,31 +1,35 @@
-import { useRouter } from 'next/router';
 import type { ReactNode } from 'react';
 import ChipProfile from '@/components/ui/chip/chip-profile';
 import { useFetch } from '@/hooks/useAsync';
+import useIsBreakPoint from '@/hooks/useIsBreakPoint';
 import { getMemberList } from '@/lib/members/api';
-import { getStringFromQuery } from '@/utils/getContextQuery';
 
-export default function ProfileList(): ReactNode {
-  const router = useRouter().query;
-  const dashboardId = getStringFromQuery(router, 'dashboardId');
+export default function ProfileList({
+  dashboardId,
+  myId,
+}: {
+  dashboardId: string;
+  myId: number;
+}): ReactNode {
   const { data, loading, error } = useFetch({
     asyncFunction: () => getMemberList({ dashboardId: Number(dashboardId) }),
     deps: [dashboardId],
   });
-  const maxDisplayLength = {
-    desktop: 4,
-    tablet: 2,
-  };
+  const isTablet = useIsBreakPoint(80);
 
-  console.log(dashboardId, data);
   if (!data || error) {
     return null;
   }
-  const excessNumber = data.totalCount - maxDisplayLength.desktop;
+  const maxDisplayLength = isTablet ? 2 : 4;
+  const excessNumber = data.totalCount - maxDisplayLength;
 
   return (
     <ul className='flex items-center **:not-first:-ml-3'>
-      {data.members.slice(0, maxDisplayLength.desktop + 1).map((member) => {
+      {data.members.slice(0, maxDisplayLength).map((member) => {
+        if (member.userId === myId) {
+          return;
+        }
+
         return (
           <li key={member.id}>
             <ChipProfile

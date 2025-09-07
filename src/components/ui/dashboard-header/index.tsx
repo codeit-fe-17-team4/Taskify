@@ -1,18 +1,28 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { type ReactNode, useState } from 'react';
-import HeaderDropdown from '@/components/ui/dashboard-header/header-dropdown';
+import HeaderProfileDropdwon from '@/components/ui/dashboard-header/header-profile-dropdown';
 import InviteMemberModal from '@/components/ui/dashboard-header/invite-member-modal';
 import ProfileList from '@/components/ui/dashboard-header/profile-list';
 import { useFetch } from '@/hooks/useAsync';
-import { getMemberList } from '@/lib/members/api';
+import { getMyInfo } from '@/lib/users/api';
+import { getStringFromQuery } from '@/utils/getContextQuery';
 
 const buttonClass =
   'flex-center border-gray-3 text-md mobile:px-3 mobile:py-1.5 h-9 cursor-pointer gap-2 rounded-lg border-1 px-4 py-2.5 hover:bg-gray-4 active:bg-gray-3';
 
 export default function DashboardHeader(): ReactNode {
+  const {
+    data: myInfo,
+    loading: myInfoLoading,
+    error: myInfoError,
+  } = useFetch({
+    asyncFunction: () => getMyInfo(),
+  });
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const dashboardId = 1;
+  const router = useRouter().query;
+  const dashboardId = getStringFromQuery(router, 'dashboardId');
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -58,12 +68,10 @@ export default function DashboardHeader(): ReactNode {
           </button>
         </div>
         <div className='mobile:gap-3 flex h-full gap-6'>
-          <ProfileList />
-          <HeaderDropdown
-            nickname={'권수형'}
-            profileColor={'red'}
-            profileLabel={'K'}
-          />
+          {dashboardId && myInfo && (
+            <ProfileList dashboardId={dashboardId} myId={myInfo.id} />
+          )}
+          {myInfo && <HeaderProfileDropdwon myNickname={myInfo.nickname} />}
         </div>
         <InviteMemberModal
           isOpen={isModalOpen}
