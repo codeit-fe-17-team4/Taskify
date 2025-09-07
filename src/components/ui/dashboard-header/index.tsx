@@ -5,6 +5,7 @@ import { type ReactNode, useEffect, useState } from 'react';
 import HeaderProfileDropdwon from '@/components/ui/dashboard-header/header-profile-dropdown';
 import InviteMemberModal from '@/components/ui/dashboard-header/invite-member-modal';
 import ProfileList from '@/components/ui/dashboard-header/profile-list';
+import ModalPortal from '@/components/ui/modal/modal-portal';
 import { useFetch } from '@/hooks/useAsync';
 import { getDashBoard } from '@/lib/dashboards/api';
 import { getMyInfo } from '@/lib/users/api';
@@ -87,11 +88,13 @@ export default function DashboardHeader(): ReactNode {
           )}
           {myInfo && <HeaderProfileDropdwon myNickname={myInfo.nickname} />}
         </div>
-        <InviteMemberModal
-          isOpen={isModalOpen}
-          onClose={handleCloseModal}
-          onSubmit={handleSubmitInviteMember}
-        />
+        <ModalPortal>
+          <InviteMemberModal
+            isOpen={isModalOpen}
+            onClose={handleCloseModal}
+            onSubmit={handleSubmitInviteMember}
+          />
+        </ModalPortal>
       </nav>
     </header>
   );

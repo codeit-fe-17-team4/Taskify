@@ -45,7 +45,7 @@ export default function HeaderProfileDropdwon({
         </div>
       </Dropdown.Toggle>
       <Dropdown.List
-        additionalClassName='w-32 mobile:w-28 -top-1'
+        additionalClassName='w-32 mobile:w-28 -top-1 mobile:-left-16'
         ariaLabel='사용자 메뉴'
       >
         <Dropdown.Item
