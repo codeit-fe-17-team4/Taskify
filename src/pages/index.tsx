@@ -10,14 +10,18 @@ import SettingsGrid from '@/components/home/SettingsGrid';
 export default function LandingPage(): ReactElement {
   return (
     <div className='min-h-screen bg-black'>
+      {/* 헤더 */}
       <Header />
+
+      {/* 메인 콘텐츠 */}
       <main className='flex flex-col items-center'>
         <Hero />
         <FeatureOne />
         <FeatureTwo />
         <SettingsGrid />
       </main>
-      {/* Footer 상단 간격 160px */}
+
+      {/* 푸터 */}
       <div className='mt-[160px] max-[375px]:mt-[120.48px]'>
         <Footer />
       </div>
@@ -25,9 +29,6 @@ export default function LandingPage(): ReactElement {
   );
 }
 
-/**
- * 정적 생성 설정.
- */
 export const getStaticProps: GetStaticProps = async () => {
   return {
     props: {},

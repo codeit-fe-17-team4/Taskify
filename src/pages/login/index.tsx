@@ -21,9 +21,6 @@ const ERROR_MESSAGES = {
   LOGIN_FAILED: '로그인에 실패했습니다. 다시 시도해주세요.',
 } as const;
 
-/**
- * 유틸리티 함수들
- */
 const validateLoginForm = (email: string, password: string): boolean => {
   const isEmailValid = Boolean(
     email.trim() && /^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]+$/.test(email)
@@ -137,11 +134,10 @@ export default function LoginPage(): JSX.Element {
             className='flex w-[520px] flex-col items-start max-[375px]:w-[351px]'
             onSubmit={handleSubmit}
           >
-            {/* Form Stack - 입력 + 버튼 + 하단 안내 */}
+            {/* 폼 요소들 */}
             <div className='flex flex-col space-y-6 max-[744px]:space-y-[13px] max-[375px]:space-y-4'>
-              {/* Input Group */}
+              {/* 입력 필드들 */}
               <div className='flex w-[520px] flex-col items-start max-[375px]:w-[351px]'>
-                {/* Email Input */}
                 <EmailInput
                   id='email'
                   label='이메일'
@@ -151,8 +147,6 @@ export default function LoginPage(): JSX.Element {
                   onChange={setEmail}
                   onBlur={handleEmailBlur}
                 />
-
-                {/* Password Input */}
                 <PasswordInput
                   id='password'
                   label='비밀번호'
@@ -169,7 +163,7 @@ export default function LoginPage(): JSX.Element {
                 />
               </div>
 
-              {/* Login Button */}
+              {/* 로그인 버튼 */}
               <AuthButton
                 type='submit'
                 disabled={!isFormValidNow}
@@ -179,7 +173,7 @@ export default function LoginPage(): JSX.Element {
                 로그인
               </AuthButton>
 
-              {/* Bottom Info */}
+              {/* 하단 링크 */}
               <div
                 className={`${styles.textStrong} w-[520px] text-center text-[16px] leading-[19px] max-[375px]:w-[351px]`}
               >
@@ -207,9 +201,6 @@ export default function LoginPage(): JSX.Element {
   );
 }
 
-/**
- * 정적 생성 설정
- */
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { req } = context;
   const accessToken = req.cookies.access_token;

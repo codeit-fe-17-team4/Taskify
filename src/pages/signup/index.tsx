@@ -20,16 +20,23 @@ const ERROR_MESSAGES = {
   SIGNUP_FAILED: '회원가입에 실패했습니다. 다시 시도해주세요.',
 } as const;
 
-/**
- * 유틸리티 함수들
- */
 const validateSignupForm = (
-  formData: { nickname: string; email: string; password: string; confirmPassword: string },
+  formData: {
+    nickname: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+  },
   hasAgreedToTerms: boolean,
-  isSignupFormValid: (formData: Record<string, string>, options: { skipConfirmPassword: boolean }) => boolean
+  isSignupFormValid: (
+    formData: Record<string, string>,
+    options: { skipConfirmPassword: boolean }
+  ) => boolean
 ): boolean => {
-  const isFormValid = isSignupFormValid(formData, { skipConfirmPassword: false });
-  
+  const isFormValid = isSignupFormValid(formData, {
+    skipConfirmPassword: false,
+  });
+
   return isFormValid && hasAgreedToTerms;
 };
 
@@ -72,8 +79,12 @@ export default function SignupPage(): React.JSX.Element {
 
   const handleConfirmPasswordBlur = useCallback(() => {
     // 비밀번호와 확인 비밀번호가 모두 입력된 경우에만 검증
-    const hasBothPasswords = password && confirmPassword && password.length > 0 && confirmPassword.length > 0;
-    
+    const hasBothPasswords =
+      password &&
+      confirmPassword &&
+      password.length > 0 &&
+      confirmPassword.length > 0;
+
     if (hasBothPasswords) {
       validateConfirmPassword(password, confirmPassword);
     }
@@ -110,7 +121,7 @@ export default function SignupPage(): React.JSX.Element {
 
       // 폼 유효성 검사
       const formData = { nickname, email, password, confirmPassword };
-      
+
       if (!validateSignupForm(formData, agreedToTerms, isSignupFormValid)) {
         return;
       }
@@ -185,11 +196,10 @@ export default function SignupPage(): React.JSX.Element {
             className='flex w-[520px] flex-col items-start max-[375px]:w-[351px]'
             onSubmit={handleSubmit}
           >
-            {/* Form Stack - 입력 + 버튼 + 하단 안내 */}
+            {/* 폼 요소들 */}
             <div className='flex flex-col space-y-6 max-[375px]:space-y-2'>
-              {/* Input Group */}
+              {/* 입력 필드들 */}
               <div className='flex w-[520px] flex-col items-start max-[375px]:w-[351px]'>
-                {/* Nickname Input */}
                 <TextInput
                   id='nickname'
                   label='닉네임'
@@ -199,8 +209,6 @@ export default function SignupPage(): React.JSX.Element {
                   onChange={setNickname}
                   onBlur={handleNicknameBlur}
                 />
-
-                {/* Email Input */}
                 <EmailInput
                   id='email'
                   label='이메일'
@@ -211,8 +219,6 @@ export default function SignupPage(): React.JSX.Element {
                   onChange={setEmail}
                   onBlur={handleEmailBlur}
                 />
-
-                {/* Password Input */}
                 <PasswordInput
                   id='password'
                   label='비밀번호'
@@ -225,8 +231,6 @@ export default function SignupPage(): React.JSX.Element {
                   onBlur={handlePasswordBlur}
                   onTogglePassword={handleTogglePassword}
                 />
-
-                {/* Confirm Password Input */}
                 <PasswordInput
                   id='confirmPassword'
                   label='비밀번호 확인'
@@ -241,7 +245,7 @@ export default function SignupPage(): React.JSX.Element {
                 />
               </div>
 
-              {/* Terms Agreement */}
+              {/* 약관 동의 */}
               <div className='flex w-[520px] items-center gap-3'>
                 <input
                   id='terms'
@@ -258,7 +262,7 @@ export default function SignupPage(): React.JSX.Element {
                 </label>
               </div>
 
-              {/* Signup Button */}
+              {/* 회원가입 버튼 */}
               <AuthButton
                 type='submit'
                 disabled={!isFormValidNow}
@@ -268,7 +272,7 @@ export default function SignupPage(): React.JSX.Element {
                 가입하기
               </AuthButton>
 
-              {/* Bottom Info */}
+              {/* 하단 링크 */}
               <div
                 className={`${styles.textStrong} w-[520px] text-center text-[16px] leading-[19px] max-[375px]:w-[351px]`}
               >
@@ -296,9 +300,6 @@ export default function SignupPage(): React.JSX.Element {
   );
 }
 
-/**
- * 정적 생성 설정
- */
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { req } = context;
   const accessToken = req.cookies.access_token;

@@ -30,6 +30,30 @@ const SUCCESS_MESSAGES = {
   PASSWORD_CHANGED: '비밀번호가 변경되었습니다.',
 } as const;
 
+// 반복되는 스타일 상수들
+const COMMON_STYLES = {
+  container: {
+    backgroundColor: '#ffffff',
+    padding: '24px',
+    borderRadius: '8px',
+    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+  },
+  title: {
+    color: '#333236',
+    fontFamily: 'Pretendard',
+    fontWeight: 700,
+    fontSize: '24px',
+  },
+  button: {
+    backgroundColor: '#5534DA',
+    fontFamily: 'Pretendard',
+    fontWeight: 600,
+    fontSize: '16px',
+    textAlign: 'center' as const,
+    color: '#ffffff',
+  },
+} as const;
+
 /**
  * 유틸리티 함수들
  */
@@ -335,22 +359,11 @@ export default function MyPage({
         <div
           className='w-full'
           style={{
-            backgroundColor: '#ffffff',
-            padding: '24px',
+            ...COMMON_STYLES.container,
             height: '366px',
-            borderRadius: '8px',
-            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
           }}
         >
-          <h2
-            className='mb-4'
-            style={{
-              color: '#333236',
-              fontFamily: 'Pretendard',
-              fontWeight: 700,
-              fontSize: '24px',
-            }}
-          >
+          <h2 className='mb-4' style={COMMON_STYLES.title}>
             프로필
           </h2>
 
@@ -450,14 +463,9 @@ export default function MyPage({
                 className='w-full shrink-0 cursor-pointer rounded-[8px] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50'
                 disabled={isLoading || !nickname.trim()}
                 style={{
+                  ...COMMON_STYLES.button,
                   height: '54px',
                   marginTop: '24px',
-                  backgroundColor: '#5534DA',
-                  fontFamily: 'Pretendard',
-                  fontWeight: 600,
-                  fontSize: '16px',
-                  textAlign: 'center',
-                  color: '#ffffff',
                 }}
                 onClick={handleUpdateNickname}
               >
@@ -471,23 +479,11 @@ export default function MyPage({
         <div
           className='mt-6 w-full'
           style={{
-            backgroundColor: '#ffffff',
-            padding: '24px',
+            ...COMMON_STYLES.container,
             height: '466px',
-            borderRadius: '8px',
-            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
           }}
         >
-          <h2
-            style={{
-              color: '#333236',
-              fontFamily: 'Pretendard',
-              fontWeight: 700,
-              fontSize: '24px',
-            }}
-          >
-            비밀번호 변경
-          </h2>
+          <h2 style={COMMON_STYLES.title}>비밀번호 변경</h2>
 
           {/* 비밀번호 변경 폼 */}
           <form
@@ -560,14 +556,9 @@ export default function MyPage({
               type='submit'
               className='w-full shrink-0 cursor-pointer rounded-[8px] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50'
               style={{
+                ...COMMON_STYLES.button,
                 height: '54px',
                 marginTop: '24px',
-                backgroundColor: '#5534DA',
-                fontFamily: 'Pretendard',
-                fontWeight: 600,
-                fontSize: '16px',
-                textAlign: 'center',
-                color: '#ffffff',
               }}
               disabled={
                 isLoading ||
