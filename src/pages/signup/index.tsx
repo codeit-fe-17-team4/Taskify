@@ -13,7 +13,25 @@ import type { SignupParams } from '@/lib/users/interface';
 import { useSignupValidation } from '@/lib/validation/rules';
 import styles from '@/styles/auth-variables.module.css';
 
+// 상수들
 const SUCCESS_MESSAGE = '가입이 완료되었습니다!';
+const ERROR_MESSAGES = {
+  DUPLICATE_EMAIL: '이미 사용중인 이메일입니다',
+  SIGNUP_FAILED: '회원가입에 실패했습니다. 다시 시도해주세요.',
+} as const;
+
+/**
+ * 유틸리티 함수들
+ */
+const validateSignupForm = (
+  formData: { nickname: string; email: string; password: string; confirmPassword: string },
+  hasAgreedToTerms: boolean,
+  isSignupFormValid: (formData: Record<string, string>, options: { skipConfirmPassword: boolean }) => boolean
+): boolean => {
+  const isFormValid = isSignupFormValid(formData, { skipConfirmPassword: false });
+  
+  return isFormValid && hasAgreedToTerms;
+};
 
 export default function SignupPage(): React.JSX.Element {
   const router = useRouter();
@@ -54,12 +72,9 @@ export default function SignupPage(): React.JSX.Element {
 
   const handleConfirmPasswordBlur = useCallback(() => {
     // 비밀번호와 확인 비밀번호가 모두 입력된 경우에만 검증
-    if (
-      password &&
-      confirmPassword &&
-      password.length > 0 &&
-      confirmPassword.length > 0
-    ) {
+    const hasBothPasswords = password && confirmPassword && password.length > 0 && confirmPassword.length > 0;
+    
+    if (hasBothPasswords) {
       validateConfirmPassword(password, confirmPassword);
     }
   }, [validateConfirmPassword, password, confirmPassword]);
@@ -94,13 +109,9 @@ export default function SignupPage(): React.JSX.Element {
       e.preventDefault();
 
       // 폼 유효성 검사
-      const isFormValid =
-        isSignupFormValid(
-          { nickname, email, password, confirmPassword },
-          { skipConfirmPassword: false }
-        ) && agreedToTerms;
-
-      if (!isFormValid) {
+      const formData = { nickname, email, password, confirmPassword };
+      
+      if (!validateSignupForm(formData, agreedToTerms, isSignupFormValid)) {
         return;
       }
 
@@ -124,12 +135,11 @@ export default function SignupPage(): React.JSX.Element {
         const errorMessage = error instanceof Error ? error.message : '';
 
         if (errorMessage.includes('[409]') || errorMessage.includes('[400]')) {
-          setModalMessage('이미 사용중인 이메일입니다');
-          setShowModal(true);
+          setModalMessage(ERROR_MESSAGES.DUPLICATE_EMAIL);
         } else {
-          setModalMessage('회원가입에 실패했습니다. 다시 시도해주세요.');
-          setShowModal(true);
+          setModalMessage(ERROR_MESSAGES.SIGNUP_FAILED);
         }
+        setShowModal(true);
       } finally {
         setIsLoading(false);
       }

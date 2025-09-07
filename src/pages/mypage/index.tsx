@@ -15,6 +15,43 @@ import { BASE_API_URL } from '@/lib/constants';
 import type { UserType } from '@/lib/users/type';
 import styles from '@/styles/auth-variables.module.css';
 
+// 상수들
+const ERROR_MESSAGES = {
+  IMAGE_UPLOAD_FAILED: '이미지 업로드에 실패했습니다.',
+  NICKNAME_CHANGE_FAILED: '닉네임 변경에 실패했습니다.',
+  PASSWORD_CHANGE_FAILED: '비밀번호 변경에 실패했습니다.',
+  PASSWORD_MISMATCH: '비밀번호가 일치하지 않습니다.',
+  PASSWORD_TOO_SHORT: '비밀번호는 8자 이상이어야 합니다.',
+  NICKNAME_TOO_LONG: '닉네임은 10자 이하로 작성해주세요.',
+} as const;
+
+const SUCCESS_MESSAGES = {
+  NICKNAME_CHANGED: '닉네임이 변경되었습니다.',
+  PASSWORD_CHANGED: '비밀번호가 변경되었습니다.',
+} as const;
+
+/**
+ * 유틸리티 함수들
+ */
+const extractErrorMessage = (
+  error: unknown,
+  defaultMessage: string
+): string => {
+  if (error instanceof Error) {
+    try {
+      const match = error.message.match(
+        /\{[^}]*"message"\s*:\s*"([^"]*)"[^}]*\}/
+      );
+
+      return match?.[1] || defaultMessage;
+    } catch {
+      return defaultMessage;
+    }
+  }
+
+  return defaultMessage;
+};
+
 interface MyPageProps {
   isAuthenticated: boolean;
   userInfo: UserType | null;
@@ -148,7 +185,10 @@ export default function MyPage({
           setUserInfo(updatedUserInfo);
         }
       } catch {
-        showModal({ message: '이미지 업로드에 실패했습니다.', type: 'error' });
+        showModal({
+          message: ERROR_MESSAGES.IMAGE_UPLOAD_FAILED,
+          type: 'error',
+        });
       } finally {
         setIsLoading(false);
       }
@@ -165,7 +205,7 @@ export default function MyPage({
     // 닉네임 길이 검증 (10자 이하)
     if (nickname.trim().length > 10) {
       showModal({
-        message: '닉네임은 10자 이하로 작성해주세요.',
+        message: ERROR_MESSAGES.NICKNAME_TOO_LONG,
         type: 'error',
       });
 
@@ -188,25 +228,15 @@ export default function MyPage({
       });
 
       setUserInfo(updatedUserInfo as UserType);
-      showModal({ message: '닉네임이 변경되었습니다.', type: 'success' });
+      showModal({
+        message: SUCCESS_MESSAGES.NICKNAME_CHANGED,
+        type: 'success',
+      });
     } catch (error) {
-      // API에서 반환한 구체적인 에러 메시지 추출
-      let errorMessage = '닉네임 변경에 실패했습니다.';
-
-      if (error instanceof Error) {
-        try {
-          // "[400] {"message":"닉네임은 10자 이하로 작성해주세요."}" 형태에서 message 추출
-          const match = error.message.match(
-            /\{[^}]*"message"\s*:\s*"([^"]*)"[^}]*\}/
-          );
-
-          if (match?.[1]) {
-            errorMessage = match[1];
-          }
-        } catch {
-          // JSON 파싱 실패 시 기본 메시지 사용
-        }
-      }
+      const errorMessage = extractErrorMessage(
+        error,
+        ERROR_MESSAGES.NICKNAME_CHANGE_FAILED
+      );
 
       showModal({ message: errorMessage, type: 'error' });
     } finally {
@@ -220,14 +250,14 @@ export default function MyPage({
       e.preventDefault();
 
       if (newPassword !== confirmPassword) {
-        showModal({ message: '비밀번호가 일치하지 않습니다.', type: 'error' });
+        showModal({ message: ERROR_MESSAGES.PASSWORD_MISMATCH, type: 'error' });
 
         return;
       }
 
       if (newPassword.length < 8) {
         showModal({
-          message: '비밀번호는 8자 이상이어야 합니다.',
+          message: ERROR_MESSAGES.PASSWORD_TOO_SHORT,
           type: 'error',
         });
 
@@ -252,25 +282,15 @@ export default function MyPage({
         setNewPassword('');
         setConfirmPassword('');
 
-        showModal({ message: '비밀번호가 변경되었습니다.', type: 'success' });
+        showModal({
+          message: SUCCESS_MESSAGES.PASSWORD_CHANGED,
+          type: 'success',
+        });
       } catch (error) {
-        // API에서 반환한 구체적인 에러 메시지 추출
-        let errorMessage = '비밀번호 변경에 실패했습니다.';
-
-        if (error instanceof Error) {
-          try {
-            // "[400] {"message":"현재 비밀번호가 틀렸습니다."}" 형태에서 message 추출
-            const match = error.message.match(
-              /\{[^}]*"message"\s*:\s*"([^"]*)"[^}]*\}/
-            );
-
-            if (match?.[1]) {
-              errorMessage = match[1];
-            }
-          } catch {
-            // JSON 파싱 실패 시 기본 메시지 사용
-          }
-        }
+        const errorMessage = extractErrorMessage(
+          error,
+          ERROR_MESSAGES.PASSWORD_CHANGE_FAILED
+        );
 
         showModal({ message: errorMessage, type: 'error' });
       } finally {
@@ -294,264 +314,141 @@ export default function MyPage({
   }
 
   return (
-    <DashboardLayout>
-      <div
-        className='bg-gray-5 tablet:left-40 mobile:left-10 tablet:top-[4.375rem] mobile:top-[3.75rem] fixed top-[4.375rem] right-0 bottom-0 left-[18.75rem]'
-        style={{ zIndex: 1 }}
-      >
-        <div className='pt-5 pl-5'>
-          <BackButton />
-        </div>
+    <div
+      className='bg-gray-5 tablet:left-40 mobile:left-10 tablet:top-[4.375rem] mobile:top-[3.75rem] fixed top-[4.375rem] right-0 bottom-0 left-[18.75rem]'
+      style={{ zIndex: 1 }}
+    >
+      <div className='pt-5 pl-5'>
+        <BackButton />
+      </div>
 
-        {/* 메인 컨테이너 */}
+      {/* 메인 컨테이너 */}
+      <div
+        className='mt-[29px] ml-5'
+        style={{
+          width: '672.01px',
+          height: '856px',
+          padding: '0px',
+        }}
+      >
+        {/* 프로필 컨테이너 */}
         <div
-          className='mt-[29px] ml-5'
+          className='w-full'
           style={{
-            width: '672.01px',
-            height: '856px',
-            padding: '0px',
+            backgroundColor: '#ffffff',
+            padding: '24px',
+            height: '366px',
+            borderRadius: '8px',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
           }}
         >
-          {/* 프로필 컨테이너 */}
-          <div
-            className='w-full'
+          <h2
+            className='mb-4'
             style={{
-              backgroundColor: '#ffffff',
-              padding: '24px',
-              height: '366px',
-              borderRadius: '8px',
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+              color: '#333236',
+              fontFamily: 'Pretendard',
+              fontWeight: 700,
+              fontSize: '24px',
             }}
           >
-            <h2
-              className='mb-4'
+            프로필
+          </h2>
+
+          {/* 프로필 영역 */}
+          <div className='flex' style={{ marginTop: '24px' }}>
+            {/* 프로필 정사각형 상자 */}
+            <button
+              type='button'
+              className='relative flex cursor-pointer items-center justify-center'
               style={{
-                color: '#333236',
-                fontFamily: 'Pretendard',
-                fontWeight: 700,
-                fontSize: '24px',
+                width: '182px',
+                height: '182px',
+                backgroundColor: '#F5F5F5',
+                marginLeft: '0px',
+              }}
+              onClick={handleProfileImageClick}
+            >
+              {userInfo?.profileImageUrl ? (
+                <Image
+                  src={userInfo.profileImageUrl}
+                  alt='프로필 이미지'
+                  width={182}
+                  height={182}
+                  style={{ objectFit: 'cover', borderRadius: '8px' }}
+                />
+              ) : (
+                <Image
+                  src='/auth/icon/addimage.svg'
+                  alt='프로필 이미지 추가'
+                  width={30.01}
+                  height={30.01}
+                />
+              )}
+              <input
+                id='profile-image-input'
+                type='file'
+                accept='image/*'
+                className='hidden'
+                disabled={isLoading}
+                onChange={handleImageUpload}
+              />
+            </button>
+
+            {/* 프로필 폼 */}
+            <div
+              className='flex flex-col'
+              style={{
+                marginLeft: '42px',
+                width: '424px',
+                height: '182px',
               }}
             >
-              프로필
-            </h2>
+              {/* 이메일 */}
+              <div className='flex flex-col gap-0' style={{ marginTop: '0px' }}>
+                <label
+                  htmlFor='email'
+                  className={`${styles.textStrong} mb-2 text-[16px] leading-[26px]`}
+                >
+                  이메일
+                </label>
+                <input
+                  disabled
+                  id='email'
+                  type='email'
+                  value={userInfo?.email || ''}
+                  placeholder='이메일 입력'
+                  className='h-[50px] w-full cursor-not-allowed rounded-[8px] border border-[#D9D9D9] bg-gray-100 px-[16px] py-[12px] text-gray-500 placeholder:text-[#9FA6B2]'
+                />
+              </div>
 
-            {/* 프로필 영역 */}
-            <div className='flex' style={{ marginTop: '24px' }}>
-              {/* 프로필 정사각형 상자 */}
+              {/* 닉네임 */}
+              <div
+                className='flex flex-col gap-0'
+                style={{ marginTop: '16px' }}
+              >
+                <label
+                  htmlFor='nickname'
+                  className={`${styles.textStrong} mb-2 text-[16px] leading-[26px]`}
+                >
+                  닉네임
+                </label>
+                <input
+                  id='nickname'
+                  type='text'
+                  value={nickname}
+                  placeholder='닉네임 입력'
+                  className='h-[50px] w-full rounded-[8px] border border-[#D9D9D9] bg-white px-[16px] py-[12px] placeholder:text-[#9FA6B2] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none'
+                  onChange={(e) => {
+                    setNickname(e.target.value);
+                  }}
+                />
+              </div>
+
+              {/* 저장 버튼 */}
               <button
                 type='button'
-                className='relative flex cursor-pointer items-center justify-center'
-                style={{
-                  width: '182px',
-                  height: '182px',
-                  backgroundColor: '#F5F5F5',
-                  marginLeft: '0px',
-                }}
-                onClick={handleProfileImageClick}
-              >
-                {userInfo?.profileImageUrl ? (
-                  <Image
-                    src={userInfo.profileImageUrl}
-                    alt='프로필 이미지'
-                    width={182}
-                    height={182}
-                    style={{ objectFit: 'cover', borderRadius: '8px' }}
-                  />
-                ) : (
-                  <Image
-                    src='/auth/icon/addimage.svg'
-                    alt='프로필 이미지 추가'
-                    width={30.01}
-                    height={30.01}
-                  />
-                )}
-                <input
-                  id='profile-image-input'
-                  type='file'
-                  accept='image/*'
-                  className='hidden'
-                  disabled={isLoading}
-                  onChange={handleImageUpload}
-                />
-              </button>
-
-              {/* 프로필 폼 */}
-              <div
-                className='flex flex-col'
-                style={{
-                  marginLeft: '42px',
-                  width: '424px',
-                  height: '182px',
-                }}
-              >
-                {/* 이메일 */}
-                <div
-                  className='flex flex-col gap-0'
-                  style={{ marginTop: '0px' }}
-                >
-                  <label
-                    htmlFor='email'
-                    className={`${styles.textStrong} mb-2 text-[16px] leading-[26px]`}
-                  >
-                    이메일
-                  </label>
-                  <input
-                    disabled
-                    id='email'
-                    type='email'
-                    value={userInfo?.email || ''}
-                    placeholder='이메일 입력'
-                    className='h-[50px] w-full cursor-not-allowed rounded-[8px] border border-[#D9D9D9] bg-gray-100 px-[16px] py-[12px] text-gray-500 placeholder:text-[#9FA6B2]'
-                  />
-                </div>
-
-                {/* 닉네임 */}
-                <div
-                  className='flex flex-col gap-0'
-                  style={{ marginTop: '16px' }}
-                >
-                  <label
-                    htmlFor='nickname'
-                    className={`${styles.textStrong} mb-2 text-[16px] leading-[26px]`}
-                  >
-                    닉네임
-                  </label>
-                  <input
-                    id='nickname'
-                    type='text'
-                    value={nickname}
-                    placeholder='닉네임 입력'
-                    className='h-[50px] w-full rounded-[8px] border border-[#D9D9D9] bg-white px-[16px] py-[12px] placeholder:text-[#9FA6B2] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none'
-                    onChange={(e) => {
-                      setNickname(e.target.value);
-                    }}
-                  />
-                </div>
-
-                {/* 저장 버튼 */}
-                <button
-                  type='button'
-                  className='w-full shrink-0 cursor-pointer rounded-[8px] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50'
-                  disabled={isLoading || !nickname.trim()}
-                  style={{
-                    height: '54px',
-                    marginTop: '24px',
-                    backgroundColor: '#5534DA',
-                    fontFamily: 'Pretendard',
-                    fontWeight: 600,
-                    fontSize: '16px',
-                    textAlign: 'center',
-                    color: '#ffffff',
-                  }}
-                  onClick={handleUpdateNickname}
-                >
-                  {isLoading ? '저장 중...' : '저장'}
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* 비밀번호 변경 컨테이너 */}
-          <div
-            className='mt-6 w-full'
-            style={{
-              backgroundColor: '#ffffff',
-              padding: '24px',
-              height: '466px',
-              borderRadius: '8px',
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-            }}
-          >
-            <h2
-              style={{
-                color: '#333236',
-                fontFamily: 'Pretendard',
-                fontWeight: 700,
-                fontSize: '24px',
-              }}
-            >
-              비밀번호 변경
-            </h2>
-
-            {/* 비밀번호 변경 폼 */}
-            <form
-              className='flex flex-col'
-              style={{ height: '362px' }}
-              onSubmit={handlePasswordChange}
-            >
-              {/* 현재 비밀번호 */}
-              <div
-                className='flex flex-col gap-0'
-                style={{ marginTop: '24px' }}
-              >
-                <label
-                  htmlFor='currentPassword'
-                  className={`${styles.textStrong} mb-2 text-[16px] leading-[26px]`}
-                >
-                  현재 비밀번호
-                </label>
-                <input
-                  id='currentPassword'
-                  type='password'
-                  value={currentPassword}
-                  placeholder='비밀번호 입력'
-                  className='h-[50px] w-full rounded-[8px] border border-[#D9D9D9] bg-white px-[16px] py-[12px] placeholder:text-[#9FA6B2] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none'
-                  onChange={(e) => {
-                    setCurrentPassword(e.target.value);
-                  }}
-                />
-              </div>
-
-              {/* 새 비밀번호 */}
-              <div
-                className='flex flex-col gap-0'
-                style={{ marginTop: '16px' }}
-              >
-                <label
-                  htmlFor='newPassword'
-                  className={`${styles.textStrong} mb-2 text-[16px] leading-[26px]`}
-                >
-                  새 비밀번호
-                </label>
-                <input
-                  id='newPassword'
-                  type='password'
-                  value={newPassword}
-                  placeholder='새 비밀번호 입력'
-                  className='h-[50px] w-full rounded-[8px] border border-[#D9D9D9] bg-white px-[16px] py-[12px] placeholder:text-[#9FA6B2] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none'
-                  onChange={(e) => {
-                    setNewPassword(e.target.value);
-                  }}
-                />
-              </div>
-
-              {/* 새 비밀번호 확인 */}
-              <div
-                className='flex flex-col gap-0'
-                style={{ marginTop: '16px' }}
-              >
-                <label
-                  htmlFor='confirmPassword'
-                  className={`${styles.textStrong} mb-2 text-[16px] leading-[26px]`}
-                >
-                  새 비밀번호 확인
-                </label>
-                <input
-                  id='confirmPassword'
-                  type='password'
-                  value={confirmPassword}
-                  placeholder='새 비밀번호 입력'
-                  className='h-[50px] w-full rounded-[8px] border border-[#D9D9D9] bg-white px-[16px] py-[12px] placeholder:text-[#9FA6B2] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none'
-                  onChange={(e) => {
-                    setConfirmPassword(e.target.value);
-                  }}
-                />
-              </div>
-
-              {/* 변경 버튼 */}
-              <button
-                type='submit'
                 className='w-full shrink-0 cursor-pointer rounded-[8px] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50'
+                disabled={isLoading || !nickname.trim()}
                 style={{
                   height: '54px',
                   marginTop: '24px',
@@ -562,18 +459,127 @@ export default function MyPage({
                   textAlign: 'center',
                   color: '#ffffff',
                 }}
-                disabled={
-                  isLoading ||
-                  !currentPassword ||
-                  !newPassword ||
-                  !confirmPassword
-                }
-                onClick={handlePasswordChange}
+                onClick={handleUpdateNickname}
               >
-                {isLoading ? '변경 중...' : '변경'}
+                {isLoading ? '저장 중...' : '저장'}
               </button>
-            </form>
+            </div>
           </div>
+        </div>
+
+        {/* 비밀번호 변경 컨테이너 */}
+        <div
+          className='mt-6 w-full'
+          style={{
+            backgroundColor: '#ffffff',
+            padding: '24px',
+            height: '466px',
+            borderRadius: '8px',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+          }}
+        >
+          <h2
+            style={{
+              color: '#333236',
+              fontFamily: 'Pretendard',
+              fontWeight: 700,
+              fontSize: '24px',
+            }}
+          >
+            비밀번호 변경
+          </h2>
+
+          {/* 비밀번호 변경 폼 */}
+          <form
+            className='flex flex-col'
+            style={{ height: '362px' }}
+            onSubmit={handlePasswordChange}
+          >
+            {/* 현재 비밀번호 */}
+            <div className='flex flex-col gap-0' style={{ marginTop: '24px' }}>
+              <label
+                htmlFor='currentPassword'
+                className={`${styles.textStrong} mb-2 text-[16px] leading-[26px]`}
+              >
+                현재 비밀번호
+              </label>
+              <input
+                id='currentPassword'
+                type='password'
+                value={currentPassword}
+                placeholder='비밀번호 입력'
+                className='h-[50px] w-full rounded-[8px] border border-[#D9D9D9] bg-white px-[16px] py-[12px] placeholder:text-[#9FA6B2] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none'
+                onChange={(e) => {
+                  setCurrentPassword(e.target.value);
+                }}
+              />
+            </div>
+
+            {/* 새 비밀번호 */}
+            <div className='flex flex-col gap-0' style={{ marginTop: '16px' }}>
+              <label
+                htmlFor='newPassword'
+                className={`${styles.textStrong} mb-2 text-[16px] leading-[26px]`}
+              >
+                새 비밀번호
+              </label>
+              <input
+                id='newPassword'
+                type='password'
+                value={newPassword}
+                placeholder='새 비밀번호 입력'
+                className='h-[50px] w-full rounded-[8px] border border-[#D9D9D9] bg-white px-[16px] py-[12px] placeholder:text-[#9FA6B2] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none'
+                onChange={(e) => {
+                  setNewPassword(e.target.value);
+                }}
+              />
+            </div>
+
+            {/* 새 비밀번호 확인 */}
+            <div className='flex flex-col gap-0' style={{ marginTop: '16px' }}>
+              <label
+                htmlFor='confirmPassword'
+                className={`${styles.textStrong} mb-2 text-[16px] leading-[26px]`}
+              >
+                새 비밀번호 확인
+              </label>
+              <input
+                id='confirmPassword'
+                type='password'
+                value={confirmPassword}
+                placeholder='새 비밀번호 입력'
+                className='h-[50px] w-full rounded-[8px] border border-[#D9D9D9] bg-white px-[16px] py-[12px] placeholder:text-[#9FA6B2] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none'
+                onChange={(e) => {
+                  setConfirmPassword(e.target.value);
+                }}
+              />
+            </div>
+
+            {/* 변경 버튼 */}
+            <button
+              type='submit'
+              className='w-full shrink-0 cursor-pointer rounded-[8px] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50'
+              style={{
+                height: '54px',
+                marginTop: '24px',
+                backgroundColor: '#5534DA',
+                fontFamily: 'Pretendard',
+                fontWeight: 600,
+                fontSize: '16px',
+                textAlign: 'center',
+                color: '#ffffff',
+              }}
+              disabled={
+                isLoading ||
+                !currentPassword ||
+                !newPassword ||
+                !confirmPassword
+              }
+              onClick={handlePasswordChange}
+            >
+              {isLoading ? '변경 중...' : '변경'}
+            </button>
+          </form>
         </div>
       </div>
 
@@ -584,7 +590,7 @@ export default function MyPage({
         type={modalType}
         onClose={closeModal}
       />
-    </DashboardLayout>
+    </div>
   );
 }
 
@@ -635,5 +641,5 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 MyPage.getLayout = function getLayout(page: ReactNode) {
-  return page;
+  return <DashboardLayout>{page}</DashboardLayout>;
 };
