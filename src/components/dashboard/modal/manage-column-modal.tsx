@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react';
+import DeleteColumnModal from '@/components/dashboard/modal/delete-column-modal';
+import ManageColumnForm from '@/components/dashboard/modal/manage-column-form';
+import type {
+  ColumnType,
+  ManageColumnFormData,
+} from '@/components/dashboard/type';
+import ButtonModal from '@/components/ui/modal/modal-button';
 import { useModalKeyHandler } from '@/hooks/useModal';
-import BaseModal from '../ui/base-modal';
-import DeleteColumnModal from './delete-column-modal';
-import ManageColumnForm from './manage-column-form';
-import type { ColumnType, ManageColumnFormData } from './type';
 
 interface ManageColumnModalProps {
   isOpen: boolean;
@@ -40,10 +43,11 @@ export default function ManageColumnModal({
   useModalKeyHandler(isOpen, handleClose);
 
   const handleUpdate = () => {
-    if (column) {
-      onUpdate(column.id, formData);
-      handleClose();
+    if (!column) {
+      return;
     }
+    onUpdate(column.id, formData);
+    handleClose();
   };
 
   const handleDelete = () => {
@@ -52,10 +56,11 @@ export default function ManageColumnModal({
   };
 
   const handleConfirmDelete = () => {
-    if (column) {
-      onDelete(column.id);
-      handleClose();
+    if (!column) {
+      return;
     }
+    onDelete(column.id);
+    handleClose();
   };
 
   // 중복 검사 (현재 컬럼 제외)
@@ -71,7 +76,7 @@ export default function ManageColumnModal({
 
   return (
     <>
-      <BaseModal
+      <ButtonModal
         isOpen={isOpen}
         title='컬럼 관리'
         submitText='변경'
@@ -88,13 +93,15 @@ export default function ManageColumnModal({
           setFormData={setFormData}
           hasError={isDuplicate}
         />
-      </BaseModal>
+      </ButtonModal>
 
       <DeleteColumnModal
         isOpen={isDeleteModalOpen}
         columnTitle={column.title}
-        onClose={() => { setIsDeleteModalOpen(false); }}
         onConfirm={handleConfirmDelete}
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+        }}
       />
     </>
   );

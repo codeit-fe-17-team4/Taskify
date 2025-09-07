@@ -1,7 +1,7 @@
-import AddTaskButton from './add-task-button';
-import ColumnHeader from './column-header';
-import ColumnTaskCard from './column-task-card';
-import type { ColumnType, TaskType } from './type';
+import AddTaskButton from '@/components/dashboard/add-task-button';
+import ColumnHeader from '@/components/dashboard/column-header';
+import ColumnTaskCard from '@/components/dashboard/column-task-card';
+import type { ColumnType, TaskType } from '@/components/dashboard/type';
 
 interface ColumnProps {
   column: ColumnType;
@@ -32,13 +32,15 @@ export default function DashboardColumn({
         {/* 할일 보드 - 스크롤 가능한 영역 */}
         <div className='scrollbar-hide flex-1 overflow-y-auto'>
           <div className='flex flex-col gap-4'>
-            {column.tasks.map((task) => 
-              { return <ColumnTaskCard
-                key={task.id}
-                task={task}
-                onEditTask={onTaskClick}
-              /> }
-            )}
+            {column.tasks.map((task) => {
+              return (
+                <ColumnTaskCard
+                  key={task.id}
+                  task={task}
+                  onEditTask={onTaskClick}
+                />
+              );
+            })}
           </div>
         </div>
       </div>

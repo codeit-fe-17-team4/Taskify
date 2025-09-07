@@ -8,7 +8,7 @@ export default function DashboardLayout({
   children: ReactNode;
 }): ReactNode {
   return (
-    <div className='pt-16 pl-[18.75rem]'>
+    <div className='tablet:pl-40 mobile:pl-[4rem] pt-16 pl-[18.75rem]'>
       <DashboardHeader />
       <SideMenu />
       {children}

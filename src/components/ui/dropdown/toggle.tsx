@@ -1,11 +1,12 @@
-import { type ReactNode, useContext } from 'react';
+import { type ReactNode, useContext, useRef } from 'react';
 import { DropdownContext } from '@/components/ui/dropdown';
+import useCallbackWhenClickItem from '@/components/ui/dropdown/useCallbackWhenClickItem';
 
-export default function Toggle({
-  children,
-}: {
+interface ToggleProps {
   children: ReactNode;
-}): ReactNode {
+  onClick?: () => void;
+}
+export default function Toggle({ children, onClick }: ToggleProps): ReactNode {
   const context = useContext(DropdownContext);
 
   if (!context) {
@@ -15,16 +16,20 @@ export default function Toggle({
   const handleToggle = () => {
     setIsOpen((prev) => !prev);
   };
+  const toggleButtonRef = useRef(null);
+
+  useCallbackWhenClickItem(toggleButtonRef, handleToggle);
 
   return (
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events
     <div
+      ref={toggleButtonRef}
       role='button'
       tabIndex={0}
       aria-haspopup='menu'
       aria-expanded={isOpen}
-      className='flex-center relative h-full w-full'
-      onClick={handleToggle}
+      className='flex-center relative h-full w-full cursor-pointer'
+      onClick={onClick}
     >
       {children}
     </div>

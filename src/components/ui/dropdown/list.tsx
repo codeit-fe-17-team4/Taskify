@@ -4,12 +4,12 @@ import { cn } from '@/utils/cn';
 
 interface DropdownListProps {
   children: ReactNode;
-  positionClassName?: string;
+  additionalClassName?: string;
   ariaLabel?: string;
 }
 export default function List({
   children,
-  positionClassName,
+  additionalClassName,
   ariaLabel = '메뉴',
 }: DropdownListProps): ReactNode {
   const context = useContext(DropdownContext);
@@ -21,16 +21,16 @@ export default function List({
 
   return (
     isOpen && (
-      <ul
+      <div
         role='menu'
         aria-label={ariaLabel}
         className={cn(
-          `text-md absolute top-0 right-0 mt-2 w-full translate-y-1/2 overflow-hidden rounded-md border border-gray-200 bg-white p-1.5 font-medium`,
-          positionClassName
+          `text-md absolute -top-4 right-0 left-0 w-full translate-y-1/2 overflow-hidden rounded-md border border-gray-300 bg-white p-1.5 font-medium shadow-lg`,
+          additionalClassName
         )}
       >
         {children}
-      </ul>
+      </div>
     )
   );
 }

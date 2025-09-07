@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import type { AddColumnButtonProps } from './type';
+import type { AddColumnButtonProps } from '@/components/dashboard/type';
 
 export default function AddColumnButton({ onClick }: AddColumnButtonProps) {
   return (

@@ -1,32 +1,34 @@
-import type { ManageColumnFormData } from './type';
+import type { ReactNode } from 'react';
+import type { CreateColumnFormData } from '@/components/dashboard/type';
 
-interface ManageColumnFormProps {
-  formData: ManageColumnFormData;
-  setFormData: React.Dispatch<React.SetStateAction<ManageColumnFormData>>;
+interface CreateColumnFormProps {
+  formData: CreateColumnFormData;
+  setFormData: React.Dispatch<React.SetStateAction<CreateColumnFormData>>;
   hasError?: boolean;
 }
 
-export default function ManageColumnForm({
+export default function CreateColumnForm({
   formData,
   setFormData,
   hasError = false,
-}: ManageColumnFormProps) {
+}: CreateColumnFormProps): ReactNode {
   return (
     <>
       {/* 이름 */}
       <div>
         <label
-          htmlFor='column-name'
+          htmlFor='new-column-name'
           className='mb-2 block text-lg leading-6 font-medium'
         >
-          이름 <span className='text-violet align-baseline text-lg'>*</span>
+          대시보드 이름
+          <span className='text-violet align-baseline text-lg'> *</span>
         </label>
         <input
           required
-          id='column-name'
+          id='new-column-name'
           name='name'
           type='text'
-          placeholder='컬럼 이름을 입력해 주세요'
+          placeholder='새로운 프로젝트'
           value={formData.name}
           className={`w-full rounded-lg border p-4 focus:outline-none ${
             hasError
