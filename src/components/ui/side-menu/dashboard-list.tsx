@@ -1,16 +1,22 @@
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 import type { ReactNode } from 'react';
 import Dot from '@/components/ui/side-menu/dot';
 import type { DashboardType } from '@/lib/dashboards/type';
 import { cn } from '@/utils/cn';
 import type { dashboardColorType } from '@/utils/dashboard-color';
+import { getStringFromQuery } from '@/utils/getContextQuery';
 
 export default function DashboardList({
   dashboards,
 }: {
   dashboards: DashboardType[];
 }): ReactNode {
-  const selectedId = 0;
+  const router = useRouter();
+  const dashboardId = getStringFromQuery(router.query, 'dashboardId');
+  const handleClickItem = (id: number) => {
+    router.push(`/dashboard/${String(id)}`);
+  };
 
   return (
     <ul>
@@ -19,11 +25,13 @@ export default function DashboardList({
           <li key={dashboard.id}>
             <button
               className={cn(
-                `mobile:flex-center hover:bg-violet-light active:bg-violet active:*:text-gray-5 flex w-full cursor-pointer gap-2.5 rounded-sm p-3`,
-                selectedId === dashboard.id && `bg-violet-light`
+                `mobile:flex-center active:bg-violet-light hover:bg-gray-5 flex w-full cursor-pointer gap-2.5 rounded-sm p-3`,
+                dashboardId &&
+                  Number(dashboardId) === dashboard.id &&
+                  `bg-violet-light`
               )}
               onClick={() => {
-                console.log('todo');
+                handleClickItem(dashboard.id);
               }}
             >
               <span

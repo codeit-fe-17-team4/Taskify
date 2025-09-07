@@ -15,8 +15,8 @@ const buttonClass =
 
 export default function DashboardHeader(): ReactNode {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const router = useRouter().query;
-  const dashboardId = getStringFromQuery(router, 'dashboardId');
+  const router = useRouter();
+  const dashboardId = getStringFromQuery(router.query, 'dashboardId');
 
   const { data: myInfo } = useFetch({
     asyncFunction: () => getMyInfo(),
@@ -46,10 +46,12 @@ export default function DashboardHeader(): ReactNode {
     handleCloseModal();
   };
 
+  const title = pathnameToTitle(router.pathname);
+
   return (
     <header className='mobile:h-[3.75rem] border-gray-3 tablet:pl-48 mobile:pl-12 tablet:justify-end fixed top-0 right-0 left-0 z-20 flex h-[4.375rem] w-full items-center justify-between border-b-1 bg-white pl-96'>
       <div className='tablet:hidden flex gap-2 text-xl font-bold text-black'>
-        <h1>내 대시보드</h1>
+        <h1>{title ?? dashboardData?.title}</h1>
         {isMyDashboard && (
           <Image
             className='h-4 w-5 self-center'
@@ -121,3 +123,18 @@ function AddBoxIcon() {
     </svg>
   );
 }
+
+const pathnameToTitle = (pathname: string) => {
+  switch (pathname) {
+    case '/mydashboard': {
+      return '나의 대시보드';
+    }
+    case '/mypage': {
+      return '계정관리';
+    }
+    default: {
+      return null;
+      break;
+    }
+  }
+};
