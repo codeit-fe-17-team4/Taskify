@@ -7,7 +7,7 @@ export const commentSchema = z.object({
   updatedAt: z.string(),
   cardId: z.number(),
   author: z.object({
-    profileImageUrl: z.string(),
+    profileImageUrl: z.union([z.string(), z.null()]),
     nickname: z.string(),
     id: z.number(),
   }),

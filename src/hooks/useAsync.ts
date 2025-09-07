@@ -56,10 +56,14 @@ export default function useAsync<T>({
   return { ...state, refetch: refetchRef };
 }
 
-export function useFetch<T>({ asyncFunction, deps = [] }: useFetchParams<T>) {
+export function useFetch<T>({
+  asyncFunction,
+  deps = [],
+  immediate = true,
+}: useFetchParams<T>) {
   return useAsync({
     asyncFunction,
-    immediate: true,
+    immediate,
     deps,
   });
 }

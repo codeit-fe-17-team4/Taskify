@@ -41,6 +41,7 @@ export default async function customFetch<T extends z.ZodType>(
   }
   const data = await res.json();
 
+  console.log(data);
   try {
     return schema.parse(data);
   } catch (error) {
