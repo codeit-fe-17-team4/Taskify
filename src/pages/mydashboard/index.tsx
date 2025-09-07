@@ -6,6 +6,7 @@ import { type ReactNode, useState } from 'react';
 import DashboardLayout from '@/components/layout/dashboard-layout';
 import CreateNewboardModal from '@/components/mydashboard/create-newboard-modal';
 import type { CreateNewboardFormData } from '@/components/mydashboard/type';
+import ModalPortal from '@/components/ui/modal/modal-portal';
 import { createDashBoard } from '@/lib/dashboards/api';
 import type { InvitationType } from '@/lib/dashboards/type';
 import type { InvitationListType } from '@/lib/invitations/type';
@@ -306,11 +307,13 @@ export default function Mydashboard({
           </div>
         </div>
       </div>
-      <CreateNewboardModal
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        onSubmit={handleCreateDashboard}
-      />
+      <ModalPortal>
+        <CreateNewboardModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          onSubmit={handleCreateDashboard}
+        />
+      </ModalPortal>
     </>
   );
 }

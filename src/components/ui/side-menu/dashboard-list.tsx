@@ -7,11 +7,12 @@ import { cn } from '@/utils/cn';
 import type { dashboardColorType } from '@/utils/dashboard-color';
 import { getStringFromQuery } from '@/utils/getContextQuery';
 
+interface DashboardListProps {
+  dashboards: DashboardType[];
+}
 export default function DashboardList({
   dashboards,
-}: {
-  dashboards: DashboardType[];
-}): ReactNode {
+}: DashboardListProps): ReactNode {
   const router = useRouter();
   const dashboardId = getStringFromQuery(router.query, 'dashboardId');
   const handleClickItem = (id: number) => {
@@ -25,10 +26,10 @@ export default function DashboardList({
           <li key={dashboard.id}>
             <button
               className={cn(
-                `mobile:flex-center active:bg-violet-light hover:bg-gray-5 flex w-full cursor-pointer gap-2.5 rounded-sm p-3`,
+                `mobile:flex-center hover:bg-gray-5 active:bg-violet-light flex w-full cursor-pointer gap-2.5 rounded-sm p-3`,
                 dashboardId &&
                   Number(dashboardId) === dashboard.id &&
-                  `bg-violet-light`
+                  `bg-violet-light hover:bg-violet-light active:bg-violet-light`
               )}
               onClick={() => {
                 handleClickItem(dashboard.id);
@@ -45,13 +46,15 @@ export default function DashboardList({
                     ? `${dashboard.title.slice(0, 20)}...`
                     : dashboard.title}
                 </span>
-                <Image
-                  src={'/icon/mydashboard.svg'}
-                  className='h-[14px] w-[18px] self-center'
-                  alt='왕관 아이콘'
-                  width={16}
-                  height={12}
-                />
+                {dashboard.createdByMe && (
+                  <Image
+                    src={'/icon/mydashboard.svg'}
+                    className='h-[14px] w-[18px] self-center'
+                    alt='왕관 아이콘'
+                    width={16}
+                    height={12}
+                  />
+                )}
               </div>
             </button>
           </li>
