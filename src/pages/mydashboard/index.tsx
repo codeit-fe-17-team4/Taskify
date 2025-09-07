@@ -6,8 +6,9 @@ import { type ReactNode, useState } from 'react';
 import DashboardLayout from '@/components/layout/dashboard-layout';
 import CreateNewboardModal from '@/components/mydashboard/create-newboard-modal';
 import type { CreateNewboardFormData } from '@/components/mydashboard/type';
-import { createDashBoard } from '@/lib/dashboards/api';
-import type { InvitationType } from '@/lib/dashboards/type';
+import { createDashBoard, getDashBoard } from '@/lib/dashboards/api';
+import type { DashboardType, InvitationType } from '@/lib/dashboards/type';
+import { acceptInvitation, getInvitationList } from '@/lib/invitations/api';
 import {
   mydashboardInviteMockData,
   mydashboardMockData,
@@ -45,7 +46,7 @@ export default function Mydashboard({
     setIsModalOpen(false);
   };
 
-  // 페이지네이션 라이브러리 없이 사용해보고자 했습니다..!
+  // 페이지네이션 (라이브러리 x)
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
   const totalPages = Math.ceil(dashboardData.length / itemsPerPage);
@@ -70,28 +71,36 @@ export default function Mydashboard({
   };
 
   /**
-   * api 주고받기 ..?
+   * 새로운 대시보드 생성 + 초대받은 대시보드 수락 시 목록에 추가되는 함수 (공통이라 빼 봄)
    */
+  const addDashboardToList = (dashboard: {
+    id: number;
+    title: string;
+    color: string;
+  }) => {
+    const newDashboardItem = {
+      id: dashboard.id,
+      title: dashboard.title,
+      dotcolor: dashboard.color,
+    };
+
+    setDashboardData((prev) => [newDashboardItem, ...prev]);
+  };
 
   // 새로운 대시보드 생성 api
   const router = useRouter();
   const [isCreating, setIsCreating] = useState(false);
   const handleCreateDashboard = async (formData: CreateNewboardFormData) => {
+    if (isCreating) {
+      return;
+    }
     try {
       setIsCreating(true);
       // API 호출 - createDashBoard 컴포넌트 활용 ...
       const newDashboard = await createDashBoard(formData);
 
-      setDashboardData((prev) => {
-        return [
-          ...prev,
-          {
-            id: newDashboard.id,
-            title: newDashboard.title,
-            dotcolor: newDashboard.color,
-          },
-        ];
-      });
+      // 공통 함수로 대시보드 추가!
+      addDashboardToList(newDashboard);
 
       console.log('새 대시보드 생성 성공:', newDashboard);
       handleCloseModal();
@@ -103,11 +112,45 @@ export default function Mydashboard({
       setIsCreating(false);
     }
   };
-  const handleAcceptInvitation = (inviteId: number) => {
-    console.log('초대 수락:', inviteId);
+
+  /**
+   * 초대받은 대시보드 수락 api
+   */
+  const [isAcceptingInvitation, setIsAcceptingInvitation] = useState(false);
+
+  const handleAcceptInvitation = async (inviteId: number) => {
+    if (isAcceptingInvitation) {
+      return;
+    }
+
+    try {
+      setIsAcceptingInvitation(true);
+
+      // 1. 초대 수락 API를 호출
+      const invitation = await acceptInvitation(inviteId);
+
+      // 2. 초대 받은 항목 가져오기
+      const inviteDashboard = await getInvitationList(invitation.dashboard.id);
+
+      // 3. 공통 함수로 대시보드 추가
+      addDashboardToList(inviteDashboard);
+
+      // 4. 초대 목록에서 수락한 초대를 제거
+      setInviteDate((prev) => prev.filter((inv) => inv.id !== inviteId));
+
+      console.log('초대 수락 및 대시보드 추가 성공:', inviteDashboard);
+    } catch (error) {
+      console.error('초대 수락 실패:', error);
+    } finally {
+      setIsAcceptingInvitation(false);
+    }
   };
 
+  /**
+   * 거절 시 삭제 -> 초대 '거절'에 대한 api가 따로 없는 것 같아서 그냥 목록에서만 삭제했는데, 맞는지 확인 필요!
+   */
   const handleRejectInvitation = (inviteId: number) => {
+    setInviteDate((prev) => prev.filter((inv) => inv.id !== inviteId));
     console.log('초대 거절:', inviteId);
   };
 
@@ -152,7 +195,10 @@ export default function Mydashboard({
 
                 {getCurrentPageData().map((dashboard) => {
                   return (
-                    <Link key={dashboard.id} href='/dashboard/${dashboardId}'>
+                    <Link
+                      key={dashboard.id}
+                      href={`/dashboard/${dashboard.id}`}
+                    >
                       <button className='tablet:w-3xs mobile:w-2xs relative flex h-[60px] w-full cursor-pointer items-center gap-3 rounded-md border border-gray-200 bg-white p-4 hover:bg-gray-100'>
                         <div
                           className={`h-2 w-2 rounded-full ${dashboard.dotcolor}`}
