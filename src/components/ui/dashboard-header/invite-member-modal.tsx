@@ -1,6 +1,6 @@
 import { type ReactNode, useState } from 'react';
-import InviteMemberForm from '@/components/mydashboard/invite-member-form';
 import type { InviteMemberFormData } from '@/components/mydashboard/type';
+import InviteMemberForm from '@/components/ui/dashboard-header/invite-member-form';
 import ButtonModal from '@/components/ui/modal/modal-button';
 import { useModalKeyHandler } from '@/hooks/useModal';
 
@@ -15,7 +15,7 @@ export default function InviteMemberModal({
   onClose,
   onSubmit,
 }: InviteMemberModalProps): ReactNode {
-  const initialFormData: InviteMemberFormData = { email: '' };
+  const initialFormData: InviteMemberFormData = { nickname: '', email: '' };
 
   const [formData, setFormData] =
     useState<InviteMemberFormData>(initialFormData);

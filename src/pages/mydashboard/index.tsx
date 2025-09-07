@@ -8,6 +8,7 @@ import CreateNewboardModal from '@/components/mydashboard/create-newboard-modal'
 import type { CreateNewboardFormData } from '@/components/mydashboard/type';
 import { createDashBoard } from '@/lib/dashboards/api';
 import type { InvitationType } from '@/lib/dashboards/type';
+import type { InvitationListType } from '@/lib/invitations/type';
 import {
   mydashboardInviteMockData,
   mydashboardMockData,
@@ -32,8 +33,8 @@ export default function Mydashboard({
   // mock 데이터 파일 분리해서 활용 !
   const [dashboardData, setDashboardData] =
     useState<DashboardList[]>(mydashboardMockData);
-  const [inviteData, setInviteData] = useState<InvitationType[]>(
-    mydashboardInviteMockData.invitations
+  const [inviteData, setInviteData] = useState<InvitationListType>(
+    mydashboardInviteMockData
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -202,7 +203,7 @@ export default function Mydashboard({
 
           {/* 초대받은 대시보드 */}
           <div>
-            {inviteData.length === 0 ? (
+            {inviteData.invitations.length === 0 ? (
               // 초대받은 대시보드가 없을 때
               <div className='tablet:w-lg mobile:w-3xs mt-10 flex h-[280px] w-2xl flex-col rounded-lg border-0 bg-white'>
                 <h2 className='pt-4 pl-[28px] text-lg font-bold text-gray-600 transition-colors hover:text-violet-500'>
@@ -254,7 +255,7 @@ export default function Mydashboard({
                       <div className='mobile:hidden text-center'>수락 여부</div>
                     </div>
                     <div className='flex-1 overflow-y-auto'>
-                      {inviteData.map((invite) => {
+                      {inviteData.invitations.map((invite) => {
                         return (
                           <div
                             key={invite.id}

@@ -2,21 +2,21 @@ import z from 'zod';
 
 export const invitationSchema = z.object({
   id: z.number(),
-  inviter: {
+  inviter: z.object({
     nickname: z.string(),
     email: z.string(),
     id: z.number(),
-  },
+  }),
   teamId: z.string(),
-  dashboard: {
+  dashboard: z.object({
     title: z.string(),
     id: z.number(),
-  },
-  invitee: {
+  }),
+  invitee: z.object({
     nickname: z.string(),
     email: z.string(),
     id: z.number(),
-  },
+  }),
   inviteAccepted: z.boolean(),
   createdAt: z.string(),
   updatedAt: z.string(),

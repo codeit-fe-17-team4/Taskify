@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { type ReactNode, useState } from 'react';
 import DashboardLayout from '@/components/layout/dashboard-layout';
-import InviteMemberModal from '@/components/mydashboard/invite-member-modal';
+import InviteMemberModal from '@/components/ui/dashboard-header/invite-member-modal';
 import {
   dashboardColors,
   dashboardEditMockData,
