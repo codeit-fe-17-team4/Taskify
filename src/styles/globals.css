@@ -110,3 +110,44 @@ input[type='datetime-local']::-webkit-calendar-picker-indicator {
   display: none;
   -webkit-appearance: none;
 }
+
+/* 가로 스크롤바만 표시하는 스타일 */
+.horizontal-scroll-only {
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  -ms-overflow-style: auto; /* IE and Edge - 가로 스크롤바 표시 */
+  scrollbar-width: thin; /* Firefox - 가로 스크롤바 표시 */
+}
+
+.horizontal-scroll-only::-webkit-scrollbar {
+  height: 8px; /* 가로 스크롤바 높이 */
+  width: 0px; /* 세로 스크롤바 완전히 숨김 */
+}
+
+.horizontal-scroll-only::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.horizontal-scroll-only::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.horizontal-scroll-only::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* 세로 스크롤바 완전히 숨김 */
+.horizontal-scroll-only::-webkit-scrollbar:vertical {
+  display: none;
+}
+
+/* body와 html에서도 세로 스크롤바 숨김 */
+body {
+  overflow-y: hidden !important;
+}
+
+html {
+  overflow-y: hidden !important;
+}

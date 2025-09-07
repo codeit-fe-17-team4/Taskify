@@ -8,7 +8,6 @@ import ChipProfile from '@/components/ui/chip/chip-profile';
 import ChipState from '@/components/ui/chip/chip-state';
 import ChipTag from '@/components/ui/chip/chip-tag';
 import Dropdown from '@/components/ui/dropdown';
-import { mockProfileColors } from '@/lib/dashboard-mock-data';
 import type { UserType } from '@/lib/users/type';
 import { getProfileColor } from '@/utils/profile-color';
 
@@ -19,6 +18,7 @@ interface EditTaskFormProps {
   ) => void;
   columns?: { id: string; title: string }[];
   userInfo: UserType | null;
+  members?: any[];
 }
 
 export default function EditTaskForm({
@@ -26,6 +26,7 @@ export default function EditTaskForm({
   setFormData,
   columns = [],
   userInfo,
+  members = [],
 }: EditTaskFormProps) {
   const [currentTag, setCurrentTag] = useState('');
   const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
@@ -38,23 +39,13 @@ export default function EditTaskForm({
     };
   });
 
-  const assigneeOptions = [
-    {
-      value: userInfo?.id ?? 'user-1',
-      label: userInfo?.nickname ?? '사용자',
-      profileColor: mockProfileColors[0],
-    },
-    {
-      value: 'user-2',
-      label: '테스터',
-      profileColor: mockProfileColors[1],
-    },
-    {
-      value: 'user-3',
-      label: '관리자',
-      profileColor: mockProfileColors[2],
-    },
-  ];
+  const assigneeOptions = members.map((member) => {
+    return {
+      value: member.nickname,
+      label: member.nickname,
+      profileColor: '#7AC555', // 기본 색상
+    };
+  });
 
   const handleStatusSelect = (status: string) => {
     setFormData((prev) => ({ ...prev, status }));
@@ -197,7 +188,7 @@ export default function EditTaskForm({
                         color={getProfileColor(
                           assigneeOptions.find(
                             (opt) => opt.value === formData.assignee
-                          )?.profileColor || mockProfileColors[0]
+                          )?.profileColor || '#7AC555'
                         )}
                       />
                       <span>
@@ -356,7 +347,7 @@ export default function EditTaskForm({
           {formData.tags.map((tag, index) => {
             return (
               <div
-                key={`${crypto.randomUUID()}-${tag.label}`}
+                key={`${tag.label}-${index}`}
                 className='flex items-center gap-1'
               >
                 <ChipTag label={tag.label} color={tag.color} size='md' />

@@ -28,8 +28,12 @@ export const getCardList = async ({
   const queryParams = new URLSearchParams({
     size: String(size),
     columnId: String(columnId),
-    cursorId: String(cursorId),
   });
+
+  if (cursorId && cursorId !== 0) {
+    queryParams.append('cursorId', String(cursorId));
+  }
+
   const data = await customFetch(
     `${BASE_API_URL}/cards?${queryParams}`,
     cardListSchema

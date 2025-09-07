@@ -10,6 +10,7 @@ interface CreateTaskModalProps {
   onClose: () => void;
   onSubmit: (taskData: CreateTaskFormData) => void;
   userInfo: UserType | null;
+  members?: any[];
 }
 
 export default function CreateTaskModal({
@@ -17,6 +18,7 @@ export default function CreateTaskModal({
   onClose,
   onSubmit,
   userInfo,
+  members = [],
 }: CreateTaskModalProps) {
   const [formData, setFormData] = useState<CreateTaskFormData>({
     assignee: '',
@@ -65,6 +67,7 @@ export default function CreateTaskModal({
         formData={formData}
         setFormData={setFormData}
         userInfo={userInfo}
+        members={members}
       />
     </ButtonModal>
   );

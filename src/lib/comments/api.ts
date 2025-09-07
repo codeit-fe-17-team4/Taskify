@@ -24,8 +24,12 @@ export const getCommentList = async ({
   const queryParams = new URLSearchParams({
     size: String(size),
     cardId: String(cardId),
-    cursorId: String(cursorId),
   });
+
+  if (cursorId && cursorId !== 0) {
+    queryParams.append('cursorId', String(cursorId));
+  }
+
   const data = await customFetch(
     `${BASE_API_URL}/comments?${queryParams}`,
     z.commentListSchema

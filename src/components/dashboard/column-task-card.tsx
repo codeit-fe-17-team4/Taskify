@@ -33,13 +33,14 @@ export default function ColumnTaskCard({ task, onEditTask }: TaskCardProps) {
     >
       {/* 썸네일 */}
       {task.imageUrl && (
-        <div className='h-40 w-full overflow-hidden rounded-lg'>
+        <div className='relative h-40 w-full overflow-hidden rounded-lg'>
           <Image
+            fill
             src={task.imageUrl}
             alt='카드 이미지'
-            width={300}
-            height={160}
-            className='h-full w-full object-cover'
+            sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
+            className='object-cover'
+            priority={false}
           />
         </div>
       )}
@@ -53,10 +54,10 @@ export default function ColumnTaskCard({ task, onEditTask }: TaskCardProps) {
 
           {/* 태그들 */}
           <div className='mb-3 flex flex-wrap items-center gap-1.5'>
-            {task.tags.map((tag) => {
+            {task.tags.map((tag, index) => {
               return (
                 <ChipTag
-                  key={tag.label}
+                  key={`${tag.label}-${index}`}
                   label={tag.label}
                   size='md'
                   color={

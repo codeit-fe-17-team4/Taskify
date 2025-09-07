@@ -13,6 +13,7 @@ interface EditTaskModalProps {
   columns?: { id: string; title: string }[];
   currentColumnTitle?: string;
   userInfo: UserType | null;
+  members?: any[];
 }
 
 export default function EditTaskModal({
@@ -23,6 +24,7 @@ export default function EditTaskModal({
   columns = [],
   currentColumnTitle,
   userInfo,
+  members = [],
 }: EditTaskModalProps) {
   const [formData, setFormData] = useState<EditTaskFormData>({
     status: currentColumnTitle || 'To Do',
@@ -93,15 +95,31 @@ export default function EditTaskModal({
       return false;
     }
 
-    return (
-      formData.title !== initialTask.title ||
-      formData.description !== (initialTask.description || '') ||
-      formData.assignee !== initialTask.manager.name ||
-      formData.dueDate !== formatDateTimeLocal(initialTask.dueDate || '') ||
-      formData.status !== currentColumnTitle ||
-      JSON.stringify(formData.tags) !== JSON.stringify(initialTask.tags) ||
-      formData.imageFile !== null // 새 이미지가 업로드된 경우
-    );
+    // 이미지 삭제 감지: 원본에 이미지가 있었는데 현재는 없는 경우
+    const imageDeleted =
+      initialTask.imageUrl && !formData.existingImageUrl && !formData.imageFile;
+
+    const changes = {
+      title: formData.title !== initialTask.title,
+      description: formData.description !== (initialTask.description || ''),
+      assignee: formData.assignee !== initialTask.manager.name,
+      dueDate:
+        formData.dueDate !== formatDateTimeLocal(initialTask.dueDate || ''),
+      status: formData.status !== currentColumnTitle,
+      tags: JSON.stringify(formData.tags) !== JSON.stringify(initialTask.tags),
+      newImage: formData.imageFile !== null,
+      imageDeleted: imageDeleted,
+    };
+
+    console.log('변경사항 확인:', {
+      initialImageUrl: initialTask.imageUrl,
+      currentExistingImageUrl: formData.existingImageUrl,
+      currentImageFile: formData.imageFile,
+      imageDeleted,
+      changes,
+    });
+
+    return Object.values(changes).some(Boolean);
   };
 
   const isSubmitDisabled =
@@ -122,6 +140,7 @@ export default function EditTaskModal({
         setFormData={setFormData}
         columns={columns}
         userInfo={userInfo}
+        members={members}
       />
     </ButtonModal>
   );

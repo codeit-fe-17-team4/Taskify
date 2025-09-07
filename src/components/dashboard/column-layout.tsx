@@ -20,7 +20,7 @@ export default function ColumnLayout({
   maxColumns = 10,
 }: ColumnLayoutProps) {
   return (
-    <div className='column-layout-container flex h-full'>
+    <div className='column-layout-container flex h-full w-max'>
       {/* 칼럼 목록 */}
       {columns.map((col) => {
         return (

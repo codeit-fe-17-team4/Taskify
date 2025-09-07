@@ -7,7 +7,6 @@ import {
 import ChipProfile from '@/components/ui/chip/chip-profile';
 import ChipTag from '@/components/ui/chip/chip-tag';
 import Dropdown from '@/components/ui/dropdown';
-import { mockProfileColors } from '@/lib/dashboard-mock-data';
 import type { UserType } from '@/lib/users/type';
 import { getProfileColor } from '@/utils/profile-color';
 
@@ -19,33 +18,23 @@ interface CreateTaskFormProps {
       | ((prev: CreateTaskFormData) => CreateTaskFormData)
   ) => void;
   userInfo: UserType | null;
+  members?: any[];
 }
 
 export default function CreateTaskForm({
   formData,
   setFormData,
   userInfo,
+  members = [],
 }: CreateTaskFormProps): React.ReactElement {
   const [currentTag, setCurrentTag] = useState('');
   const [isAssigneeDropdownOpen, setIsAssigneeDropdownOpen] = useState(false);
 
-  const assigneeOptions = [
-    {
-      value: userInfo?.id ?? 'user-1',
-      label: userInfo?.nickname ?? '사용자',
-      profileColor: mockProfileColors[0],
-    },
-    {
-      value: 'user-2',
-      label: '테스터',
-      profileColor: mockProfileColors[1],
-    },
-    {
-      value: 'user-3',
-      label: '관리자',
-      profileColor: mockProfileColors[2],
-    },
-  ];
+  const assigneeOptions = members.map((member) => ({
+    value: member.nickname,
+    label: member.nickname,
+    profileColor: '#7AC555', // 기본 색상
+  }));
   const chipProfileLabel = (
     assigneeOptions.find((opt) => opt.value === formData.assignee)?.label || ''
   ).slice(0, 1);
@@ -283,7 +272,10 @@ export default function CreateTaskForm({
           {/* 기존 태그들 */}
           {formData.tags.map((tag, index) => {
             return (
-              <div key={tag.label} className='flex items-center gap-1'>
+              <div
+                key={`${tag.label}-${index}`}
+                className='flex items-center gap-1'
+              >
                 <ChipTag
                   label={tag.label}
                   size='md'

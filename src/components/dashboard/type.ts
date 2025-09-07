@@ -126,6 +126,8 @@ export interface TaskDetailModalProps {
   onClose: () => void;
   task: TaskType | null;
   columnTitle?: string;
+  dashboardId?: string;
+  columnId?: string;
   currentUser?: {
     id: string;
     name: string;

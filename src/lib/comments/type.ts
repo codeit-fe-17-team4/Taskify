@@ -7,13 +7,13 @@ export const commentSchema = z.object({
   updatedAt: z.string(),
   cardId: z.number(),
   author: z.object({
-    profileImageUrl: z.string(),
+    profileImageUrl: z.string().nullable(),
     nickname: z.string(),
     id: z.number(),
   }),
 });
 export const commentListSchema = z.object({
-  cursorId: z.number(),
+  cursorId: z.number().nullable(),
   comments: z.array(commentSchema),
 });
 export const deleteSchema = z.object();

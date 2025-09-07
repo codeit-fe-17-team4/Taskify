@@ -1,5 +1,6 @@
 import Image from 'next/image';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import InfiniteCommentList from '@/components/dashboard/infinite-comment-list';
 import type {
   CommentType,
   TaskDetailModalProps,
@@ -9,6 +10,12 @@ import ChipTag from '@/components/ui/chip/chip-tag';
 import Dropdown from '@/components/ui/dropdown';
 import BaseModal from '@/components/ui/modal/modal-base';
 import { useModalKeyHandler } from '@/hooks/useModal';
+import {
+  createComment,
+  deleteComment,
+  editComment,
+  getCommentList,
+} from '@/lib/comments/api';
 import { getProfileColor } from '@/utils/profile-color';
 
 const formatDueDate = (dueDate: string) => {
@@ -31,82 +38,145 @@ export default function TaskDetailModal({
   onClose,
   task,
   columnTitle,
+  dashboardId,
+  columnId,
   currentUser,
   onEdit,
   onDelete,
 }: TaskDetailModalProps): React.ReactElement | null {
   const [newComment, setNewComment] = useState('');
-  const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
-  const [editingContent, setEditingContent] = useState('');
-  const [comments, setComments] = useState<CommentType[]>([]);
+  const commentRefreshRef = useRef<(() => void) | null>(null);
+
   const handleClose = (): void => {
     setNewComment('');
-    setEditingCommentId(null);
-    setEditingContent('');
     onClose();
   };
 
   useModalKeyHandler(isOpen, handleClose);
 
-  const handleCommentSubmit = () => {
-    if (!newComment.trim()) {
-      return;
-    }
-
-    const newCommentObj: CommentType = {
-      id: `comment_${String(Date.now())}_${Math.random().toString(36).slice(2, 11)}`,
-      content: newComment.trim(),
-      author: {
-        id: currentUser?.id || 'current-user',
-        name: currentUser?.name || '사용자',
-        profileColor: currentUser?.profileColor || '#8B5CF6',
-      },
-      createdAt: new Date()
-        .toLocaleString('ko-KR', {
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit',
-          hour: '2-digit',
-          minute: '2-digit',
-        })
-        .replaceAll('.', '.')
-        .replaceAll(',', ''),
-    };
-
-    setComments((prev) => [...prev, newCommentObj]);
-    setNewComment('');
-  };
-
-  const handleEditComment = (commentId: string, content: string) => {
-    setEditingCommentId(commentId);
-    setEditingContent(content);
-  };
-
-  const handleUpdateComment = () => {
-    if (!editingCommentId || !editingContent.trim()) {
-      return;
-    }
-
-    setComments((prev) => {
-      return prev.map((comment) => {
-        return comment.id === editingCommentId
-          ? { ...comment, content: editingContent.trim() }
-          : comment;
-      });
+  /**
+   * 댓글 생성 함수
+   */
+  const handleCommentSubmit = async () => {
+    console.log('handleCommentSubmit 함수 호출됨');
+    console.log('현재 상태:', {
+      newComment,
+      newCommentTrimmed: newComment.trim(),
+      task,
+      dashboardId,
+      columnId,
     });
-    setEditingCommentId(null);
-    setEditingContent('');
-  };
 
-  const handleDeleteComment = (commentId: string) => {
-    if (window.confirm('댓글을 삭제하시겠습니까?')) {
-      setComments((prev) => prev.filter((comment) => comment.id !== commentId));
+    if (!newComment.trim() || !task || !dashboardId || !columnId) {
+      console.log('댓글 생성 조건 불만족:', {
+        newComment,
+        task,
+        dashboardId,
+        columnId,
+      });
+
+      return;
+    }
+
+    console.log('댓글 생성 시작:', {
+      content: newComment.trim(),
+      cardId: Number(task.id),
+      columnId: Number(columnId),
+      dashboardId: Number(dashboardId),
+    });
+
+    try {
+      const result = await createComment({
+        content: newComment.trim(),
+        cardId: Number(task.id),
+        columnId: Number(columnId),
+        dashboardId: Number(dashboardId),
+      });
+
+      console.log('댓글 생성 성공:', result);
+      setNewComment('');
+
+      // 댓글 목록 새로고침
+      if (commentRefreshRef.current) {
+        console.log('댓글 목록 새로고침 호출');
+        commentRefreshRef.current();
+      } else {
+        console.log('commentRefreshRef.current가 null입니다');
+      }
+    } catch (error) {
+      console.error('댓글 생성 실패:', error);
     }
   };
 
-  const handleCancelEdit = () => {
-    setEditingCommentId(null);
-    setEditingContent('');
+  /**
+   * 댓글 수정 함수
+   */
+  const handleEditComment = async (commentId: number, content: string) => {
+    try {
+      await editComment({
+        commentId,
+        body: { content },
+      });
+
+      // 댓글 목록 새로고침
+      if (commentRefreshRef.current) {
+        commentRefreshRef.current();
+      }
+    } catch (error) {
+      console.error('댓글 수정 실패:', error);
+    }
+  };
+
+  /**
+   * 댓글 삭제 함수
+   */
+  const handleDeleteComment = async (commentId: number) => {
+    if (window.confirm('댓글을 삭제하시겠습니까?')) {
+      try {
+        await deleteComment(commentId);
+
+        // 댓글 목록 새로고침
+        if (commentRefreshRef.current) {
+          commentRefreshRef.current();
+        }
+      } catch (error) {
+        console.error('댓글 삭제 실패:', error);
+      }
+    }
+  };
+
+  /**
+   * 댓글 목록 가져오기 함수
+   */
+  const fetchComments = async (
+    cardId: number,
+    page: number,
+    pageSize: number
+  ) => {
+    console.log('fetchComments 호출됨:', { cardId, page, pageSize });
+    try {
+      const result = await getCommentList({
+        cardId,
+        size: pageSize,
+        cursorId: page > 0 ? page : undefined,
+      });
+
+      console.log('댓글 목록 가져오기 성공:', result);
+
+      return {
+        data: result.comments,
+        hasMore: result.cursorId !== null,
+        totalCount: result.comments.length,
+      };
+    } catch (error) {
+      console.error('댓글 목록 가져오기 실패:', error);
+
+      return {
+        data: [],
+        hasMore: false,
+        totalCount: 0,
+      };
+    }
   };
 
   const handleEdit = () => {
@@ -269,6 +339,12 @@ export default function TaskDetailModal({
             onChange={(e) => {
               setNewComment(e.target.value);
             }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleCommentSubmit();
+              }
+            }}
           />
           <button
             className='text-violet absolute right-4 bottom-4 cursor-pointer rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium hover:bg-gray-50'
@@ -279,80 +355,16 @@ export default function TaskDetailModal({
         </div>
 
         {/* 댓글 목록 */}
-        {comments.length > 0 && (
-          <div className='mt-6 space-y-6'>
-            {comments.map((comment) => {
-              return (
-                <div key={comment.id} className='flex gap-3'>
-                  <ChipProfile
-                    label={(comment.author.name || '').slice(0, 1)}
-                    color={getProfileColor(comment.author.profileColor)}
-                    size='md'
-                  />
-                  <div className='flex-1'>
-                    <div className='mb-1 flex items-center gap-2'>
-                      <span className='text-sm font-medium'>
-                        {comment.author.name}
-                      </span>
-                      <span className='text-xs text-gray-500'>
-                        {comment.createdAt}
-                      </span>
-                    </div>
-
-                    {editingCommentId === comment.id ? (
-                      <div className='space-y-3'>
-                        <textarea
-                          value={editingContent}
-                          className='focus:border-violet w-full resize-none rounded-lg border border-gray-300 p-3 text-sm focus:outline-none'
-                          rows={3}
-                          onChange={(e) => {
-                            setEditingContent(e.target.value);
-                          }}
-                        />
-                        <div className='flex gap-3'>
-                          <button
-                            className='cursor-pointer text-xs text-gray-500 underline'
-                            onClick={handleUpdateComment}
-                          >
-                            저장
-                          </button>
-                          <button
-                            className='cursor-pointer text-xs text-gray-500 underline'
-                            onClick={handleCancelEdit}
-                          >
-                            취소
-                          </button>
-                        </div>
-                      </div>
-                    ) : (
-                      <>
-                        <p className='text-sm text-gray-700'>
-                          {comment.content}
-                        </p>
-                        <div className='mt-2 flex gap-3'>
-                          <button
-                            className='cursor-pointer text-xs text-gray-500 underline'
-                            onClick={() => {
-                              handleEditComment(comment.id, comment.content);
-                            }}
-                          >
-                            수정
-                          </button>
-                          <button
-                            className='cursor-pointer text-xs text-gray-500 underline'
-                            onClick={() => {
-                              handleDeleteComment(comment.id);
-                            }}
-                          >
-                            삭제
-                          </button>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
+        {task && (
+          <div className='mt-6'>
+            <InfiniteCommentList
+              cardId={Number(task.id)}
+              fetchComments={fetchComments}
+              currentUserId={Number(currentUser?.id)}
+              onEditComment={handleEditComment}
+              onDeleteComment={handleDeleteComment}
+              onRefreshRef={commentRefreshRef}
+            />
           </div>
         )}
       </div>
