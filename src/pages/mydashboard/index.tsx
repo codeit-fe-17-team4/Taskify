@@ -7,8 +7,8 @@ import DashboardLayout from '@/components/layout/dashboard-layout';
 import CreateNewboardModal from '@/components/mydashboard/create-newboard-modal';
 import type { CreateNewboardFormData } from '@/components/mydashboard/type';
 import { createDashBoard, getDashBoard } from '@/lib/dashboards/api';
-import type { InvitationType } from '@/lib/dashboards/type';
 import { acceptInvitation, getInvitationList } from '@/lib/invitations/api';
+import type { InvitationType } from '@/lib/invitations/type';
 import {
   mydashboardInviteMockData,
   mydashboardMockData,
@@ -41,22 +41,18 @@ export default function Mydashboard({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // 검색 필터링
+  // 검색 --> 확인 필요 ㅠㅠ 한글로 검색하면 초대받은 목록 없음 화면으로 렌더링 됨 ..
   useEffect(() => {
-    // 검색 없을 경우 데이터 다 보여주기
     if (searchQuery === '') {
+      // 검색어 없으면 전체 보여주기
       setInviteData(mydashboardInviteMockData.invitations);
-      {
-        /* 그게 아닐 경우 검색되도록 */
-      }
     } else {
-      const lowercasedQuery = searchQuery.toLowerCase();
+      const query = searchQuery.toLowerCase();
+
       const filtered = mydashboardInviteMockData.invitations.filter(
         (invite) => {
-          return (
-            invite.dashboard.title.toLowerCase().includes(lowercasedQuery) ||
-            invite.inviter.nickname.toLowerCase().includes(lowercasedQuery)
-          );
+          // title(대시보드 이름)에서만 검색 (요구사항 반영)
+          return invite.dashboard.title.toLowerCase().includes(query);
         }
       );
 
@@ -135,6 +131,7 @@ export default function Mydashboard({
       console.log('새 대시보드 생성 성공:', newDashboard);
       handleCloseModal();
       // id 가 number 타입인데 아래와 같이 사용하려니까 오류가 나서 해결 방법을 찾아보니 직접 타입을 명시해줘야 한다고 하여 toString으로 명시했습니다. 흠
+      // 생성 시 페이지 이동
       router.push(`/dashboard/${newDashboard.id.toString()}`);
     } catch (error) {
       console.error('대시보드 생성 실패:', error);
