@@ -1,11 +1,12 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { type ReactNode, useState } from 'react';
+import { type ReactNode, useEffect, useState } from 'react';
 import HeaderProfileDropdwon from '@/components/ui/dashboard-header/header-profile-dropdown';
 import InviteMemberModal from '@/components/ui/dashboard-header/invite-member-modal';
 import ProfileList from '@/components/ui/dashboard-header/profile-list';
 import { useFetch } from '@/hooks/useAsync';
+import { getDashBoard } from '@/lib/dashboards/api';
 import { getMyInfo } from '@/lib/users/api';
 import { getStringFromQuery } from '@/utils/getContextQuery';
 
@@ -13,16 +14,25 @@ const buttonClass =
   'flex-center border-gray-3 text-md mobile:px-3 mobile:py-1.5 h-9 cursor-pointer gap-2 rounded-lg border-1 px-4 py-2.5 hover:bg-gray-4 active:bg-gray-3';
 
 export default function DashboardHeader(): ReactNode {
-  const {
-    data: myInfo,
-    loading: myInfoLoading,
-    error: myInfoError,
-  } = useFetch({
-    asyncFunction: () => getMyInfo(),
-  });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const router = useRouter().query;
   const dashboardId = getStringFromQuery(router, 'dashboardId');
+
+  const { data: myInfo } = useFetch({
+    asyncFunction: () => getMyInfo(),
+  });
+  const { data: dashboardData, refetch } = useFetch({
+    asyncFunction: () => getDashBoard(Number(dashboardId)),
+    deps: [dashboardId],
+    immediate: false,
+  });
+  const isMyDashboard = dashboardId && dashboardData?.createdByMe;
+
+  useEffect(() => {
+    if (dashboardId) {
+      refetch();
+    }
+  }, [dashboardId, refetch]);
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -40,13 +50,15 @@ export default function DashboardHeader(): ReactNode {
     <header className='mobile:h-[3.75rem] border-gray-3 tablet:pl-48 mobile:pl-12 tablet:justify-end fixed top-0 right-0 left-0 z-20 flex h-[4.375rem] w-full items-center justify-between border-b-1 bg-white pl-96'>
       <div className='tablet:hidden flex gap-2 text-xl font-bold text-black'>
         <h1>내 대시보드</h1>
-        <Image
-          className='h-4 w-5 self-center'
-          src={'/icon/mydashboard.svg'}
-          alt='왕관: 내 대시보드 아이콘'
-          width={20}
-          height={16}
-        />
+        {isMyDashboard && (
+          <Image
+            className='h-4 w-5 self-center'
+            src={'/icon/mydashboard.svg'}
+            alt='왕관: 내 대시보드 아이콘'
+            width={20}
+            height={16}
+          />
+        )}
       </div>
       <nav className='mobile:gap-2 flex h-full items-center gap-8'>
         <div className='mobile:gap-1.5 flex gap-3'>

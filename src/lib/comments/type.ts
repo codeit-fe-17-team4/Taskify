@@ -13,7 +13,7 @@ export const commentSchema = z.object({
   }),
 });
 export const commentListSchema = z.object({
-  cursorId: z.number(),
+  cursorId: z.union([z.number(), z.null()]),
   comments: z.array(commentSchema),
 });
 export const deleteSchema = z.object();

@@ -53,7 +53,7 @@ export default function useAsync<T>({
     }
   }, [immediate, ...deps]);
 
-  return { ...state, refetch: refetchRef };
+  return { ...state, refetch: refetchRef.current };
 }
 
 export function useFetch<T>({

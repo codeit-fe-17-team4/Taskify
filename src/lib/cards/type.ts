@@ -18,7 +18,7 @@ export const cardSchema = z.object({
   updatedAt: z.string(),
 });
 export const cardListSchema = z.object({
-  cursorId: z.number(),
+  cursorId: z.union([z.number(), z.null()]),
   totalCount: z.number(),
   cards: z.array(cardSchema),
 });
