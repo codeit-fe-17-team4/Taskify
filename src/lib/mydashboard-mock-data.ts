@@ -7,15 +7,35 @@ export const DASHBOARD_COLORS = {
 };
 
 export const mydashboardMockData = [
-  { id: 1, title: '비브리지', dotcolor: DASHBOARD_COLORS.green },
-  { id: 2, title: '코드잇', dotcolor: DASHBOARD_COLORS.purple },
-  { id: 3, title: '3분기 계획', dotcolor: DASHBOARD_COLORS.orange },
-  { id: 4, title: '회의록', dotcolor: DASHBOARD_COLORS.blue },
-  { id: 5, title: '중요 문서함', dotcolor: DASHBOARD_COLORS.pink },
-  { id: 6, title: '프로덕트 디자인', dotcolor: DASHBOARD_COLORS.green },
-  { id: 7, title: '새로운 기획 문서', dotcolor: DASHBOARD_COLORS.purple },
-  { id: 8, title: '유닛 A', dotcolor: DASHBOARD_COLORS.orange },
-  { id: 9, title: '유닛 B', dotcolor: DASHBOARD_COLORS.blue },
+  { id: 1, title: '비브리지', dotcolor: DASHBOARD_COLORS.green, isOwner: true },
+  { id: 2, title: '코드잇', dotcolor: DASHBOARD_COLORS.purple, isOwner: false },
+  {
+    id: 3,
+    title: '3분기 계획',
+    dotcolor: DASHBOARD_COLORS.orange,
+    isOwner: false,
+  },
+  { id: 4, title: '회의록', dotcolor: DASHBOARD_COLORS.blue, isOwner: true },
+  {
+    id: 5,
+    title: '중요 문서함',
+    dotcolor: DASHBOARD_COLORS.pink,
+    isOwner: false,
+  },
+  {
+    id: 6,
+    title: '프로덕트 디자인',
+    dotcolor: DASHBOARD_COLORS.green,
+    isOwner: true,
+  },
+  {
+    id: 7,
+    title: '새로운 기획 문서',
+    dotcolor: DASHBOARD_COLORS.purple,
+    isOwner: true,
+  },
+  { id: 8, title: '유닛 A', dotcolor: DASHBOARD_COLORS.orange, isOwner: false },
+  { id: 9, title: '유닛 B', dotcolor: DASHBOARD_COLORS.blue, isOwner: false },
 ];
 
 export const mydashboardInviteMockData = {

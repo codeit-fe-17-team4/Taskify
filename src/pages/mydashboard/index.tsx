@@ -2,12 +2,12 @@ import type { GetServerSideProps } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { type ReactNode, useState } from 'react';
+import { type ReactNode, useEffect, useState } from 'react';
 import DashboardLayout from '@/components/layout/dashboard-layout';
 import CreateNewboardModal from '@/components/mydashboard/create-newboard-modal';
 import type { CreateNewboardFormData } from '@/components/mydashboard/type';
 import { createDashBoard, getDashBoard } from '@/lib/dashboards/api';
-import type { DashboardType, InvitationType } from '@/lib/dashboards/type';
+import type { InvitationType } from '@/lib/dashboards/type';
 import { acceptInvitation, getInvitationList } from '@/lib/invitations/api';
 import {
   mydashboardInviteMockData,
@@ -25,6 +25,7 @@ interface DashboardList {
   id: number;
   title: string;
   dotcolor: string;
+  isOwner: boolean;
 }
 
 export default function Mydashboard({
@@ -33,10 +34,35 @@ export default function Mydashboard({
   // mock 데이터 파일 분리해서 활용 !
   const [dashboardData, setDashboardData] =
     useState<DashboardList[]>(mydashboardMockData);
-  const [inviteData, setInviteDate] = useState<InvitationType[]>(
+
+  const [inviteData, setInviteData] = useState<InvitationType[]>(
     mydashboardInviteMockData.invitations
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  // 검색 필터링
+  useEffect(() => {
+    // 검색 없을 경우 데이터 다 보여주기
+    if (searchQuery === '') {
+      setInviteData(mydashboardInviteMockData.invitations);
+      {
+        /* 그게 아닐 경우 검색되도록 */
+      }
+    } else {
+      const lowercasedQuery = searchQuery.toLowerCase();
+      const filtered = mydashboardInviteMockData.invitations.filter(
+        (invite) => {
+          return (
+            invite.dashboard.title.toLowerCase().includes(lowercasedQuery) ||
+            invite.inviter.nickname.toLowerCase().includes(lowercasedQuery)
+          );
+        }
+      );
+
+      setInviteData(filtered);
+    }
+  }, [searchQuery]);
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -73,15 +99,19 @@ export default function Mydashboard({
   /**
    * 새로운 대시보드 생성 + 초대받은 대시보드 수락 시 목록에 추가되는 함수 (공통이라 빼 봄)
    */
-  const addDashboardToList = (dashboard: {
-    id: number;
-    title: string;
-    color: string;
-  }) => {
+  const addDashboardToList = (
+    dashboard: {
+      id: number;
+      title: string;
+      color: string;
+    },
+    isOwner: boolean
+  ) => {
     const newDashboardItem = {
       id: dashboard.id,
       title: dashboard.title,
       dotcolor: dashboard.color,
+      isOwner,
     };
 
     setDashboardData((prev) => [newDashboardItem, ...prev]);
@@ -99,8 +129,8 @@ export default function Mydashboard({
       // API 호출 - createDashBoard 컴포넌트 활용 ...
       const newDashboard = await createDashBoard(formData);
 
-      // 공통 함수로 대시보드 추가!
-      addDashboardToList(newDashboard);
+      // 공통 함수로 대시보드 추가 , 내가 생성한 거니까 isOwner: true;
+      addDashboardToList(newDashboard, true);
 
       console.log('새 대시보드 생성 성공:', newDashboard);
       handleCloseModal();
@@ -127,18 +157,21 @@ export default function Mydashboard({
       setIsAcceptingInvitation(true);
 
       // 1. 초대 수락 API를 호출
-      const invitation = await acceptInvitation(inviteId);
+      const invitation = await acceptInvitation({
+        invitationId: inviteId,
+        body: { inviteAccepted: true },
+      });
 
-      // 2. 초대 받은 항목 가져오기
-      const inviteDashboard = await getInvitationList(invitation.dashboard.id);
+      // 2. 초대 받은 대시보드 정보를 가져오기
+      const dashboardDetails = await getDashBoard(invitation.dashboard.id);
 
-      // 3. 공통 함수로 대시보드 추가
-      addDashboardToList(inviteDashboard);
+      // 3. 공통 함수로 대시보드 추가 (초대받은 대시보드는 isOwner가 false)
+      addDashboardToList(dashboardDetails, false);
 
       // 4. 초대 목록에서 수락한 초대를 제거
-      setInviteDate((prev) => prev.filter((inv) => inv.id !== inviteId));
+      setInviteData((prev) => prev.filter((inv) => inv.id !== inviteId));
 
-      console.log('초대 수락 및 대시보드 추가 성공:', inviteDashboard);
+      console.log('초대 수락 및 대시보드 추가 성공:', dashboardDetails);
     } catch (error) {
       console.error('초대 수락 실패:', error);
     } finally {
@@ -150,7 +183,7 @@ export default function Mydashboard({
    * 거절 시 삭제 -> 초대 '거절'에 대한 api가 따로 없는 것 같아서 그냥 목록에서만 삭제했는데, 맞는지 확인 필요!
    */
   const handleRejectInvitation = (inviteId: number) => {
-    setInviteDate((prev) => prev.filter((inv) => inv.id !== inviteId));
+    setInviteData((prev) => prev.filter((inv) => inv.id !== inviteId));
     console.log('초대 거절:', inviteId);
   };
 
@@ -203,9 +236,11 @@ export default function Mydashboard({
                         <div
                           className={`h-2 w-2 rounded-full ${dashboard.dotcolor}`}
                         />
-                        <span className='text-sm font-bold text-gray-600'>
-                          {dashboard.title}
-                        </span>
+                        <div>
+                          <span className='text-sm font-bold text-gray-600'>
+                            {dashboard.title} {dashboard.isOwner && '👑'}
+                          </span>
+                        </div>
                       </button>
                     </Link>
                   );
@@ -289,8 +324,11 @@ export default function Mydashboard({
                           name='search'
                           placeholder='검색'
                           className='h-[40px] w-full rounded border border-gray-300 pr-4 pl-10 text-sm focus:ring-1 focus:ring-gray-300 focus:outline-none'
+                          value={searchQuery}
+                          onChange={(e) => {
+                            setSearchQuery(e.target.value);
+                          }}
                         />
-                        <ul></ul>
                       </div>
                     </div>
 
