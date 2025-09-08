@@ -1,15 +1,57 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import type { ReactNode } from 'react';
+import { type ReactNode, useState } from 'react';
+import CreateNewboardModal from '@/components/mydashboard/create-newboard-modal';
 import ButtonPagination from '@/components/ui/button/button-pagination';
+import ModalPortal from '@/components/ui/modal/modal-portal';
 import DashboardList from '@/components/ui/side-menu/dashboard-list';
+import { useFetch } from '@/hooks/useAsync';
+import { getDashBoardList } from '@/lib/dashboards/api';
 
 export default function SideMenu(): ReactNode {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [page, setPage] = useState(1);
+  const pageSize = 12;
+  const {
+    data: dashboardListData,
+    loading,
+    error,
+  } = useFetch({
+    asyncFunction: () => {
+      return getDashBoardList({
+        navigationMethod: 'pagination',
+        cursorId: 0,
+        page,
+        size: pageSize,
+      });
+    },
+    deps: [page],
+  });
+
+  if (!dashboardListData || error) {
+    return null;
+  }
+  const pageCount = Math.ceil(dashboardListData.totalCount / pageSize);
+  const isPrevButtonDisabled = page <= 1;
+  const isNextButtonDisabled = pageCount === page;
   const handleClickPrev = () => {
-    console.log('click');
+    if (isPrevButtonDisabled) {
+      return;
+    }
+    setPage((prev) => prev - 1);
   };
   const handleClickNext = () => {
-    console.log('click');
+    if (isNextButtonDisabled) {
+      return;
+    }
+    setPage((prev) => prev + 1);
+  };
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
   };
 
   return (
@@ -40,7 +82,7 @@ export default function SideMenu(): ReactNode {
           <span className='mobile:hidden text-xs font-semibold'>
             DashBoards
           </span>
-          <button className='cursor-pointer'>
+          <button onClick={handleOpenModal}>
             <Image
               src={'/icon/add_box.svg'}
               alt='플러스 아이콘'
@@ -49,15 +91,20 @@ export default function SideMenu(): ReactNode {
             />
           </button>
         </div>
-        <DashboardList />
+        <DashboardList dashboards={dashboardListData.dashboards} />
         <div className='mt-3'>
           <ButtonPagination
             additionalClass='mobile:hidden'
+            isPrevDisabled={isPrevButtonDisabled}
+            isNextDisabled={isNextButtonDisabled}
             onPrevClick={handleClickPrev}
             onNextClick={handleClickNext}
           />
         </div>
       </nav>
+      <ModalPortal>
+        <CreateNewboardModal isOpen={isModalOpen} onClose={handleCloseModal} />
+      </ModalPortal>
     </section>
   );
 }
