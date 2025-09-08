@@ -14,6 +14,7 @@ export const cardSchema = z.object({
   imageUrl: z.string().nullable(),
   teamId: z.string(),
   columnId: z.number(),
+  order: z.number().optional(), // 카드 순서 필드 추가
   createdAt: z.string(),
   updatedAt: z.string(),
 });

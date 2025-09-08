@@ -74,3 +74,18 @@ export const deleteCard = async (cardId: number): Promise<void> => {
     method: 'DELETE',
   });
 };
+
+/**
+ * 카드 순서 업데이트 (드래그 앤 드롭용)
+ */
+export const updateCardOrder = async (
+  cardId: number,
+  order: number
+): Promise<CardType> => {
+  return editCard({
+    cardId,
+    body: {
+      order,
+    },
+  });
+};

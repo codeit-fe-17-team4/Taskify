@@ -1,5 +1,12 @@
 import type { GetServerSideProps } from 'next';
 import { useEffect, useState } from 'react';
+import {
+  closestCenter,
+  DndContext,
+  type DragEndEvent,
+  DragOverlay,
+  type DragStartEvent,
+} from '@dnd-kit/core';
 import ColumnLayout from '@/components/dashboard/column-layout';
 import CreateColumnModal from '@/components/dashboard/modal/create-column-modal';
 import CreateTaskModal from '@/components/dashboard/modal/create-task-modal';
@@ -11,13 +18,18 @@ import {
   type CreateColumnFormData,
   type CreateTaskFormData,
   type EditTaskFormData,
-  getRandomTagColor,
   type ManageColumnFormData,
   TAG_COLORS,
   type TaskType,
 } from '@/components/dashboard/type';
 import DashboardLayout from '@/components/layout/dashboard-layout';
-import { createCard, deleteCard, editCard, getCardList } from '@/lib/cards/api';
+import {
+  createCard,
+  deleteCard,
+  editCard,
+  getCardList,
+  updateCardOrder,
+} from '@/lib/cards/api';
 import {
   createColumn,
   deleteColumn,
@@ -46,8 +58,16 @@ export default function DashboardDetailPage({
   const [isCreateTaskModalOpen, setIsCreateTaskModalOpen] = useState(false);
   const [selectedColumnId, setSelectedColumnId] = useState<string | null>(null);
   const [columns, setColumns] = useState<ColumnType[]>([]);
-  const [members, setMembers] = useState<any[]>([]);
+  const [members, setMembers] = useState<
+    {
+      userId: number;
+      nickname: string;
+      email: string;
+      profileImageUrl: string | null;
+    }[]
+  >([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [activeTask, setActiveTask] = useState<TaskType | null>(null);
 
   /**
    * 태그 라벨을 기반으로 일관된 색상 할당
@@ -55,11 +75,104 @@ export default function DashboardDetailPage({
   const getTagColorByLabel = (
     label: string
   ): 'blue' | 'pink' | 'green' | 'brown' | 'red' => {
-    const hash = label
-      .split('')
-      .reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const hash = [...label].reduce((acc, char) => acc + char.charCodeAt(0), 0);
 
     return TAG_COLORS[hash % TAG_COLORS.length];
+  };
+
+  /**
+   * 드래그 시작 핸들러
+   */
+  const handleDragStart = (event: DragStartEvent) => {
+    const { active } = event;
+    const taskId = active.id as string;
+
+    // 모든 컬럼에서 해당 태스크 찾기
+    for (const column of columns) {
+      const task = column.tasks.find((t) => t.id === taskId);
+
+      if (task) {
+        setActiveTask(task);
+        break;
+      }
+    }
+  };
+
+  /**
+   * 카드 순서를 localStorage에 저장
+   */
+  const saveCardOrder = (columnId: string, taskIds: string[]) => {
+    const orderKey = `card-order-${dashboardId}-${columnId}`;
+
+    localStorage.setItem(orderKey, JSON.stringify(taskIds));
+  };
+
+  /**
+   * localStorage에서 카드 순서를 가져오기
+   */
+  const getCardOrder = (columnId: string): string[] | null => {
+    const orderKey = `card-order-${dashboardId}-${columnId}`;
+    const saved = localStorage.getItem(orderKey);
+
+    return saved ? JSON.parse(saved) : null;
+  };
+
+  /**
+   * 드래그 종료 핸들러
+   */
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (!over || active.id === over.id) {
+      setActiveTask(null);
+
+      return;
+    }
+
+    const activeId = active.id as string;
+    const overId = over.id as string;
+
+    // 같은 컬럼 내에서 순서 변경
+    const activeColumn = columns.find((col) =>
+      col.tasks.some((task) => task.id === activeId)
+    );
+    const overColumn = columns.find((col) =>
+      col.tasks.some((task) => task.id === overId)
+    );
+
+    if (activeColumn && overColumn && activeColumn.id === overColumn.id) {
+      const activeIndex = activeColumn.tasks.findIndex(
+        (task) => task.id === activeId
+      );
+      const overIndex = overColumn.tasks.findIndex(
+        (task) => task.id === overId
+      );
+
+      if (activeIndex !== overIndex) {
+        const newTasks = [...activeColumn.tasks];
+        const [removed] = newTasks.splice(activeIndex, 1);
+
+        newTasks.splice(overIndex, 0, removed);
+
+        // UI 업데이트
+        setColumns((prevColumns) => {
+          return prevColumns.map((col) => {
+            return col.id === activeColumn.id
+              ? { ...col, tasks: newTasks }
+              : col;
+          });
+        });
+
+        // localStorage에 순서 저장
+        const newTaskIds = newTasks.map((task) => task.id);
+
+        saveCardOrder(activeColumn.id, newTaskIds);
+
+        console.log('카드 순서 저장 완료:', newTaskIds);
+      }
+    }
+
+    setActiveTask(null);
   };
 
   /**
@@ -111,30 +224,59 @@ export default function DashboardDetailPage({
               size: 100, // 모든 카드 로드
             });
 
+            // 카드 데이터를 TaskType으로 변환
+            const cardTasks = cardsData.cards.map((card) => {
+              return {
+                id: String(card.id),
+                title: card.title,
+                description: card.description,
+                tags: card.tags.map((tag) => {
+                  return {
+                    label: tag,
+                    color: getTagColorByLabel(tag),
+                  };
+                }),
+                dueDate: card.dueDate || undefined,
+                imageUrl: card.imageUrl || '',
+                manager: {
+                  id: String(card.assignee.id),
+                  name: card.assignee.nickname,
+                  nickname: card.assignee.nickname,
+                  profileColor: '#7AC555',
+                },
+              };
+            });
+
+            // localStorage에서 저장된 순서 가져오기
+            const savedOrder = getCardOrder(String(column.id));
+            let sortedTasks = cardTasks;
+
+            if (savedOrder && savedOrder.length > 0) {
+              // 저장된 순서대로 정렬
+              const taskMap = new Map(cardTasks.map((task) => [task.id, task]));
+
+              sortedTasks = savedOrder
+                .map((taskId) => taskMap.get(taskId))
+                .filter((task) => task !== undefined);
+
+              // 새로 추가된 카드들 (저장된 순서에 없는)을 끝에 추가
+              const existingIds = new Set(savedOrder);
+              const newTasks = cardTasks.filter(
+                (task) => !existingIds.has(task.id)
+              );
+
+              sortedTasks = [...sortedTasks, ...newTasks];
+            } else {
+              // 저장된 순서가 없으면 기본 정렬 (id 기준)
+              sortedTasks = cardTasks.sort(
+                (a, b) => Number(a.id) - Number(b.id)
+              );
+            }
+
             return {
               id: String(column.id),
               title: column.title,
-              tasks: cardsData.cards.map((card) => {
-                return {
-                  id: String(card.id),
-                  title: card.title,
-                  description: card.description,
-                  tags: card.tags.map((tag) => {
-                    return {
-                      label: tag,
-                      color: getTagColorByLabel(tag),
-                    };
-                  }),
-                  dueDate: card.dueDate,
-                  imageUrl: card.imageUrl || '',
-                  manager: {
-                    id: String(card.assignee.id),
-                    name: card.assignee.nickname,
-                    nickname: card.assignee.nickname,
-                    profileColor: '#7AC555',
-                  },
-                };
-              }),
+              tasks: sortedTasks,
             };
           })
         );
@@ -293,11 +435,19 @@ export default function DashboardDetailPage({
         imageUrl = ''; // 빈 문자열로 다시 시도
       }
 
-      const updateData: any = {
+      const updateData: {
+        columnId: number;
+        assigneeUserId: number;
+        title: string;
+        description: string;
+        tags: string[];
+        dueDate?: string;
+        imageUrl?: string;
+      } = {
         columnId: targetColumn
           ? Number(targetColumn.id)
           : Number(selectedTask.id),
-        assigneeUserId: assigneeMember?.userId || 1,
+        assigneeUserId: assigneeMember?.userId ?? 1,
         title: taskData.title,
         description: taskData.description,
         tags: taskData.tags.map((tag) => tag.label),
@@ -340,7 +490,7 @@ export default function DashboardDetailPage({
             color: getTagColorByLabel(tag),
           };
         }),
-        dueDate: updatedCard.dueDate,
+        dueDate: updatedCard.dueDate || undefined,
         // 이미지 삭제된 경우 빈 문자열로 설정
         imageUrl:
           taskData.existingImageUrl === undefined
@@ -436,8 +586,17 @@ export default function DashboardDetailPage({
         }
       }
 
-      const cardData: any = {
-        assigneeUserId: assigneeMember?.userId || 1, // 기본값
+      const cardData: {
+        assigneeUserId: number;
+        dashboardId: number;
+        columnId: number;
+        title: string;
+        description: string;
+        tags: string[];
+        dueDate?: string;
+        imageUrl?: string;
+      } = {
+        assigneeUserId: assigneeMember?.userId ?? 1, // 기본값
         dashboardId: Number(dashboardId),
         columnId: Number(selectedColumnId),
         title: taskData.title,
@@ -469,7 +628,7 @@ export default function DashboardDetailPage({
             color: getTagColorByLabel(tag),
           };
         }),
-        dueDate: newCard.dueDate,
+        dueDate: newCard.dueDate || undefined,
         imageUrl: newCard.imageUrl || '',
         manager: {
           id: String(newCard.assignee.id),
@@ -513,14 +672,34 @@ export default function DashboardDetailPage({
           msOverflowStyle: 'auto',
         }}
       >
-        <ColumnLayout
-          columns={columns}
-          maxColumns={10}
-          onAddColumnClick={handleAddColumnClick}
-          onColumnSettingsClick={handleColumnSettingsClick}
-          onTaskClick={handleTaskClick}
-          onAddTaskClick={handleAddTaskClick}
-        />
+        <DndContext
+          collisionDetection={closestCenter}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+        >
+          <ColumnLayout
+            columns={columns}
+            maxColumns={10}
+            onAddColumnClick={handleAddColumnClick}
+            onColumnSettingsClick={handleColumnSettingsClick}
+            onTaskClick={handleTaskClick}
+            onAddTaskClick={handleAddTaskClick}
+          />
+          <DragOverlay>
+            {activeTask ? (
+              <div className='rotate-3 opacity-90'>
+                <div className='w-80 rounded-lg border border-gray-300 bg-white p-4 shadow-lg'>
+                  <h3 className='font-medium text-gray-900'>
+                    {activeTask.title}
+                  </h3>
+                  <p className='text-sm text-gray-600'>
+                    {activeTask.description}
+                  </p>
+                </div>
+              </div>
+            ) : null}
+          </DragOverlay>
+        </DndContext>
       </main>
 
       {/* 컬럼 생성 모달 */}

@@ -26,4 +26,5 @@ export interface UpdateCardParams {
   dueDate?: string;
   tags?: string[];
   imageUrl?: string;
+  order?: number; // 카드 순서 필드 추가
 }
