@@ -13,7 +13,32 @@ import type { SignupParams } from '@/lib/users/interface';
 import { useSignupValidation } from '@/lib/validation/rules';
 import styles from '@/styles/auth-variables.module.css';
 
+// 상수들
 const SUCCESS_MESSAGE = '가입이 완료되었습니다!';
+const ERROR_MESSAGES = {
+  DUPLICATE_EMAIL: '이미 사용중인 이메일입니다',
+  SIGNUP_FAILED: '회원가입에 실패했습니다. 다시 시도해주세요.',
+} as const;
+
+const validateSignupForm = (
+  formData: {
+    nickname: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+  },
+  hasAgreedToTerms: boolean,
+  isSignupFormValid: (
+    formData: Record<string, string>,
+    options: { skipConfirmPassword: boolean }
+  ) => boolean
+): boolean => {
+  const isFormValid = isSignupFormValid(formData, {
+    skipConfirmPassword: false,
+  });
+
+  return isFormValid && hasAgreedToTerms;
+};
 
 export default function SignupPage(): React.JSX.Element {
   const router = useRouter();
@@ -54,12 +79,13 @@ export default function SignupPage(): React.JSX.Element {
 
   const handleConfirmPasswordBlur = useCallback(() => {
     // 비밀번호와 확인 비밀번호가 모두 입력된 경우에만 검증
-    if (
+    const hasBothPasswords =
       password &&
       confirmPassword &&
       password.length > 0 &&
-      confirmPassword.length > 0
-    ) {
+      confirmPassword.length > 0;
+
+    if (hasBothPasswords) {
       validateConfirmPassword(password, confirmPassword);
     }
   }, [validateConfirmPassword, password, confirmPassword]);
@@ -94,13 +120,9 @@ export default function SignupPage(): React.JSX.Element {
       e.preventDefault();
 
       // 폼 유효성 검사
-      const isFormValid =
-        isSignupFormValid(
-          { nickname, email, password, confirmPassword },
-          { skipConfirmPassword: false }
-        ) && agreedToTerms;
+      const formData = { nickname, email, password, confirmPassword };
 
-      if (!isFormValid) {
+      if (!validateSignupForm(formData, agreedToTerms, isSignupFormValid)) {
         return;
       }
 
@@ -124,12 +146,11 @@ export default function SignupPage(): React.JSX.Element {
         const errorMessage = error instanceof Error ? error.message : '';
 
         if (errorMessage.includes('[409]') || errorMessage.includes('[400]')) {
-          setModalMessage('이미 사용중인 이메일입니다');
-          setShowModal(true);
+          setModalMessage(ERROR_MESSAGES.DUPLICATE_EMAIL);
         } else {
-          setModalMessage('회원가입에 실패했습니다. 다시 시도해주세요.');
-          setShowModal(true);
+          setModalMessage(ERROR_MESSAGES.SIGNUP_FAILED);
         }
+        setShowModal(true);
       } finally {
         setIsLoading(false);
       }
@@ -163,7 +184,11 @@ export default function SignupPage(): React.JSX.Element {
 
   return (
     <main
-      className={`${styles.auth} ${styles.bgAuth} flex min-h-screen items-center justify-center`}
+      className={`${styles.auth} ${styles.bgAuth} flex items-center justify-center`}
+      style={{
+        height: '1211px',
+        minHeight: '1211px',
+      }}
     >
       <div className='flex h-auto min-h-[653px] w-[520px] shrink-0 flex-col items-center gap-[30px] max-[375px]:w-[351px] max-[375px]:gap-[36px]'>
         {/* Hero Block */}
@@ -175,11 +200,10 @@ export default function SignupPage(): React.JSX.Element {
             className='flex w-[520px] flex-col items-start max-[375px]:w-[351px]'
             onSubmit={handleSubmit}
           >
-            {/* Form Stack - 입력 + 버튼 + 하단 안내 */}
+            {/* 폼 요소들 */}
             <div className='flex flex-col space-y-6 max-[375px]:space-y-2'>
-              {/* Input Group */}
+              {/* 입력 필드들 */}
               <div className='flex w-[520px] flex-col items-start max-[375px]:w-[351px]'>
-                {/* Nickname Input */}
                 <TextInput
                   id='nickname'
                   label='닉네임'
@@ -189,8 +213,6 @@ export default function SignupPage(): React.JSX.Element {
                   onChange={setNickname}
                   onBlur={handleNicknameBlur}
                 />
-
-                {/* Email Input */}
                 <EmailInput
                   id='email'
                   label='이메일'
@@ -201,8 +223,6 @@ export default function SignupPage(): React.JSX.Element {
                   onChange={setEmail}
                   onBlur={handleEmailBlur}
                 />
-
-                {/* Password Input */}
                 <PasswordInput
                   id='password'
                   label='비밀번호'
@@ -215,8 +235,6 @@ export default function SignupPage(): React.JSX.Element {
                   onBlur={handlePasswordBlur}
                   onTogglePassword={handleTogglePassword}
                 />
-
-                {/* Confirm Password Input */}
                 <PasswordInput
                   id='confirmPassword'
                   label='비밀번호 확인'
@@ -231,7 +249,7 @@ export default function SignupPage(): React.JSX.Element {
                 />
               </div>
 
-              {/* Terms Agreement */}
+              {/* 약관 동의 */}
               <div className='flex w-[520px] items-center gap-3'>
                 <input
                   id='terms'
@@ -248,7 +266,7 @@ export default function SignupPage(): React.JSX.Element {
                 </label>
               </div>
 
-              {/* Signup Button */}
+              {/* 회원가입 버튼 */}
               <AuthButton
                 type='submit'
                 disabled={!isFormValidNow}
@@ -258,7 +276,7 @@ export default function SignupPage(): React.JSX.Element {
                 가입하기
               </AuthButton>
 
-              {/* Bottom Info */}
+              {/* 하단 링크 */}
               <div
                 className={`${styles.textStrong} w-[520px] text-center text-[16px] leading-[19px] max-[375px]:w-[351px]`}
               >
@@ -286,9 +304,6 @@ export default function SignupPage(): React.JSX.Element {
   );
 }
 
-/**
- * 정적 생성 설정
- */
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { req } = context;
   const accessToken = req.cookies.access_token;
