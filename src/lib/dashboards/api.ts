@@ -114,7 +114,7 @@ export const deleteInvitation = async ({
   invitationId,
 }: i.DeleteInvitationParams): Promise<void> => {
   await customFetch(
-    `${BASE_API_URL}/dashboards/${String(dashboardId)}/invitations/${String(invitationId)}}`,
+    `${BASE_API_URL}/dashboards/${String(dashboardId)}/invitations/${String(invitationId)}`,
     z.deleteSchema,
     {
       method: 'DELETE',

@@ -29,7 +29,7 @@ export const mockColumns: ColumnType[] = [
         title: '123433333',
         description: '123433333',
         tags: [
-          { label: '프로젝트', color: 'orange' },
+          { label: '프로젝트', color: 'red' },
           { label: '백엔드', color: 'green' },
         ],
         dueDate: '2025-08-28 10:00',
@@ -51,7 +51,7 @@ export const mockColumns: ColumnType[] = [
         id: 't2',
         title: '2222',
         description: '2222',
-        tags: [{ label: '프로젝트', color: 'orange' }],
+        tags: [{ label: '프로젝트', color: 'red' }],
         dueDate: '2025-08-28 10:30',
         imageUrl: '',
         manager: {

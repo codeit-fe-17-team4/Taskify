@@ -12,6 +12,34 @@ import type { LoginParams } from '@/lib/auth/interface';
 import { useLoginValidation } from '@/lib/validation/rules';
 import styles from '@/styles/auth-variables.module.css';
 
+// 상수들
+const ERROR_MESSAGES = {
+  INVALID_PASSWORD: '비밀번호가 일치하지 않습니다.',
+  USER_NOT_FOUND: '존재하지 않는 유저입니다.',
+  SESSION_CREATION_FAILED:
+    '로그인 처리 중 오류가 발생했습니다. 다시 시도해주세요.',
+  LOGIN_FAILED: '로그인에 실패했습니다. 다시 시도해주세요.',
+} as const;
+
+const validateLoginForm = (email: string, password: string): boolean => {
+  const isEmailValid = Boolean(
+    email.trim() && /^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]+$/.test(email)
+  );
+  const isPasswordValid = Boolean(password.trim() && password.length >= 8);
+
+  return isEmailValid && isPasswordValid;
+};
+
+const resolveRedirectPath = (
+  queryNext: string | string[] | undefined
+): string => {
+  const nextParam = Array.isArray(queryNext) ? queryNext[0] : queryNext;
+  const shouldUseQueryNext =
+    Boolean(nextParam) && !String(nextParam).startsWith('/dashboard');
+
+  return shouldUseQueryNext ? String(nextParam) : '/mydashboard';
+};
+
 export default function LoginPage(): JSX.Element {
   const router = useRouter();
   const [email, setEmail] = useState('');
@@ -31,23 +59,10 @@ export default function LoginPage(): JSX.Element {
     validateField('password', password);
   }, [validateField, password]);
 
-  const isFormValidNow = useMemo(() => {
-    // 로그인 폼 유효성 직접 계산
-    const isEmailValid =
-      email.trim() && /^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]+$/.test(email);
-    const isPasswordValid = password.trim() && password.length >= 8;
-    const result = isEmailValid && isPasswordValid;
-
-    console.log('로그인 폼 유효성:', {
-      email,
-      password,
-      isEmailValid,
-      isPasswordValid,
-      result,
-    });
-
-    return result;
-  }, [email, password]);
+  const isFormValidNow = useMemo(
+    () => validateLoginForm(email, password),
+    [email, password]
+  );
 
   const handleModalClose = useCallback(() => {
     setShowModal(false);
@@ -58,12 +73,8 @@ export default function LoginPage(): JSX.Element {
     async (e: React.FormEvent) => {
       e.preventDefault();
 
-      // 로그인 폼 유효성 직접 검증
-      const isEmailValid =
-        email.trim() && /^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]+$/.test(email);
-      const isPasswordValid = password.trim() && password.length >= 8;
-
-      if (!isEmailValid || !isPasswordValid) {
+      // 로그인 폼 유효성 검증
+      if (!validateLoginForm(email, password)) {
         return;
       }
 
@@ -71,58 +82,37 @@ export default function LoginPage(): JSX.Element {
 
       try {
         // 로그인 API 호출
-        const loginParams: LoginParams = {
-          email,
-          password,
-        };
-
+        const loginParams: LoginParams = { email, password };
         const response = await login(loginParams);
 
         // accessToken을 HttpOnly 쿠키로 설정
-        try {
-          const sessionResponse = await fetch('/api/session', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              accessToken: response.accessToken,
-            }),
-          });
+        const sessionResponse = await fetch('/api/session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ accessToken: response.accessToken }),
+        });
 
-          if (!sessionResponse.ok) {
-            throw new Error('Session creation failed');
-          }
-
-          // 리다이렉트 경로 결정: 대시보드 경로로 향하던 경우에도 디폴트는 mydashboard
-          const nextParam = router.query.next as string | undefined;
-          const nextPath =
-            nextParam && !nextParam.startsWith('/dashboard')
-              ? nextParam
-              : '/mydashboard';
-
-          router.push(nextPath);
-        } catch {
-          setModalMessage(
-            '로그인 처리 중 오류가 발생했습니다. 다시 시도해주세요.'
-          );
-          setShowModal(true);
+        if (!sessionResponse.ok) {
+          throw new Error('Session creation failed');
         }
+
+        // 리다이렉트 경로 결정
+        router.push(resolveRedirectPath(router.query.next));
       } catch (error: unknown) {
         // 에러 메시지 처리
         const errorMessage =
           error instanceof Error ? error.message : '알 수 없는 오류';
 
         if (errorMessage.includes('[400]')) {
-          setModalMessage('비밀번호가 일치하지 않습니다.');
-          setShowModal(true);
+          setModalMessage(ERROR_MESSAGES.INVALID_PASSWORD);
         } else if (errorMessage.includes('[404]')) {
-          setModalMessage('존재하지 않는 유저입니다.');
-          setShowModal(true);
+          setModalMessage(ERROR_MESSAGES.USER_NOT_FOUND);
+        } else if (errorMessage.includes('Session creation failed')) {
+          setModalMessage(ERROR_MESSAGES.SESSION_CREATION_FAILED);
         } else {
-          setModalMessage('로그인에 실패했습니다. 다시 시도해주세요.');
-          setShowModal(true);
+          setModalMessage(ERROR_MESSAGES.LOGIN_FAILED);
         }
+        setShowModal(true);
       } finally {
         setIsLoading(false);
       }
@@ -132,7 +122,11 @@ export default function LoginPage(): JSX.Element {
 
   return (
     <main
-      className={`${styles.auth} ${styles.bgAuth} flex min-h-screen items-center justify-center`}
+      className={`${styles.auth} ${styles.bgAuth} flex items-center justify-center`}
+      style={{
+        height: '1080px',
+        minHeight: '1080px',
+      }}
     >
       <div className='flex h-auto min-h-[653px] w-[520px] shrink-0 flex-col items-center gap-[30px] max-[375px]:w-[351px] max-[375px]:gap-[36px]'>
         {/* Hero Block */}
@@ -144,11 +138,10 @@ export default function LoginPage(): JSX.Element {
             className='flex w-[520px] flex-col items-start max-[375px]:w-[351px]'
             onSubmit={handleSubmit}
           >
-            {/* Form Stack - 입력 + 버튼 + 하단 안내 */}
+            {/* 폼 요소들 */}
             <div className='flex flex-col space-y-6 max-[744px]:space-y-[13px] max-[375px]:space-y-4'>
-              {/* Input Group */}
+              {/* 입력 필드들 */}
               <div className='flex w-[520px] flex-col items-start max-[375px]:w-[351px]'>
-                {/* Email Input */}
                 <EmailInput
                   id='email'
                   label='이메일'
@@ -158,8 +151,6 @@ export default function LoginPage(): JSX.Element {
                   onChange={setEmail}
                   onBlur={handleEmailBlur}
                 />
-
-                {/* Password Input */}
                 <PasswordInput
                   id='password'
                   label='비밀번호'
@@ -176,7 +167,7 @@ export default function LoginPage(): JSX.Element {
                 />
               </div>
 
-              {/* Login Button */}
+              {/* 로그인 버튼 */}
               <AuthButton
                 type='submit'
                 disabled={!isFormValidNow}
@@ -186,7 +177,7 @@ export default function LoginPage(): JSX.Element {
                 로그인
               </AuthButton>
 
-              {/* Bottom Info */}
+              {/* 하단 링크 */}
               <div
                 className={`${styles.textStrong} w-[520px] text-center text-[16px] leading-[19px] max-[375px]:w-[351px]`}
               >
@@ -214,9 +205,6 @@ export default function LoginPage(): JSX.Element {
   );
 }
 
-/**
- * 정적 생성 설정
- */
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { req } = context;
   const accessToken = req.cookies.access_token;

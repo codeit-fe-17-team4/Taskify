@@ -6,19 +6,39 @@ import { type ReactNode, useEffect, useState } from 'react';
 import DashboardLayout from '@/components/layout/dashboard-layout';
 import CreateNewboardModal from '@/components/mydashboard/create-newboard-modal';
 import type { CreateNewboardFormData } from '@/components/mydashboard/type';
-import { createDashBoard, getDashBoard } from '@/lib/dashboards/api';
+import ModalPortal from '@/components/ui/modal/modal-portal';
+import {
+  createDashBoard,
+  getDashBoard,
+  getDashBoardList,
+} from '@/lib/dashboards/api';
 import { acceptInvitation, getInvitationList } from '@/lib/invitations/api';
 import type { InvitationType } from '@/lib/invitations/type';
-import {
-  mydashboardInviteMockData,
-  mydashboardMockData,
-} from '@/lib/mydashboard-mock-data';
+
+const colorCode: { [key: string]: string } = {
+  '#7AC555': 'bg-green-500',
+  '#760DDE': 'bg-purple-700',
+  '#FFA500': 'bg-orange-500',
+  '#76A5EA': 'bg-blue-300',
+  '#E876EA': 'bg-pink-400',
+};
+
+const colorNameToCode: { [key: string]: string } = {
+  green: '#7AC555',
+  purple: '#760DDE',
+  orange: '#FFA500',
+  blue: '#76A5EA',
+  pink: '#E876EA',
+};
+
 // 인증 상태를 받기 위한 props 타입 정의
 interface MydashboardProps {
   /**
    * 서버에서 전달받은 로그인 상태
    */
   isLoggedIn: boolean;
+  initialInvitations: InvitationType[];
+  initialDashboards: DashboardList[];
 }
 
 interface DashboardList {
@@ -30,35 +50,39 @@ interface DashboardList {
 
 export default function Mydashboard({
   isLoggedIn,
+  initialInvitations = [],
+  initialDashboards = [],
 }: MydashboardProps): ReactNode {
-  // mock 데이터 파일 분리해서 활용 !
   const [dashboardData, setDashboardData] =
-    useState<DashboardList[]>(mydashboardMockData);
-
-  const [inviteData, setInviteData] = useState<InvitationType[]>(
-    mydashboardInviteMockData.invitations
-  );
+    useState<DashboardList[]>(initialDashboards);
+  const [inviteData, setInviteData] =
+    useState<InvitationType[]>(initialInvitations);
+  const [originalInviteData, setOriginalInviteData] =
+    useState<InvitationType[]>(initialInvitations);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isComposing, setIsComposing] = useState(false);
 
-  // 검색 --> 확인 필요 ㅠㅠ 한글로 검색하면 초대받은 목록 없음 화면으로 렌더링 됨 ..
+  // 검색
   useEffect(() => {
+    // 한글 조합 중 오류 발생 -> 조합 중에는 발생하지 않도록
+    if (isComposing) {
+      return;
+    }
     if (searchQuery === '') {
       // 검색어 없으면 전체 보여주기
-      setInviteData(mydashboardInviteMockData.invitations);
+      setInviteData(originalInviteData);
     } else {
       const query = searchQuery.toLowerCase();
 
-      const filtered = mydashboardInviteMockData.invitations.filter(
-        (invite) => {
-          // title(대시보드 이름)에서만 검색 (요구사항 반영)
-          return invite.dashboard.title.toLowerCase().includes(query);
-        }
-      );
+      const filtered = originalInviteData.filter((invite) => {
+        // title(대시보드 이름)에서만 검색 (요구사항 반영)
+        return invite.dashboard.title.toLowerCase().includes(query);
+      });
 
       setInviteData(filtered);
     }
-  }, [searchQuery]);
+  }, [searchQuery, originalInviteData, isComposing]);
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -106,7 +130,7 @@ export default function Mydashboard({
     const newDashboardItem = {
       id: dashboard.id,
       title: dashboard.title,
-      dotcolor: dashboard.color,
+      dotcolor: colorCode[dashboard.color] || 'bg-gray-500',
       isOwner,
     };
 
@@ -122,8 +146,11 @@ export default function Mydashboard({
     }
     try {
       setIsCreating(true);
-      // API 호출 - createDashBoard 컴포넌트 활용 ...
-      const newDashboard = await createDashBoard(formData);
+      const CodeColor = colorNameToCode[formData.color] || '#7AC555';
+      const newDashboard = await createDashBoard({
+        title: formData.title,
+        color: CodeColor,
+      });
 
       // 공통 함수로 대시보드 추가 , 내가 생성한 거니까 isOwner: true;
       addDashboardToList(newDashboard, true);
@@ -135,6 +162,7 @@ export default function Mydashboard({
       router.push(`/dashboard/${newDashboard.id.toString()}`);
     } catch (error) {
       console.error('대시보드 생성 실패:', error);
+      alert('대시보드 생성에 실패했습니다. 다시 시도해주세요.');
     } finally {
       setIsCreating(false);
     }
@@ -150,6 +178,9 @@ export default function Mydashboard({
       return;
     }
 
+    console.log('수락하려는 초대 ID:', inviteId);
+    console.log('현재 초대 목록:', inviteData);
+
     try {
       setIsAcceptingInvitation(true);
 
@@ -159,18 +190,31 @@ export default function Mydashboard({
         body: { inviteAccepted: true },
       });
 
+      console.log('초대 수락 성공:', invitation);
+
       // 2. 초대 받은 대시보드 정보를 가져오기
       const dashboardDetails = await getDashBoard(invitation.dashboard.id);
+
+      console.log('대시보드 정보 조회 성공:', dashboardDetails);
 
       // 3. 공통 함수로 대시보드 추가 (초대받은 대시보드는 isOwner가 false)
       addDashboardToList(dashboardDetails, false);
 
       // 4. 초대 목록에서 수락한 초대를 제거
       setInviteData((prev) => prev.filter((inv) => inv.id !== inviteId));
+      setOriginalInviteData((prev) =>
+        prev.filter((inv) => inv.id !== inviteId)
+      );
 
       console.log('초대 수락 및 대시보드 추가 성공:', dashboardDetails);
+      alert('초대를 수락했습니다!');
     } catch (error) {
       console.error('초대 수락 실패:', error);
+      if (error instanceof Error) {
+        alert(`초대 수락에 실패했습니다: ${error.message}`);
+      } else {
+        alert('초대 수락에 실패했습니다. 다시 시도해주세요.');
+      }
     } finally {
       setIsAcceptingInvitation(false);
     }
@@ -181,6 +225,7 @@ export default function Mydashboard({
    */
   const handleRejectInvitation = (inviteId: number) => {
     setInviteData((prev) => prev.filter((inv) => inv.id !== inviteId));
+    setOriginalInviteData((prev) => prev.filter((inv) => inv.id !== inviteId));
     console.log('초대 거절:', inviteId);
   };
 
@@ -227,7 +272,7 @@ export default function Mydashboard({
                   return (
                     <Link
                       key={dashboard.id}
-                      href={`/dashboard/${dashboard.id}`}
+                      href={`/dashboard/${String(dashboard.id)}`}
                     >
                       <button className='tablet:w-3xs mobile:w-2xs relative flex h-[60px] w-full cursor-pointer items-center gap-3 rounded-md border border-gray-200 bg-white p-4 hover:bg-gray-100'>
                         <div
@@ -322,8 +367,15 @@ export default function Mydashboard({
                           placeholder='검색'
                           className='h-[40px] w-full rounded border border-gray-300 pr-4 pl-10 text-sm focus:ring-1 focus:ring-gray-300 focus:outline-none'
                           value={searchQuery}
+                          onCompositionStart={() => {
+                            setIsComposing(true);
+                          }}
                           onChange={(e) => {
                             setSearchQuery(e.target.value);
+                          }}
+                          onCompositionEnd={(e) => {
+                            setIsComposing(false);
+                            setSearchQuery(e.currentTarget.value);
                           }}
                         />
                       </div>
@@ -386,11 +438,13 @@ export default function Mydashboard({
           </div>
         </div>
       </div>
-      <CreateNewboardModal
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        onSubmit={handleCreateDashboard}
-      />
+      <ModalPortal>
+        <CreateNewboardModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          onSubmit={handleCreateDashboard}
+        />
+      </ModalPortal>
     </>
   );
 }
@@ -412,9 +466,35 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
+  let initialInvitations: InvitationType[] = [];
+
+  try {
+    // 서버 사이드에서는 document.cookie에 접근할 수 없으므로,
+    // context에서 직접 토큰을 가져와 API를 호출해야 합니다.   <-- 이 부분은 무슨 말인지 모르겠으나 오류가 나서 확인해보니 이렇다고 합니다 .. ㅠㅠ
+    const res = await fetch(
+      `https://sp-taskify-api.vercel.app/17-4/invitations`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    if (res.ok) {
+      const invitationData = await res.json();
+
+      initialInvitations = invitationData.invitations || [];
+    } else {
+      console.error('Failed to fetch invitations on server:', res.status);
+    }
+  } catch (error) {
+    console.error('Error in getServerSideProps fetching invitations:', error);
+  }
+
   return {
     props: {
       isLoggedIn: true,
+      initialInvitations,
     },
   };
 };

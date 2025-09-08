@@ -1,5 +1,4 @@
 import type { ComponentType } from 'react';
-import { fn } from 'storybook/test';
 import { INITIAL_VIEWPORTS, MINIMAL_VIEWPORTS } from 'storybook/viewport';
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import Dropdown from '@/components/ui/dropdown';
@@ -55,7 +54,7 @@ export const Primary: Story = {
             </div>
           </Dropdown.Toggle>
           <Dropdown.List
-            positionClassName='top-0 right-0'
+            additionalClassName='top-0 right-0'
             ariaLabel='사용자 메뉴'
           >
             <Dropdown.Item onClick={() => 0}>로그아웃</Dropdown.Item>

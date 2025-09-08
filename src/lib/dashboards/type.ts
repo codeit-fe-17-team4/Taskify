@@ -8,27 +8,27 @@ export const dashboardSchema = z.object({
   createdByMe: z.boolean(),
 });
 export const dashboardListSchema = z.object({
-  cursorId: z.number(),
+  cursorId: z.union([z.number(), z.null()]),
   totalCount: z.number(),
   dashboards: z.array(dashboardSchema),
 });
 export const invitationSchema = z.object({
   id: z.number(),
-  inviter: {
+  inviter: z.object({
     nickname: z.string(),
     email: z.string(),
     id: z.number(),
-  },
+  }),
   teamId: z.string(),
-  dashboard: {
+  dashboard: z.object({
     title: z.string(),
     id: z.number(),
-  },
-  invitee: {
+  }),
+  invitee: z.object({
     nickname: z.string(),
     email: z.string(),
     id: z.number(),
-  },
+  }),
   inviteAccepted: z.boolean(),
   createdAt: z.string(),
   updatedAt: z.string(),

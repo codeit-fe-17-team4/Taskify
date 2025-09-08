@@ -1,7 +1,7 @@
 import { type ReactNode, useState } from 'react';
-import InviteMemberForm from '@/components/mydashboard/invite-member-form';
 import type { InviteMemberFormData } from '@/components/mydashboard/type';
-import BaseModal from '@/components/ui/base-modal';
+import InviteMemberForm from '@/components/ui/dashboard-header/invite-member-form';
+import ButtonModal from '@/components/ui/modal/modal-button';
 import { useModalKeyHandler } from '@/hooks/useModal';
 
 interface InviteMemberModalProps {
@@ -37,7 +37,7 @@ export default function InviteMemberModal({
   const isSubmitDisabled = !isEmailValid;
 
   return (
-    <BaseModal
+    <ButtonModal
       isOpen={isOpen}
       title='초대하기'
       submitText='생성'
@@ -48,6 +48,6 @@ export default function InviteMemberModal({
       onSubmit={handleSubmit}
     >
       <InviteMemberForm formData={formData} setFormData={setFormData} />
-    </BaseModal>
+    </ButtonModal>
   );
 }

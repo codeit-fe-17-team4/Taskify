@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import type { AddTaskButtonProps } from './type';
+import type { AddTaskButtonProps } from '@/components/dashboard/type';
 
 export default function AddTaskButton({ onClick }: AddTaskButtonProps) {
   return (
