@@ -2,15 +2,14 @@ import type { GetServerSideProps } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { type ReactNode, useState } from 'react';
+import { type ReactNode, useEffect, useState } from 'react';
 import DashboardLayout from '@/components/layout/dashboard-layout';
 import CreateNewboardModal from '@/components/mydashboard/create-newboard-modal';
 import type { CreateNewboardFormData } from '@/components/mydashboard/type';
 import ModalPortal from '@/components/ui/modal/modal-portal';
 import { createDashBoard, getDashBoard } from '@/lib/dashboards/api';
-import { acceptInvitation, getInvitationList } from '@/lib/invitations/api';
 import type { InvitationType } from '@/lib/dashboards/type';
-import type { InvitationListType } from '@/lib/invitations/type';
+import { acceptInvitation } from '@/lib/invitations/api';
 import {
   mydashboardInviteMockData,
   mydashboardMockData,
@@ -229,7 +228,7 @@ export default function Mydashboard({
                   return (
                     <Link
                       key={dashboard.id}
-                      href={`/dashboard/${dashboard.id}`}
+                      href={`/dashboard/${String(dashboard.id)}`}
                     >
                       <button className='tablet:w-3xs mobile:w-2xs relative flex h-[60px] w-full cursor-pointer items-center gap-3 rounded-md border border-gray-200 bg-white p-4 hover:bg-gray-100'>
                         <div
