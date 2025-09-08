@@ -8,7 +8,7 @@ export const dashboardSchema = z.object({
   createdByMe: z.boolean(),
 });
 export const dashboardListSchema = z.object({
-  cursorId: z.number(),
+  cursorId: z.union([z.number(), z.null()]),
   totalCount: z.number(),
   dashboards: z.array(dashboardSchema),
 });

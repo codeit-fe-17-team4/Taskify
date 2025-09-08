@@ -52,5 +52,6 @@ export default tseslint.config(sheriff(sheriffOptions), {
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     'fsecond/prefer-destructured-optionals': 'off',
     '@typescript-eslint/no-misused-spread': 'off',
+    '@typescript-eslint/prefer-nullish-coalescing': 'off',
   },
 });
