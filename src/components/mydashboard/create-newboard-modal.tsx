@@ -2,12 +2,14 @@ import { type ReactNode, useState } from 'react';
 import CreateNewboardForm from '@/components/mydashboard/create-newboard-form';
 import type { CreateNewboardFormData } from '@/components/mydashboard/type';
 import ButtonModal from '@/components/ui/modal/modal-button';
+import { useMutate } from '@/hooks/useAsync';
 import { useModalKeyHandler } from '@/hooks/useModal';
+import { createDashBoard } from '@/lib/dashboards/api';
 
 interface CreateNewboardModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (formData: CreateNewboardFormData) => void;
+  onSubmit?: (formData: CreateNewboardFormData) => void;
 }
 
 export default function CreateNewboardModal({
@@ -19,7 +21,9 @@ export default function CreateNewboardModal({
     title: '',
     color: 'green', // 기본 색상 설정
   });
-
+  const { mutate } = useMutate({
+    asyncFunction: () => createDashBoard(formData),
+  });
   const handleClose = () => {
     setFormData({ title: '', color: 'green' });
     onClose();
@@ -27,11 +31,15 @@ export default function CreateNewboardModal({
 
   useModalKeyHandler(isOpen, handleClose);
 
-  const handleSubmit = () => {
-    onSubmit(formData);
-    handleClose();
-  };
+  // const handleSubmit = () => {
+  //   onSubmit(formData);
+  //   handleClose();
+  // };
 
+  const handleSubmit = () => {
+    mutate();
+    onClose();
+  };
   const isSubmitDisabled = !formData.title.trim();
 
   return (

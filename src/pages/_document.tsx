@@ -7,6 +7,7 @@ export default function Document(): ReactNode {
       <Head />
       <body className='antialiased'>
         <Main />
+        <div id='modal-portal' />
         <NextScript />
       </body>
     </Html>

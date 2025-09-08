@@ -6,7 +6,9 @@ import { type ReactNode, useState } from 'react';
 import DashboardLayout from '@/components/layout/dashboard-layout';
 import CreateNewboardModal from '@/components/mydashboard/create-newboard-modal';
 import type { CreateNewboardFormData } from '@/components/mydashboard/type';
-import { createDashBoard } from '@/lib/dashboards/api';
+import ModalPortal from '@/components/ui/modal/modal-portal';
+import { createDashBoard, getDashBoard } from '@/lib/dashboards/api';
+import { acceptInvitation, getInvitationList } from '@/lib/invitations/api';
 import type { InvitationType } from '@/lib/dashboards/type';
 import type { InvitationListType } from '@/lib/invitations/type';
 import {
@@ -25,6 +27,7 @@ interface DashboardList {
   id: number;
   title: string;
   dotcolor: string;
+  isOwner: boolean;
 }
 
 export default function Mydashboard({
@@ -33,10 +36,31 @@ export default function Mydashboard({
   // mock 데이터 파일 분리해서 활용 !
   const [dashboardData, setDashboardData] =
     useState<DashboardList[]>(mydashboardMockData);
-  const [inviteData, setInviteData] = useState<InvitationListType>(
-    mydashboardInviteMockData
+
+  const [inviteData, setInviteData] = useState<InvitationType[]>(
+    mydashboardInviteMockData.invitations
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  // 검색 --> 확인 필요 ㅠㅠ 한글로 검색하면 초대받은 목록 없음 화면으로 렌더링 됨 ..
+  useEffect(() => {
+    if (searchQuery === '') {
+      // 검색어 없으면 전체 보여주기
+      setInviteData(mydashboardInviteMockData.invitations);
+    } else {
+      const query = searchQuery.toLowerCase();
+
+      const filtered = mydashboardInviteMockData.invitations.filter(
+        (invite) => {
+          // title(대시보드 이름)에서만 검색 (요구사항 반영)
+          return invite.dashboard.title.toLowerCase().includes(query);
+        }
+      );
+
+      setInviteData(filtered);
+    }
+  }, [searchQuery]);
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -46,7 +70,7 @@ export default function Mydashboard({
     setIsModalOpen(false);
   };
 
-  // 페이지네이션 라이브러리 없이 사용해보고자 했습니다..!
+  // 페이지네이션 (라이브러리 x)
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
   const totalPages = Math.ceil(dashboardData.length / itemsPerPage);
@@ -71,32 +95,45 @@ export default function Mydashboard({
   };
 
   /**
-   * api 주고받기 ..?
+   * 새로운 대시보드 생성 + 초대받은 대시보드 수락 시 목록에 추가되는 함수 (공통이라 빼 봄)
    */
+  const addDashboardToList = (
+    dashboard: {
+      id: number;
+      title: string;
+      color: string;
+    },
+    isOwner: boolean
+  ) => {
+    const newDashboardItem = {
+      id: dashboard.id,
+      title: dashboard.title,
+      dotcolor: dashboard.color,
+      isOwner,
+    };
+
+    setDashboardData((prev) => [newDashboardItem, ...prev]);
+  };
 
   // 새로운 대시보드 생성 api
   const router = useRouter();
   const [isCreating, setIsCreating] = useState(false);
   const handleCreateDashboard = async (formData: CreateNewboardFormData) => {
+    if (isCreating) {
+      return;
+    }
     try {
       setIsCreating(true);
       // API 호출 - createDashBoard 컴포넌트 활용 ...
       const newDashboard = await createDashBoard(formData);
 
-      setDashboardData((prev) => {
-        return [
-          ...prev,
-          {
-            id: newDashboard.id,
-            title: newDashboard.title,
-            dotcolor: newDashboard.color,
-          },
-        ];
-      });
+      // 공통 함수로 대시보드 추가 , 내가 생성한 거니까 isOwner: true;
+      addDashboardToList(newDashboard, true);
 
       console.log('새 대시보드 생성 성공:', newDashboard);
       handleCloseModal();
       // id 가 number 타입인데 아래와 같이 사용하려니까 오류가 나서 해결 방법을 찾아보니 직접 타입을 명시해줘야 한다고 하여 toString으로 명시했습니다. 흠
+      // 생성 시 페이지 이동
       router.push(`/dashboard/${newDashboard.id.toString()}`);
     } catch (error) {
       console.error('대시보드 생성 실패:', error);
@@ -104,11 +141,48 @@ export default function Mydashboard({
       setIsCreating(false);
     }
   };
-  const handleAcceptInvitation = (inviteId: number) => {
-    console.log('초대 수락:', inviteId);
+
+  /**
+   * 초대받은 대시보드 수락 api
+   */
+  const [isAcceptingInvitation, setIsAcceptingInvitation] = useState(false);
+
+  const handleAcceptInvitation = async (inviteId: number) => {
+    if (isAcceptingInvitation) {
+      return;
+    }
+
+    try {
+      setIsAcceptingInvitation(true);
+
+      // 1. 초대 수락 API를 호출
+      const invitation = await acceptInvitation({
+        invitationId: inviteId,
+        body: { inviteAccepted: true },
+      });
+
+      // 2. 초대 받은 대시보드 정보를 가져오기
+      const dashboardDetails = await getDashBoard(invitation.dashboard.id);
+
+      // 3. 공통 함수로 대시보드 추가 (초대받은 대시보드는 isOwner가 false)
+      addDashboardToList(dashboardDetails, false);
+
+      // 4. 초대 목록에서 수락한 초대를 제거
+      setInviteData((prev) => prev.filter((inv) => inv.id !== inviteId));
+
+      console.log('초대 수락 및 대시보드 추가 성공:', dashboardDetails);
+    } catch (error) {
+      console.error('초대 수락 실패:', error);
+    } finally {
+      setIsAcceptingInvitation(false);
+    }
   };
 
+  /**
+   * 거절 시 삭제 -> 초대 '거절'에 대한 api가 따로 없는 것 같아서 그냥 목록에서만 삭제했는데, 맞는지 확인 필요!
+   */
   const handleRejectInvitation = (inviteId: number) => {
+    setInviteData((prev) => prev.filter((inv) => inv.id !== inviteId));
     console.log('초대 거절:', inviteId);
   };
 
@@ -153,14 +227,19 @@ export default function Mydashboard({
 
                 {getCurrentPageData().map((dashboard) => {
                   return (
-                    <Link key={dashboard.id} href='/dashboard/${dashboardId}'>
+                    <Link
+                      key={dashboard.id}
+                      href={`/dashboard/${dashboard.id}`}
+                    >
                       <button className='tablet:w-3xs mobile:w-2xs relative flex h-[60px] w-full cursor-pointer items-center gap-3 rounded-md border border-gray-200 bg-white p-4 hover:bg-gray-100'>
                         <div
                           className={`h-2 w-2 rounded-full ${dashboard.dotcolor}`}
                         />
-                        <span className='text-sm font-bold text-gray-600'>
-                          {dashboard.title}
-                        </span>
+                        <div>
+                          <span className='text-sm font-bold text-gray-600'>
+                            {dashboard.title} {dashboard.isOwner && '👑'}
+                          </span>
+                        </div>
                       </button>
                     </Link>
                   );
@@ -203,7 +282,7 @@ export default function Mydashboard({
 
           {/* 초대받은 대시보드 */}
           <div>
-            {inviteData.invitations.length === 0 ? (
+            {inviteData.length === 0 ? (
               // 초대받은 대시보드가 없을 때
               <div className='tablet:w-lg mobile:w-3xs mt-10 flex h-[280px] w-2xl flex-col rounded-lg border-0 bg-white'>
                 <h2 className='pt-4 pl-[28px] text-lg font-bold text-gray-600 transition-colors hover:text-violet-500'>
@@ -244,8 +323,11 @@ export default function Mydashboard({
                           name='search'
                           placeholder='검색'
                           className='h-[40px] w-full rounded border border-gray-300 pr-4 pl-10 text-sm focus:ring-1 focus:ring-gray-300 focus:outline-none'
+                          value={searchQuery}
+                          onChange={(e) => {
+                            setSearchQuery(e.target.value);
+                          }}
                         />
-                        <ul></ul>
                       </div>
                     </div>
 
@@ -255,7 +337,7 @@ export default function Mydashboard({
                       <div className='mobile:hidden text-center'>수락 여부</div>
                     </div>
                     <div className='flex-1 overflow-y-auto'>
-                      {inviteData.invitations.map((invite) => {
+                      {inviteData.map((invite) => {
                         return (
                           <div
                             key={invite.id}
@@ -306,11 +388,13 @@ export default function Mydashboard({
           </div>
         </div>
       </div>
-      <CreateNewboardModal
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        onSubmit={handleCreateDashboard}
-      />
+      <ModalPortal>
+        <CreateNewboardModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          onSubmit={handleCreateDashboard}
+        />
+      </ModalPortal>
     </>
   );
 }
