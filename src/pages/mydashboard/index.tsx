@@ -2,13 +2,15 @@ import type { GetServerSideProps } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { type ReactNode, useEffect, useState } from 'react';
+import { type ReactNode, useState } from 'react';
 import DashboardLayout from '@/components/layout/dashboard-layout';
 import CreateNewboardModal from '@/components/mydashboard/create-newboard-modal';
 import type { CreateNewboardFormData } from '@/components/mydashboard/type';
+import ModalPortal from '@/components/ui/modal/modal-portal';
 import { createDashBoard, getDashBoard } from '@/lib/dashboards/api';
 import { acceptInvitation, getInvitationList } from '@/lib/invitations/api';
-import type { InvitationType } from '@/lib/invitations/type';
+import type { InvitationType } from '@/lib/dashboards/type';
+import type { InvitationListType } from '@/lib/invitations/type';
 import {
   mydashboardInviteMockData,
   mydashboardMockData,
@@ -386,11 +388,13 @@ export default function Mydashboard({
           </div>
         </div>
       </div>
-      <CreateNewboardModal
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        onSubmit={handleCreateDashboard}
-      />
+      <ModalPortal>
+        <CreateNewboardModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          onSubmit={handleCreateDashboard}
+        />
+      </ModalPortal>
     </>
   );
 }

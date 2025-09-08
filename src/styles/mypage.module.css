@@ -1,0 +1,59 @@
+/* 모바일 패딩 오버라이드 */
+@media (max-width: 375px) {
+  .mobilePaddingOverride {
+    padding: 16px !important;
+  }
+
+  .mobileTitleFont {
+    font-size: 18px !important;
+  }
+
+  .mobileLabelFont {
+    font-size: 14px !important;
+  }
+
+  .mobileInputFont {
+    font-size: 14px !important;
+  }
+
+  .mobileInputFont::placeholder {
+    font-size: 14px !important;
+  }
+
+  .mobileBackButtonFont {
+    font-size: 14px !important;
+  }
+
+  .mobileProfileImage {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    width: 100px !important;
+    height: 100px !important;
+  }
+
+  .mobileProfileForm {
+    margin-left: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  .mobileProfileContainer {
+    height: auto !important;
+    min-height: 366px !important;
+  }
+
+  .mobileEmailField {
+    margin-top: 40px !important;
+  }
+
+  .mobileBottomSpacing {
+    height: 61px !important;
+  }
+}
+
+/* 태블릿 하단 간격 */
+@media (max-width: 1280px) and (min-width: 376px) {
+  .tabletBottomSpacing {
+    height: 136px !important;
+  }
+}

@@ -1,47 +1,72 @@
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 import type { ReactNode } from 'react';
+import Dot from '@/components/ui/side-menu/dot';
+import type { DashboardType } from '@/lib/dashboards/type';
 import { cn } from '@/utils/cn';
+import type { dashboardColorType } from '@/utils/dashboard-color';
+import { getStringFromQuery } from '@/utils/getContextQuery';
 
-export default function DashboardList(): ReactNode {
-  const selectedId = 0;
+interface DashboardListProps {
+  dashboards: DashboardType[];
+}
+export default function DashboardList({
+  dashboards,
+}: DashboardListProps): ReactNode {
+  const router = useRouter();
+  const dashboardId = getStringFromQuery(router.query, 'dashboardId');
+  const handleClickItem = (id: number) => {
+    router.push(`/dashboard/${String(id)}`);
+  };
 
   return (
     <ul>
-      {Array(10)
-        .fill('')
-        .map((num, i) => {
-          return (
-            <li key={crypto.randomUUID()}>
-              <button
-                className={cn(
-                  `mobile:flex-center hover:bg-violet-light active:bg-violet active:*:text-gray-5 flex w-full cursor-pointer gap-2.5 rounded-sm p-3`,
-                  selectedId === i && `bg-violet-light`
-                )}
-                onClick={() => {
-                  console.log('todo');
-                }}
+      {dashboards.map((dashboard) => {
+        return (
+          <li key={dashboard.id}>
+            <button
+              className={cn(
+                `mobile:flex-center hover:bg-gray-5 active:bg-violet-light flex w-full cursor-pointer gap-2.5 rounded-sm p-3`,
+                dashboardId &&
+                  Number(dashboardId) === dashboard.id &&
+                  `bg-violet-light hover:bg-violet-light active:bg-violet-light`
+              )}
+              onClick={() => {
+                handleClickItem(dashboard.id);
+              }}
+            >
+              <span
+                className={`${hexToClassName[dashboard.color as dashboardColorType]} self-center`}
               >
-                <Image
-                  src={'/icon/dot/dot4.svg'}
-                  alt='초록색 점'
-                  className='h-2 w-2 self-center'
-                  width={8}
-                  height={8}
-                />
-                <div className='mobile:hidden flex gap-1.5'>
-                  <span className='text-2lg font-medium'>코드잇</span>
+                <Dot />
+              </span>
+              <div className='mobile:hidden flex gap-1.5'>
+                <span className='text-2lg tablet:text-md font-medium'>
+                  {dashboard.title.length > 20
+                    ? `${dashboard.title.slice(0, 20)}...`
+                    : dashboard.title}
+                </span>
+                {dashboard.createdByMe && (
                   <Image
                     src={'/icon/mydashboard.svg'}
                     className='h-[14px] w-[18px] self-center'
                     alt='왕관 아이콘'
-                    width={18}
-                    height={14}
+                    width={16}
+                    height={12}
                   />
-                </div>
-              </button>
-            </li>
-          );
-        })}
+                )}
+              </div>
+            </button>
+          </li>
+        );
+      })}
     </ul>
   );
 }
+const hexToClassName = {
+  '#7AC555': '*:fill-green',
+  '#760DDE': '*:fill-purple',
+  '#FFA500': '*:fill-orange',
+  '#76A5EA': '*:fill-blue',
+  '#E876EA': '*:fill-pink',
+};

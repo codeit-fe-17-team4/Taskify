@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { type ReactNode, useCallback } from 'react';
+import mypageStyles from '@/styles/mypage.module.css';
 
 interface BackButtonProps {
   /** 클릭 시 이동할 경로 (기본값: 이전 페이지) */
@@ -35,6 +36,7 @@ export default function BackButton({
     >
       <Image src='/icon/goback.svg' alt='go-back' width={10} height={10} />
       <span
+        className={mypageStyles.mobileBackButtonFont}
         style={{
           color: '#333236',
           fontFamily: 'Pretendard',

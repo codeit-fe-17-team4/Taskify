@@ -38,15 +38,15 @@ export function middleware(request: NextRequest): NextResponse {
   return NextResponse.next();
 }
 
-export const config = {
-  matcher: [
-    MYDASHBOARD_PATH,
-    `${MYDASHBOARD_PATH}/:path*`,
-    '/mypage',
-    '/mypage/:path*',
-    DASHBOARD_PATH,
-    `${DASHBOARD_PATH}/:path*`,
-    LOGIN_PATH,
-    '/signup',
-  ],
-};
+// export const config = {
+//   matcher: [
+//     MYDASHBOARD_PATH,
+//     `${MYDASHBOARD_PATH}/:path*`,
+//     '/mypage',
+//     '/mypage/:path*',
+//     DASHBOARD_PATH,
+//     `${DASHBOARD_PATH}/:path*`,
+//     LOGIN_PATH,
+//     '/signup',
+//   ],
+// };

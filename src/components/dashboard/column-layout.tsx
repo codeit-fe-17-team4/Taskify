@@ -1,6 +1,6 @@
-import AddColumnButton from './add-column-button';
-import DashboardColumn from './dashboard-column';
-import type { ColumnType, TaskType } from './type';
+import AddColumnButton from '@/components/dashboard/add-column-button';
+import DashboardColumn from '@/components/dashboard/dashboard-column';
+import type { ColumnType, TaskType } from '@/components/dashboard/type';
 
 interface ColumnLayoutProps {
   columns: ColumnType[];

@@ -2,6 +2,8 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import type { HTMLAttributes, ReactNode } from 'react';
 import { cn } from '@/utils/cn';
 
+export type chipTagColor = 'blue' | 'pink' | 'green' | 'brown' | 'red';
+
 export const ChipVariants = cva(`flex-center gap-1.5 rounded-sm font-normal`, {
   variants: {
     color: {
@@ -29,7 +31,7 @@ interface ChipProps
   /** 사이즈: 'md' | 'lg'*/
   size: 'md' | 'lg';
   /** 색상: 'blue' | 'pink' | 'green' | 'brown' | 'red'*/
-  color: 'blue' | 'pink' | 'green' | 'brown' | 'red';
+  color: chipTagColor;
 }
 export default function ChipTag({
   label,

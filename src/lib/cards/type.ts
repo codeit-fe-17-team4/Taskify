@@ -6,11 +6,11 @@ export const cardSchema = z.object({
   description: z.string(),
   tags: z.array(z.string()),
   dueDate: z.string(),
-  assignee: {
-    profileImageUrl: z.string(),
+  assignee: z.object({
+    profileImageUrl: z.union([z.string(), z.null()]),
     nickname: z.string(),
     id: z.number(),
-  },
+  }),
   imageUrl: z.string(),
   teamId: z.string(),
   columnId: z.number(),
@@ -18,7 +18,7 @@ export const cardSchema = z.object({
   updatedAt: z.string(),
 });
 export const cardListSchema = z.object({
-  cursorId: z.number(),
+  cursorId: z.union([z.number(), z.null()]),
   totalCount: z.number(),
   cards: z.array(cardSchema),
 });
