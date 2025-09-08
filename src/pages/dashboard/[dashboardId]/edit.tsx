@@ -8,10 +8,16 @@ import InviteMemberModal from '@/components/ui/dashboard-header/invite-member-mo
 import {
   dashboardColors,
   dashboardEditMockData,
-  membersEmailMockData,
-  membersNameMockData,
+  membersMockData,
 } from '@/lib/mydashboard-mock-data';
 import { getStringFromQuery } from '@/utils/getContextQuery';
+
+interface Member {
+  id: number;
+  name: string;
+  initial: string;
+  email: string;
+}
 
 export default function MydashboardEdit(): ReactNode {
   const router = useRouter();
@@ -26,16 +32,17 @@ export default function MydashboardEdit(): ReactNode {
     setSelectedColor(color.name);
   };
 
-  const [members, setMembers] = useState(membersNameMockData);
+  const [members, setMembers] = useState<Member[]>(membersMockData);
   const handleDeleteMember = (memberId: number) => {
     setMembers((prevMembers) =>
       prevMembers.filter((member) => member.id !== memberId)
     );
   };
 
-  const [membersEmails, setMembersEmails] = useState(membersEmailMockData);
+  const [invitationEmails, setInvitationEmails] =
+    useState<Member[]>(membersMockData);
   const handleDeleteMemberEmail = (memberId: number) => {
-    setMembersEmails((prevMembersEmails) =>
+    setInvitationEmails((prevMembersEmails) =>
       prevMembersEmails.filter((member) => member.id !== memberId)
     );
   };
@@ -59,6 +66,56 @@ export default function MydashboardEdit(): ReactNode {
 
     return;
   }
+
+  // 구성원 페이지네이션
+  const [membersCurrentPage, setMembersCurrentPage] = useState(1);
+  const membersItemsPerPage = 4;
+  const membersTotalPages = Math.ceil(members.length / membersItemsPerPage);
+
+  const getCurrentMembersPageData = () => {
+    const startIndex = (membersCurrentPage - 1) * membersItemsPerPage;
+    const endIndex = startIndex + membersItemsPerPage;
+
+    return members.slice(startIndex, endIndex);
+  };
+
+  const handleMembersPrevPage = () => {
+    if (membersCurrentPage > 1) {
+      setMembersCurrentPage((prevPage) => prevPage - 1);
+    }
+  };
+
+  const handleMembersNextPage = () => {
+    if (membersCurrentPage < membersTotalPages) {
+      setMembersCurrentPage((prevPage) => prevPage + 1);
+    }
+  };
+
+  // 초대내역 페이지네이션
+  const [invitationsCurrentPage, setInvitationsCurrentPage] = useState(1);
+  const invitationsItemsPerPage = 5;
+  const invitationsTotalPages = Math.ceil(
+    invitationEmails.length / invitationsItemsPerPage
+  );
+
+  const getCurrentInvitationsPageData = () => {
+    const startIndex = (invitationsCurrentPage - 1) * invitationsItemsPerPage;
+    const endIndex = startIndex + invitationsItemsPerPage;
+
+    return invitationEmails.slice(startIndex, endIndex);
+  };
+
+  const handleInvitationsPrevPage = () => {
+    if (invitationsCurrentPage > 1) {
+      setInvitationsCurrentPage((prevPage) => prevPage - 1);
+    }
+  };
+
+  const handleInvitationsNextPage = () => {
+    if (invitationsCurrentPage < invitationsTotalPages) {
+      setInvitationsCurrentPage((prevPage) => prevPage + 1);
+    }
+  };
 
   return (
     <div className='min-h-screen bg-gray-50'>
@@ -138,9 +195,14 @@ export default function MydashboardEdit(): ReactNode {
           <div className='flex items-center justify-between pr-8 pl-8'>
             <h2 className='text-xl font-bold'>구성원</h2>
             <div className='flex items-center justify-end gap-2'>
-              <span className='text-xs'>1 페이지 중 1</span>
+              <p className='text-xs text-gray-600'>
+                {membersTotalPages} 페이지 중 {membersCurrentPage}
+              </p>
               <div className='flex items-center justify-center'>
-                <button className='flex h-7 w-7 cursor-pointer items-center justify-center rounded border border-gray-200 bg-white hover:bg-gray-100'>
+                <button
+                  className='flex h-7 w-7 cursor-pointer items-center justify-center rounded border border-gray-200 bg-white hover:bg-gray-100'
+                  onClick={handleMembersPrevPage}
+                >
                   <Image
                     src='/icon/prevPage.svg'
                     alt='이전 페이지'
@@ -148,7 +210,10 @@ export default function MydashboardEdit(): ReactNode {
                     height={7}
                   />
                 </button>
-                <button className='flex h-7 w-7 cursor-pointer items-center justify-center rounded border border-gray-200 bg-white hover:bg-gray-100'>
+                <button
+                  className='flex h-7 w-7 cursor-pointer items-center justify-center rounded border border-gray-200 bg-white hover:bg-gray-100'
+                  onClick={handleMembersNextPage}
+                >
                   <Image
                     src='/icon/nextPage.svg'
                     alt='다음 페이지'
@@ -168,7 +233,7 @@ export default function MydashboardEdit(): ReactNode {
               </tr>
             </thead>
             <tbody>
-              {members.slice(0, 4).map((member, index, arr) => {
+              {getCurrentMembersPageData().map((member, index, arr) => {
                 const isLastItem = index === arr.length - 1;
 
                 return (
@@ -207,9 +272,14 @@ export default function MydashboardEdit(): ReactNode {
             <h2 className='text-xl font-bold'>초대 내역</h2>
             <div className='mobile:absolute mobile:right-5 mobile:top-5 flex items-center justify-end gap-3'>
               <div className='flex items-center justify-end gap-2'>
-                <span className='text-xs'>1 페이지 중 1</span>
+                <p className='text-xs text-gray-600'>
+                  {invitationsTotalPages} 페이지 중 {invitationsCurrentPage}
+                </p>
                 <div className='flex items-center justify-center'>
-                  <button className='flex h-7 w-7 cursor-pointer items-center justify-center rounded border border-gray-200 bg-white hover:bg-gray-100'>
+                  <button
+                    className='flex h-7 w-7 cursor-pointer items-center justify-center rounded border border-gray-200 bg-white hover:bg-gray-100'
+                    onClick={handleInvitationsPrevPage}
+                  >
                     <Image
                       src='/icon/prevPage.svg'
                       alt='이전 페이지'
@@ -217,7 +287,10 @@ export default function MydashboardEdit(): ReactNode {
                       height={7}
                     />
                   </button>
-                  <button className='flex h-7 w-7 cursor-pointer items-center justify-center rounded border border-gray-200 bg-white hover:bg-gray-100'>
+                  <button
+                    className='flex h-7 w-7 cursor-pointer items-center justify-center rounded border border-gray-200 bg-white hover:bg-gray-100'
+                    onClick={handleInvitationsNextPage}
+                  >
                     <Image
                       src='/icon/nextPage.svg'
                       alt='다음 페이지'
@@ -251,7 +324,7 @@ export default function MydashboardEdit(): ReactNode {
                 </tr>
               </thead>
               <tbody>
-                {membersEmails.slice(0, 5).map((member, index, arr) => {
+                {getCurrentInvitationsPageData().map((member, index, arr) => {
                   const isLastItem = index === arr.length - 1;
 
                   return (

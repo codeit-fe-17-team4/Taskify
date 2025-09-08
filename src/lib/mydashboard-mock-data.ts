@@ -1,3 +1,5 @@
+import { email } from 'zod';
+
 export const DASHBOARD_COLORS = {
   green: 'bg-lime-500',
   purple: 'bg-purple-700',
@@ -160,18 +162,13 @@ export const dashboardColors = [
   { name: 'pink', bgClass: DASHBOARD_COLORS.pink },
 ];
 
-export const membersNameMockData = [
-  { id: 1, name: '정만철', initial: 'J' },
-  { id: 2, name: '김태순', initial: 'K' },
-  { id: 3, name: '최주협', initial: 'C' },
-  { id: 4, name: '윤지현', initial: 'Y' },
-  { id: 5, name: '심예진', initial: 'S' },
-];
-
-export const membersEmailMockData = [
-  { id: 1, email: 'codeitA@codeit.com' },
-  { id: 2, email: 'codeitB@codeit.com' },
-  { id: 3, email: 'codeitC@codeit.com' },
-  { id: 4, email: 'codeitD@codeit.com' },
-  { id: 5, email: 'codeitE@codeit.com' },
+export const membersMockData = [
+  { id: 1, name: '정만철', initial: 'J', email: 'codeitA@codeit.com' },
+  { id: 2, name: '김태순', initial: 'K', email: 'codeitB@codeit.com' },
+  { id: 3, name: '최주협', initial: 'C', email: 'codeitC@codeit.com' },
+  { id: 4, name: '윤지현', initial: 'Y', email: 'codeitD@codeit.com' },
+  { id: 5, name: '심예진', initial: 'S', email: 'codeitE@codeit.com' },
+  { id: 5, name: '권수형', initial: 'S', email: 'codeitF@codeit.com' },
+  { id: 5, name: '박서현', initial: 'S', email: 'codeitG@codeit.com' },
+  { id: 5, name: '이재준', initial: 'S', email: 'codeitH@codeit.com' },
 ];
