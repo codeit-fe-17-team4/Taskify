@@ -2,70 +2,186 @@ import type { GetServerSideProps } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { type ReactNode, useState } from 'react';
+import { type ReactNode, useEffect, useState } from 'react';
 import DashboardLayout from '@/components/layout/dashboard-layout';
 import InviteMemberModal from '@/components/ui/dashboard-header/invite-member-modal';
 import {
-  dashboardColors,
-  dashboardEditMockData,
-  membersMockData,
-} from '@/lib/mydashboard-mock-data';
+  createInvitation,
+  deleteDashBoard,
+  deleteInvitation,
+  getDashBoard,
+  getInvitationList,
+} from '@/lib/dashboards/api';
+import type { Dashboard, InvitationType } from '@/lib/dashboards/type';
+import { deleteMember, getMemberList } from '@/lib/members/api';
+import type { MemberType } from '@/lib/members/type';
+import { dashboardColors } from '@/lib/mydashboard-mock-data';
 import { getStringFromQuery } from '@/utils/getContextQuery';
-
-interface Member {
-  id: number;
-  name: string;
-  initial: string;
-  email: string;
-}
 
 export default function MydashboardEdit(): ReactNode {
   const router = useRouter();
   const dashboardId = getStringFromQuery(router.query, 'dashboardId');
-  // 대시보드 이름 불러오기
-  const currentDashboard = dashboardEditMockData.find(
-    (dashboard) => dashboard.id === Number(dashboardId)
-  );
-
+  // 대시보드 API 연동 정보
+  const [dashboardData, setDashboardData] = useState<Dashboard | null>(null);
+  // 구성원 정보 연동해서 가져와야 함
+  const [members, setMembers] = useState<MemberType[]>([]);
+  // 초대내역 이메일도 가져와야 함
+  const [invitations, setInvitations] = useState<InvitationType[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedColor, setSelectedColor] = useState('');
+
+  // 대시보드 정보 가져오기
+  useEffect(() => {
+    if (!dashboardId) {
+      return;
+    }
+
+    const fetchDashboardData = async () => {
+      try {
+        const data = await getDashBoard(Number(dashboardId));
+
+        if (!data.createdByMe) {
+          alert('대시보드 수정이 불가합니다.');
+          router.push(`/dashboard/${dashboardId}`);
+
+          return;
+        }
+        setDashboardData(data);
+      } catch (error) {
+        console.error('대시보드 정보 불러오기 실패:', error);
+        alert('대시보드 정보를 불러올 수 없습니다.');
+        router.push('/mydashboard');
+      }
+    };
+
+    fetchDashboardData();
+  }, [dashboardId, router]);
+
+  // 구성원 목록 가져오기
+  useEffect(() => {
+    if (!dashboardId) {
+      return;
+    }
+
+    const fetchMembers = async () => {
+      try {
+        const data = await getMemberList({ dashboardId: Number(dashboardId) });
+
+        setMembers(data.members);
+      } catch (error) {
+        console.error('구성원 목록 불러오기 실패:', error);
+      }
+    };
+
+    fetchMembers();
+  }, [dashboardId]);
+
+  // 초대내역 가져오기
+  useEffect(() => {
+    if (!dashboardId) {
+      return;
+    }
+
+    const fetchInvitationEmails = async () => {
+      try {
+        const data = await getInvitationList({
+          dashboardId: Number(dashboardId),
+        });
+
+        setInvitations(data.invitations);
+      } catch (error) {
+        console.error('초대내역 불러오기 실패:', error);
+      }
+    };
+
+    fetchInvitationEmails();
+  }, [dashboardId]);
+
   const handleColorChange = (color: { name: string; bgClass: string }) => {
     setSelectedColor(color.name);
   };
 
-  const [members, setMembers] = useState<Member[]>(membersMockData);
-  const handleDeleteMember = (memberId: number) => {
-    setMembers((prevMembers) =>
-      prevMembers.filter((member) => member.id !== memberId)
-    );
+  /**
+   * 구성원 삭제 api 연동
+   */
+  const handleDeleteMember = async (memberId: number) => {
+    try {
+      await deleteMember(memberId);
+      alert('구성원이 삭제되었습니다.');
+      // 목록 새로고침 - 삭제되면서 목록이 보여야 함
+      setMembers((prev) => prev.filter((member) => member.id !== memberId));
+    } catch (error) {
+      console.error('구성원 삭제 실패:', error);
+      alert('구성원 삭제에 실패했습니다.');
+    }
   };
 
-  const [invitationEmails, setInvitationEmails] =
-    useState<Member[]>(membersMockData);
-  const handleDeleteMemberEmail = (memberId: number) => {
-    setInvitationEmails((prevMembersEmails) =>
-      prevMembersEmails.filter((member) => member.id !== memberId)
-    );
+  /**
+   * 초대내역 삭제(취소) api 연동
+   */
+  const handleDeleteInvitation = async (invitationId: number) => {
+    if (!dashboardId) {
+      return;
+    }
+    try {
+      await deleteInvitation({
+        dashboardId: Number(dashboardId),
+        invitationId,
+      });
+      alert('초대를 취소했습니다.');
+      // 목록 새로고침
+      setInvitations((prev) =>
+        prev.filter((invitation) => invitation.id !== invitationId)
+      );
+    } catch (error) {
+      console.error('초대내역 삭제 실패:', error);
+      alert('초대 취소에 실패했습니다.');
+    }
   };
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
   };
-
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
-
-  const handleSubmitInviteMember = () => {
-    handleCloseModal();
+  /**
+   * 초대
+   */
+  const handleSubmitInviteMember = async (formData: { email: string }) => {
+    if (!dashboardId) {
+      return;
+    }
+    try {
+      await createInvitation({ id: Number(dashboardId), body: formData });
+      alert('성공적으로 초대했습니다.');
+      handleCloseModal();
+    } catch (error) {
+      console.error('초대 실패:', error);
+      alert('초대에 실패했습니다.');
+    }
   };
 
-  if (!dashboardId) {
-    router.push('/');
+  const [deletingDashboard, setDeletingDashboard] = useState(false);
+  const handleDeleteDashboard = async () => {
+    if (!dashboardId || deletingDashboard) {
+      return;
+    }
 
-    return;
-  }
+    if (window.confirm('정말로 대시보드를 삭제하시겠습니까?')) {
+      try {
+        setDeletingDashboard(true);
+        await deleteDashBoard(Number(dashboardId));
+        alert('대시보드가 삭제되었습니다.');
+        router.push('/mydashboard');
+      } catch (error) {
+        console.error('대시보드 삭제 실패:', error);
+        alert('대시보드 삭제에 실패했습니다. 다시 시도해주세요.');
+      } finally {
+        setDeletingDashboard(false);
+      }
+    }
+  };
 
   // 구성원 페이지네이션
   const [membersCurrentPage, setMembersCurrentPage] = useState(1);
@@ -95,14 +211,14 @@ export default function MydashboardEdit(): ReactNode {
   const [invitationsCurrentPage, setInvitationsCurrentPage] = useState(1);
   const invitationsItemsPerPage = 5;
   const invitationsTotalPages = Math.ceil(
-    invitationEmails.length / invitationsItemsPerPage
+    invitations.length / invitationsItemsPerPage
   );
 
   const getCurrentInvitationsPageData = () => {
     const startIndex = (invitationsCurrentPage - 1) * invitationsItemsPerPage;
     const endIndex = startIndex + invitationsItemsPerPage;
 
-    return invitationEmails.slice(startIndex, endIndex);
+    return invitations.slice(startIndex, endIndex);
   };
 
   const handleInvitationsPrevPage = () => {
@@ -134,7 +250,7 @@ export default function MydashboardEdit(): ReactNode {
 
         {/* 대시보드 정보 수정 */}
         <div className='tablet:min-w-lg mobile:min-w-2xs tablet:w-full mobile:w-full mt-8 h-[340px] w-[620px] rounded-lg bg-white p-7'>
-          <h2 className='text-xl font-bold'>{currentDashboard?.name}</h2>
+          <h2 className='text-xl font-bold'>{dashboardData?.title}</h2>
           <form className='mt-4 space-y-4'>
             {/* 이름 수정 */}
             <div>
@@ -145,7 +261,7 @@ export default function MydashboardEdit(): ReactNode {
                 id='name'
                 name='name'
                 type='text'
-                defaultValue={currentDashboard?.name}
+                defaultValue={dashboardData?.title}
                 className='mt-3 block h-12 w-full rounded-md border border-gray-300 px-4 focus:border-violet-500 focus:ring-violet-500 focus:outline-none'
               />
             </div>
@@ -244,9 +360,9 @@ export default function MydashboardEdit(): ReactNode {
                     <td className='py-3'>
                       <div className='flex items-center gap-2'>
                         <div className='flex h-5 w-5 items-center justify-center rounded-full bg-sky-200 text-sm text-white'>
-                          {member.initial}
+                          {member.nickname.slice(0, 1).toUpperCase()}
                         </div>
-                        <span>{member.name}</span>
+                        <span>{member.nickname}</span>
                       </div>
                     </td>
                     <td className='py-3'>
@@ -324,35 +440,37 @@ export default function MydashboardEdit(): ReactNode {
                 </tr>
               </thead>
               <tbody>
-                {getCurrentInvitationsPageData().map((member, index, arr) => {
-                  const isLastItem = index === arr.length - 1;
+                {getCurrentInvitationsPageData().map(
+                  (invitation, index, arr) => {
+                    const isLastItem = index === arr.length - 1;
 
-                  return (
-                    <tr
-                      key={member.id}
-                      className={`flex items-center justify-between pr-8 pl-8 ${
-                        !isLastItem ? 'border-b border-gray-200' : ''
-                      }`}
-                    >
-                      <td className='py-3'>
-                        <div className='flex items-center gap-2'>
-                          <span>{member.email}</span>
-                        </div>
-                      </td>
-                      <td className='py-3'>
-                        <button
-                          type='button'
-                          className='mobile:w-12 w-16 cursor-pointer rounded border border-gray-200 px-3 py-1 text-xs text-violet-500 transition-colors hover:bg-gray-50'
-                          onClick={() => {
-                            handleDeleteMemberEmail(member.id);
-                          }}
-                        >
-                          취소
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
+                    return (
+                      <tr
+                        key={invitation.id}
+                        className={`flex items-center justify-between pr-8 pl-8 ${
+                          !isLastItem ? 'border-b border-gray-200' : ''
+                        }`}
+                      >
+                        <td className='py-3'>
+                          <div className='flex items-center gap-2'>
+                            <span>{invitation.invitee.email}</span>
+                          </div>
+                        </td>
+                        <td className='py-3'>
+                          <button
+                            type='button'
+                            className='mobile:w-12 w-16 cursor-pointer rounded border border-gray-200 px-3 py-1 text-xs text-violet-500 transition-colors hover:bg-gray-50'
+                            onClick={() => {
+                              handleDeleteInvitation(invitation.id);
+                            }}
+                          >
+                            취소
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  }
+                )}
               </tbody>
             </table>
           </div>
@@ -360,13 +478,12 @@ export default function MydashboardEdit(): ReactNode {
         {/* 대시보드 삭제 */}
         <div>
           <button
-            type='submit'
+            type='button'
             className='mobile:max-w-2xs my-6 h-12 w-xs cursor-pointer rounded-sm border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-100'
-            onClick={() => {
-              alert('대시보드를 삭제하시겠습니까?');
-            }}
+            disabled={deletingDashboard}
+            onClick={handleDeleteDashboard}
           >
-            대시보드 삭제하기
+            {deletingDashboard ? '삭제 중...' : '대시보드 삭제하기'}
           </button>
         </div>
         <InviteMemberModal
