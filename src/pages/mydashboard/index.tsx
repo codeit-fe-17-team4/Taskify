@@ -1,4 +1,3 @@
-import type { GetServerSideProps } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -151,6 +150,8 @@ export default function Mydashboard({
         title: formData.title,
         color: CodeColor,
       });
+
+      console.log(newDashboard.title, CodeColor);
 
       // 공통 함수로 대시보드 추가 , 내가 생성한 거니까 isOwner: true;
       addDashboardToList(newDashboard, true);
@@ -448,56 +449,6 @@ export default function Mydashboard({
     </>
   );
 }
-/**
- * 서버 사이드에서 실행되는 함수 - 페이지 렌더링 전에 로그인 상태 확인
- */
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { req } = context;
-
-  // HttpOnly 쿠키에서 access_token 확인
-  const accessToken = req.cookies.access_token;
-
-  if (!accessToken) {
-    return {
-      redirect: {
-        destination: '/login',
-        permanent: false,
-      },
-    };
-  }
-
-  let initialInvitations: InvitationType[] = [];
-
-  try {
-    // 서버 사이드에서는 document.cookie에 접근할 수 없으므로,
-    // context에서 직접 토큰을 가져와 API를 호출해야 합니다.   <-- 이 부분은 무슨 말인지 모르겠으나 오류가 나서 확인해보니 이렇다고 합니다 .. ㅠㅠ
-    const res = await fetch(
-      `https://sp-taskify-api.vercel.app/17-4/invitations`,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    );
-
-    if (res.ok) {
-      const invitationData = await res.json();
-
-      initialInvitations = invitationData.invitations || [];
-    } else {
-      console.error('Failed to fetch invitations on server:', res.status);
-    }
-  } catch (error) {
-    console.error('Error in getServerSideProps fetching invitations:', error);
-  }
-
-  return {
-    props: {
-      isLoggedIn: true,
-      initialInvitations,
-    },
-  };
-};
 
 Mydashboard.getLayout = function getLayout(page: ReactNode) {
   return <DashboardLayout>{page}</DashboardLayout>;
