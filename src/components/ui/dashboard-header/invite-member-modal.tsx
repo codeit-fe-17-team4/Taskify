@@ -1,40 +1,61 @@
-import { type ReactNode, useState } from 'react';
-import type { InviteMemberFormData } from '@/components/mydashboard/type';
+import { type ChangeEvent, type ReactNode, useState } from 'react';
 import InviteMemberForm from '@/components/ui/dashboard-header/invite-member-form';
 import ButtonModal from '@/components/ui/modal/modal-button';
+import { useMutate } from '@/hooks/useAsync';
 import { useModalKeyHandler } from '@/hooks/useModal';
+import { CustomError } from '@/lib/custom-error';
+import { createInvitation } from '@/lib/dashboards/api';
 
 interface InviteMemberModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (formData: InviteMemberFormData) => void;
+  dashboardId: string | null;
 }
-
 export default function InviteMemberModal({
   isOpen,
   onClose,
-  onSubmit,
+  dashboardId,
 }: InviteMemberModalProps): ReactNode {
-  const initialFormData: InviteMemberFormData = { nickname: '', email: '' };
+  const [email, setEmail] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const { mutate } = useMutate({
+    asyncFunction: () => {
+      return createInvitation({
+        id: Number(dashboardId),
+        body: {
+          email,
+        },
+      });
+    },
+  });
 
-  const [formData, setFormData] =
-    useState<InviteMemberFormData>(initialFormData);
+  useModalKeyHandler(isOpen, onClose);
 
-  const handleClose = () => {
-    setFormData(initialFormData); // 초기화
-    onClose();
+  const emailRegex = /^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]+$/;
+  const isEmailValid = emailRegex.test(email);
+  const isSubmitDisabled = !isEmailValid;
+
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
   };
-
-  useModalKeyHandler(isOpen, handleClose);
+  const validateEmail = () => {
+    if (!emailRegex.test(email)) {
+      setErrorMessage('이메일 형식으로 입력해주세요');
+    } else {
+      setErrorMessage('');
+    }
+  };
 
   const handleSubmit = () => {
-    onSubmit(formData);
-    handleClose();
+    if (!dashboardId || !email) {
+      return;
+    }
+    mutate()?.catch((error) => {
+      if (error instanceof CustomError && error.details) {
+        setErrorMessage(error.details.message);
+      }
+    });
   };
-
-  // 간단한 이메일 형식 유효성 검사
-  const isEmailValid = /^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]+$/.test(formData.email);
-  const isSubmitDisabled = !isEmailValid;
 
   return (
     <ButtonModal
@@ -44,10 +65,15 @@ export default function InviteMemberModal({
       cancelText='취소'
       isSubmitDisabled={isSubmitDisabled}
       width='w-[32rem]'
-      onClose={handleClose}
+      errorMessage={errorMessage}
+      onClose={onClose}
       onSubmit={handleSubmit}
     >
-      <InviteMemberForm formData={formData} setFormData={setFormData} />
+      <InviteMemberForm
+        email={email}
+        onChange={handleInputChange}
+        onBlur={validateEmail}
+      />
     </ButtonModal>
   );
 }
