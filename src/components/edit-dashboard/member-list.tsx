@@ -1,13 +1,16 @@
 // 구성원 목록 조회 및 삭제 UI 컴포넌트
 
 import Image from 'next/image';
-import type { MemberListType as MemberType } from '@/lib/members/type';
+import type { MemberListType } from '@/lib/members/type';
+
+// 접근을 하지 못하고 있길래 빼봄!
+type Member = MemberListType['members'][number];
 
 interface MemberListProps {
-  members: MemberType[];
+  members: Member[];
   currentPage: number;
   totalPages: number;
-  getCurrentPageData: () => MemberType[];
+  getCurrentPageData: () => Member[];
   onDeleteMember: (memberId: number) => void;
   onPrevPage: () => void;
   onNextPage: () => void;
@@ -22,42 +25,6 @@ export default function MemberList({
   onPrevPage,
   onNextPage,
 }: MemberListProps) {
-  // const [membersCurrentPage, setMembersCurrentPage] = useState(1);
-  // const membersItemsPerPage = 4;
-
-  // const membersTotalPages = Math.ceil(members.length / membersItemsPerPage);
-
-  // const getCurrentMembersPageData = () => {
-  //   const start = (membersCurrentPage - 1) * membersItemsPerPage;
-
-  //   return members.slice(start, start + membersItemsPerPage);
-  // };
-
-  // const handleMembersPrevPage = () => {
-  //   if (membersCurrentPage > 1) {
-  //     setMembersCurrentPage((prevPage) => prevPage - 1);
-  //   }
-  // };
-
-  // const handleMembersNextPage = () => {
-  //   if (membersCurrentPage < membersTotalPages) {
-  //     setMembersCurrentPage((prevPage) => prevPage + 1);
-  //   }
-  // };
-
-  // const handleDeleteMember = async (memberId: number) => {
-  //   try {
-  //     await deleteMember(memberId);
-  //     alert('구성원이 삭제되었습니다.');
-  //     // 목록 새로고침 - 삭제되면서 목록이 보여야 함
-  //     setMembers((prev) => prev.filter((member) => member.id !== memberId));
-  //   } catch (error) {
-  //     console.error('구성원 삭제 실패:', error);
-  //     setMembers(prev);
-  //     alert('구성원 삭제에 실패했습니다.');
-  //   }
-  // };
-
   return (
     <div className='tablet:w-full mobile:w-full tablet:min-w-lg mobile:min-w-2xs mt-8 h-[340px] w-[620px] rounded-lg bg-white pt-5'>
       <div className='flex items-center justify-between pr-8 pl-8'>

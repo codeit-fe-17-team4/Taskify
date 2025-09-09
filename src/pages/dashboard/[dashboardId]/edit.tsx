@@ -15,19 +15,23 @@ import {
   getDashBoard,
   getInvitationList,
 } from '@/lib/dashboards/api';
-import type { Dashboard, InvitationType } from '@/lib/dashboards/type';
-import { deleteMember, getMemberList } from '@/lib/members/api';
-import type { MemberType } from '@/lib/members/type';
+import type { DashboardType, InvitationType } from '@/lib/dashboards/type';
+import { getMemberList } from '@/lib/members/api';
+import type { MemberListType } from '@/lib/members/type';
 import { getStringFromQuery } from '@/utils/getContextQuery';
+
+type Member = MemberListType['members'][number];
 
 export default function MydashboardEdit(): ReactNode {
   const router = useRouter();
   const dashboardId = getStringFromQuery(router.query, 'dashboardId');
   // 대시보드 API 연동 정보
-  const [dashboardData, setDashboardData] = useState<Dashboard | null>(null);
+  const [dashboardData, setDashboardData] = useState<DashboardType | null>(
+    null
+  );
   const [updating, setUpdating] = useState(false);
   // 구성원 정보 연동해서 가져와야 함
-  const [members, setMembers] = useState<MemberType[]>([]);
+  const [members, setMembers] = useState<Member[]>([]);
   // 초대내역 이메일도 가져와야 함
   const [invitations, setInvitations] = useState<InvitationType[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -87,8 +91,16 @@ export default function MydashboardEdit(): ReactNode {
 
     const fetchInvitationEmails = async () => {
       try {
+        console.log('getInvitationList params:', {
+          dashboardId: Number(dashboardId),
+          page: 1,
+          size: 10,
+        });
+
         const data = await getInvitationList({
           dashboardId: Number(dashboardId),
+          page: 1,
+          size: 10,
         });
 
         setInvitations(data.invitations);
@@ -231,17 +243,19 @@ export default function MydashboardEdit(): ReactNode {
   return (
     <div className='min-h-screen bg-gray-50'>
       <div className='mr-120 ml-5 min-w-2xs pt-5'>
-        <Link href={`/dashboard/${dashboardId}`}>
-          <div className='flex w-full cursor-pointer items-center gap-2'>
-            <Image
-              src='/icon/goback.svg'
-              alt='go-back'
-              width={10}
-              height={10}
-            />
-            <span>돌아가기</span>
-          </div>
-        </Link>
+        {dashboardId && (
+          <Link href={`/dashboard/${dashboardId}`}>
+            <div className='flex w-full cursor-pointer items-center gap-2'>
+              <Image
+                src='/icon/goback.svg'
+                alt='go-back'
+                width={10}
+                height={10}
+              />
+              <span>돌아가기</span>
+            </div>
+          </Link>
+        )}
 
         {/* 대시보드 정보 수정 */}
         {dashboardData && (
@@ -283,184 +297,15 @@ export default function MydashboardEdit(): ReactNode {
         />
         {/* 초대내역 */}
         <InvitationListCard
-          invitations={invitations}
           currentPage={invitationsCurrentPage}
           totalPages={invitationsTotalPages}
           getCurrentPageData={getCurrentInvitationsPageData}
-          onDeleteInvitation={handleDeleteInvitation}
+          onDeleteMember={handleDeleteInvitation}
           onPrevPage={handleInvitationsPrevPage}
           onNextPage={handleInvitationsNextPage}
           onOpenModal={handleOpenModal}
         />
-        {/* 구성원 */}
-        {/* <div className='tablet:w-full mobile:w-full tablet:min-w-lg mobile:min-w-2xs mt-8 h-[340px] w-[620px] rounded-lg bg-white pt-5'>
-          <div className='flex items-center justify-between pr-8 pl-8'>
-            <h2 className='text-xl font-bold'>구성원</h2>
-            <div className='flex items-center justify-end gap-2'>
-              <p className='text-xs text-gray-600'>
-                {membersTotalPages} 페이지 중 {membersCurrentPage}
-              </p>
-              <div className='flex items-center justify-center'>
-                <button
-                  className='flex h-7 w-7 cursor-pointer items-center justify-center rounded border border-gray-200 bg-white hover:bg-gray-100'
-                  onClick={handleMembersPrevPage}
-                >
-                  <Image
-                    src='/icon/prevPage.svg'
-                    alt='이전 페이지'
-                    width={7}
-                    height={7}
-                  />
-                </button>
-                <button
-                  className='flex h-7 w-7 cursor-pointer items-center justify-center rounded border border-gray-200 bg-white hover:bg-gray-100'
-                  onClick={handleMembersNextPage}
-                >
-                  <Image
-                    src='/icon/nextPage.svg'
-                    alt='다음 페이지'
-                    width={7}
-                    height={7}
-                  />
-                </button>
-              </div>
-            </div>
-          </div>
-          <table className='mt-5 w-full text-center text-xs'>
-            <thead>
-              <tr>
-                <th className='pr-8 pl-8 text-start font-normal text-gray-400'>
-                  이름
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {getCurrentMembersPageData().map((member, index, arr) => {
-                const isLastItem = index === arr.length - 1;
 
-                return (
-                  <tr
-                    key={member.id}
-                    className={`flex items-center justify-between pr-8 pl-8 ${!isLastItem ? 'border-b border-gray-200' : ''}`}
-                  >
-                    <td className='py-3'>
-                      <div className='flex items-center gap-2'>
-                        <div className='flex h-5 w-5 items-center justify-center rounded-full bg-sky-200 text-sm text-white'>
-                          {member.nickname.slice(0, 1).toUpperCase()}
-                        </div>
-                        <span>{member.nickname}</span>
-                      </div>
-                    </td>
-                    <td className='py-3'>
-                      <button
-                        type='button'
-                        className='mobile:w-12 w-15.5 cursor-pointer rounded border border-gray-200 px-3 py-1 text-xs text-violet-500 transition-colors hover:bg-gray-50'
-                        onClick={() => {
-                          handleDeleteMember(member.id);
-                        }}
-                      >
-                        삭제
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div> */}
-        {/* 초대 내역 */}
-        {/* <div className='tablet:min-w-lg mobile:min-w-2xs tablet:w-full mobile:relative mt-8 h-[400px] w-[620px] rounded-lg bg-white pt-5'>
-          <div className='flex items-center justify-between pr-8 pl-8'>
-            <h2 className='text-xl font-bold'>초대 내역</h2>
-            <div className='mobile:absolute mobile:right-5 mobile:top-5 flex items-center justify-end gap-3'>
-              <div className='flex items-center justify-end gap-2'>
-                <p className='text-xs text-gray-600'>
-                  {invitationsTotalPages} 페이지 중 {invitationsCurrentPage}
-                </p>
-                <div className='flex items-center justify-center'>
-                  <button
-                    className='flex h-7 w-7 cursor-pointer items-center justify-center rounded border border-gray-200 bg-white hover:bg-gray-100'
-                    onClick={handleInvitationsPrevPage}
-                  >
-                    <Image
-                      src='/icon/prevPage.svg'
-                      alt='이전 페이지'
-                      width={7}
-                      height={7}
-                    />
-                  </button>
-                  <button
-                    className='flex h-7 w-7 cursor-pointer items-center justify-center rounded border border-gray-200 bg-white hover:bg-gray-100'
-                    onClick={handleInvitationsNextPage}
-                  >
-                    <Image
-                      src='/icon/nextPage.svg'
-                      alt='다음 페이지'
-                      width={7}
-                      height={7}
-                    />
-                  </button>
-                </div>
-              </div>
-              <button
-                className='mobile:absolute mobile:right-3 mobile:top-10 flex cursor-pointer items-center gap-2 rounded-sm bg-violet-500 py-1 pr-2 pl-2 text-white hover:bg-violet-600'
-                onClick={handleOpenModal}
-              >
-                <Image
-                  src='/icon/addmember.svg'
-                  alt='add-member'
-                  width={20}
-                  height={20}
-                />
-                <span className='text-xs'>초대하기</span>
-              </button>
-            </div>
-          </div>
-          <div>
-            <table className='mt-5 w-full text-center text-xs'>
-              <thead>
-                <tr>
-                  <th className='pr-8 pl-8 text-start font-normal text-gray-400'>
-                    이메일
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {getCurrentInvitationsPageData().map(
-                  (invitation, index, arr) => {
-                    const isLastItem = index === arr.length - 1;
-
-                    return (
-                      <tr
-                        key={invitation.id}
-                        className={`flex items-center justify-between pr-8 pl-8 ${
-                          !isLastItem ? 'border-b border-gray-200' : ''
-                        }`}
-                      >
-                        <td className='py-3'>
-                          <div className='flex items-center gap-2'>
-                            <span>{invitation.invitee.email}</span>
-                          </div>
-                        </td>
-                        <td className='py-3'>
-                          <button
-                            type='button'
-                            className='mobile:w-12 w-16 cursor-pointer rounded border border-gray-200 px-3 py-1 text-xs text-violet-500 transition-colors hover:bg-gray-50'
-                            onClick={() => {
-                              handleDeleteInvitation(invitation.id);
-                            }}
-                          >
-                            취소
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  }
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div> */}
         {/* 대시보드 삭제 */}
         <div>
           <button
