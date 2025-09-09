@@ -30,7 +30,7 @@ Taskify는 팀 협업을 위한 칸반 보드 기반 프로젝트/일정 관리 
 | 박서현 | 대시보드      | 대시보드 상세, 할 일 모달, DnD, 할 일 카드 CRUD                                             |
 | 권수형 | 공통 코드     | CSS·fetch 세팅, 공용 컴포넌트(Button/Chip/Input/Header/Sidebar), 공통 hooks, 칼럼/초대 모달 |
 
-GitHub: @ParkSohyunee @HaydenDevK @yunajoe @Hongjw030
+
 
 ## ✅ 조건사항 충족 내역 (요약)
 
@@ -109,27 +109,7 @@ GitHub: @ParkSohyunee @HaydenDevK @yunajoe @Hongjw030
 - **Cards**: POST /cards, PUT/DELETE /cards/:id
 - **Comments**: POST /comments, PUT/DELETE /comments/:id
 
-## 🎨 테마 시스템
 
-useTheme(로컬 관리) + 조건부 클래스 조합으로 라이트/다크 전환
-
-토큰 기반 스타일(글로벌 CSS 변수/유틸리티)
-
-테마별 이미지 자동 전환
-
-```typescript
-// 다크 예시
-const DARK_THEME_COLORS = {
-  INPUT_BORDER: '#524F5B',
-  INPUT_BACKGROUND: '#1B1A1F',
-  TEXT_SECONDARY: '#D6D5D9',
-  BUTTON_SECONDARY: '#3C3C41',
-  BORDER: '#524F5B',
-  CONTAINER_BACKGROUND: '#262629',
-};
-
-const FOCUS_COLORS = { DARK: '#10671F' };
-```
 
 ## 🗂️ 폴더 구조
 
@@ -178,25 +158,43 @@ ManageColumnForm
 
 유효성/에러 처리, 성공 시 리다이렉트
 
-<!-- 이미지: 로그인 --> <!-- 이미지: 회원가입 --> <!-- 이미지: 로그인 실패/회원가입 실패 에러 -->
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/65461ecb-7d32-4646-a43f-a979a7d815da" />
+<img width="1920" height="1211" alt="image" src="https://github.com/user-attachments/assets/e31c7491-afb7-47f6-8b1b-82591a103db3" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/70cdcc10-e4e2-4f7b-9129-8b213e48ee45" />
+<img width="1920" height="1211" alt="image" src="https://github.com/user-attachments/assets/ffc33fa7-3bb4-459d-bd54-69b2de592e64" />
+
+
 
 ### 나의 대시보드
 
-내가 만든 대시보드(👑), 초대받은 대시보드(무한 스크롤/검색/수락·거절)
+내가 만든 대시보드(👑), 초대받은 대시보드
 
-<!-- 이미지: 마이 대시보드 초기 --> <!-- 이미지: 대시보드 생성 모달 --> <!-- 이미지: 초대 수락/거절 -->
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/7e64cc03-969a-46e5-b598-3fe3a4a218d8" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/f4580dda-8f31-4e58-aeb0-5ec8888d3b59" />
+
 
 ### 대시보드 상세 / 수정
 
 컬럼/카드, 멤버, 관리/초대, 카드 상세/댓글
 
-<!-- 이미지: 대시보드 상세 --> <!-- 이미지: 컬럼 추가/수정 모달 --> <!-- 이미지: 카드 상세(댓글) --> <!-- 이미지: 대시보드 edit(구성원/초대내역) -->
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/abb45db1-1d83-4ecf-b9f2-bf1d1d9d10b7" />
+ <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/4eb153b6-1451-4ee3-9e74-7fc5eb76263b" />
+ <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/d15e3771-ed19-45ad-a855-6ddcd5057493" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/2ce79225-1f4e-48e8-9faa-ea3d97badaa0" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/d21c65fd-af75-4305-8d2a-3d1db6b14dc0" />
+<img width="1920" height="1550" alt="image" src="https://github.com/user-attachments/assets/677e8024-be38-48ca-bf55-8ac9e2ef3b80" />
+<img width="1920" height="1453" alt="image" src="https://github.com/user-attachments/assets/1450db00-5b34-47f8-8464-4510f8881902" />
+
+
+
+
 
 ### 마이 페이지
 
 프로필 편집, 비밀번호 변경
 
-<!-- 이미지: 마이페이지 프로필 --> <!-- 이미지: 비밀번호 변경 -->
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/ec42c7db-fb20-4afc-ba6e-f7fe552dc242" />
+
 
 ## 🚀 시작하기
 
@@ -211,7 +209,7 @@ yarn install   # 또는 npm install
 yarn dev       # 또는 npm run dev
 ```
 
-### 빌드/테스트/스토리북(선택)
+### 빌드/테스트/스토리북
 
 ```bash
 yarn build
@@ -239,25 +237,9 @@ NEXT_PUBLIC_API_URL=http://localhost:3000/api
   금지
 - **포맷팅**: 저장 시 Prettier/ESLint 자동수정, Tailwind IntelliSense
 
-## 🧪 입력 유효성 & UX(발췌)
 
-### 로그인/회원가입
-
-- 이메일·비밀번호 형식 검증, 포커스 아웃 시 에러 메시지
-- 비밀번호 토글(눈 아이콘), 중복 이메일 모달
-- 성공 시 리다이렉트(/mydashboard) 및 토큰 발급(요구사항)
-
-### 마이페이지
-
-- 프로필 이미지 업로드, 닉네임 수정
-- 비밀번호 변경: 일치/불일치 검증, 에러 문구, 성공 처리
-
-### 대시보드/카드/댓글
-
-- 모달 기반 CRUD, 무한 스크롤(요구 영역), 페이지네이션(요구 영역)
-
-## 📚 (선택) 주요 라이브러리
+## 📚 주요 기술
 
 - next / react / typescript / tailwindcss
 - eslint / prettier
-- (옵션) @storybook/react, vitest
+-  @storybook/react, vitest
