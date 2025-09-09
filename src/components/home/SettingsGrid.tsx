@@ -62,7 +62,7 @@ export default function SettingsGrid(): ReactElement {
               className='w-full max-w-[378px] max-[375px]:max-w-[343px]'
             >
               {/* 썸네일 영역 378×260 안에 실제 이미지 크기 중앙 배치 */}
-              <div className='flex h-[260px] w-full items-center justify-center overflow-hidden rounded-t-[8px] bg-gray-600 max-[375px]:h-[235.93px]'>
+              <div className='flex h-[260px] w-full items-center justify-center overflow-hidden rounded-t-[8px] bg-[#4B4B4B] max-[375px]:h-[235.93px]'>
                 <Image
                   src={it.img}
                   alt={it.alt}
@@ -97,7 +97,7 @@ export default function SettingsGrid(): ReactElement {
                   })()}
                 />
               </div>
-              <div className='h-[124px] w-full rounded-b-[8px] bg-gray-800 px-8 py-6 max-[375px]:h-[112.52px]'>
+              <div className='h-[124px] w-full rounded-b-[8px] bg-[#171717] px-8 py-6 max-[375px]:h-[112.52px]'>
                 <h4 className='mb-3 text-[18px] leading-[21px] font-bold text-white max-[744px]:text-[16px] max-[744px]:leading-[19px]'>
                   {it.title}
                 </h4>

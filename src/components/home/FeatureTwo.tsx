@@ -4,7 +4,7 @@ import type { ReactElement } from 'react';
 
 export default function FeatureTwo(): ReactElement {
   return (
-    <section className='relative mx-auto mt-[90px] h-[600px] w-full max-w-[1200px] bg-gray-800 max-[744px]:mx-4 max-[744px]:mt-[90px] max-[744px]:h-[972px] max-[744px]:max-w-[664px] max-[744px]:pb-[240px] max-[375px]:mt-[59px] max-[375px]:h-[686px] max-[375px]:w-[343px]'>
+    <section className='relative mx-auto mt-[90px] h-[600px] w-full max-w-[1200px] bg-[#171717] max-[744px]:mx-4 max-[744px]:mt-[90px] max-[744px]:h-[972px] max-[744px]:max-w-[664px] max-[744px]:pb-[240px] max-[375px]:mt-[59px] max-[375px]:h-[686px] max-[375px]:w-[343px]'>
       {/* 배경 이미지 */}
       <Image
         src='/auth/image/landing2.svg'
