@@ -75,6 +75,16 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 }
+@utility flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+@utility skeleton {
+  animation: var(--animate-pulse);
+  background-color: var(--color-gray-3);
+}
+
 html,
 body {
   background: var(--background);
