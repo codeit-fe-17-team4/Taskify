@@ -5,13 +5,14 @@
 
 🔗 배포 주소: https://taskify-schedule.vercel.app/
 
-<!-- 이미지: 랜딩 페이지 PC --> <!-- 이미지: 랜딩 페이지 Mobile -->
+<img width="800" alt="랜딩 페이지 PC" src="https://github.com/user-attachments/assets/007e689d-7a47-47ce-98af-2e349d23d6fa" />
+
+<img width="400" alt="랜딩 페이지 Mobile" src="https://github.com/user-attachments/assets/007e689d-7a47-47ce-98af-2e349d23d6fa" />
 
 ## 📌 프로젝트 개요
 
 Taskify는 팀 협업을 위한 칸반 보드 기반 프로젝트/일정 관리 도구입니다. 대시보드
-단위 협업, 컬럼/카드(태스크) 관리, 팀원 초대, 댓글 소통을 지원하며 라이트/다크
-테마와 반응형 UI를 제공합니다.
+단위 협업, 컬럼/카드(태스크) 관리, 팀원 초대, 댓글 소통을 지원하며 반응형 UI를 제공합니다.
 
 ### 주요 특징
 
@@ -19,7 +20,6 @@ Taskify는 팀 협업을 위한 칸반 보드 기반 프로젝트/일정 관리 
 - 칼럼/카드(태스크) CRUD, 태그/담당자/마감일/이미지 첨부
 - 초대 수락/거절, 구성원/초대 내역 관리
 - 댓글 작성/수정/삭제, (요구사항 기준) 무한 스크롤 지원 영역
-- 라이트/다크 테마 전환 및 테마별 이미지 전환
 
 ## 👥 팀원 소개 (R&R)
 
@@ -29,7 +29,6 @@ Taskify는 팀 협업을 위한 칸반 보드 기반 프로젝트/일정 관리 
 | 심예진 | 대시보드 관리 | 나의 대시보드, 대시보드 수정 페이지                                                         |
 | 박서현 | 대시보드      | 대시보드 상세, 할 일 모달, DnD, 할 일 카드 CRUD                                             |
 | 권수형 | 공통 코드     | CSS·fetch 세팅, 공용 컴포넌트(Button/Chip/Input/Header/Sidebar), 공통 hooks, 칼럼/초대 모달 |
-
 
 
 ## ✅ 조건사항 충족 내역 (요약)
@@ -91,7 +90,7 @@ Taskify는 팀 협업을 위한 칸반 보드 기반 프로젝트/일정 관리 
 - **Code Quality**: ESLint, Prettier
 - **Deploy**: Vercel
 
-선택/확장 요소(옵션): Storybook(컴포넌트 문서화), Vitest(테스트) — 필요 시 도입
+선택/확장 요소(옵션): Storybook(컴포넌트 문서화), Vitest(테스트) 
 
 ## 🔗 API & 인증
 
@@ -125,9 +124,8 @@ src/
 ├─ hooks/                 # 커스텀 훅
 ├─ lib/                   # 유틸 & API
 ├─ pages/                 # Next.js Page Router
-├─ contexts/              # (필요 시 한정 사용)
 ├─ styles/                # 전역/모듈 스타일
-├─ stories/               # (선택) Storybook
+├─ stories/               #  Storybook
 └─ utils/                 # 헬퍼
 ```
 
@@ -152,49 +150,57 @@ ManageColumnForm
 
 서비스 소개, 로그인/회원가입 라우팅
 
-<!-- 이미지: 메인 PC --> <!-- 이미지: 메인 Mobile -->
+<img width="800" alt="메인 페이지" src="https://github.com/user-attachments/assets/007e689d-7a47-47ce-98af-2e349d23d6fa" />
 
 ### 로그인 / 회원가입
 
 유효성/에러 처리, 성공 시 리다이렉트
 
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/65461ecb-7d32-4646-a43f-a979a7d815da" />
-<img width="1920" height="1211" alt="image" src="https://github.com/user-attachments/assets/e31c7491-afb7-47f6-8b1b-82591a103db3" />
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/70cdcc10-e4e2-4f7b-9129-8b213e48ee45" />
-<img width="1920" height="1211" alt="image" src="https://github.com/user-attachments/assets/ffc33fa7-3bb4-459d-bd54-69b2de592e64" />
+<img width="800" alt="로그인 페이지" src="https://github.com/user-attachments/assets/e35ec0b5-b5ea-474e-a68c-845e4921ebb0" />
 
-
+<img width="800" alt="회원가입 페이지" src="https://github.com/user-attachments/assets/52214f06-8b79-4a75-9a00-0c36d0503378" />
 
 ### 나의 대시보드
 
-내가 만든 대시보드(👑), 초대받은 대시보드
+내가 만든 대시보드(👑), 초대받은 대시보드(무한 스크롤/검색/수락·거절)
 
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/7e64cc03-969a-46e5-b598-3fe3a4a218d8" />
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/f4580dda-8f31-4e58-aeb0-5ec8888d3b59" />
+<img width="800" alt="나의 대시보드" src="https://github.com/user-attachments/assets/eb53b6aa-4d97-47f4-a41d-fa8fe2430044" />
 
+<img width="400" alt="할 일 카드 상세 모달" src="https://github.com/user-attachments/assets/cfeabd78-1a36-4e69-9242-753cdd8f13ba" />
 
 ### 대시보드 상세 / 수정
 
 컬럼/카드, 멤버, 관리/초대, 카드 상세/댓글
 
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/abb45db1-1d83-4ecf-b9f2-bf1d1d9d10b7" />
- <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/4eb153b6-1451-4ee3-9e74-7fc5eb76263b" />
- <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/d15e3771-ed19-45ad-a855-6ddcd5057493" />
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/2ce79225-1f4e-48e8-9faa-ea3d97badaa0" />
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/d21c65fd-af75-4305-8d2a-3d1db6b14dc0" />
-<img width="1920" height="1550" alt="image" src="https://github.com/user-attachments/assets/677e8024-be38-48ca-bf55-8ac9e2ef3b80" />
-<img width="1920" height="1453" alt="image" src="https://github.com/user-attachments/assets/1450db00-5b34-47f8-8464-4510f8881902" />
+<img width="800" alt="대시보드 상세 페이지" src="https://github.com/user-attachments/assets/67582632-b43e-4635-8085-053c8fea3de4" />
 
+<img width="800" alt="대시보드 생성" src="https://github.com/user-attachments/assets/35cdbc86-ec0a-4515-83ec-9c1080766fe9" />
 
+<img width="800" alt="대시보드 수정" src="https://github.com/user-attachments/assets/8cfca0ce-ccb9-4f5d-b675-80270e91cd5e" />
 
+### 할 일 카드 상세 모달
 
+<img width="400" alt="할 일 카드 상세 모달 1" src="https://github.com/user-attachments/assets/367af6ab-eb90-416e-98bd-ff05e03e77c3" />
+
+<img width="400" alt="할 일 카드 상세 모달 2" src="https://github.com/user-attachments/assets/6e37cf4c-e2cf-412d-ad21-2298bd4f6327" />
+
+<img width="400" alt="할 일 카드 상세 모달 3" src="https://github.com/user-attachments/assets/e8c2f1bb-af87-4128-9454-77e682b59cf7" />
+
+### 컬럼 추가, 관리 모달
+
+<img width="600" alt="컬럼 추가 모달" src="https://github.com/user-attachments/assets/a42bdd27-1c98-44b4-9741-6dc629253228" />
+
+<img width="600" alt="컬럼 관리 모달" src="https://github.com/user-attachments/assets/0c39432d-87df-4dbe-a2c7-6e2ac5249222" />
+
+### 초대하기 모달
+
+<img width="600" alt="초대하기 모달" src="https://github.com/user-attachments/assets/f0c8ab69-66aa-440b-adc1-4b212f6634ef" />
 
 ### 마이 페이지
 
 프로필 편집, 비밀번호 변경
 
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/ec42c7db-fb20-4afc-ba6e-f7fe552dc242" />
-
+<img width="800" alt="계정 관리 페이지" src="https://github.com/user-attachments/assets/b76596b9-a2ff-4c47-8f0d-944db24fa696" />
 
 ## 🚀 시작하기
 
@@ -209,7 +215,7 @@ yarn install   # 또는 npm install
 yarn dev       # 또는 npm run dev
 ```
 
-### 빌드/테스트/스토리북
+### 빌드/테스트/스토리북(선택)
 
 ```bash
 yarn build
@@ -237,9 +243,25 @@ NEXT_PUBLIC_API_URL=http://localhost:3000/api
   금지
 - **포맷팅**: 저장 시 Prettier/ESLint 자동수정, Tailwind IntelliSense
 
+## 🧪 입력 유효성 & UX(발췌)
+
+### 로그인/회원가입
+
+- 이메일·비밀번호 형식 검증, 포커스 아웃 시 에러 메시지
+- 비밀번호 토글(눈 아이콘), 중복 이메일 모달
+- 성공 시 리다이렉트(/mydashboard) 및 토큰 발급(요구사항)
+
+### 마이페이지
+
+- 프로필 이미지 업로드, 닉네임 수정
+- 비밀번호 변경: 일치/불일치 검증, 에러 문구, 성공 처리
+
+### 대시보드/카드/댓글
+
+- 모달 기반 CRUD, 무한 스크롤(요구 영역), 페이지네이션(요구 영역)
 
 ## 📚 주요 기술
 
 - next / react / typescript / tailwindcss
 - eslint / prettier
--  @storybook/react, vitest
+- @storybook/react, vitest
