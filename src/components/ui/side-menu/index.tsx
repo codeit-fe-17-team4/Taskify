@@ -91,7 +91,10 @@ export default function SideMenu(): ReactNode {
             />
           </button>
         </div>
-        <DashboardList dashboards={dashboardListData.dashboards} />
+        <DashboardList
+          dashboards={dashboardListData.dashboards}
+          loading={loading}
+        />
         <div className='mt-3'>
           <ButtonPagination
             additionalClass='mobile:hidden'
