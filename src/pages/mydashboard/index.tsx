@@ -9,7 +9,8 @@ import type { CreateNewboardFormData } from '@/components/mydashboard/type';
 import ModalPortal from '@/components/ui/modal/modal-portal';
 import { createDashBoard, getDashBoard } from '@/lib/dashboards/api';
 import type { InvitationType } from '@/lib/dashboards/type';
-import { acceptInvitation } from '@/lib/invitations/api';
+import { acceptInvitation, getInvitationList } from '@/lib/invitations/api';
+import type { InvitationListType } from '@/lib/invitations/type';
 import {
   mydashboardInviteMockData,
   mydashboardMockData,
