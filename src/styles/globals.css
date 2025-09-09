@@ -69,18 +69,12 @@
   --breakpoint-*: initial;
 }
 @custom-variant tablet (@media (max-width: 80rem));
-@custom-variant mobile (@media (max-width: 48rem));
+@custom-variant mobile (@media (max-width: 47rem));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 }
-@utility flex-center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 html,
 body {
   background: var(--background);
