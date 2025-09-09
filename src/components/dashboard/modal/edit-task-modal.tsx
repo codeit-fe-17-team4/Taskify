@@ -13,7 +13,12 @@ interface EditTaskModalProps {
   columns?: { id: string; title: string }[];
   currentColumnTitle?: string;
   userInfo: UserType | null;
-  members?: any[];
+  members?: {
+    userId: number;
+    nickname: string;
+    email: string;
+    profileImageUrl: string | null;
+  }[];
 }
 
 export default function EditTaskModal({
@@ -97,7 +102,9 @@ export default function EditTaskModal({
 
     // 이미지 삭제 감지: 원본에 이미지가 있었는데 현재는 없는 경우
     const imageDeleted =
-      initialTask.imageUrl && !formData.existingImageUrl && !formData.imageFile;
+      initialTask.imageUrl &&
+      formData.existingImageUrl === undefined &&
+      !formData.imageFile;
 
     const changes = {
       title: formData.title !== initialTask.title,
@@ -108,16 +115,8 @@ export default function EditTaskModal({
       status: formData.status !== currentColumnTitle,
       tags: JSON.stringify(formData.tags) !== JSON.stringify(initialTask.tags),
       newImage: formData.imageFile !== null,
-      imageDeleted: imageDeleted,
-    };
-
-    console.log('변경사항 확인:', {
-      initialImageUrl: initialTask.imageUrl,
-      currentExistingImageUrl: formData.existingImageUrl,
-      currentImageFile: formData.imageFile,
       imageDeleted,
-      changes,
-    });
+    };
 
     return Object.values(changes).some(Boolean);
   };
@@ -139,7 +138,6 @@ export default function EditTaskModal({
         formData={formData}
         setFormData={setFormData}
         columns={columns}
-        userInfo={userInfo}
         members={members}
       />
     </ButtonModal>

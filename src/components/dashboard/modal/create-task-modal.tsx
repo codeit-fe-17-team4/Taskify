@@ -10,7 +10,12 @@ interface CreateTaskModalProps {
   onClose: () => void;
   onSubmit: (taskData: CreateTaskFormData) => void;
   userInfo: UserType | null;
-  members?: any[];
+  members?: {
+    userId: number;
+    nickname: string;
+    email: string;
+    profileImageUrl: string | null;
+  }[];
 }
 
 export default function CreateTaskModal({

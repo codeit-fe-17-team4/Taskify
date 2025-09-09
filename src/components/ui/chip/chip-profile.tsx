@@ -1,4 +1,5 @@
 import { cva, type VariantProps } from 'class-variance-authority';
+import Image from 'next/image';
 import type { HTMLAttributes, ReactNode } from 'react';
 import { cn } from '@/utils/cn';
 
@@ -36,6 +37,8 @@ export interface ChipProfileProps
   size: 'sm' | 'md' | 'lg';
   /** 색상: 'green' | 'blue' | 'orange' | 'yellow' | 'brown' */
   color: 'green' | 'blue' | 'orange' | 'yellow' | 'brown' | 'red';
+  /** 프로필 이미지 URL */
+  profileImageUrl?: string | null;
 }
 /** 사이즈:
  * - 'sm' : 1.375rem(22px)
@@ -46,13 +49,31 @@ export default function ChipProfile({
   label,
   size = 'md',
   color = 'green',
+  profileImageUrl,
   ...props
 }: ChipProfileProps): ReactNode {
-  return (
-    <>
-      <div className={cn(ChipVariants({ color, size }))} {...props}>
-        <span>{label}</span>
+  // 프로필 이미지가 있고 유효한 경우 이미지 표시
+  if (profileImageUrl && profileImageUrl.trim() !== '') {
+    return (
+      <div
+        className={cn(ChipVariants({ color, size }), 'overflow-hidden')}
+        {...props}
+      >
+        <Image
+          src={profileImageUrl}
+          alt='프로필 이미지'
+          width={size === 'sm' ? 22 : size === 'md' ? 24 : 38}
+          height={size === 'sm' ? 22 : size === 'md' ? 24 : 38}
+          className='h-full w-full object-cover'
+        />
       </div>
-    </>
+    );
+  }
+
+  // 프로필 이미지가 없는 경우 기본 색상 칩 표시
+  return (
+    <div className={cn(ChipVariants({ color, size }))} {...props}>
+      <span>{label}</span>
+    </div>
   );
 }

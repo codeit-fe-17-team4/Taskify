@@ -8,7 +8,6 @@ import ChipProfile from '@/components/ui/chip/chip-profile';
 import ChipState from '@/components/ui/chip/chip-state';
 import ChipTag from '@/components/ui/chip/chip-tag';
 import Dropdown from '@/components/ui/dropdown';
-import type { UserType } from '@/lib/users/type';
 import { getProfileColor } from '@/utils/profile-color';
 
 interface EditTaskFormProps {
@@ -17,15 +16,16 @@ interface EditTaskFormProps {
     data: EditTaskFormData | ((prev: EditTaskFormData) => EditTaskFormData)
   ) => void;
   columns?: { id: string; title: string }[];
-  userInfo: UserType | null;
-  members?: any[];
+  members?: {
+    nickname: string;
+    profileImageUrl: string | null;
+  }[];
 }
 
 export default function EditTaskForm({
   formData,
   setFormData,
   columns = [],
-  userInfo,
   members = [],
 }: EditTaskFormProps) {
   const [currentTag, setCurrentTag] = useState('');
@@ -43,18 +43,22 @@ export default function EditTaskForm({
     return {
       value: member.nickname,
       label: member.nickname,
-      profileColor: '#7AC555', // 기본 색상
+      profileColor: '#7AC555',
+      profileImageUrl: member.profileImageUrl,
     };
   });
 
-  const handleStatusSelect = (status: string) => {
-    setFormData((prev) => ({ ...prev, status }));
-    setIsStatusDropdownOpen(false);
-  };
+  const selectedAssignee = assigneeOptions.find(
+    (opt) => opt.value === formData.assignee
+  );
 
-  const handleAssigneeSelect = (assignee: string) => {
-    setFormData((prev) => ({ ...prev, assignee }));
-    setIsAssigneeDropdownOpen(false);
+  const handleSelect = (field: 'status' | 'assignee', value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    if (field === 'status') {
+      setIsStatusDropdownOpen(false);
+    } else {
+      setIsAssigneeDropdownOpen(false);
+    }
   };
 
   const handleTagKeyDown = (e: React.KeyboardEvent) => {
@@ -105,7 +109,7 @@ export default function EditTaskForm({
       return {
         ...prev,
         imageFile: null,
-        existingImageUrl: undefined,
+        existingImageUrl: undefined, // undefined로 설정하여 삭제 상태를 명확히 표시
       };
     });
   };
@@ -116,134 +120,134 @@ export default function EditTaskForm({
         {/* 상태 */}
         <div className='flex-1'>
           <span className='mb-2 block text-lg font-medium'>상태</span>
-          <Dropdown>
-            <Dropdown.Toggle
-              onClick={() => {
-                setIsStatusDropdownOpen(!isStatusDropdownOpen);
-              }}
-            >
-              <div className='flex w-full cursor-pointer appearance-none items-center justify-between rounded-lg border border-gray-300 p-4 pr-4 text-left focus:outline-none'>
-                <ChipState label={formData.status} size='md' />
-                <Image
-                  src='/dashboard/input-dropdown-btn.svg'
-                  alt='드롭다운'
-                  width={14}
-                  height={16}
-                  className={`transition-transform ${isStatusDropdownOpen ? 'rotate-180' : ''}`}
-                />
-              </div>
-            </Dropdown.Toggle>
-            <Dropdown.List>
-              {statusOptions.map((option) => {
-                return (
-                  <Dropdown.Item
-                    key={option.value}
-                    onClick={() => {
-                      handleStatusSelect(option.value);
-                    }}
-                  >
-                    <div className={`flex items-center gap-2 px-4`}>
-                      <div className='flex-center h-[10px] w-[14px]'>
-                        {formData.status === option.value && (
-                          <Image
-                            src='/dashboard/check-icon.svg'
-                            alt='선택됨'
-                            width={14}
-                            height={10}
-                          />
-                        )}
+          <div className='relative'>
+            <Dropdown>
+              <Dropdown.Toggle
+                onClick={() => {
+                  setIsStatusDropdownOpen(!isStatusDropdownOpen);
+                }}
+              >
+                <div className='flex w-full cursor-pointer appearance-none items-center justify-between rounded-lg border border-gray-300 p-4 pr-4 text-left focus:outline-none'>
+                  <ChipState label={formData.status} size='md' />
+                  <Image
+                    src='/dashboard/input-dropdown-btn.svg'
+                    alt='드롭다운'
+                    width={14}
+                    height={16}
+                    className={`transition-transform ${isStatusDropdownOpen ? 'rotate-180' : ''}`}
+                  />
+                </div>
+              </Dropdown.Toggle>
+              <Dropdown.List>
+                {statusOptions.map((option) => {
+                  return (
+                    <Dropdown.Item
+                      key={option.value}
+                      onClick={() => {
+                        handleSelect('status', option.value);
+                      }}
+                    >
+                      <div className={`flex items-center gap-2 px-4`}>
+                        <div className='flex-center h-[10px] w-[14px]'>
+                          {formData.status === option.value && (
+                            <Image
+                              src='/dashboard/check-icon.svg'
+                              alt='선택됨'
+                              width={14}
+                              height={10}
+                            />
+                          )}
+                        </div>
+                        <ChipState label={option.label} size='md' />
                       </div>
-                      <ChipState label={option.label} size='md' />
-                    </div>
-                  </Dropdown.Item>
-                );
-              })}
-            </Dropdown.List>
-          </Dropdown>
+                    </Dropdown.Item>
+                  );
+                })}
+              </Dropdown.List>
+            </Dropdown>
+          </div>
         </div>
         {/* 담당자 */}
         <div className='flex-1'>
           <label htmlFor='assignee' className='mb-2 block text-lg font-medium'>
             담당자
           </label>
-          <Dropdown>
-            <Dropdown.Toggle
-              onClick={() => {
-                setIsAssigneeDropdownOpen(!isAssigneeDropdownOpen);
-              }}
-            >
-              <div className='flex w-full cursor-pointer appearance-none items-center justify-between rounded-lg border border-gray-300 p-4 pr-4 text-left focus:outline-none'>
-                <div className='flex items-center gap-2'>
-                  {formData.assignee ? (
-                    <>
-                      <ChipProfile
-                        size='md'
-                        label={
-                          (
-                            assigneeOptions.find(
-                              (opt) => opt.value === formData.assignee
-                            )?.label || ''
-                          ).slice(0, 1) || '배'
-                        }
-                        color={getProfileColor(
-                          assigneeOptions.find(
-                            (opt) => opt.value === formData.assignee
-                          )?.profileColor || '#7AC555'
-                        )}
-                      />
-                      <span>
-                        {assigneeOptions.find(
-                          (opt) => opt.value === formData.assignee
-                        )?.label || '이름을 입력해 주세요'}
-                      </span>
-                    </>
-                  ) : (
-                    <span className='text-gray-500'>이름을 입력해 주세요</span>
-                  )}
-                </div>
-                <Image
-                  src='/dashboard/input-dropdown-btn.svg'
-                  alt='드롭다운'
-                  width={14}
-                  height={16}
-                  className={`transition-transform ${isAssigneeDropdownOpen ? 'rotate-180' : ''}`}
-                />
-              </div>
-            </Dropdown.Toggle>
-            <Dropdown.List>
-              {assigneeOptions.map((option) => {
-                return (
-                  <Dropdown.Item
-                    key={option.value}
-                    onClick={() => {
-                      handleAssigneeSelect(String(option.value));
-                    }}
-                  >
-                    <div className={`flex items-center gap-2 px-4`}>
-                      <div className='flex-center h-[10px] w-[14px]'>
-                        {formData.assignee === option.value && (
-                          <Image
-                            src='/dashboard/check-icon.svg'
-                            alt='선택됨'
-                            width={14}
-                            height={10}
-                          />
-                        )}
-                      </div>
-                      <div className='flex items-center gap-2'>
+          <div className='relative'>
+            <Dropdown>
+              <Dropdown.Toggle
+                onClick={() => {
+                  setIsAssigneeDropdownOpen(!isAssigneeDropdownOpen);
+                }}
+              >
+                <div className='flex w-full cursor-pointer appearance-none items-center justify-between rounded-lg border border-gray-300 p-4 pr-4 text-left focus:outline-none'>
+                  <div className='flex items-center gap-2'>
+                    {formData.assignee ? (
+                      <>
                         <ChipProfile
-                          label={(option.label || '').slice(0, 1)}
-                          color={getProfileColor(option.profileColor)}
                           size='md'
+                          profileImageUrl={selectedAssignee?.profileImageUrl}
+                          label={
+                            (selectedAssignee?.label || '').slice(0, 1) || '배'
+                          }
+                          color={getProfileColor(
+                            selectedAssignee?.profileColor || '#7AC555'
+                          )}
                         />
-                        <span>{option.label}</span>
+                        <span>
+                          {selectedAssignee?.label || '이름을 입력해 주세요'}
+                        </span>
+                      </>
+                    ) : (
+                      <span className='text-gray-500'>
+                        이름을 입력해 주세요
+                      </span>
+                    )}
+                  </div>
+                  <Image
+                    src='/dashboard/input-dropdown-btn.svg'
+                    alt='드롭다운'
+                    width={14}
+                    height={16}
+                    className={`transition-transform ${isAssigneeDropdownOpen ? 'rotate-180' : ''}`}
+                  />
+                </div>
+              </Dropdown.Toggle>
+              <Dropdown.List>
+                {assigneeOptions.map((option) => {
+                  return (
+                    <Dropdown.Item
+                      key={option.value}
+                      onClick={() => {
+                        handleSelect('assignee', option.value);
+                      }}
+                    >
+                      <div className={`flex items-center gap-2 px-4`}>
+                        <div className='flex-center h-[10px] w-[14px]'>
+                          {formData.assignee === option.value && (
+                            <Image
+                              src='/dashboard/check-icon.svg'
+                              alt='선택됨'
+                              width={14}
+                              height={10}
+                            />
+                          )}
+                        </div>
+                        <div className='flex items-center gap-2'>
+                          <ChipProfile
+                            label={option.label.slice(0, 1)}
+                            color={getProfileColor(option.profileColor)}
+                            size='md'
+                            profileImageUrl={option.profileImageUrl}
+                          />
+                          <span>{option.label}</span>
+                        </div>
                       </div>
-                    </div>
-                  </Dropdown.Item>
-                );
-              })}
-            </Dropdown.List>
-          </Dropdown>
+                    </Dropdown.Item>
+                  );
+                })}
+              </Dropdown.List>
+            </Dropdown>
+          </div>
         </div>
       </div>
 
@@ -347,7 +351,7 @@ export default function EditTaskForm({
           {formData.tags.map((tag, index) => {
             return (
               <div
-                key={`${tag.label}-${index}`}
+                key={`${tag.label}-${String(index)}`}
                 className='flex items-center gap-1'
               >
                 <ChipTag label={tag.label} color={tag.color} size='md' />

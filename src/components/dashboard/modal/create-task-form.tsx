@@ -18,7 +18,10 @@ interface CreateTaskFormProps {
       | ((prev: CreateTaskFormData) => CreateTaskFormData)
   ) => void;
   userInfo: UserType | null;
-  members?: any[];
+  members?: {
+    nickname: string;
+    profileImageUrl: string | null;
+  }[];
 }
 
 export default function CreateTaskForm({
@@ -30,17 +33,21 @@ export default function CreateTaskForm({
   const [currentTag, setCurrentTag] = useState('');
   const [isAssigneeDropdownOpen, setIsAssigneeDropdownOpen] = useState(false);
 
-  const assigneeOptions = members.map((member) => ({
-    value: member.nickname,
-    label: member.nickname,
-    profileColor: '#7AC555', // 기본 색상
-  }));
-  const chipProfileLabel = (
-    assigneeOptions.find((opt) => opt.value === formData.assignee)?.label || ''
-  ).slice(0, 1);
+  const assigneeOptions = members.map((member) => {
+    return {
+      value: member.nickname,
+      label: member.nickname,
+      profileColor: '#7AC555',
+      profileImageUrl: member.profileImageUrl,
+    };
+  });
+
+  const selectedAssignee = assigneeOptions.find(
+    (opt) => opt.value === formData.assignee
+  );
+  const chipProfileLabel = (selectedAssignee?.label || '').slice(0, 1);
   const chipProfileColor = getProfileColor(
-    assigneeOptions.find((opt) => opt.value === formData.assignee)
-      ?.profileColor || '#10b981'
+    selectedAssignee?.profileColor || '#10b981'
   );
   const handleAssigneeSelect = (assignee: string) => {
     setFormData((prev) => ({ ...prev, assignee }));
@@ -117,6 +124,11 @@ export default function CreateTaskForm({
                       size='md'
                       label={chipProfileLabel}
                       color={chipProfileColor}
+                      profileImageUrl={
+                        assigneeOptions.find(
+                          (opt) => opt.value === formData.assignee
+                        )?.profileImageUrl
+                      }
                     />
                     <span>
                       {assigneeOptions.find(
@@ -144,7 +156,7 @@ export default function CreateTaskForm({
                   key={option.value}
                   additionalClassName='gap-2 px-4 py-3 items-center'
                   onClick={() => {
-                    handleAssigneeSelect(String(option.value));
+                    handleAssigneeSelect(option.value);
                   }}
                 >
                   <div className='flex h-[10px] w-[14px] items-center justify-center'>
@@ -162,6 +174,7 @@ export default function CreateTaskForm({
                       label={(option.label || '').slice(0, 1)}
                       color={getProfileColor(option.profileColor)}
                       size='md'
+                      profileImageUrl={option.profileImageUrl}
                     />
                     <span>{option.label}</span>
                   </div>
@@ -273,7 +286,7 @@ export default function CreateTaskForm({
           {formData.tags.map((tag, index) => {
             return (
               <div
-                key={`${tag.label}-${index}`}
+                key={`${tag.label}-${String(tag.color)}`}
                 className='flex items-center gap-1'
               >
                 <ChipTag

@@ -32,18 +32,24 @@ export default function ColumnTaskCard({ task, onEditTask }: TaskCardProps) {
       onClick={handleCardClick}
     >
       {/* 썸네일 */}
-      {task.imageUrl && (
-        <div className='relative h-40 w-full overflow-hidden rounded-lg'>
-          <Image
-            fill
-            src={task.imageUrl}
-            alt='카드 이미지'
-            sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
-            className='object-cover'
-            priority={false}
-          />
-        </div>
-      )}
+      {task.imageUrl &&
+        task.imageUrl.trim() !== '' &&
+        !(
+          JSON.parse(
+            localStorage.getItem('deletedImageCards') || '[]'
+          ) as string[]
+        ).includes(task.id) && (
+          <div className='relative h-40 w-full overflow-hidden rounded-lg'>
+            <Image
+              fill
+              priority
+              src={task.imageUrl}
+              alt='카드 이미지'
+              sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
+              className='object-cover'
+            />
+          </div>
+        )}
 
       {/* 본문 */}
       <div className='flex flex-col justify-between'>
@@ -54,10 +60,10 @@ export default function ColumnTaskCard({ task, onEditTask }: TaskCardProps) {
 
           {/* 태그들 */}
           <div className='mb-3 flex flex-wrap items-center gap-1.5'>
-            {task.tags.map((tag, index) => {
+            {task.tags.map((tag) => {
               return (
                 <ChipTag
-                  key={`${tag.label}-${index}`}
+                  key={`${tag.label}-${String(tag.color)}`}
                   label={tag.label}
                   size='md'
                   color={
@@ -85,6 +91,7 @@ export default function ColumnTaskCard({ task, onEditTask }: TaskCardProps) {
                 label={(task.manager.nickname || '').slice(0, 1)}
                 color={getProfileColor(task.manager.profileColor)}
                 size='sm'
+                profileImageUrl={task.manager.profileImageUrl}
               />
             </div>
           </div>

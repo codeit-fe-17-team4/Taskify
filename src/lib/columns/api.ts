@@ -63,7 +63,6 @@ export const uploadCardImage = async (
   formData.append('image', imageFile);
 
   try {
-    console.log(`이미지 업로드 시도: /columns/${columnId}/card-image`);
     const data = await customFetch(
       `${BASE_API_URL}/columns/${String(columnId)}/card-image`,
       z.imageSchema,
@@ -72,7 +71,6 @@ export const uploadCardImage = async (
         body: formData,
       }
     );
-    console.log('이미지 업로드 성공');
     return data;
   } catch (error) {
     console.error('이미지 업로드 실패:', error);
