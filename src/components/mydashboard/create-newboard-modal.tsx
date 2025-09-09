@@ -1,45 +1,73 @@
+import { useRouter } from 'next/router';
 import { type ReactNode, useState } from 'react';
 import CreateNewboardForm from '@/components/mydashboard/create-newboard-form';
 import type { CreateNewboardFormData } from '@/components/mydashboard/type';
 import ButtonModal from '@/components/ui/modal/modal-button';
-import { useMutate } from '@/hooks/useAsync';
 import { useModalKeyHandler } from '@/hooks/useModal';
 import { createDashBoard } from '@/lib/dashboards/api';
 
 interface CreateNewboardModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit?: (formData: CreateNewboardFormData) => void;
+  addDashboardToList: (
+    dashboard: {
+      id: number;
+      title: string;
+      color: string;
+    },
+    isOwner: boolean
+  ) => void;
 }
 
 export default function CreateNewboardModal({
   isOpen,
   onClose,
-  onSubmit,
+  addDashboardToList,
 }: CreateNewboardModalProps): ReactNode {
   const [formData, setFormData] = useState<CreateNewboardFormData>({
     title: '',
-    color: 'green', // 기본 색상 설정
+    color: '#7AC555', // 기본 색상 설정
   });
-  const { mutate } = useMutate({
-    asyncFunction: () => createDashBoard(formData),
-  });
+  const [isCreating, setIsCreating] = useState(false);
+  const router = useRouter();
+  const handleCreateDashboard = async () => {
+    if (isCreating) {
+      return;
+    }
+    try {
+      setIsCreating(true);
+      const newDashboard = await createDashBoard({
+        title: formData.title,
+        color: formData.color,
+      });
+
+      // 공통 함수로 대시보드 추가 , 내가 생성한 거니까 isOwner: true;
+      addDashboardToList(newDashboard, true);
+
+      console.log('새 대시보드 생성 성공:', newDashboard);
+      onClose();
+      // id 가 number 타입인데 아래와 같이 사용하려니까 오류가 나서 해결 방법을 찾아보니 직접 타입을 명시해줘야 한다고 하여 toString으로 명시했습니다. 흠
+      // 생성 시 페이지 이동
+      // router.push(`/dashboard/${newDashboard.id.toString()}`); 일단 생략
+    } catch (error) {
+      console.error('대시보드 생성 실패:', error);
+      alert('대시보드 생성에 실패했습니다. 다시 시도해주세요.');
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
   const handleClose = () => {
-    setFormData({ title: '', color: 'green' });
     onClose();
   };
 
   useModalKeyHandler(isOpen, handleClose);
 
-  // const handleSubmit = () => {
-  //   onSubmit(formData);
-  //   handleClose();
-  // };
-
   const handleSubmit = () => {
-    mutate();
-    onClose();
+    handleCreateDashboard();
+    handleClose();
   };
+
   const isSubmitDisabled = !formData.title.trim();
 
   return (

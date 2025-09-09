@@ -1,17 +1,11 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import { type ReactNode, useEffect, useState } from 'react';
 import DashboardLayout from '@/components/layout/dashboard-layout';
 import CreateNewboardModal from '@/components/mydashboard/create-newboard-modal';
-import type { CreateNewboardFormData } from '@/components/mydashboard/type';
 import ModalPortal from '@/components/ui/modal/modal-portal';
-import {
-  createDashBoard,
-  getDashBoard,
-  getDashBoardList,
-} from '@/lib/dashboards/api';
-import { acceptInvitation, getInvitationList } from '@/lib/invitations/api';
+import { getDashBoard } from '@/lib/dashboards/api';
+import { acceptInvitation } from '@/lib/invitations/api';
 import type { InvitationType } from '@/lib/invitations/type';
 
 const colorCode: { [key: string]: string } = {
@@ -20,14 +14,6 @@ const colorCode: { [key: string]: string } = {
   '#FFA500': 'bg-orange-500',
   '#76A5EA': 'bg-blue-300',
   '#E876EA': 'bg-pink-400',
-};
-
-const colorNameToCode: { [key: string]: string } = {
-  green: '#7AC555',
-  purple: '#760DDE',
-  orange: '#FFA500',
-  blue: '#76A5EA',
-  pink: '#E876EA',
 };
 
 // 인증 상태를 받기 위한 props 타입 정의
@@ -48,7 +34,6 @@ interface DashboardList {
 }
 
 export default function Mydashboard({
-  isLoggedIn,
   initialInvitations = [],
   initialDashboards = [],
 }: MydashboardProps): ReactNode {
@@ -137,38 +122,6 @@ export default function Mydashboard({
   };
 
   // 새로운 대시보드 생성 api
-  const router = useRouter();
-  const [isCreating, setIsCreating] = useState(false);
-  const handleCreateDashboard = async (formData: CreateNewboardFormData) => {
-    if (isCreating) {
-      return;
-    }
-    try {
-      setIsCreating(true);
-      const CodeColor = colorNameToCode[formData.color] || '#7AC555';
-      const newDashboard = await createDashBoard({
-        title: formData.title,
-        color: CodeColor,
-      });
-
-      console.log(newDashboard.title, CodeColor);
-
-      // 공통 함수로 대시보드 추가 , 내가 생성한 거니까 isOwner: true;
-      addDashboardToList(newDashboard, true);
-
-      console.log('새 대시보드 생성 성공:', newDashboard);
-      handleCloseModal();
-      // id 가 number 타입인데 아래와 같이 사용하려니까 오류가 나서 해결 방법을 찾아보니 직접 타입을 명시해줘야 한다고 하여 toString으로 명시했습니다. 흠
-      // 생성 시 페이지 이동
-      router.push(`/dashboard/${newDashboard.id.toString()}`);
-    } catch (error) {
-      console.error('대시보드 생성 실패:', error);
-      alert('대시보드 생성에 실패했습니다. 다시 시도해주세요.');
-    } finally {
-      setIsCreating(false);
-    }
-  };
-
   /**
    * 초대받은 대시보드 수락 api
    */
@@ -442,8 +395,8 @@ export default function Mydashboard({
       <ModalPortal>
         <CreateNewboardModal
           isOpen={isModalOpen}
+          addDashboardToList={addDashboardToList}
           onClose={handleCloseModal}
-          onSubmit={handleCreateDashboard}
         />
       </ModalPortal>
     </>
