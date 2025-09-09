@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from 'react';
 interface useFetchParams<T> {
   asyncFunction: () => Promise<T>;
   deps?: unknown[];
-  isSuspense?: boolean;
   immediate?: boolean;
 }
 interface fetchStateInterface<T> {
@@ -15,7 +14,6 @@ export default function useAsync<T>({
   asyncFunction,
   deps = [],
   immediate = false,
-  isSuspense = false,
 }: useFetchParams<T>) {
   const [state, setState] = useState<fetchStateInterface<T>>({
     data: null,
@@ -35,13 +33,6 @@ export default function useAsync<T>({
     refetchRef.current = async () => {
       setState((prev) => ({ ...prev, error: null, loading: true }));
       try {
-        if (isSuspense) {
-          const promise = asyncFnRef.current();
-
-          // eslint-disable-next-line @typescript-eslint/only-throw-error
-          throw promise;
-        }
-
         const response = await asyncFnRef.current();
 
         setState((prev) => ({ ...prev, loading: false, data: response }));
@@ -69,22 +60,16 @@ export default function useAsync<T>({
 export function useFetch<T>({
   asyncFunction,
   deps = [],
-  isSuspense = false,
   immediate = true,
 }: useFetchParams<T>) {
   return useAsync({
     asyncFunction,
     immediate,
-    isSuspense,
     deps,
   });
 }
 
-export function useMutate<T>({
-  asyncFunction,
-  deps = [],
-  isSuspense = false,
-}: useFetchParams<T>) {
+export function useMutate<T>({ asyncFunction, deps = [] }: useFetchParams<T>) {
   const {
     data,
     loading,
@@ -93,7 +78,6 @@ export function useMutate<T>({
   } = useAsync({
     asyncFunction,
     immediate: false,
-    isSuspense,
     deps,
   });
 
