@@ -4,6 +4,7 @@ import CreateNewboardForm from '@/components/mydashboard/create-newboard-form';
 import type { CreateNewboardFormData } from '@/components/mydashboard/type';
 import ButtonModal from '@/components/ui/modal/modal-button';
 import { useModalKeyHandler } from '@/hooks/useModal';
+import { createDashBoard } from '@/lib/dashboards/api';
 
 interface CreateNewboardModalProps {
   isOpen: boolean;
@@ -19,21 +20,20 @@ export default function CreateNewboardModal({
     title: '',
     color: '#7AC555', // 기본 색상 설정
   });
-  const [isCreating, setIsCreating] = useState(false);
   const router = useRouter();
+  const [isCreating, setIsCreating] = useState(false);
+
   const handleCreateDashboard = async () => {
     if (isCreating) {
       return;
     }
     try {
       setIsCreating(true);
+      const newDashboard = await createDashBoard(formData);
 
-      // 공통 함수로 대시보드 추가 , 내가 생성한 거니까 isOwner: true;
       addDashboardToList();
       onClose();
-      // id 가 number 타입인데 아래와 같이 사용하려니까 오류가 나서 해결 방법을 찾아보니 직접 타입을 명시해줘야 한다고 하여 toString으로 명시했습니다. 흠
-      // 생성 시 페이지 이동
-      // router.push(`/dashboard/${newDashboard.id.toString()}`); 일단 생략
+      router.push(`/dashboard/${String(newDashboard.id)}`);
     } catch (error) {
       console.error('대시보드 생성 실패:', error);
       alert('대시보드 생성에 실패했습니다. 다시 시도해주세요.');
@@ -50,10 +50,9 @@ export default function CreateNewboardModal({
 
   const handleSubmit = () => {
     handleCreateDashboard();
-    handleClose();
   };
 
-  const isSubmitDisabled = !formData.title.trim();
+  const isSubmitDisabled = !formData.title.trim() || isCreating;
 
   return (
     <ButtonModal

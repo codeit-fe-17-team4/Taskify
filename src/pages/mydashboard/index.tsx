@@ -1,14 +1,14 @@
-import type { InferGetServerSidePropsType } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { type ReactNode, useEffect, useState } from 'react';
 import DashboardLayout from '@/components/layout/dashboard-layout';
 import CreateNewboardModal from '@/components/mydashboard/create-newboard-modal';
+import DashboardList from '@/components/mydashboard/dashboard-list';
+import InviteList from '@/components/mydashboard/invite-list';
 import ModalPortal from '@/components/ui/modal/modal-portal';
 import { useFetch } from '@/hooks/useAsync';
-import { getDashBoard, getDashBoardList } from '@/lib/dashboards/api';
-import type { DashboardListType, DashboardType } from '@/lib/dashboards/type';
-import { acceptInvitation } from '@/lib/invitations/api';
+import { getDashBoardList } from '@/lib/dashboards/api';
+import { acceptInvitation, getInvitationList } from '@/lib/invitations/api';
 import type { InvitationType } from '@/lib/invitations/type';
 
 const colorCode: { [key: string]: string } = {
@@ -21,14 +21,9 @@ const colorCode: { [key: string]: string } = {
 
 export default function Mydashboard(): ReactNode {
   const [isAcceptingInvitation, setIsAcceptingInvitation] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [inviteData, setInviteData] = useState<InvitationType[]>([]);
-  const [originalInviteData, setOriginalInviteData] = useState<
-    InvitationType[]
-  >([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
-  const [isComposing, setIsComposing] = useState(false);
   const {
     data: dashboardData,
     loading,
@@ -38,37 +33,20 @@ export default function Mydashboard(): ReactNode {
     asyncFunction: () => {
       return getDashBoardList({
         navigationMethod: 'pagination',
-        page: 1,
-        size: 6,
+        page: currentPage,
+        size: 5, // 한 페이지에 5개씩 표시
       });
     },
+    deps: [currentPage],
   });
-
-  // 검색
-  useEffect(() => {
-    // 한글 조합 중 오류 발생 -> 조합 중에는 발생하지 않도록
-    if (isComposing) {
-      return;
-    }
-    if (searchQuery === '') {
-      // 검색어 없으면 전체 보여주기
-      setInviteData(originalInviteData);
-    } else {
-      const query = searchQuery.toLowerCase();
-
-      const filtered = originalInviteData.filter((invite) => {
-        // title(대시보드 이름)에서만 검색 (요구사항 반영)
-        return invite.dashboard.title.toLowerCase().includes(query);
-      });
-
-      setInviteData(filtered);
-    }
-  }, [searchQuery, originalInviteData, isComposing]);
-
+  const { data: invitationListData, refetch: refetchInvitations } = useFetch({
+    asyncFunction: () => getInvitationList({ size: 100, title: searchQuery }),
+    deps: [searchQuery],
+  });
+  const inviteData = invitationListData?.invitations ?? [];
   const handleOpenModal = () => {
     setIsModalOpen(true);
   };
-
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
@@ -76,73 +54,43 @@ export default function Mydashboard(): ReactNode {
   if (!dashboardData || loading) {
     return <div> loading</div>;
   }
+
+  if (error) {
+    return <div>에러가 발생했습니다.</div>;
+  }
   // 페이지네이션 (라이브러리 x)
   const itemsPerPage = 5;
-  const totalPages = Math.ceil(dashboardData.dashboards.length / itemsPerPage);
-
-  const getCurrentPageData = () => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-
-    return dashboardData.dashboards.slice(startIndex, endIndex);
-  };
-
+  const totalPages = Math.ceil((dashboardData?.totalCount ?? 0) / itemsPerPage);
+  const getCurrentPageData = () => dashboardData.dashboards;
   const handlePrevPage = () => {
     if (currentPage > 1) {
       setCurrentPage((prevPage) => prevPage - 1);
     }
   };
-
   const handleNextPage = () => {
     if (currentPage < totalPages) {
       setCurrentPage((prevPage) => prevPage + 1);
     }
   };
-
   /**
    * 새로운 대시보드 생성 + 초대받은 대시보드 수락 시 목록에 추가되는 함수 (공통이라 빼 봄)
    */
   const addDashboardToList = () => {
     refetch();
   };
-
   /**
-   * 초대받은 대시보드 수락 api
+   * 초대 수락 API 연동
    */
   const handleAcceptInvitation = async (inviteId: number) => {
-    if (isAcceptingInvitation) {
-      return;
-    }
-
-    console.log('수락하려는 초대 ID:', inviteId);
-    console.log('현재 초대 목록:', inviteData);
-
     try {
       setIsAcceptingInvitation(true);
-
-      // 1. 초대 수락 API를 호출
-      const invitation = await acceptInvitation({
+      await acceptInvitation({
         invitationId: inviteId,
         body: { inviteAccepted: true },
       });
-
-      console.log('초대 수락 성공:', invitation);
-
-      // 2. 초대 받은 대시보드 정보를 가져오기
-      const dashboardDetails = await getDashBoard(invitation.dashboard.id);
-
-      console.log('대시보드 정보 조회 성공:', dashboardDetails);
-
-      // 3. 공통 함수로 대시보드 추가 (초대받은 대시보드는 isOwner가 false)
+      // 대시보드 목록과 초대 목록을 새로고침
       addDashboardToList();
-
-      // 4. 초대 목록에서 수락한 초대를 제거
-      setInviteData((prev) => prev.filter((inv) => inv.id !== inviteId));
-      setOriginalInviteData((prev) =>
-        prev.filter((inv) => inv.id !== inviteId)
-      );
-
-      console.log('초대 수락 및 대시보드 추가 성공:', dashboardDetails);
+      refetchInvitations();
       alert('초대를 수락했습니다!');
     } catch (error) {
       console.error('초대 수락 실패:', error);
@@ -155,14 +103,26 @@ export default function Mydashboard(): ReactNode {
       setIsAcceptingInvitation(false);
     }
   };
-
   /**
-   * 거절 시 삭제 -> 초대 '거절'에 대한 api가 따로 없는 것 같아서 그냥 목록에서만 삭제했는데, 맞는지 확인 필요!
+   * 초대 거절 API 연동 (PUT 요청으로 inviteAccepted: false)
    */
-  const handleRejectInvitation = (inviteId: number) => {
-    setInviteData((prev) => prev.filter((inv) => inv.id !== inviteId));
-    setOriginalInviteData((prev) => prev.filter((inv) => inv.id !== inviteId));
-    console.log('초대 거절:', inviteId);
+  const handleRejectInvitation = async (inviteId: number) => {
+    if (isAcceptingInvitation) {
+      return;
+    }
+    try {
+      setIsAcceptingInvitation(true);
+      await acceptInvitation({
+        invitationId: inviteId,
+        body: { inviteAccepted: false },
+      });
+      alert('초대를 거절했습니다.');
+      refetchInvitations(); // 거절 후 초대 목록 새로고침
+    } catch (error) {
+      console.error('초대 거절 실패:', error);
+    } finally {
+      setIsAcceptingInvitation(false);
+    }
   };
 
   return (
@@ -170,7 +130,17 @@ export default function Mydashboard(): ReactNode {
       <div className='flex h-full min-h-screen w-full flex-col bg-gray-50'>
         {/* 새로운 대시보드 */}
         <div className='max-w-7xl p-6'>
-          {dashboardData.dashboards.length === 0 ? (
+          <DashboardList
+            dashboards={getCurrentPageData()}
+            totalPages={totalPages}
+            currentPage={currentPage}
+            colorCode={colorCode} // 필요하다면 props로 전달
+            onPrevPage={handlePrevPage}
+            onNextPage={handleNextPage}
+            onOpenModal={handleOpenModal}
+          />
+
+          {/* {dashboardData.dashboards.length === 0 ? (
             <button
               className='tablet:w-3xs mobile:w-3xs flex h-[60px] w-2xs cursor-pointer items-center justify-center gap-1 rounded-lg border border-gray-200 bg-white hover:bg-gray-100'
               onClick={handleOpenModal}
@@ -188,7 +158,6 @@ export default function Mydashboard(): ReactNode {
           ) : (
             <div className='tablet:w-lg mobile:w-2xs mb-10 w-full max-w-4xl'>
               <div className='tablet:grid-cols-2 mobile:grid-cols-1 relative grid grid-cols-3 gap-2'>
-                {/* 새로운 대시보드 (항상 첫 번째 위치에 고정되어 있어야 함!) */}
                 <button
                   className='tablet:w-3xs mobile:w-2xs flex h-[60px] w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white hover:bg-gray-100'
                   onClick={handleOpenModal}
@@ -203,7 +172,6 @@ export default function Mydashboard(): ReactNode {
                     height={20}
                   />
                 </button>
-
                 {getCurrentPageData().map((dashboard) => {
                   return (
                     <Link
@@ -223,7 +191,6 @@ export default function Mydashboard(): ReactNode {
                     </Link>
                   );
                 })}
-
                 <div className='col-span-full mt-4 flex items-center justify-end gap-2'>
                   <p className='text-xs text-gray-600'>
                     {totalPages} 페이지 중 {currentPage}
@@ -257,10 +224,16 @@ export default function Mydashboard(): ReactNode {
                 </div>
               </div>
             </div>
-          )}
-
+          )} */}
           {/* 초대받은 대시보드 */}
-          <div>
+          <InviteList
+            inviteData={inviteData}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            onAccept={handleAcceptInvitation}
+            onReject={handleRejectInvitation}
+          />
+          {/* <div>
             {inviteData.length === 0 ? (
               // 초대받은 대시보드가 없을 때
               <div className='tablet:w-lg mobile:w-3xs mt-10 flex h-[280px] w-2xl flex-col rounded-lg border-0 bg-white'>
@@ -303,20 +276,12 @@ export default function Mydashboard(): ReactNode {
                           placeholder='검색'
                           className='h-[40px] w-full rounded border border-gray-300 pr-4 pl-10 text-sm focus:ring-1 focus:ring-gray-300 focus:outline-none'
                           value={searchQuery}
-                          onCompositionStart={() => {
-                            setIsComposing(true);
-                          }}
                           onChange={(e) => {
                             setSearchQuery(e.target.value);
-                          }}
-                          onCompositionEnd={(e) => {
-                            setIsComposing(false);
-                            setSearchQuery(e.currentTarget.value);
                           }}
                         />
                       </div>
                     </div>
-
                     <div className='mobile:hidden tablet:grid-cols-[150px_80px_200px] tablet:pl-8 grid w-full max-w-2xl min-w-2xs grid-cols-[250px_250px_200px] gap-2 pt-5 pl-12 text-sm text-gray-400'>
                       <div>이름</div>
                       <div>초대자</div>
@@ -371,7 +336,7 @@ export default function Mydashboard(): ReactNode {
                 </div>
               </>
             )}
-          </div>
+          </div> */}
         </div>
       </div>
       <ModalPortal>
@@ -384,7 +349,6 @@ export default function Mydashboard(): ReactNode {
     </>
   );
 }
-
 Mydashboard.getLayout = function getLayout(page: ReactNode) {
   return <DashboardLayout>{page}</DashboardLayout>;
 };
