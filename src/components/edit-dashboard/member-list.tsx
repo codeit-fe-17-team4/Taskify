@@ -1,8 +1,6 @@
 // 구성원 목록 조회 및 삭제 UI 컴포넌트
 
 import Image from 'next/image';
-import { useState } from 'react';
-import { deleteMember } from '@/lib/members/api';
 import type { MemberListType as MemberType } from '@/lib/members/type';
 
 interface MemberListProps {
@@ -10,50 +8,55 @@ interface MemberListProps {
   currentPage: number;
   totalPages: number;
   getCurrentPageData: () => MemberType[];
-  onDeleteMember: (memberId: number) => Promise<void>;
+  onDeleteMember: (memberId: number) => void;
   onPrevPage: () => void;
   onNextPage: () => void;
 }
 
 export default function MemberList({
-  members: initialMembers,
+  members,
+  currentPage,
+  totalPages,
+  getCurrentPageData,
+  onDeleteMember,
+  onPrevPage,
+  onNextPage,
 }: MemberListProps) {
-  const [members, setMembers] = useState<MemberType[]>(initialMembers);
-  const [membersCurrentPage, setMembersCurrentPage] = useState(1);
-  const membersItemsPerPage = 4;
+  // const [membersCurrentPage, setMembersCurrentPage] = useState(1);
+  // const membersItemsPerPage = 4;
 
-  const membersTotalPages = Math.ceil(members.length / membersItemsPerPage);
+  // const membersTotalPages = Math.ceil(members.length / membersItemsPerPage);
 
-  const getCurrentMembersPageData = () => {
-    const start = (membersCurrentPage - 1) * membersItemsPerPage;
+  // const getCurrentMembersPageData = () => {
+  //   const start = (membersCurrentPage - 1) * membersItemsPerPage;
 
-    return members.slice(start, start + membersItemsPerPage);
-  };
+  //   return members.slice(start, start + membersItemsPerPage);
+  // };
 
-  const handleMembersPrevPage = () => {
-    if (membersCurrentPage > 1) {
-      setMembersCurrentPage((prevPage) => prevPage - 1);
-    }
-  };
+  // const handleMembersPrevPage = () => {
+  //   if (membersCurrentPage > 1) {
+  //     setMembersCurrentPage((prevPage) => prevPage - 1);
+  //   }
+  // };
 
-  const handleMembersNextPage = () => {
-    if (membersCurrentPage < membersTotalPages) {
-      setMembersCurrentPage((prevPage) => prevPage + 1);
-    }
-  };
+  // const handleMembersNextPage = () => {
+  //   if (membersCurrentPage < membersTotalPages) {
+  //     setMembersCurrentPage((prevPage) => prevPage + 1);
+  //   }
+  // };
 
-  const handleDeleteMember = async (memberId: number) => {
-    try {
-      await deleteMember(memberId);
-      alert('구성원이 삭제되었습니다.');
-      // 목록 새로고침 - 삭제되면서 목록이 보여야 함
-      setMembers((prev) => prev.filter((member) => member.id !== memberId));
-    } catch (error) {
-      console.error('구성원 삭제 실패:', error);
-      setMembers(prev);
-      alert('구성원 삭제에 실패했습니다.');
-    }
-  };
+  // const handleDeleteMember = async (memberId: number) => {
+  //   try {
+  //     await deleteMember(memberId);
+  //     alert('구성원이 삭제되었습니다.');
+  //     // 목록 새로고침 - 삭제되면서 목록이 보여야 함
+  //     setMembers((prev) => prev.filter((member) => member.id !== memberId));
+  //   } catch (error) {
+  //     console.error('구성원 삭제 실패:', error);
+  //     setMembers(prev);
+  //     alert('구성원 삭제에 실패했습니다.');
+  //   }
+  // };
 
   return (
     <div className='tablet:w-full mobile:w-full tablet:min-w-lg mobile:min-w-2xs mt-8 h-[340px] w-[620px] rounded-lg bg-white pt-5'>
@@ -61,12 +64,12 @@ export default function MemberList({
         <h2 className='text-xl font-bold'>구성원</h2>
         <div className='flex items-center justify-end gap-2'>
           <p className='text-xs text-gray-600'>
-            {membersTotalPages} 페이지 중 {membersCurrentPage}
+            {totalPages} 페이지 중 {currentPage}
           </p>
           <div className='flex items-center justify-center'>
             <button
               className='flex h-7 w-7 cursor-pointer items-center justify-center rounded border border-gray-200 bg-white hover:bg-gray-100'
-              onClick={handleMembersPrevPage}
+              onClick={onPrevPage}
             >
               <Image
                 src='/icon/prevPage.svg'
@@ -77,7 +80,7 @@ export default function MemberList({
             </button>
             <button
               className='flex h-7 w-7 cursor-pointer items-center justify-center rounded border border-gray-200 bg-white hover:bg-gray-100'
-              onClick={handleMembersNextPage}
+              onClick={onNextPage}
             >
               <Image
                 src='/icon/nextPage.svg'
@@ -98,7 +101,7 @@ export default function MemberList({
           </tr>
         </thead>
         <tbody>
-          {getCurrentMembersPageData().map((member, index, arr) => {
+          {getCurrentPageData().map((member, index, arr) => {
             const isLastItem = index === arr.length - 1;
 
             return (
@@ -119,7 +122,7 @@ export default function MemberList({
                     type='button'
                     className='mobile:w-12 w-15.5 cursor-pointer rounded border border-gray-200 px-3 py-1 text-xs text-violet-500 transition-colors hover:bg-gray-50'
                     onClick={() => {
-                      handleDeleteMember(member.id);
+                      onDeleteMember(member.id);
                     }}
                   >
                     삭제

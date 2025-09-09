@@ -69,6 +69,7 @@ export default function MydashboardEdit(): ReactNode {
       try {
         const data = await getMemberList({ dashboardId: Number(dashboardId) });
 
+        console.log('구성원 API 응답:', data);
         setMembers(data.members);
       } catch (error) {
         console.error('구성원 목록 불러오기 실패:', error);
@@ -103,15 +104,8 @@ export default function MydashboardEdit(): ReactNode {
    * 구성원 삭제 api 연동
    */
   const handleDeleteMember = async (memberId: number) => {
-    try {
-      await deleteMember(memberId);
-      alert('구성원이 삭제되었습니다.');
-      // 목록 새로고침 - 삭제되면서 목록이 보여야 함
-      setMembers((prev) => prev.filter((member) => member.id !== memberId));
-    } catch (error) {
-      console.error('구성원 삭제 실패:', error);
-      alert('구성원 삭제에 실패했습니다.');
-    }
+    setMembers((prev) => prev.filter((member) => member.id !== memberId));
+    alert('구성원이 삭제되었습니다.');
   };
 
   /**
@@ -146,7 +140,10 @@ export default function MydashboardEdit(): ReactNode {
   /**
    * 초대
    */
-  const handleSubmitInviteMember = async (formData: { email: string }) => {
+  const handleSubmitInviteMember = async (formData: {
+    nickname: string;
+    email: string;
+  }) => {
     if (!dashboardId) {
       return;
     }
