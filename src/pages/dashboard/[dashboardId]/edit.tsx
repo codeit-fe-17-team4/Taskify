@@ -2,19 +2,22 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { type ReactNode, useEffect, useState } from 'react';
+import EditDashboardForm from '@/components/edit-dashboard/edit-dashboard-form';
+import InvitationListCard from '@/components/edit-dashboard/invitation-listcard';
+import MemberList from '@/components/edit-dashboard/member-list';
 import DashboardLayout from '@/components/layout/dashboard-layout';
 import InviteMemberModal from '@/components/ui/dashboard-header/invite-member-modal';
 import {
   createInvitation,
   deleteDashBoard,
   deleteInvitation,
+  editDashBoard,
   getDashBoard,
   getInvitationList,
 } from '@/lib/dashboards/api';
 import type { Dashboard, InvitationType } from '@/lib/dashboards/type';
 import { deleteMember, getMemberList } from '@/lib/members/api';
 import type { MemberType } from '@/lib/members/type';
-import { dashboardColors } from '@/lib/mydashboard-mock-data';
 import { getStringFromQuery } from '@/utils/getContextQuery';
 
 export default function MydashboardEdit(): ReactNode {
@@ -22,12 +25,12 @@ export default function MydashboardEdit(): ReactNode {
   const dashboardId = getStringFromQuery(router.query, 'dashboardId');
   // 대시보드 API 연동 정보
   const [dashboardData, setDashboardData] = useState<Dashboard | null>(null);
+  const [updating, setUpdating] = useState(false);
   // 구성원 정보 연동해서 가져와야 함
   const [members, setMembers] = useState<MemberType[]>([]);
   // 초대내역 이메일도 가져와야 함
   const [invitations, setInvitations] = useState<InvitationType[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedColor, setSelectedColor] = useState('');
 
   // 대시보드 정보 가져오기
   useEffect(() => {
@@ -95,10 +98,6 @@ export default function MydashboardEdit(): ReactNode {
 
     fetchInvitationEmails();
   }, [dashboardId]);
-
-  const handleColorChange = (color: { name: string; bgClass: string }) => {
-    setSelectedColor(color.name);
-  };
 
   /**
    * 구성원 삭제 api 연동
@@ -248,65 +247,56 @@ export default function MydashboardEdit(): ReactNode {
         </Link>
 
         {/* 대시보드 정보 수정 */}
-        <div className='tablet:min-w-lg mobile:min-w-2xs tablet:w-full mobile:w-full mt-8 h-[340px] w-[620px] rounded-lg bg-white p-7'>
-          <h2 className='text-xl font-bold'>{dashboardData?.title}</h2>
-          <form className='mt-4 space-y-4'>
-            {/* 이름 수정 */}
-            <div>
-              <label htmlFor='name' className='font-sm block text-base'>
-                대시보드 이름
-              </label>
-              <input
-                id='name'
-                name='name'
-                type='text'
-                defaultValue={dashboardData?.title}
-                className='mt-3 block h-12 w-full rounded-md border border-gray-300 px-4 focus:border-violet-500 focus:ring-violet-500 focus:outline-none'
-              />
-            </div>
-            <div>
-              <div className='mt-3 flex items-center gap-2'>
-                {dashboardColors.map((color) => {
-                  return (
-                    <button
-                      key={color.name}
-                      type='button'
-                      className={`flex h-6 w-6 cursor-pointer items-center justify-center rounded-full border-2 transition-all ${
-                        color.bgClass
-                      } ${
-                        selectedColor === color.name
-                          ? 'scale-110 border-transparent'
-                          : 'border-transparent hover:scale-110'
-                      }`}
-                      onClick={() => {
-                        handleColorChange(color);
-                      }}
-                    >
-                      {selectedColor === color.name && (
-                        <Image
-                          src='/icon/selected.svg'
-                          alt='selected'
-                          width={14}
-                          height={14}
-                        />
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-            <div className='mt-10 flex'>
-              <button
-                type='submit'
-                className='h-12 w-xl cursor-pointer rounded-md bg-violet-500 px-4 py-2 text-sm font-medium text-white hover:bg-violet-600'
-              >
-                변경
-              </button>
-            </div>
-          </form>
-        </div>
+        {dashboardData && (
+          <EditDashboardForm
+            prevTitle={dashboardData.title}
+            prevColor={dashboardData.color}
+            onSubmit={async ({ title, color }) => {
+              if (!dashboardId || updating) {
+                return;
+              }
+              try {
+                setUpdating(true);
+                const updatedDashboard = await editDashBoard({
+                  id: Number(dashboardId),
+                  body: { title, color }, // hex 값
+                });
+
+                setDashboardData(updatedDashboard); // 상태 갱신
+                alert('대시보드가 수정되었습니다.');
+              } catch (error) {
+                console.error('대시보드 수정 실패:', error);
+                alert('수정에 실패했습니다.');
+              } finally {
+                setUpdating(false);
+              }
+            }}
+          />
+        )}
+
         {/* 구성원 */}
-        <div className='tablet:w-full mobile:w-full tablet:min-w-lg mobile:min-w-2xs mt-8 h-[340px] w-[620px] rounded-lg bg-white pt-5'>
+        <MemberList
+          members={members}
+          currentPage={membersCurrentPage}
+          totalPages={membersTotalPages}
+          getCurrentPageData={getCurrentMembersPageData}
+          onDeleteMember={handleDeleteMember}
+          onPrevPage={handleMembersPrevPage}
+          onNextPage={handleMembersNextPage}
+        />
+        {/* 초대내역 */}
+        <InvitationListCard
+          invitations={invitations}
+          currentPage={invitationsCurrentPage}
+          totalPages={invitationsTotalPages}
+          getCurrentPageData={getCurrentInvitationsPageData}
+          onDeleteInvitation={handleDeleteInvitation}
+          onPrevPage={handleInvitationsPrevPage}
+          onNextPage={handleInvitationsNextPage}
+          onOpenModal={handleOpenModal}
+        />
+        {/* 구성원 */}
+        {/* <div className='tablet:w-full mobile:w-full tablet:min-w-lg mobile:min-w-2xs mt-8 h-[340px] w-[620px] rounded-lg bg-white pt-5'>
           <div className='flex items-center justify-between pr-8 pl-8'>
             <h2 className='text-xl font-bold'>구성원</h2>
             <div className='flex items-center justify-end gap-2'>
@@ -380,9 +370,9 @@ export default function MydashboardEdit(): ReactNode {
               })}
             </tbody>
           </table>
-        </div>
+        </div> */}
         {/* 초대 내역 */}
-        <div className='tablet:min-w-lg mobile:min-w-2xs tablet:w-full mobile:relative mt-8 h-[400px] w-[620px] rounded-lg bg-white pt-5'>
+        {/* <div className='tablet:min-w-lg mobile:min-w-2xs tablet:w-full mobile:relative mt-8 h-[400px] w-[620px] rounded-lg bg-white pt-5'>
           <div className='flex items-center justify-between pr-8 pl-8'>
             <h2 className='text-xl font-bold'>초대 내역</h2>
             <div className='mobile:absolute mobile:right-5 mobile:top-5 flex items-center justify-end gap-3'>
@@ -473,7 +463,7 @@ export default function MydashboardEdit(): ReactNode {
               </tbody>
             </table>
           </div>
-        </div>
+        </div> */}
         {/* 대시보드 삭제 */}
         <div>
           <button

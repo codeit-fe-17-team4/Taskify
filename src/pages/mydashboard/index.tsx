@@ -2,7 +2,7 @@ import { type ReactNode, useState } from 'react';
 import DashboardLayout from '@/components/layout/dashboard-layout';
 import CreateNewboardModal from '@/components/mydashboard/create-newboard-modal';
 import DashboardList from '@/components/mydashboard/dashboard-list';
-import InviteList from '@/components/mydashboard/invite-list';
+import InvitationList from '@/components/mydashboard/invitation-list';
 import ModalPortal from '@/components/ui/modal/modal-portal';
 import { useFetch } from '@/hooks/useAsync';
 import { getDashBoardList } from '@/lib/dashboards/api';
@@ -130,7 +130,7 @@ export default function Mydashboard(): ReactNode {
           />
 
           {/* 초대받은 대시보드 */}
-          <InviteList
+          <InvitationList
             inviteData={inviteData}
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}

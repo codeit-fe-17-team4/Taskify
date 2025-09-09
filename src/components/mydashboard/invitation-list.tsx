@@ -9,7 +9,7 @@ interface InviteListProps {
   onReject: (inviteId: number) => void;
 }
 
-export default function InviteList({
+export default function InvitationList({
   inviteData,
   searchQuery,
   setSearchQuery,

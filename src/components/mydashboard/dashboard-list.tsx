@@ -1,7 +1,5 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import type { ReactNode } from 'react';
-import DashboardLayout from '@/components/layout/dashboard-layout';
 
 const colorCode: { [key: string]: string } = {
   '#7AC555': 'bg-green-500',
@@ -126,7 +124,3 @@ export default function DashboardList({
     </div>
   );
 }
-
-DashboardList.getLayout = function getLayout(page: ReactNode) {
-  return <DashboardLayout>{page}</DashboardLayout>;
-};
