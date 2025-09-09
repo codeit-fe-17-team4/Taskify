@@ -1,10 +1,13 @@
+import type { InferGetServerSidePropsType } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { type ReactNode, useEffect, useState } from 'react';
 import DashboardLayout from '@/components/layout/dashboard-layout';
 import CreateNewboardModal from '@/components/mydashboard/create-newboard-modal';
 import ModalPortal from '@/components/ui/modal/modal-portal';
-import { getDashBoard } from '@/lib/dashboards/api';
+import { useFetch } from '@/hooks/useAsync';
+import { getDashBoard, getDashBoardList } from '@/lib/dashboards/api';
+import type { DashboardListType, DashboardType } from '@/lib/dashboards/type';
 import { acceptInvitation } from '@/lib/invitations/api';
 import type { InvitationType } from '@/lib/invitations/type';
 
@@ -16,36 +19,30 @@ const colorCode: { [key: string]: string } = {
   '#E876EA': 'bg-pink-400',
 };
 
-// 인증 상태를 받기 위한 props 타입 정의
-interface MydashboardProps {
-  /**
-   * 서버에서 전달받은 로그인 상태
-   */
-  isLoggedIn: boolean;
-  initialInvitations: InvitationType[];
-  initialDashboards: DashboardList[];
-}
-
-interface DashboardList {
-  id: number;
-  title: string;
-  dotcolor: string;
-  isOwner: boolean;
-}
-
-export default function Mydashboard({
-  initialInvitations = [],
-  initialDashboards = [],
-}: MydashboardProps): ReactNode {
-  const [dashboardData, setDashboardData] =
-    useState<DashboardList[]>(initialDashboards);
-  const [inviteData, setInviteData] =
-    useState<InvitationType[]>(initialInvitations);
-  const [originalInviteData, setOriginalInviteData] =
-    useState<InvitationType[]>(initialInvitations);
+export default function Mydashboard(): ReactNode {
+  const [isAcceptingInvitation, setIsAcceptingInvitation] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [inviteData, setInviteData] = useState<InvitationType[]>([]);
+  const [originalInviteData, setOriginalInviteData] = useState<
+    InvitationType[]
+  >([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isComposing, setIsComposing] = useState(false);
+  const {
+    data: dashboardData,
+    loading,
+    error,
+    refetch,
+  } = useFetch({
+    asyncFunction: () => {
+      return getDashBoardList({
+        navigationMethod: 'pagination',
+        page: 1,
+        size: 6,
+      });
+    },
+  });
 
   // 검색
   useEffect(() => {
@@ -76,16 +73,18 @@ export default function Mydashboard({
     setIsModalOpen(false);
   };
 
+  if (!dashboardData || loading) {
+    return <div> loading</div>;
+  }
   // 페이지네이션 (라이브러리 x)
-  const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
-  const totalPages = Math.ceil(dashboardData.length / itemsPerPage);
+  const totalPages = Math.ceil(dashboardData.dashboards.length / itemsPerPage);
 
   const getCurrentPageData = () => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
 
-    return dashboardData.slice(startIndex, endIndex);
+    return dashboardData.dashboards.slice(startIndex, endIndex);
   };
 
   const handlePrevPage = () => {
@@ -103,30 +102,13 @@ export default function Mydashboard({
   /**
    * 새로운 대시보드 생성 + 초대받은 대시보드 수락 시 목록에 추가되는 함수 (공통이라 빼 봄)
    */
-  const addDashboardToList = (
-    dashboard: {
-      id: number;
-      title: string;
-      color: string;
-    },
-    isOwner: boolean
-  ) => {
-    const newDashboardItem = {
-      id: dashboard.id,
-      title: dashboard.title,
-      dotcolor: colorCode[dashboard.color] || 'bg-gray-500',
-      isOwner,
-    };
-
-    setDashboardData((prev) => [newDashboardItem, ...prev]);
+  const addDashboardToList = () => {
+    refetch();
   };
 
-  // 새로운 대시보드 생성 api
   /**
    * 초대받은 대시보드 수락 api
    */
-  const [isAcceptingInvitation, setIsAcceptingInvitation] = useState(false);
-
   const handleAcceptInvitation = async (inviteId: number) => {
     if (isAcceptingInvitation) {
       return;
@@ -152,7 +134,7 @@ export default function Mydashboard({
       console.log('대시보드 정보 조회 성공:', dashboardDetails);
 
       // 3. 공통 함수로 대시보드 추가 (초대받은 대시보드는 isOwner가 false)
-      addDashboardToList(dashboardDetails, false);
+      addDashboardToList();
 
       // 4. 초대 목록에서 수락한 초대를 제거
       setInviteData((prev) => prev.filter((inv) => inv.id !== inviteId));
@@ -188,7 +170,7 @@ export default function Mydashboard({
       <div className='flex h-full min-h-screen w-full flex-col bg-gray-50'>
         {/* 새로운 대시보드 */}
         <div className='max-w-7xl p-6'>
-          {dashboardData.length === 0 ? (
+          {dashboardData.dashboards.length === 0 ? (
             <button
               className='tablet:w-3xs mobile:w-3xs flex h-[60px] w-2xs cursor-pointer items-center justify-center gap-1 rounded-lg border border-gray-200 bg-white hover:bg-gray-100'
               onClick={handleOpenModal}
@@ -230,11 +212,11 @@ export default function Mydashboard({
                     >
                       <button className='tablet:w-3xs mobile:w-2xs relative flex h-[60px] w-full cursor-pointer items-center gap-3 rounded-md border border-gray-200 bg-white p-4 hover:bg-gray-100'>
                         <div
-                          className={`h-2 w-2 rounded-full ${dashboard.dotcolor}`}
+                          className={`h-2 w-2 rounded-full ${colorCode[dashboard.color]}`}
                         />
                         <div>
                           <span className='text-sm font-bold text-gray-600'>
-                            {dashboard.title} {dashboard.isOwner && '👑'}
+                            {dashboard.title} {dashboard.createdByMe && '👑'}
                           </span>
                         </div>
                       </button>

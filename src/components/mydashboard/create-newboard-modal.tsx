@@ -4,21 +4,12 @@ import CreateNewboardForm from '@/components/mydashboard/create-newboard-form';
 import type { CreateNewboardFormData } from '@/components/mydashboard/type';
 import ButtonModal from '@/components/ui/modal/modal-button';
 import { useModalKeyHandler } from '@/hooks/useModal';
-import { createDashBoard } from '@/lib/dashboards/api';
 
 interface CreateNewboardModalProps {
   isOpen: boolean;
   onClose: () => void;
-  addDashboardToList: (
-    dashboard: {
-      id: number;
-      title: string;
-      color: string;
-    },
-    isOwner: boolean
-  ) => void;
+  addDashboardToList: () => void;
 }
-
 export default function CreateNewboardModal({
   isOpen,
   onClose,
@@ -36,15 +27,9 @@ export default function CreateNewboardModal({
     }
     try {
       setIsCreating(true);
-      const newDashboard = await createDashBoard({
-        title: formData.title,
-        color: formData.color,
-      });
 
       // 공통 함수로 대시보드 추가 , 내가 생성한 거니까 isOwner: true;
-      addDashboardToList(newDashboard, true);
-
-      console.log('새 대시보드 생성 성공:', newDashboard);
+      addDashboardToList();
       onClose();
       // id 가 number 타입인데 아래와 같이 사용하려니까 오류가 나서 해결 방법을 찾아보니 직접 타입을 명시해줘야 한다고 하여 toString으로 명시했습니다. 흠
       // 생성 시 페이지 이동
