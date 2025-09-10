@@ -9,7 +9,6 @@ import DashboardLayout from '@/components/layout/dashboard-layout';
 import Button from '@/components/ui/button/button';
 import InviteMemberModal from '@/components/ui/dashboard-header/invite-member-modal';
 import {
-  createInvitation,
   deleteDashBoard,
   deleteInvitation,
   editDashBoard,
