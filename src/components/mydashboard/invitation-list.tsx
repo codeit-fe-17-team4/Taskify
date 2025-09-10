@@ -39,7 +39,7 @@ export default function InvitationList({
               width={80}
               height={80}
             />
-            <p className='pt-5 text-xs text-gray-400'>
+            <p className='pt-5 text-lg text-gray-400'>
               아직 초대받은 대시보드가 없어요
             </p>
           </div>
