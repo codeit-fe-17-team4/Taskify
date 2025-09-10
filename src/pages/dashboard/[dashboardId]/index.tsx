@@ -234,7 +234,7 @@ export default function DashboardDetailPage({
     }
   };
 
-  if (!isLoading) {
+  if (isLoading) {
     return <ColumnSkeleton />;
   }
 
