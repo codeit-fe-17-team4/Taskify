@@ -4,7 +4,7 @@ import { getColumnList } from '@/lib/columns/api';
 import { getMemberList } from '@/lib/members/api';
 
 interface UseDashboardDataProps {
-  dashboardId: string;
+  dashboardId: number;
   getCardList: (params: { columnId: number; size: number }) => Promise<{
     cursorId: number | null;
     totalCount: number;

@@ -1,8 +1,9 @@
 import Image from 'next/image';
 import type { TaskCardProps } from '@/components/dashboard/type';
-import ChipProfile from '@/components/ui/chip/chip-profile';
+import ChipProfile, {
+  getProfileColorByIdHash,
+} from '@/components/ui/chip/chip-profile';
 import ChipTag from '@/components/ui/chip/chip-tag';
-import { getProfileColor } from '@/utils/profile-color';
 
 const formatDueDate = (dueDate: string | undefined) => {
   if (!dueDate) {
@@ -88,7 +89,7 @@ export default function ColumnTaskCard({ task, onEditTask }: TaskCardProps) {
             <div className='flex items-center'>
               <ChipProfile
                 label={(task.manager.nickname || '').slice(0, 1)}
-                color={getProfileColor(task.manager.profileColor)}
+                color={getProfileColorByIdHash(Number(task.manager.id))}
                 size='sm'
                 profileImageUrl={task.manager.profileImageUrl}
               />

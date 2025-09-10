@@ -1,23 +1,11 @@
 import type { ReactNode } from 'react';
-import ChipProfile from '@/components/ui/chip/chip-profile';
+import ChipProfile, {
+  getProfileColorByIdHash,
+} from '@/components/ui/chip/chip-profile';
 import { useFetch } from '@/hooks/useAsync';
 import useIsBreakPoint from '@/hooks/useIsBreakPoint';
 import { getMemberList } from '@/lib/members/api';
 
-export const PROFILE_COLORS = [
-  'green',
-  'blue',
-  'orange',
-  'yellow',
-  'brown',
-  'red',
-] as const;
-
-export const getRandomProfileColor = () => {
-  const randomIndex = Math.floor(Math.random() * PROFILE_COLORS.length);
-
-  return PROFILE_COLORS[randomIndex];
-};
 export default function ProfileList({
   dashboardId,
   myId,
@@ -50,7 +38,7 @@ export default function ProfileList({
             <ChipProfile
               label={member.nickname.slice(0, 1)}
               size='lg'
-              color={getRandomProfileColor()}
+              color={getProfileColorByIdHash(member.userId)}
             />
           </li>
         );

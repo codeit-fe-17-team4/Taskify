@@ -1,14 +1,17 @@
 import { useRouter } from 'next/router';
 import { type ReactNode, useCallback, useEffect } from 'react';
-import ChipProfile from '@/components/ui/chip/chip-profile';
+import ChipProfile, {
+  getProfileColorByIdHash,
+} from '@/components/ui/chip/chip-profile';
 import Dropdown from '@/components/ui/dropdown';
 
 export default function HeaderProfileDropdwon({
   myNickname,
+  myId,
 }: {
   myNickname: string;
+  myId: number;
 }): ReactNode {
-  const profileColor = 'yellow';
   const profileLabel = myNickname.slice(0, 1);
   const router = useRouter();
 
@@ -40,7 +43,11 @@ export default function HeaderProfileDropdwon({
     <Dropdown>
       <Dropdown.Toggle>
         <div className='border-l-gray-3 hover:bg-gray-4 active:bg-gray-3 mobile:pl-3 tablet:pr-8 mobile:pr-2 flex h-full cursor-pointer items-center gap-3 border-l-1 pr-20 pl-6'>
-          <ChipProfile label={profileLabel} size='lg' color={profileColor} />
+          <ChipProfile
+            label={profileLabel}
+            size='lg'
+            color={getProfileColorByIdHash(myId)}
+          />
           <span className='mobile:hidden font-medium'>{myNickname}</span>
         </div>
       </Dropdown.Toggle>

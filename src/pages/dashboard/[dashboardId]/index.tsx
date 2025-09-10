@@ -1,4 +1,4 @@
-import type { GetServerSideProps } from 'next';
+import { useRouter } from 'next/router';
 import { useCallback, useState } from 'react';
 import {
   closestCenter,
@@ -26,6 +26,7 @@ import { useTaskHandlers } from '@/hooks/useTaskHandlers';
 import { getCardList } from '@/lib/cards/api';
 import { createColumn, deleteColumn, editColumn } from '@/lib/columns/api';
 import type { UserType } from '@/lib/users/type';
+import { getStringFromQuery } from '@/utils/getContextQuery';
 
 interface DashboardDetailPageProps {
   userInfo: UserType | null;
@@ -34,8 +35,10 @@ interface DashboardDetailPageProps {
 
 export default function DashboardDetailPage({
   userInfo,
-  dashboardId,
+  // dashboardId,
 }: DashboardDetailPageProps): React.ReactElement {
+  const router = useRouter();
+  const dashboardId = Number(getStringFromQuery(router.query, 'dashboardId'));
   /**
    * ===== 유틸리티 함수 =====
    */

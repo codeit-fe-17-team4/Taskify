@@ -27,6 +27,13 @@ export const ChipVariants = cva(
     },
   }
 );
+type profileColorsType =
+  | 'green'
+  | 'blue'
+  | 'orange'
+  | 'yellow'
+  | 'brown'
+  | 'red';
 export interface ChipProfileProps
   extends HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof ChipVariants> {
@@ -35,8 +42,8 @@ export interface ChipProfileProps
   label: string;
   /** 사이즈: 'sm' | 'md' | 'lg' */
   size: 'sm' | 'md' | 'lg';
-  /** 색상: 'green' | 'blue' | 'orange' | 'yellow' | 'brown' */
-  color: 'green' | 'blue' | 'orange' | 'yellow' | 'brown' | 'red';
+  /** 색상: 'green' | 'blue' | 'orange' | 'yellow' | 'brown | red' */
+  color: profileColorsType;
   /** 프로필 이미지 URL */
   profileImageUrl?: string | null;
 }
@@ -51,6 +58,12 @@ const imageSize = {
   lg: 38,
 };
 
+export const getProfileColorByIdHash = (id: number): profileColorsType => {
+  const colors = ['green', 'blue', 'orange', 'yellow', 'brown'];
+  const idx = id % colors.length;
+
+  return colors[idx] as profileColorsType;
+};
 export default function ChipProfile({
   label,
   size = 'md',

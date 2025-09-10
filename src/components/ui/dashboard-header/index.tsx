@@ -85,7 +85,12 @@ export default function DashboardHeader(): ReactNode {
           {dashboardId && myInfo && (
             <ProfileList dashboardId={dashboardId} myId={myInfo.id} />
           )}
-          {myInfo && <HeaderProfileDropdwon myNickname={myInfo.nickname} />}
+          {myInfo && (
+            <HeaderProfileDropdwon
+              myNickname={myInfo.nickname}
+              myId={myInfo.id}
+            />
+          )}
         </div>
         <ModalPortal>
           <InviteMemberModal

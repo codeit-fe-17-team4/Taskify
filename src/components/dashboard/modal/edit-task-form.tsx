@@ -4,11 +4,12 @@ import {
   type EditTaskFormData,
   getRandomTagColor,
 } from '@/components/dashboard/type';
-import ChipProfile from '@/components/ui/chip/chip-profile';
+import ChipProfile, {
+  getProfileColorByIdHash,
+} from '@/components/ui/chip/chip-profile';
 import ChipState from '@/components/ui/chip/chip-state';
 import ChipTag from '@/components/ui/chip/chip-tag';
 import Dropdown from '@/components/ui/dropdown';
-import { getProfileColor } from '@/utils/profile-color';
 
 interface EditTaskFormProps {
   formData: EditTaskFormData;
@@ -17,6 +18,7 @@ interface EditTaskFormProps {
   ) => void;
   columns?: { id: string; title: string }[];
   members?: {
+    userId: number;
     nickname: string;
     profileImageUrl: string | null;
   }[];
@@ -43,7 +45,7 @@ export default function EditTaskForm({
     return {
       value: member.nickname,
       label: member.nickname,
-      profileColor: '#7AC555',
+      profileColor: getProfileColorByIdHash(member.userId),
       profileImageUrl: member.profileImageUrl,
     };
   });
@@ -186,12 +188,10 @@ export default function EditTaskForm({
                         <ChipProfile
                           size='md'
                           profileImageUrl={selectedAssignee?.profileImageUrl}
+                          color={selectedAssignee?.profileColor ?? 'green'}
                           label={
                             (selectedAssignee?.label || '').slice(0, 1) || '배'
                           }
-                          color={getProfileColor(
-                            selectedAssignee?.profileColor || '#7AC555'
-                          )}
                         />
                         <span>
                           {selectedAssignee?.label || '이름을 입력해 주세요'}
@@ -235,7 +235,7 @@ export default function EditTaskForm({
                         <div className='flex items-center gap-2'>
                           <ChipProfile
                             label={option.label.slice(0, 1)}
-                            color={getProfileColor(option.profileColor)}
+                            color={option.profileColor}
                             size='md'
                             profileImageUrl={option.profileImageUrl}
                           />

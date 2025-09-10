@@ -4,11 +4,12 @@ import {
   type CreateTaskFormData,
   getRandomTagColor,
 } from '@/components/dashboard/type';
-import ChipProfile from '@/components/ui/chip/chip-profile';
+import ChipProfile, {
+  getProfileColorByIdHash,
+} from '@/components/ui/chip/chip-profile';
 import ChipTag from '@/components/ui/chip/chip-tag';
 import Dropdown from '@/components/ui/dropdown';
 import type { UserType } from '@/lib/users/type';
-import { getProfileColor } from '@/utils/profile-color';
 
 interface CreateTaskFormProps {
   formData: CreateTaskFormData;
@@ -19,6 +20,7 @@ interface CreateTaskFormProps {
   ) => void;
   userInfo: UserType | null;
   members?: {
+    userId: number;
     nickname: string;
     profileImageUrl: string | null;
   }[];
@@ -37,7 +39,7 @@ export default function CreateTaskForm({
     return {
       value: member.nickname,
       label: member.nickname,
-      profileColor: '#7AC555',
+      profileColor: getProfileColorByIdHash(member.userId),
       profileImageUrl: member.profileImageUrl,
     };
   });
@@ -46,9 +48,7 @@ export default function CreateTaskForm({
     (opt) => opt.value === formData.assignee
   );
   const chipProfileLabel = (selectedAssignee?.label || '').slice(0, 1);
-  const chipProfileColor = getProfileColor(
-    selectedAssignee?.profileColor || '#10b981'
-  );
+  const chipProfileColor = selectedAssignee?.profileColor ?? 'green';
 
   const handleAssigneeSelect = (assignee: string) => {
     setFormData((prev) => ({ ...prev, assignee }));
@@ -179,7 +179,7 @@ export default function CreateTaskForm({
                   <div className='flex items-center gap-2'>
                     <ChipProfile
                       label={(option.label || '').slice(0, 1)}
-                      color={getProfileColor(option.profileColor)}
+                      color={option.profileColor}
                       size='md'
                       profileImageUrl={option.profileImageUrl}
                     />
