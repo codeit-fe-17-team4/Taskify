@@ -34,6 +34,7 @@ export default function CreateNewboardForm({
           id='new-dashboard-name'
           name='name'
           type='text'
+          maxLength={10}
           placeholder='새로운 대시보드'
           className='w-full rounded-lg border border-gray-300 p-4 focus:outline-none'
           value={formData.title}

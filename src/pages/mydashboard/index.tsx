@@ -3,6 +3,7 @@ import DashboardLayout from '@/components/layout/dashboard-layout';
 import CreateNewboardModal from '@/components/mydashboard/create-newboard-modal';
 import DashboardList from '@/components/mydashboard/dashboard-list';
 import InvitationList from '@/components/mydashboard/invitation-list';
+import PeekabooLoader from '@/components/ui/loader/peekabooLoader';
 import ModalPortal from '@/components/ui/modal/modal-portal';
 import { useFetch } from '@/hooks/useAsync';
 import { useCursorInfiniteScroll } from '@/hooks/useCursorInfiniteScroll';
@@ -84,7 +85,7 @@ export default function Mydashboard(): ReactNode {
   };
 
   if (!dashboardData || dashboardLoading) {
-    return <div> loading ...</div>;
+    return <PeekabooLoader />;
   }
 
   if (dashboardError) {
@@ -138,15 +139,13 @@ export default function Mydashboard(): ReactNode {
       console.error('초대 수락 실패:', error);
       if (error instanceof Error) {
         alert(`초대 수락에 실패했습니다: ${error.message}`);
-      } else {
-        alert('초대 수락에 실패했습니다. 다시 시도해주세요.');
       }
     } finally {
       setIsAcceptingInvitation(false);
     }
   };
   /**
-   * 초대 거절 API 연동 (일단 구현해봤는데 그냥 삭제하는 것으로 구현하는 것도 있을 듯)
+   * 초대 거절 API 연동
    */
   const handleRejectInvitation = async (inviteId: number) => {
     if (isAcceptingInvitation) {
