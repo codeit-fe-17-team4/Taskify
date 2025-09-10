@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 // 인증 페이지용 통합 모달 컴포넌트 (성공/에러 메시지)
 import type React from 'react';
