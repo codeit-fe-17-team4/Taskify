@@ -29,7 +29,7 @@ export default function Mydashboard(): ReactNode {
     deps: [currentPage],
   });
   const { data: invitationListData, refetch: refetchInvitations } = useFetch({
-    asyncFunction: () => getInvitationList({ size: 100, title: 'invitation' }),
+    asyncFunction: () => getInvitationList({ size: 100 }),
     deps: [searchQuery],
   });
   const inviteData = invitationListData?.invitations ?? [];

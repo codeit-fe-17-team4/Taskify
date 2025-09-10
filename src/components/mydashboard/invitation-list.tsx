@@ -16,6 +16,8 @@ export default function InvitationList({
   onAccept,
   onReject,
 }: InviteListProps) {
+  console.log(inviteData);
+
   return (
     <div>
       {inviteData.length === 0 ? (
