@@ -49,9 +49,7 @@ export default function CreateTaskModal({
   useModalKeyHandler(isOpen, handleClose);
 
   const handleSubmit = () => {
-    console.log('CreateTaskModal handleSubmit called');
     onSubmit(formData);
-    console.log('Calling handleClose');
     handleClose();
   };
 

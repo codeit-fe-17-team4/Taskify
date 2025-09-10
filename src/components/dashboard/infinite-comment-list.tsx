@@ -19,6 +19,9 @@ interface InfiniteCommentListProps {
   onRefreshRef?: React.RefObject<(() => void) | null>;
 }
 
+/**
+ * 무한 스크롤 설정
+ */
 export default function InfiniteCommentList({
   cardId,
   fetchComments,
@@ -50,6 +53,9 @@ export default function InfiniteCommentList({
     };
   }
 
+  /**
+   * 댓글 수정 상태 관리
+   */
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [editContent, setEditContent] = useState('');
 
@@ -63,7 +69,7 @@ export default function InfiniteCommentList({
         await onDeleteComment(commentId);
         await refresh();
       } catch (error) {
-        console.error('댓글 삭제 실패:', error);
+        // 댓글 삭제 실패
       }
     },
     [onDeleteComment, refresh]
@@ -81,7 +87,7 @@ export default function InfiniteCommentList({
         setEditContent('');
         await refresh();
       } catch (error) {
-        console.error('댓글 수정 실패:', error);
+        // 댓글 수정 실패
       }
     },
     [onEditComment, editContent, refresh]
@@ -241,14 +247,13 @@ export default function InfiniteCommentList({
           </div>
         )
       )}
-
       {isLoading && (
         <div className='flex justify-center py-4'>
           <div className='h-6 w-6 animate-spin rounded-full border-b-2 border-blue-500'></div>
         </div>
       )}
-
-      {hasMore && !isLoading && <div ref={ref} className='h-4' />}
+      {/* 무한 스크롤 트리거 */}
+      {hasMore && !isLoading && <div ref={ref} className='h-4' />}{' '}
     </div>
   );
 }

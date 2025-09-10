@@ -49,11 +49,15 @@ export default function CreateTaskForm({
   const chipProfileColor = getProfileColor(
     selectedAssignee?.profileColor || '#10b981'
   );
+
   const handleAssigneeSelect = (assignee: string) => {
     setFormData((prev) => ({ ...prev, assignee }));
     setIsAssigneeDropdownOpen(false);
   };
 
+  /**
+   * ===== 태그 관련 핸들러 =====
+   */
   const handleTagKeyDown = (e: React.KeyboardEvent) => {
     if (e.key !== 'Enter') {
       return;
@@ -83,6 +87,9 @@ export default function CreateTaskForm({
     });
   };
 
+  /**
+   * ===== 이미지 관련 핸들러 =====
+   */
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
 

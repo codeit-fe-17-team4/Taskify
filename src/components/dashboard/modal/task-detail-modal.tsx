@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import InfiniteCommentList from '@/components/dashboard/infinite-comment-list';
 import type { TaskDetailModalProps } from '@/components/dashboard/type';
 import ChipProfile from '@/components/ui/chip/chip-profile';
@@ -72,7 +72,7 @@ export default function TaskDetailModal({
         commentRefreshRef.current();
       }
     } catch (error) {
-      console.error('댓글 생성 실패:', error);
+      // 댓글 생성 실패
     }
   };
 
@@ -90,7 +90,7 @@ export default function TaskDetailModal({
         commentRefreshRef.current();
       }
     } catch (error) {
-      console.error('댓글 수정 실패:', error);
+      // 댓글 수정 실패
     }
   };
 
@@ -106,7 +106,7 @@ export default function TaskDetailModal({
           commentRefreshRef.current();
         }
       } catch (error) {
-        console.error('댓글 삭제 실패:', error);
+        // 댓글 삭제 실패
       }
     }
   };
@@ -127,8 +127,6 @@ export default function TaskDetailModal({
         nextCursorId: result.cursorId,
       };
     } catch (error) {
-      console.error('댓글 목록 가져오기 실패:', error);
-
       return {
         data: [],
         nextCursorId: null,

@@ -1,5 +1,5 @@
 import type { GetServerSideProps } from 'next';
-import { useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import {
   closestCenter,
   DndContext,
@@ -16,22 +16,15 @@ import TaskDetailModal from '@/components/dashboard/modal/task-detail-modal';
 import {
   type ColumnType,
   type CreateColumnFormData,
-  type CreateTaskFormData,
-  type EditTaskFormData,
   type ManageColumnFormData,
   TAG_COLORS,
   type TaskType,
 } from '@/components/dashboard/type';
 import DashboardLayout from '@/components/layout/dashboard-layout';
-import { createCard, deleteCard, editCard, getCardList } from '@/lib/cards/api';
-import {
-  createColumn,
-  deleteColumn,
-  editColumn,
-  getColumnList,
-  uploadCardImage,
-} from '@/lib/columns/api';
-import { getMemberList } from '@/lib/members/api';
+import { useDashboardData } from '@/hooks/useDashboardData';
+import { useTaskHandlers } from '@/hooks/useTaskHandlers';
+import { getCardList } from '@/lib/cards/api';
+import { createColumn, deleteColumn, editColumn } from '@/lib/columns/api';
 import type { UserType } from '@/lib/users/type';
 
 interface DashboardDetailPageProps {
@@ -43,34 +36,66 @@ export default function DashboardDetailPage({
   userInfo,
   dashboardId,
 }: DashboardDetailPageProps): React.ReactElement {
-  const [isColumnModalOpen, setIsColumnModalOpen] = useState(false);
-  const [isManageColumnModalOpen, setIsManageColumnModalOpen] = useState(false);
-  const [selectedColumn, setSelectedColumn] = useState<ColumnType | null>(null);
-  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
-  const [selectedTask, setSelectedTask] = useState<TaskType | null>(null);
-  const [isEditTaskModalOpen, setIsEditTaskModalOpen] = useState(false);
-  const [isCreateTaskModalOpen, setIsCreateTaskModalOpen] = useState(false);
-  const [selectedColumnId, setSelectedColumnId] = useState<string | null>(null);
-  const [columns, setColumns] = useState<ColumnType[]>([]);
-  const [members, setMembers] = useState<
-    {
-      userId: number;
-      nickname: string;
-      email: string;
-      profileImageUrl: string | null;
-    }[]
-  >([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [activeTask, setActiveTask] = useState<TaskType | null>(null);
+  /**
+   * ===== 유틸리티 함수 =====
+   */
+  const getTagColorByLabel = useCallback(
+    (label: string): 'blue' | 'pink' | 'green' | 'brown' | 'red' => {
+      const hash = [...label].reduce(
+        (acc, char) => acc + char.charCodeAt(0),
+        0
+      );
 
-  const getTagColorByLabel = (
-    label: string
-  ): 'blue' | 'pink' | 'green' | 'brown' | 'red' => {
-    const hash = [...label].reduce((acc, char) => acc + char.charCodeAt(0), 0);
+      return TAG_COLORS[hash % TAG_COLORS.length];
+    },
+    []
+  );
 
-    return TAG_COLORS[hash % TAG_COLORS.length];
+  /**
+   * ===== 카드 순서 관리 =====
+   */
+  const saveCardOrder = (columnId: string, taskIds: string[]) => {
+    const orderKey = `card-order-${dashboardId}-${columnId}`;
+
+    localStorage.setItem(orderKey, JSON.stringify(taskIds));
   };
 
+  // ===== 데이터 로딩 =====
+  const { columns, setColumns, members, isLoading } = useDashboardData({
+    dashboardId,
+    getCardList,
+  });
+
+  // ===== 태스크 핸들러 =====
+  const {
+    selectedTask,
+    handleTaskClick,
+    getSelectedTaskColumn,
+    handleTaskEdit,
+    handleTaskUpdate,
+    handleAddTaskClick,
+    handleCreateTask,
+    handleTaskDelete,
+  } = useTaskHandlers({
+    columns,
+    setColumns,
+    members,
+    dashboardId,
+    getTagColorByLabel,
+  });
+
+  // ===== 모달 상태 =====
+  const [isColumnModalOpen, setIsColumnModalOpen] = useState(false);
+  const [isManageColumnModalOpen, setIsManageColumnModalOpen] = useState(false);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [isEditTaskModalOpen, setIsEditTaskModalOpen] = useState(false);
+  const [isCreateTaskModalOpen, setIsCreateTaskModalOpen] = useState(false);
+  const [selectedColumn, setSelectedColumn] = useState<ColumnType | null>(null);
+  const [activeTask, setActiveTask] = useState<TaskType | null>(null);
+
+  /**
+   * ===== 드래그 앤 드롭 핸들러 =====
+   */
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
     const taskId = active.id as string;
@@ -83,19 +108,6 @@ export default function DashboardDetailPage({
         break;
       }
     }
-  };
-
-  const saveCardOrder = (columnId: string, taskIds: string[]) => {
-    const orderKey = `card-order-${dashboardId}-${columnId}`;
-
-    localStorage.setItem(orderKey, JSON.stringify(taskIds));
-  };
-
-  const getCardOrder = (columnId: string): string[] | null => {
-    const orderKey = `card-order-${dashboardId}-${columnId}`;
-    const saved = localStorage.getItem(orderKey);
-
-    return saved ? (JSON.parse(saved) as string[]) : null;
   };
 
   const handleDragEnd = async (event: DragEndEvent) => {
@@ -148,103 +160,9 @@ export default function DashboardDetailPage({
     setActiveTask(null);
   };
 
-  const formatDueDate = (dateString: string): string | null => {
-    if (!dateString || dateString.trim() === '') {
-      return null;
-    }
-
-    if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/.test(dateString)) {
-      return dateString;
-    }
-
-    if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
-      return `${dateString} 00:00`;
-    }
-    const date = new Date(dateString);
-
-    if (isNaN(date.getTime())) {
-      return null;
-    }
-
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-
-    return `${String(year)}-${month}-${day} ${hours}:${minutes}`;
-  };
-
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        setIsLoading(true);
-
-        const columnsData = await getColumnList(Number(dashboardId));
-        const columnsWithTasks = await Promise.all(
-          columnsData.data.map(async (column) => {
-            const cardsData = await getCardList({
-              columnId: column.id,
-              size: 100,
-            });
-
-            const cardTasks = cardsData.cards.map((card) => {
-              return {
-                id: String(card.id),
-                title: card.title,
-                description: card.description,
-                tags: card.tags.map((tag) => {
-                  return {
-                    label: tag,
-                    color: getTagColorByLabel(tag),
-                  };
-                }),
-                dueDate: card.dueDate || undefined,
-                imageUrl: card.imageUrl || '',
-                manager: {
-                  id: String(card.assignee.id),
-                  name: card.assignee.nickname,
-                  nickname: card.assignee.nickname,
-                  profileColor: '#7AC555',
-                  profileImageUrl: card.assignee.profileImageUrl,
-                },
-              };
-            });
-
-            return {
-              id: String(column.id),
-              title: column.title,
-              tasks: cardTasks,
-            };
-          })
-        );
-
-        setColumns(columnsWithTasks);
-
-        const membersData = await getMemberList({
-          dashboardId: Number(dashboardId),
-          size: 100,
-        });
-
-        setMembers(membersData.members);
-      } catch (error) {
-        console.error('데이터 로딩 실패:', error);
-        setColumns([
-          { id: '1', title: 'To do', tasks: [] },
-          { id: '2', title: 'On progress', tasks: [] },
-          { id: '3', title: 'Done', tasks: [] },
-          { id: '4', title: 'Review', tasks: [] },
-          { id: '5', title: 'Testing', tasks: [] },
-          { id: '6', title: 'Deploy', tasks: [] },
-        ]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadData();
-  }, [dashboardId]);
-
+  /**
+   * ===== 컬럼 관련 핸들러 =====
+   */
   const handleAddColumnClick = () => {
     setIsColumnModalOpen(true);
   };
@@ -264,8 +182,8 @@ export default function DashboardDetailPage({
 
       setColumns((prevColumns) => [...prevColumns, columnWithTasks]);
       setIsColumnModalOpen(false);
-    } catch (error) {
-      console.error('컬럼 생성 실패:', error);
+    } catch {
+      // 컬럼 생성 실패
     }
   };
 
@@ -294,8 +212,8 @@ export default function DashboardDetailPage({
         );
       });
       setIsManageColumnModalOpen(false);
-    } catch (error) {
-      console.error('컬럼 수정 실패:', error);
+    } catch {
+      // 컬럼 수정 실패
     }
   };
 
@@ -307,275 +225,8 @@ export default function DashboardDetailPage({
         prevColumns.filter((col) => col.id !== columnId)
       );
       setIsManageColumnModalOpen(false);
-    } catch (error) {
-      console.error('컬럼 삭제 실패:', error);
-    }
-  };
-
-  const handleTaskClick = (task: TaskType) => {
-    setSelectedTask(task);
-    setIsDetailModalOpen(true);
-  };
-
-  const getSelectedTaskColumn = () => {
-    if (!selectedTask) {
-      return null;
-    }
-
-    return columns.find((col) =>
-      col.tasks.some((task) => task.id === selectedTask.id)
-    );
-  };
-
-  const handleTaskEdit = (task: TaskType) => {
-    setSelectedTask(task);
-    setIsDetailModalOpen(false);
-    setIsEditTaskModalOpen(true);
-  };
-
-  const handleTaskUpdate = async (taskData: EditTaskFormData) => {
-    if (!selectedTask) {
-      return;
-    }
-
-    try {
-      const assigneeMember = members.find((member) => {
-        return (
-          member.nickname === taskData.assignee ||
-          member.email === taskData.assignee
-        );
-      });
-
-      const targetColumn = columns.find((col) => col.title === taskData.status);
-
-      let imageUrl = taskData.existingImageUrl ?? '';
-      let isImageDeleted = false;
-
-      if (taskData.imageFile) {
-        try {
-          const uploadResult = await uploadCardImage(
-            targetColumn ? Number(targetColumn.id) : Number(selectedTask.id),
-            taskData.imageFile
-          );
-
-          imageUrl = uploadResult.imageUrl;
-        } catch (error) {
-          console.error('이미지 업로드 실패:', error);
-          imageUrl = taskData.existingImageUrl ?? '';
-        }
-      } else if (taskData.existingImageUrl === undefined) {
-        imageUrl = '';
-        isImageDeleted = true;
-      }
-
-      const updateData: {
-        columnId: number;
-        assigneeUserId: number;
-        title: string;
-        description: string;
-        tags: string[];
-        dueDate?: string;
-        imageUrl?: string;
-      } = {
-        columnId: targetColumn
-          ? Number(targetColumn.id)
-          : Number(selectedTask.id),
-        assigneeUserId: assigneeMember?.userId ?? 1,
-        title: taskData.title,
-        description: taskData.description,
-        tags: taskData.tags.map((tag) => tag.label),
-      };
-
-      const formattedDueDate = formatDueDate(taskData.dueDate);
-
-      if (formattedDueDate) {
-        updateData.dueDate = formattedDueDate;
-      }
-
-      if (isImageDeleted) {
-        const deletedImageCards = JSON.parse(
-          localStorage.getItem('deletedImageCards') || '[]'
-        ) as string[];
-
-        if (!deletedImageCards.includes(selectedTask.id)) {
-          deletedImageCards.push(selectedTask.id);
-          localStorage.setItem(
-            'deletedImageCards',
-            JSON.stringify(deletedImageCards)
-          );
-        }
-        const { imageUrl: _, ...updateDataWithoutImage } = updateData;
-
-        Object.assign(updateData, updateDataWithoutImage);
-      } else if (imageUrl && imageUrl.trim() !== '') {
-        updateData.imageUrl = imageUrl;
-      }
-
-      const updatedCard = await editCard({
-        cardId: Number(selectedTask.id),
-        body: updateData,
-      });
-
-      const updatedTask: TaskType = {
-        id: String(updatedCard.id),
-        title: updatedCard.title,
-        description: updatedCard.description,
-        tags: updatedCard.tags.map((tag) => {
-          return {
-            label: tag,
-            color: getTagColorByLabel(tag),
-          };
-        }),
-        dueDate: updatedCard.dueDate || undefined,
-        imageUrl: isImageDeleted ? '' : updatedCard.imageUrl || '',
-        manager: {
-          id: String(updatedCard.assignee.id),
-          name: updatedCard.assignee.nickname,
-          nickname: updatedCard.assignee.nickname,
-          profileColor: '#7AC555',
-        },
-      };
-
-      const currentColumn = columns.find((col) =>
-        col.tasks.some((task) => task.id === selectedTask.id)
-      );
-
-      setColumns((prevColumns) => {
-        if (
-          currentColumn &&
-          targetColumn &&
-          currentColumn.id !== targetColumn.id
-        ) {
-          return prevColumns.map((col) => {
-            if (col.id === currentColumn.id) {
-              return {
-                ...col,
-                tasks: col.tasks.filter((task) => task.id !== selectedTask.id),
-              };
-            }
-            if (col.id === targetColumn.id) {
-              return {
-                ...col,
-                tasks: [...col.tasks, updatedTask],
-              };
-            }
-
-            return col;
-          });
-        }
-
-        return prevColumns.map((col) => {
-          return {
-            ...col,
-            tasks: col.tasks.map((task) =>
-              task.id === selectedTask.id ? updatedTask : task
-            ),
-          };
-        });
-      });
-
-      setIsEditTaskModalOpen(false);
-      setSelectedTask(null);
-    } catch (error) {
-      console.error('카드 수정 실패:', error);
-    }
-  };
-
-  const handleAddTaskClick = (columnId: string) => {
-    setSelectedColumnId(columnId);
-    setIsCreateTaskModalOpen(true);
-  };
-
-  const handleCreateTask = async (taskData: CreateTaskFormData) => {
-    if (!selectedColumnId) {
-      return;
-    }
-
-    try {
-      const assigneeMember = members.find((member) => {
-        return (
-          member.nickname === taskData.assignee ||
-          member.email === taskData.assignee
-        );
-      });
-
-      let imageUrl = '';
-
-      if (taskData.imageFile) {
-        try {
-          const uploadResult = await uploadCardImage(
-            Number(selectedColumnId),
-            taskData.imageFile
-          );
-
-          imageUrl = uploadResult.imageUrl;
-        } catch (error) {
-          console.error('이미지 업로드 실패:', error);
-          imageUrl = '';
-        }
-      }
-
-      const cardData: {
-        assigneeUserId: number;
-        dashboardId: number;
-        columnId: number;
-        title: string;
-        description: string;
-        tags: string[];
-        dueDate?: string;
-        imageUrl?: string;
-      } = {
-        assigneeUserId: assigneeMember?.userId ?? 1,
-        dashboardId: Number(dashboardId),
-        columnId: Number(selectedColumnId),
-        title: taskData.title,
-        description: taskData.description,
-        tags: taskData.tags.map((tag) => tag.label),
-      };
-
-      const formattedDueDate = formatDueDate(taskData.dueDate);
-
-      if (formattedDueDate) {
-        cardData.dueDate = formattedDueDate;
-      }
-
-      if (imageUrl) {
-        cardData.imageUrl = imageUrl;
-      }
-
-      const newCard = await createCard(cardData);
-
-      const newTask: TaskType = {
-        id: String(newCard.id),
-        title: newCard.title,
-        description: newCard.description,
-        tags: newCard.tags.map((tag) => {
-          return {
-            label: tag,
-            color: getTagColorByLabel(tag),
-          };
-        }),
-        dueDate: newCard.dueDate || undefined,
-        imageUrl: newCard.imageUrl || '',
-        manager: {
-          id: String(newCard.assignee.id),
-          name: newCard.assignee.nickname,
-          nickname: newCard.assignee.nickname,
-          profileColor: '#7AC555',
-        },
-      };
-
-      setColumns((prevColumns) => {
-        return prevColumns.map((col) => {
-          return col.id === selectedColumnId
-            ? { ...col, tasks: [...col.tasks, newTask] }
-            : col;
-        });
-      });
-
-      setIsCreateTaskModalOpen(false);
-    } catch (error) {
-      console.error('카드 생성 실패:', error);
+    } catch {
+      // 컬럼 삭제 실패
     }
   };
 
@@ -607,8 +258,14 @@ export default function DashboardDetailPage({
             maxColumns={10}
             onAddColumnClick={handleAddColumnClick}
             onColumnSettingsClick={handleColumnSettingsClick}
-            onTaskClick={handleTaskClick}
-            onAddTaskClick={handleAddTaskClick}
+            onTaskClick={(task) => {
+              handleTaskClick(task);
+              setIsDetailModalOpen(true);
+            }}
+            onAddTaskClick={(columnId) => {
+              handleAddTaskClick(columnId);
+              setIsCreateTaskModalOpen(true);
+            }}
           />
           <DragOverlay>
             {activeTask ? (
@@ -644,7 +301,6 @@ export default function DashboardDetailPage({
         onSubmit={handleCreateTask}
         onClose={() => {
           setIsCreateTaskModalOpen(false);
-          setSelectedColumnId(null);
         }}
       />
 
@@ -670,27 +326,14 @@ export default function DashboardDetailPage({
           name: userInfo?.nickname ?? '사용자',
           profileColor: '#7AC555',
         }}
-        onEdit={handleTaskEdit}
+        onDelete={handleTaskDelete}
+        onEdit={(task) => {
+          handleTaskEdit(task);
+          setIsDetailModalOpen(false);
+          setIsEditTaskModalOpen(true);
+        }}
         onClose={() => {
           setIsDetailModalOpen(false);
-        }}
-        onDelete={async (taskId) => {
-          try {
-            await deleteCard(Number(taskId));
-
-            setColumns((prevColumns) => {
-              return prevColumns.map((col) => {
-                return {
-                  ...col,
-                  tasks: col.tasks.filter((task) => task.id !== taskId),
-                };
-              });
-            });
-            setIsDetailModalOpen(false);
-            setSelectedTask(null);
-          } catch (error) {
-            console.error('카드 삭제 실패:', error);
-          }
         }}
       />
 

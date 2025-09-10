@@ -42,7 +42,6 @@ export default function ColumnTaskCard({ task, onEditTask }: TaskCardProps) {
           <div className='relative h-40 w-full overflow-hidden rounded-lg'>
             <Image
               fill
-              priority
               src={task.imageUrl}
               alt='카드 이미지'
               sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'

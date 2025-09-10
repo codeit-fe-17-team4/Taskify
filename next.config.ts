@@ -20,6 +20,10 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // LCP 경고 비활성화 (개발 환경에서만)
+  experimental: {
+    optimizePackageImports: ['@dnd-kit/core', '@dnd-kit/sortable'],
+  },
 };
 
 export default nextConfig;
