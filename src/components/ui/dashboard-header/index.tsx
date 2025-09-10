@@ -9,6 +9,7 @@ import ModalPortal from '@/components/ui/modal/modal-portal';
 import { useFetch } from '@/hooks/useAsync';
 import { getDashBoard } from '@/lib/dashboards/api';
 import { getMyInfo } from '@/lib/users/api';
+import { cn } from '@/utils/cn';
 import { getStringFromQuery } from '@/utils/getContextQuery';
 
 const buttonClass =
@@ -64,10 +65,10 @@ export default function DashboardHeader(): ReactNode {
           <div className='mobile:gap-1.5 flex gap-3'>
             <Link
               href={`/dashboard/${dashboardId}/edit`}
-              className={buttonClass}
+              className={cn(buttonClass, 'active:*:first:rotate-90')}
               aria-label='대시보드 관리 페이지로 이동'
             >
-              <span className='mobile:hidden *:fill-gray-1'>
+              <span className='mobile:hidden *:fill-gray-1 transition-transform duration-200'>
                 <SettingIcon />
               </span>
               <span>관리</span>
