@@ -1,8 +1,10 @@
 // 구성원 목록 조회 및 삭제 UI 컴포넌트
 
 import Image from 'next/image';
+import ChipProfile, {
+  getProfileColorByIdHash,
+} from '@/components/ui/chip/chip-profile';
 import type { MemberListType } from '@/lib/members/type';
-import ChipProfile, { getProfileColorByIdHash } from '../ui/chip/chip-profile';
 
 // 접근을 하지 못하고 있길래 빼봄!
 type Member = MemberListType['members'][number];
