@@ -29,7 +29,7 @@ export default function InvitationList({
       {inviteData.length === 0 ? (
         // 초대받은 대시보드가 없을 때
         <div className='tablet:w-lg mobile:w-3xs mt-10 flex h-[280px] w-2xl flex-col rounded-lg border-0 bg-white'>
-          <h2 className='pt-4 pl-[28px] text-lg font-bold text-gray-600'>
+          <h2 className='pt-4 pl-[28px] text-2xl font-bold text-gray-600'>
             초대받은 대시보드
           </h2>
           <div className='flex flex-grow flex-col items-center justify-center gap-2'>
@@ -76,7 +76,7 @@ export default function InvitationList({
                 </div>
               </div>
 
-              <div className='mobile:hidden tablet:grid-cols-[150px_80px_200px] tablet:pl-8 grid w-full max-w-2xl min-w-2xs grid-cols-[250px_250px_200px] gap-2 pt-5 pl-12 text-sm text-gray-400'>
+              <div className='mobile:hidden tablet:grid-cols-[150px_80px_200px] tablet:pl-8 grid w-full max-w-2xl min-w-2xs grid-cols-[250px_250px_200px] gap-2 pt-5 pl-12 text-base text-gray-400'>
                 <div>이름</div>
                 <div>초대자</div>
                 <div className='mobile:hidden text-center'>수락 여부</div>
@@ -86,7 +86,7 @@ export default function InvitationList({
                   return (
                     <div
                       key={invite.id}
-                      className='mobile:flex mobile:flex-col mobile:w-full tablet:w-lg tablet:grid-cols-[150px_80px_200px] tablet:pl-8 grid grid-cols-[250px_250px_200px] items-center gap-2 border-b border-gray-200 py-5 pl-12 text-sm text-gray-600'
+                      className='mobile:flex mobile:flex-col mobile:w-full tablet:w-lg tablet:grid-cols-[150px_80px_200px] tablet:pl-8 grid grid-cols-[250px_250px_200px] items-center gap-2 border-b border-gray-200 py-5 pl-12 text-base text-gray-600'
                     >
                       <div className='mobile:flex mobile:w-full'>
                         <p className='tablet:hidden mobile:w-16 mobile:block hidden text-gray-400'>
@@ -106,7 +106,7 @@ export default function InvitationList({
                       </div>
                       <div className='mobile:flex mobile:mt-2 mobile:w-full mobile:mr-8 flex items-center justify-center gap-2'>
                         <button
-                          className='mobile:w-full w-20 cursor-pointer rounded bg-violet-500 py-1 text-sm text-white hover:bg-violet-600'
+                          className='mobile:w-full w-20 cursor-pointer rounded bg-violet-500 py-1 text-base text-white hover:bg-violet-600'
                           onClick={() => {
                             onAccept(invite.id);
                           }}
@@ -114,7 +114,7 @@ export default function InvitationList({
                           수락
                         </button>
                         <button
-                          className='mobile:w-full w-20 cursor-pointer rounded border border-gray-300 bg-white py-1 text-sm text-violet-500 hover:bg-gray-100'
+                          className='mobile:w-full w-20 cursor-pointer rounded border border-gray-300 bg-white py-1 text-base text-violet-500 hover:bg-gray-100'
                           onClick={() => {
                             onReject(invite.id);
                           }}

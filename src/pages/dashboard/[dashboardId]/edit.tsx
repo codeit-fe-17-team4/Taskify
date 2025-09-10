@@ -265,7 +265,7 @@ export default function MydashboardEdit(): ReactNode {
                 width={10}
                 height={10}
               />
-              <span>돌아가기</span>
+              <span className='text-base'>돌아가기</span>
             </div>
           </Link>
         )}
@@ -323,7 +323,7 @@ export default function MydashboardEdit(): ReactNode {
         <div>
           <button
             type='button'
-            className='mobile:max-w-2xs my-6 h-12 w-xs cursor-pointer rounded-sm border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-100'
+            className='mobile:max-w-2xs my-6 h-12 w-xs cursor-pointer rounded-sm border border-gray-300 px-4 py-2 text-lg font-medium hover:bg-gray-100'
             disabled={deletingDashboard}
             onClick={handleDeleteDashboard}
           >

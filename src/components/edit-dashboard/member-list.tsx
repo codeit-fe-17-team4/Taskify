@@ -30,7 +30,7 @@ export default function MemberList({
       <div className='flex items-center justify-between pr-8 pl-8'>
         <h2 className='text-xl font-bold'>구성원</h2>
         <div className='flex items-center justify-end gap-2'>
-          <p className='text-xs text-gray-600'>
+          <p className='text-sm text-gray-600'>
             {totalPages} 페이지 중 {currentPage}
           </p>
           <div className='flex items-center justify-center'>
@@ -59,7 +59,7 @@ export default function MemberList({
           </div>
         </div>
       </div>
-      <table className='mt-5 w-full text-center text-xs'>
+      <table className='mt-5 w-full text-center text-base'>
         <thead>
           <tr>
             <th className='pr-8 pl-8 text-start font-normal text-gray-400'>
@@ -87,7 +87,7 @@ export default function MemberList({
                 <td className='py-3'>
                   <button
                     type='button'
-                    className='mobile:w-12 w-15.5 cursor-pointer rounded border border-gray-200 px-3 py-1 text-xs text-violet-500 transition-colors hover:bg-gray-50'
+                    className='mobile:w-12 w-15.5 cursor-pointer rounded border border-gray-200 px-3 py-1 text-sm text-violet-500 transition-colors hover:bg-gray-50'
                     onClick={() => {
                       onDeleteMember(member.id);
                     }}

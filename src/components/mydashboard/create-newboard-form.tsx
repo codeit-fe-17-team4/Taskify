@@ -53,18 +53,15 @@ export default function CreateNewboardForm({
                 className={`flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border-2 transition-all ${
                   color.bgClass
                 } ${
-                  formData.color === color.name
+                  formData.color === color.hexCode
                     ? 'scale-110 border-transparent'
                     : 'border-transparent hover:scale-110'
                 }`}
                 onClick={() => {
-                  console.log(color.hexCode);
                   setFormData((prev) => ({ ...prev, color: color.hexCode }));
-                  console.log(formData);
-                  console.log(formData);
                 }}
               >
-                {formData.color === color.name && (
+                {formData.color === color.hexCode && (
                   <Image
                     src='/icon/selected.svg'
                     alt='selected'
