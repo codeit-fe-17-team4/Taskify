@@ -5,13 +5,16 @@ import ChipProfile, {
 } from '@/components/ui/chip/chip-profile';
 import Dropdown from '@/components/ui/dropdown';
 
+interface HeaderProfileDropdwonProps {
+  myNickname: string;
+  myId: number;
+  profileImageUrl: string | null;
+}
 export default function HeaderProfileDropdwon({
   myNickname,
   myId,
-}: {
-  myNickname: string;
-  myId: number;
-}): ReactNode {
+  profileImageUrl,
+}: HeaderProfileDropdwonProps): ReactNode {
   const profileLabel = myNickname.slice(0, 1);
   const router = useRouter();
 
@@ -47,6 +50,7 @@ export default function HeaderProfileDropdwon({
             label={profileLabel}
             size='lg'
             color={getProfileColorByIdHash(myId)}
+            profileImageUrl={profileImageUrl}
           />
           <span className='mobile:hidden font-medium'>{myNickname}</span>
         </div>

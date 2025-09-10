@@ -39,6 +39,7 @@ export default function ProfileList({
               label={member.nickname.slice(0, 1)}
               size='lg'
               color={getProfileColorByIdHash(member.userId)}
+              profileImageUrl={member.profileImageUrl}
             />
           </li>
         );

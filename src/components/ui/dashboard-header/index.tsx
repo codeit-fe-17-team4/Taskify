@@ -89,6 +89,7 @@ export default function DashboardHeader(): ReactNode {
             <HeaderProfileDropdwon
               myNickname={myInfo.nickname}
               myId={myInfo.id}
+              profileImageUrl={myInfo.profileImageUrl}
             />
           )}
         </div>
