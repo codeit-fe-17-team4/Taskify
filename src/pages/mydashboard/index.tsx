@@ -15,8 +15,8 @@ export default function Mydashboard(): ReactNode {
   const [searchQuery, setSearchQuery] = useState('');
   const {
     data: dashboardData,
-    loading,
-    error,
+    loading: dashboardLoading,
+    error: dashboardError,
     refetch,
   } = useFetch({
     asyncFunction: () => {
@@ -28,11 +28,29 @@ export default function Mydashboard(): ReactNode {
     },
     deps: [currentPage],
   });
-  const { data: invitationListData, refetch: refetchInvitations } = useFetch({
-    asyncFunction: () => getInvitationList({ size: 100 }),
-    deps: [searchQuery],
+
+  /* 초대받은 목록 API 연동 */
+  const {
+    data: invitationListData,
+    loading: invitationLoading,
+    error: invitationError,
+    refetch: refetchInvitations,
+  } = useFetch({
+    asyncFunction: () => getInvitationList({ size: 100, title: 'invitation' }),
+    deps: [],
   });
-  const inviteData = invitationListData?.invitations ?? [];
+
+  const rawInviteData = invitationListData?.invitations ?? [];
+
+  const inviteData =
+    searchQuery.trim() === ''
+      ? rawInviteData
+      : rawInviteData.filter((invite) => {
+          return invite.dashboard.title
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase());
+        });
+
   const handleOpenModal = () => {
     setIsModalOpen(true);
   };
@@ -40,13 +58,22 @@ export default function Mydashboard(): ReactNode {
     setIsModalOpen(false);
   };
 
-  if (!dashboardData || loading) {
-    return <div> loading</div>;
+  if (!dashboardData || dashboardLoading) {
+    return <div> loading ...</div>;
   }
 
-  if (error) {
-    return <div>에러가 발생했습니다.</div>;
+  if (dashboardError) {
+    return <div>Error ... </div>;
   }
+
+  if (!invitationListData || invitationLoading) {
+    return <div> loading ...</div>;
+  }
+
+  if (invitationError) {
+    return <div>Error ... </div>;
+  }
+
   // 페이지네이션 (라이브러리 x)
   const itemsPerPage = 5;
   const totalPages = Math.ceil(dashboardData.totalCount / itemsPerPage);
@@ -67,6 +94,7 @@ export default function Mydashboard(): ReactNode {
   const addDashboardToList = () => {
     refetch();
   };
+
   /**
    * 초대 수락 API 연동
    */

@@ -21,7 +21,7 @@ export default function InvitationList({
       {inviteData.length === 0 ? (
         // 초대받은 대시보드가 없을 때
         <div className='tablet:w-lg mobile:w-3xs mt-10 flex h-[280px] w-2xl flex-col rounded-lg border-0 bg-white'>
-          <h2 className='pt-4 pl-[28px] text-lg font-bold text-gray-600 transition-colors hover:text-violet-500'>
+          <h2 className='pt-4 pl-[28px] text-lg font-bold text-gray-600'>
             초대받은 대시보드
           </h2>
           <div className='flex flex-grow flex-col items-center justify-center gap-2'>

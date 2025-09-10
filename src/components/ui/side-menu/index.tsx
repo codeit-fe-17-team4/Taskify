@@ -16,6 +16,7 @@ export default function SideMenu(): ReactNode {
     data: dashboardListData,
     loading,
     error,
+    refetch,
   } = useFetch({
     asyncFunction: () => {
       return getDashBoardList({
@@ -103,7 +104,11 @@ export default function SideMenu(): ReactNode {
         </div>
       </nav>
       <ModalPortal>
-        <CreateNewboardModal isOpen={isModalOpen} onClose={handleCloseModal} />
+        <CreateNewboardModal
+          isOpen={isModalOpen}
+          addDashboardToList={refetch}
+          onClose={handleCloseModal}
+        />
       </ModalPortal>
     </section>
   );

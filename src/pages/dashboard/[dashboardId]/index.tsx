@@ -1,52 +1,190 @@
-import { useState } from 'react';
+import type { GetServerSideProps } from 'next';
+import { useCallback, useState } from 'react';
+import {
+  closestCenter,
+  DndContext,
+  type DragEndEvent,
+  DragOverlay,
+  type DragStartEvent,
+} from '@dnd-kit/core';
 import ColumnLayout from '@/components/dashboard/column-layout';
 import CreateColumnModal from '@/components/dashboard/modal/create-column-modal';
 import CreateTaskModal from '@/components/dashboard/modal/create-task-modal';
 import EditTaskModal from '@/components/dashboard/modal/edit-task-modal';
 import ManageColumnModal from '@/components/dashboard/modal/manage-column-modal';
 import TaskDetailModal from '@/components/dashboard/modal/task-detail-modal';
-import type {
-  ColumnType,
-  CreateColumnFormData,
-  CreateTaskFormData,
-  EditTaskFormData,
-  ManageColumnFormData,
-  TaskType,
+import {
+  type ColumnType,
+  type CreateColumnFormData,
+  type ManageColumnFormData,
+  TAG_COLORS,
+  type TaskType,
 } from '@/components/dashboard/type';
 import DashboardLayout from '@/components/layout/dashboard-layout';
-import { mockColumns, mockProfileColors } from '@/lib/dashboard-mock-data';
+import { useDashboardData } from '@/hooks/useDashboardData';
+import { useTaskHandlers } from '@/hooks/useTaskHandlers';
+import { getCardList } from '@/lib/cards/api';
+import { createColumn, deleteColumn, editColumn } from '@/lib/columns/api';
 import type { UserType } from '@/lib/users/type';
 
 interface DashboardDetailPageProps {
   userInfo: UserType | null;
+  dashboardId: string;
 }
 
 export default function DashboardDetailPage({
   userInfo,
+  dashboardId,
 }: DashboardDetailPageProps): React.ReactElement {
+  /**
+   * ===== 유틸리티 함수 =====
+   */
+  const getTagColorByLabel = useCallback(
+    (label: string): 'blue' | 'pink' | 'green' | 'brown' | 'red' => {
+      const hash = [...label].reduce(
+        (acc, char) => acc + char.charCodeAt(0),
+        0
+      );
+
+      return TAG_COLORS[hash % TAG_COLORS.length];
+    },
+    []
+  );
+
+  /**
+   * ===== 카드 순서 관리 =====
+   */
+  const saveCardOrder = (columnId: string, taskIds: string[]) => {
+    const orderKey = `card-order-${dashboardId}-${columnId}`;
+
+    localStorage.setItem(orderKey, JSON.stringify(taskIds));
+  };
+
+  // ===== 데이터 로딩 =====
+  const { columns, setColumns, members, isLoading } = useDashboardData({
+    dashboardId,
+    getCardList,
+  });
+
+  // ===== 태스크 핸들러 =====
+  const {
+    selectedTask,
+    handleTaskClick,
+    getSelectedTaskColumn,
+    handleTaskEdit,
+    handleTaskUpdate,
+    handleAddTaskClick,
+    handleCreateTask,
+    handleTaskDelete,
+  } = useTaskHandlers({
+    columns,
+    setColumns,
+    members,
+    dashboardId,
+    getTagColorByLabel,
+  });
+
+  // ===== 모달 상태 =====
   const [isColumnModalOpen, setIsColumnModalOpen] = useState(false);
   const [isManageColumnModalOpen, setIsManageColumnModalOpen] = useState(false);
-  const [selectedColumn, setSelectedColumn] = useState<ColumnType | null>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
-  const [selectedTask, setSelectedTask] = useState<TaskType | null>(null);
   const [isEditTaskModalOpen, setIsEditTaskModalOpen] = useState(false);
   const [isCreateTaskModalOpen, setIsCreateTaskModalOpen] = useState(false);
-  const [selectedColumnId, setSelectedColumnId] = useState<string | null>(null);
-  const [columns, setColumns] = useState<ColumnType[]>(mockColumns);
+  const [selectedColumn, setSelectedColumn] = useState<ColumnType | null>(null);
+  const [activeTask, setActiveTask] = useState<TaskType | null>(null);
 
+  /**
+   * ===== 드래그 앤 드롭 핸들러 =====
+   */
+  const handleDragStart = (event: DragStartEvent) => {
+    const { active } = event;
+    const taskId = active.id as string;
+
+    for (const column of columns) {
+      const task = column.tasks.find((t) => t.id === taskId);
+
+      if (task) {
+        setActiveTask(task);
+        break;
+      }
+    }
+  };
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (!over || active.id === over.id) {
+      setActiveTask(null);
+
+      return;
+    }
+
+    const activeId = active.id as string;
+    const overId = over.id as string;
+
+    const activeColumn = columns.find((col) =>
+      col.tasks.some((task) => task.id === activeId)
+    );
+    const overColumn = columns.find((col) =>
+      col.tasks.some((task) => task.id === overId)
+    );
+
+    if (activeColumn && overColumn && activeColumn.id === overColumn.id) {
+      const activeIndex = activeColumn.tasks.findIndex(
+        (task) => task.id === activeId
+      );
+      const overIndex = overColumn.tasks.findIndex(
+        (task) => task.id === overId
+      );
+
+      if (activeIndex !== overIndex) {
+        const newTasks = [...activeColumn.tasks];
+        const [removed] = newTasks.splice(activeIndex, 1);
+
+        newTasks.splice(overIndex, 0, removed);
+
+        setColumns((prevColumns) => {
+          return prevColumns.map((col) => {
+            return col.id === activeColumn.id
+              ? { ...col, tasks: newTasks }
+              : col;
+          });
+        });
+
+        const newTaskIds = newTasks.map((task) => task.id);
+
+        saveCardOrder(activeColumn.id, newTaskIds);
+      }
+    }
+
+    setActiveTask(null);
+  };
+
+  /**
+   * ===== 컬럼 관련 핸들러 =====
+   */
   const handleAddColumnClick = () => {
     setIsColumnModalOpen(true);
   };
 
-  const handleColumnSubmit = (columnData: CreateColumnFormData) => {
-    const newColumn: ColumnType = {
-      id: Date.now().toString(),
-      title: columnData.name,
-      tasks: [],
-    };
+  const handleColumnSubmit = async (columnData: CreateColumnFormData) => {
+    try {
+      const newColumn = await createColumn({
+        title: columnData.name,
+        dashboardId: Number(dashboardId),
+      });
 
-    setColumns((prevColumns) => [...prevColumns, newColumn]);
-    setIsColumnModalOpen(false);
+      const columnWithTasks: ColumnType = {
+        id: String(newColumn.id),
+        title: newColumn.title,
+        tasks: [],
+      };
+
+      setColumns((prevColumns) => [...prevColumns, columnWithTasks]);
+      setIsColumnModalOpen(false);
+    } catch {
+      // 컬럼 생성 실패
+    }
   };
 
   const handleColumnSettingsClick = (columnId: string) => {
@@ -58,161 +196,94 @@ export default function DashboardDetailPage({
     }
   };
 
-  const handleColumnUpdate = (
+  const handleColumnUpdate = async (
     columnId: string,
     columnData: ManageColumnFormData
   ) => {
-    setColumns((prevColumns) => {
-      return prevColumns.map((col) =>
-        col.id === columnId ? { ...col, title: columnData.name } : col
+    try {
+      await editColumn({
+        columnId: Number(columnId),
+        body: { title: columnData.name },
+      });
+
+      setColumns((prevColumns) => {
+        return prevColumns.map((col) =>
+          col.id === columnId ? { ...col, title: columnData.name } : col
+        );
+      });
+      setIsManageColumnModalOpen(false);
+    } catch {
+      // 컬럼 수정 실패
+    }
+  };
+
+  const handleColumnDelete = async (columnId: string) => {
+    try {
+      await deleteColumn(Number(columnId));
+
+      setColumns((prevColumns) =>
+        prevColumns.filter((col) => col.id !== columnId)
       );
-    });
-    setIsManageColumnModalOpen(false);
-  };
-
-  const handleColumnDelete = (columnId: string) => {
-    setColumns((prevColumns) =>
-      prevColumns.filter((col) => col.id !== columnId)
-    );
-    setIsManageColumnModalOpen(false);
-  };
-
-  const handleTaskClick = (task: TaskType) => {
-    setSelectedTask(task);
-    setIsDetailModalOpen(true);
-  };
-
-  const getSelectedTaskColumn = () => {
-    if (!selectedTask) {
-      return null;
+      setIsManageColumnModalOpen(false);
+    } catch {
+      // 컬럼 삭제 실패
     }
+  };
 
-    return columns.find((col) =>
-      col.tasks.some((task) => task.id === selectedTask.id)
+  if (isLoading) {
+    return (
+      <div className='flex min-h-screen items-center justify-center bg-gray-50'>
+        <div className='text-lg'>로딩 중...</div>
+      </div>
     );
-  };
-
-  const handleTaskEdit = (task: TaskType) => {
-    setSelectedTask(task);
-    setIsDetailModalOpen(false);
-    setIsEditTaskModalOpen(true);
-  };
-
-  const handleTaskUpdate = (taskData: EditTaskFormData) => {
-    if (!selectedTask) {
-      return;
-    }
-
-    const updatedTask: TaskType = {
-      ...selectedTask,
-      title: taskData.title,
-      description: taskData.description,
-      tags: taskData.tags,
-      dueDate: taskData.dueDate,
-      imageUrl: taskData.imageFile
-        ? URL.createObjectURL(taskData.imageFile)
-        : (taskData.existingImageUrl ?? ''),
-      manager: {
-        ...selectedTask.manager,
-        name: taskData.assignee,
-        nickname: taskData.assignee,
-      },
-    };
-
-    const currentColumn = columns.find((col) =>
-      col.tasks.some((task) => task.id === selectedTask.id)
-    );
-    const targetColumn = columns.find((col) => col.title === taskData.status);
-
-    setColumns((prevColumns) => {
-      if (
-        currentColumn &&
-        targetColumn &&
-        currentColumn.id !== targetColumn.id
-      ) {
-        return prevColumns.map((col) => {
-          if (col.id === currentColumn.id) {
-            return {
-              ...col,
-              tasks: col.tasks.filter((task) => task.id !== selectedTask.id),
-            };
-          }
-          if (col.id === targetColumn.id) {
-            return {
-              ...col,
-              tasks: [...col.tasks, updatedTask],
-            };
-          }
-
-          return col;
-        });
-      }
-
-      return prevColumns.map((col) => {
-        return {
-          ...col,
-          tasks: col.tasks.map((task) =>
-            task.id === selectedTask.id ? updatedTask : task
-          ),
-        };
-      });
-    });
-
-    setIsEditTaskModalOpen(false);
-    setSelectedTask(null);
-  };
-
-  const handleAddTaskClick = (columnId: string) => {
-    setSelectedColumnId(columnId);
-    setIsCreateTaskModalOpen(true);
-  };
-
-  const handleCreateTask = (taskData: CreateTaskFormData) => {
-    if (!selectedColumnId) {
-      return;
-    }
-
-    const newTask: TaskType = {
-      id: `task_${String(Date.now())}_${Math.random().toString(36).slice(2, 11)}`,
-      title: taskData.title,
-      description: taskData.description,
-      tags: taskData.tags,
-      dueDate: taskData.dueDate,
-      imageUrl: taskData.imageFile
-        ? URL.createObjectURL(taskData.imageFile)
-        : '',
-      manager: {
-        id: 'm1',
-        name: taskData.assignee,
-        nickname: taskData.assignee,
-        profileColor: mockProfileColors[0],
-      },
-    };
-
-    setColumns((prevColumns) => {
-      return prevColumns.map((col) => {
-        return col.id === selectedColumnId
-          ? { ...col, tasks: [...col.tasks, newTask] }
-          : col;
-      });
-    });
-  };
+  }
 
   return (
     <div className='min-h-screen bg-gray-50'>
-      {/* 대시보드 메인 콘텐츠 */}
-      <main className='h-screen bg-gray-50'>
-        <ColumnLayout
-          columns={columns}
-          maxColumns={10}
-          onAddColumnClick={handleAddColumnClick}
-          onColumnSettingsClick={handleColumnSettingsClick}
-          onTaskClick={handleTaskClick}
-          onAddTaskClick={handleAddTaskClick}
-        />
+      <main
+        className='horizontal-scroll-only h-screen bg-gray-50'
+        style={{
+          overflowX: 'auto',
+          scrollbarWidth: 'thin',
+          msOverflowStyle: 'auto',
+        }}
+      >
+        <DndContext
+          collisionDetection={closestCenter}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+        >
+          <ColumnLayout
+            columns={columns}
+            maxColumns={10}
+            onAddColumnClick={handleAddColumnClick}
+            onColumnSettingsClick={handleColumnSettingsClick}
+            onTaskClick={(task) => {
+              handleTaskClick(task);
+              setIsDetailModalOpen(true);
+            }}
+            onAddTaskClick={(columnId) => {
+              handleAddTaskClick(columnId);
+              setIsCreateTaskModalOpen(true);
+            }}
+          />
+          <DragOverlay>
+            {activeTask ? (
+              <div className='rotate-3 opacity-90'>
+                <div className='w-80 rounded-lg border border-gray-300 bg-white p-4 shadow-lg'>
+                  <h3 className='font-medium text-gray-900'>
+                    {activeTask.title}
+                  </h3>
+                  <p className='text-sm text-gray-600'>
+                    {activeTask.description}
+                  </p>
+                </div>
+              </div>
+            ) : null}
+          </DragOverlay>
+        </DndContext>
       </main>
 
-      {/* 컬럼 생성 모달 */}
       <CreateColumnModal
         isOpen={isColumnModalOpen}
         existingColumns={columns.map((col) => col.title)}
@@ -223,18 +294,16 @@ export default function DashboardDetailPage({
         }}
       />
 
-      {/* 태스크 생성 모달 */}
       <CreateTaskModal
         isOpen={isCreateTaskModalOpen}
         userInfo={userInfo}
+        members={members}
         onSubmit={handleCreateTask}
         onClose={() => {
           setIsCreateTaskModalOpen(false);
-          setSelectedColumnId(null);
         }}
       />
 
-      {/* 컬럼 관리 모달 */}
       <ManageColumnModal
         isOpen={isManageColumnModalOpen}
         column={selectedColumn}
@@ -246,41 +315,35 @@ export default function DashboardDetailPage({
         }}
       />
 
-      {/* 할일 상세 모달 */}
       <TaskDetailModal
         isOpen={isDetailModalOpen}
         task={selectedTask}
         columnTitle={getSelectedTaskColumn()?.title}
+        dashboardId={dashboardId}
+        columnId={getSelectedTaskColumn()?.id}
         currentUser={{
           id: String(userInfo?.id ?? 'user-1'),
           name: userInfo?.nickname ?? '사용자',
-          profileColor: mockProfileColors[1],
+          profileColor: '#7AC555',
         }}
-        onEdit={handleTaskEdit}
+        onDelete={handleTaskDelete}
+        onEdit={(task) => {
+          handleTaskEdit(task);
+          setIsDetailModalOpen(false);
+          setIsEditTaskModalOpen(true);
+        }}
         onClose={() => {
           setIsDetailModalOpen(false);
         }}
-        onDelete={(taskId) => {
-          setColumns((prevColumns) => {
-            return prevColumns.map((col) => {
-              return {
-                ...col,
-                tasks: col.tasks.filter((task) => task.id !== taskId),
-              };
-            });
-          });
-          setIsDetailModalOpen(false);
-          setSelectedTask(null);
-        }}
       />
 
-      {/* 할일 수정 모달 */}
       <EditTaskModal
         isOpen={isEditTaskModalOpen}
         initialTask={selectedTask ?? undefined}
         columns={columns.map((col) => ({ id: col.id, title: col.title }))}
         currentColumnTitle={getSelectedTaskColumn()?.title ?? undefined}
         userInfo={userInfo}
+        members={members}
         onSubmit={handleTaskUpdate}
         onClose={() => {
           setIsEditTaskModalOpen(false);

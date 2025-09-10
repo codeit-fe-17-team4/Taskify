@@ -16,7 +16,7 @@ import {
   getInvitationList,
 } from '@/lib/dashboards/api';
 import type { DashboardType, InvitationType } from '@/lib/dashboards/type';
-import { getMemberList } from '@/lib/members/api';
+import { deleteMember, getMemberList } from '@/lib/members/api';
 import type { MemberListType } from '@/lib/members/type';
 import { getStringFromQuery } from '@/utils/getContextQuery';
 
@@ -115,10 +115,13 @@ export default function MydashboardEdit(): ReactNode {
   /**
    * 구성원 삭제 api 연동
    */
-  const handleDeleteMember = async (memberId: number) => {
-    setMembers((prev) => prev.filter((member) => member.id !== memberId));
-    alert('구성원이 삭제되었습니다.');
-  };
+  // const handleDeleteMember = async (memberId: number) => {
+  //   try {
+  //     const data = await deleteMember({
+
+  //     })
+  //   } catch (e)
+  // }
 
   /**
    * 초대내역 삭제(취소) api 연동
@@ -319,8 +322,8 @@ export default function MydashboardEdit(): ReactNode {
         </div>
         <InviteMemberModal
           isOpen={isModalOpen}
+          dashboardId={dashboardId}
           onClose={handleCloseModal}
-          onSubmit={handleSubmitInviteMember}
         />
       </div>
     </div>

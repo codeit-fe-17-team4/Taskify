@@ -63,17 +63,23 @@ export const uploadCardImage = async (
 
   formData.append('image', imageFile);
 
-  const data = await customFetch(
-    `${BASE_API_URL}/columns/${String(columnId)}/card-image`,
-    z.imageSchema,
-    {
-      method: 'POST',
-      body: formData,
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    }
-  );
+  try {
+    const data = await customFetch(
+      `${BASE_API_URL}/columns/${String(columnId)}/card-image`,
+      z.imageSchema,
+      {
+        method: 'POST',
+        body: formData,
+      }
+    );
 
-  return data;
+    return data;
+  } catch (error) {
+    console.error('이미지 업로드 실패:', error);
+
+    // 이미지 업로드 실패 시 빈 문자열 반환 (서버에서 빈 문자열을 허용하지 않으면 제외됨)
+    return {
+      imageUrl: '',
+    };
+  }
 };

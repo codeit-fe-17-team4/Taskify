@@ -7,7 +7,6 @@ import {
 import ChipProfile from '@/components/ui/chip/chip-profile';
 import ChipTag from '@/components/ui/chip/chip-tag';
 import Dropdown from '@/components/ui/dropdown';
-import { mockProfileColors } from '@/lib/dashboard-mock-data';
 import type { UserType } from '@/lib/users/type';
 import { getProfileColor } from '@/utils/profile-color';
 
@@ -19,45 +18,46 @@ interface CreateTaskFormProps {
       | ((prev: CreateTaskFormData) => CreateTaskFormData)
   ) => void;
   userInfo: UserType | null;
+  members?: {
+    nickname: string;
+    profileImageUrl: string | null;
+  }[];
 }
 
 export default function CreateTaskForm({
   formData,
   setFormData,
   userInfo,
+  members = [],
 }: CreateTaskFormProps): React.ReactElement {
   const [currentTag, setCurrentTag] = useState('');
   const [isAssigneeDropdownOpen, setIsAssigneeDropdownOpen] = useState(false);
 
-  const assigneeOptions = [
-    {
-      value: userInfo?.id ?? 'user-1',
-      label: userInfo?.nickname ?? '사용자',
-      profileColor: mockProfileColors[0],
-    },
-    {
-      value: 'user-2',
-      label: '테스터',
-      profileColor: mockProfileColors[1],
-    },
-    {
-      value: 'user-3',
-      label: '관리자',
-      profileColor: mockProfileColors[2],
-    },
-  ];
-  const chipProfileLabel = (
-    assigneeOptions.find((opt) => opt.value === formData.assignee)?.label || ''
-  ).slice(0, 1);
-  const chipProfileColor = getProfileColor(
-    assigneeOptions.find((opt) => opt.value === formData.assignee)
-      ?.profileColor || '#10b981'
+  const assigneeOptions = members.map((member) => {
+    return {
+      value: member.nickname,
+      label: member.nickname,
+      profileColor: '#7AC555',
+      profileImageUrl: member.profileImageUrl,
+    };
+  });
+
+  const selectedAssignee = assigneeOptions.find(
+    (opt) => opt.value === formData.assignee
   );
+  const chipProfileLabel = (selectedAssignee?.label || '').slice(0, 1);
+  const chipProfileColor = getProfileColor(
+    selectedAssignee?.profileColor || '#10b981'
+  );
+
   const handleAssigneeSelect = (assignee: string) => {
     setFormData((prev) => ({ ...prev, assignee }));
     setIsAssigneeDropdownOpen(false);
   };
 
+  /**
+   * ===== 태그 관련 핸들러 =====
+   */
   const handleTagKeyDown = (e: React.KeyboardEvent) => {
     if (e.key !== 'Enter') {
       return;
@@ -87,6 +87,9 @@ export default function CreateTaskForm({
     });
   };
 
+  /**
+   * ===== 이미지 관련 핸들러 =====
+   */
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
 
@@ -128,6 +131,11 @@ export default function CreateTaskForm({
                       size='md'
                       label={chipProfileLabel}
                       color={chipProfileColor}
+                      profileImageUrl={
+                        assigneeOptions.find(
+                          (opt) => opt.value === formData.assignee
+                        )?.profileImageUrl
+                      }
                     />
                     <span>
                       {assigneeOptions.find(
@@ -155,7 +163,7 @@ export default function CreateTaskForm({
                   key={option.value}
                   additionalClassName='gap-2 px-4 py-3 items-center'
                   onClick={() => {
-                    handleAssigneeSelect(String(option.value));
+                    handleAssigneeSelect(option.value);
                   }}
                 >
                   <div className='flex h-[10px] w-[14px] items-center justify-center'>
@@ -173,6 +181,7 @@ export default function CreateTaskForm({
                       label={(option.label || '').slice(0, 1)}
                       color={getProfileColor(option.profileColor)}
                       size='md'
+                      profileImageUrl={option.profileImageUrl}
                     />
                     <span>{option.label}</span>
                   </div>
@@ -283,7 +292,10 @@ export default function CreateTaskForm({
           {/* 기존 태그들 */}
           {formData.tags.map((tag, index) => {
             return (
-              <div key={tag.label} className='flex items-center gap-1'>
+              <div
+                key={`${tag.label}-${tag.color}`}
+                className='flex items-center gap-1'
+              >
                 <ChipTag
                   label={tag.label}
                   size='md'

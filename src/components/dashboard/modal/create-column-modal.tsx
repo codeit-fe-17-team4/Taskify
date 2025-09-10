@@ -49,11 +49,18 @@ export default function CreateColumnModal({
 
   const isSubmitDisabled =
     !formData.name.trim() || isDuplicate || isMaxColumnsReached;
-  const errorMessage = isMaxColumnsReached
-    ? `최대 ${String(maxColumns)}개까지만 생성할 수 있습니다.`
-    : isDuplicate
-      ? '중복된 컬럼 이름입니다.'
-      : undefined;
+  const getErrorMessage = () => {
+    if (isMaxColumnsReached) {
+      return `최대 ${String(maxColumns)}개까지만 생성할 수 있습니다.`;
+    }
+    if (isDuplicate) {
+      return '중복된 컬럼 이름입니다.';
+    }
+
+    return undefined;
+  };
+
+  const errorMessage = getErrorMessage();
 
   return (
     <ButtonModal

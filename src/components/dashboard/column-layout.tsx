@@ -20,8 +20,7 @@ export default function ColumnLayout({
   maxColumns = 10,
 }: ColumnLayoutProps) {
   return (
-    <div className='column-layout-container flex h-full'>
-      {/* 칼럼 목록 */}
+    <div className='column-layout-container flex h-full w-max'>
       {columns.map((col) => {
         return (
           <div
@@ -38,7 +37,6 @@ export default function ColumnLayout({
         );
       })}
 
-      {/* 칼럼 추가 버튼 (최대 개수 미달 시에만 표시) */}
       {columns.length < maxColumns && (
         <div className='add-column-container h-full w-80 flex-shrink-0 px-4 py-6'>
           <div className='mt-12'>

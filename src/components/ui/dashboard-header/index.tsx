@@ -43,10 +43,6 @@ export default function DashboardHeader(): ReactNode {
     setIsModalOpen(false);
   };
 
-  const handleSubmitInviteMember = () => {
-    handleCloseModal();
-  };
-
   const title = pathnameToTitle(router.pathname);
 
   return (
@@ -64,24 +60,27 @@ export default function DashboardHeader(): ReactNode {
         )}
       </div>
       <nav className='mobile:gap-2 flex h-full items-center gap-8'>
-        <div className='mobile:gap-1.5 flex gap-3'>
-          <Link
-            href={`/dashboard/${String(dashboardId)}/edit`}
-            className={buttonClass}
-            aria-label='대시보드 관리 페이지로 이동'
-          >
-            <span className='mobile:hidden *:fill-gray-1'>
-              <SettingIcon />
-            </span>
-            <span>관리</span>
-          </Link>
-          <button className={buttonClass} onClick={handleOpenModal}>
-            <span className='mobile:hidden *:fill-gray-1'>
-              <AddBoxIcon />
-            </span>
-            <span>초대하기</span>
-          </button>
-        </div>
+        {dashboardId && (
+          <div className='mobile:gap-1.5 flex gap-3'>
+            <Link
+              href={`/dashboard/${dashboardId}/edit`}
+              className={buttonClass}
+              aria-label='대시보드 관리 페이지로 이동'
+            >
+              <span className='mobile:hidden *:fill-gray-1'>
+                <SettingIcon />
+              </span>
+              <span>관리</span>
+            </Link>
+
+            <button className={buttonClass} onClick={handleOpenModal}>
+              <span className='mobile:hidden *:fill-gray-1'>
+                <AddBoxIcon />
+              </span>
+              <span>초대하기</span>
+            </button>
+          </div>
+        )}
         <div className='mobile:gap-3 flex h-full gap-6'>
           {dashboardId && myInfo && (
             <ProfileList dashboardId={dashboardId} myId={myInfo.id} />
@@ -91,8 +90,8 @@ export default function DashboardHeader(): ReactNode {
         <ModalPortal>
           <InviteMemberModal
             isOpen={isModalOpen}
+            dashboardId={dashboardId}
             onClose={handleCloseModal}
-            onSubmit={handleSubmitInviteMember}
           />
         </ModalPortal>
       </nav>
