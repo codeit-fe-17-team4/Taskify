@@ -353,47 +353,6 @@ export default function DashboardDetailPage({
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { req, params } = context;
-  const dashboardId = params?.dashboardId as string;
-
-  const accessToken = req.cookies.access_token;
-  const isAuthenticated = Boolean(accessToken);
-
-  if (!isAuthenticated) {
-    return {
-      redirect: {
-        destination: '/login',
-        permanent: false,
-      },
-    };
-  }
-
-  let userInfo = null;
-
-  try {
-    const response = await fetch(`/api/users/me`, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${String(accessToken)}`,
-      },
-    });
-
-    if (response.ok) {
-      userInfo = await response.json();
-    }
-  } catch {
-    // 서버에서 사용자 정보 조회 실패 시 기본값 사용
-  }
-
-  return {
-    props: {
-      userInfo,
-      dashboardId,
-    },
-  };
-};
-
 DashboardDetailPage.getLayout = function getLayout(page: React.ReactElement) {
   return <DashboardLayout>{page}</DashboardLayout>;
 };
