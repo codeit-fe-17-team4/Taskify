@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import InfiniteCommentList from '@/components/dashboard/infinite-comment-list';
 import type { TaskDetailModalProps } from '@/components/dashboard/type';
 import ChipProfile from '@/components/ui/chip/chip-profile';
@@ -114,25 +114,28 @@ export default function TaskDetailModal({
   /**
    * 댓글 목록 가져오기 함수
    */
-  const fetchComments = async (cardId: number, cursorId?: number) => {
-    try {
-      const result = await getCommentList({
-        cardId,
-        size: 4,
-        cursorId,
-      });
+  const fetchComments = useCallback(
+    async (cardId: number, cursorId?: number) => {
+      try {
+        const result = await getCommentList({
+          cardId,
+          size: 4,
+          cursorId,
+        });
 
-      return {
-        data: result.comments,
-        nextCursorId: result.cursorId,
-      };
-    } catch (error) {
-      return {
-        data: [],
-        nextCursorId: null,
-      };
-    }
-  };
+        return {
+          data: result.comments,
+          nextCursorId: result.cursorId,
+        };
+      } catch (error) {
+        return {
+          data: [],
+          nextCursorId: null,
+        };
+      }
+    },
+    []
+  );
 
   const handleEdit = () => {
     if (!task || !onEdit) {
