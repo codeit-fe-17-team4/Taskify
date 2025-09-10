@@ -149,25 +149,6 @@ export default function MydashboardEdit(): ReactNode {
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
-  /**
-   * 초대
-   */
-  const handleSubmitInviteMember = async (formData: {
-    nickname: string;
-    email: string;
-  }) => {
-    if (!dashboardId) {
-      return;
-    }
-    try {
-      await createInvitation({ id: Number(dashboardId), body: formData });
-      alert('성공적으로 초대했습니다.');
-      handleCloseModal();
-    } catch (error) {
-      console.error('초대 실패:', error);
-      alert('초대에 실패했습니다.');
-    }
-  };
 
   const [deletingDashboard, setDeletingDashboard] = useState(false);
   const handleDeleteDashboard = async () => {
@@ -319,8 +300,8 @@ export default function MydashboardEdit(): ReactNode {
         </div>
         <InviteMemberModal
           isOpen={isModalOpen}
+          dashboardId={dashboardId}
           onClose={handleCloseModal}
-          onSubmit={handleSubmitInviteMember}
         />
       </div>
     </div>

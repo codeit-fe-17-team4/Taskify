@@ -60,6 +60,7 @@ export const uploadCardImage = async (
   imageFile: File
 ): Promise<z.ImageType> => {
   const formData = new FormData();
+
   formData.append('image', imageFile);
 
   try {
@@ -71,9 +72,11 @@ export const uploadCardImage = async (
         body: formData,
       }
     );
+
     return data;
   } catch (error) {
     console.error('이미지 업로드 실패:', error);
+
     // 이미지 업로드 실패 시 빈 문자열 반환 (서버에서 빈 문자열을 허용하지 않으면 제외됨)
     return {
       imageUrl: '',

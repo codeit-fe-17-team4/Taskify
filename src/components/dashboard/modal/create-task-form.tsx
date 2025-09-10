@@ -293,7 +293,7 @@ export default function CreateTaskForm({
           {formData.tags.map((tag, index) => {
             return (
               <div
-                key={`${tag.label}-${String(tag.color)}`}
+                key={`${tag.label}-${tag.color}`}
                 className='flex items-center gap-1'
               >
                 <ChipTag

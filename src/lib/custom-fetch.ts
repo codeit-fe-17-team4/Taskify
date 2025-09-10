@@ -62,6 +62,7 @@ export default async function customFetch<T extends z.ZodType>(
 
   // JSON 파싱 시도
   let data;
+
   try {
     data = JSON.parse(responseText);
   } catch (jsonError) {

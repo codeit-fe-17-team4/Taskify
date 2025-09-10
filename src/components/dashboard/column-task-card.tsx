@@ -62,7 +62,7 @@ export default function ColumnTaskCard({ task, onEditTask }: TaskCardProps) {
             {task.tags.map((tag) => {
               return (
                 <ChipTag
-                  key={`${tag.label}-${String(tag.color)}`}
+                  key={`${tag.label}-${tag.color}`}
                   label={tag.label}
                   size='md'
                   color={

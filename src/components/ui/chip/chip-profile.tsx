@@ -45,6 +45,12 @@ export interface ChipProfileProps
  * - 'md' : 1.5rem (24px)
  * - 'lg' : 2.375rem (38px).
  */
+const imageSize = {
+  sm: 22,
+  md: 24,
+  lg: 38,
+};
+
 export default function ChipProfile({
   label,
   size = 'md',
@@ -62,8 +68,8 @@ export default function ChipProfile({
         <Image
           src={profileImageUrl}
           alt='프로필 이미지'
-          width={size === 'sm' ? 22 : size === 'md' ? 24 : 38}
-          height={size === 'sm' ? 22 : size === 'md' ? 24 : 38}
+          width={imageSize[size]}
+          height={imageSize[size]}
           className='h-full w-full object-cover'
         />
       </div>
