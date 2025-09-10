@@ -4,20 +4,22 @@ import type { InvitationType } from '@/lib/invitations/type';
 interface InviteListProps {
   inviteData: InvitationType[];
   searchQuery: string;
-  setSearchQuery: (query: string) => void;
   onAccept: (inviteId: number) => void;
   onReject: (inviteId: number) => void;
   handleComposition: (e: React.CompositionEvent<HTMLInputElement>) => void;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  loaderRef: (node?: Element | null) => void;
+  hasMore: boolean;
 }
 
 export default function InvitationList({
   inviteData,
   searchQuery,
-  setSearchQuery,
   onAccept,
   onReject,
   handleComposition,
+  loaderRef,
+  hasMore,
   onChange,
 }: InviteListProps) {
   return (
@@ -120,6 +122,7 @@ export default function InvitationList({
                     </div>
                   );
                 })}
+                {hasMore && <div ref={loaderRef} className='h-10' />}
               </div>
             </div>
           </div>

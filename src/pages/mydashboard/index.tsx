@@ -1,18 +1,21 @@
-import { type ReactNode, useState } from 'react';
+import { type ReactNode, useCallback, useEffect, useState } from 'react';
 import DashboardLayout from '@/components/layout/dashboard-layout';
 import CreateNewboardModal from '@/components/mydashboard/create-newboard-modal';
 import DashboardList from '@/components/mydashboard/dashboard-list';
 import InvitationList from '@/components/mydashboard/invitation-list';
 import ModalPortal from '@/components/ui/modal/modal-portal';
 import { useFetch } from '@/hooks/useAsync';
+import { useCursorInfiniteScroll } from '@/hooks/useCursorInfiniteScroll';
 import { getDashBoardList } from '@/lib/dashboards/api';
 import { acceptInvitation, getInvitationList } from '@/lib/invitations/api';
+import type { InvitationType } from '@/lib/invitations/type';
 
 export default function Mydashboard(): ReactNode {
   const [isAcceptingInvitation, setIsAcceptingInvitation] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
   const [isComposing, setIsComposing] = useState<boolean>(false);
 
   const {
@@ -31,41 +34,69 @@ export default function Mydashboard(): ReactNode {
     deps: [currentPage],
   });
 
+  // 검색어 디바운싱 처리
+  useEffect(() => {
+    // 한글 조합 중에는 API 호출 방지
+    if (isComposing) {
+      return;
+    }
+
+    /**
+     * 300ms 후 API 호출
+     */
+    const handler = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 300);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchQuery, isComposing]);
   /* 초대받은 목록 API 연동 */
   const {
-    data: invitationListData,
-    loading: invitationLoading,
+    data: inviteData,
+    isLoading: invitationLoading,
     error: invitationError,
-    refetch: refetchInvitations,
-  } = useFetch({
-    asyncFunction: () => getInvitationList({ size: 100, title: 'invitation' }),
-    deps: [],
+    hasMore,
+    ref,
+    refresh,
+  } = useCursorInfiniteScroll<InvitationType>({
+    fetchData: useCallback(
+      async (cursorId?: number) => {
+        const result = await getInvitationList({
+          size: 10,
+          title: debouncedSearchQuery, // 디바운싱된 검색어로 API 호출
+          cursorId,
+        });
+
+        return { data: result.invitations, nextCursorId: result.cursorId };
+      },
+      [debouncedSearchQuery]
+    ),
+    deps: [debouncedSearchQuery], // 디바운싱된 검색어가 변경될 때만 훅 재실행
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // 조합 중에는 무시
     setSearchQuery(e.target.value);
   };
+
   const handleComposition = (e: React.CompositionEvent<HTMLInputElement>) => {
-    if (e.type === 'compositionstart') {
-      setIsComposing(true);
-    }
-    if (e.type === 'compositionend') {
-      setIsComposing(false);
-      setSearchQuery(e.currentTarget.value);
-    }
+    setIsComposing(e.type === 'compositionstart');
   };
 
-  const rawInviteData = invitationListData?.invitations ?? [];
+  // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setSearchQuery(e.target.value);
+  // };
 
-  const inviteData =
-    searchQuery.trim() === '' || isComposing
-      ? rawInviteData
-      : rawInviteData.filter((invite) => {
-          return invite.dashboard.title
-            .toLowerCase()
-            .includes(searchQuery.toLowerCase());
-        });
+  // const handleComposition = (e: React.CompositionEvent<HTMLInputElement>) => {
+  //   if (e.type === 'compositionstart') {
+  //     setIsComposing(true);
+  //   }
+  //   if (e.type === 'compositionend') {
+  //     setIsComposing(false);
+  //     setSearchQuery(e.currentTarget.value);
+  //   }
+  // };
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -82,7 +113,7 @@ export default function Mydashboard(): ReactNode {
     return <div>Error ... </div>;
   }
 
-  if (!invitationListData || invitationLoading) {
+  if (!inviteData || invitationLoading) {
     return <div> loading ...</div>;
   }
 
@@ -123,7 +154,7 @@ export default function Mydashboard(): ReactNode {
       });
       // 대시보드 목록과 초대 목록을 새로고침
       addDashboardToList();
-      refetchInvitations();
+      await refresh();
       alert('초대를 수락했습니다!');
     } catch (error) {
       console.error('초대 수락 실패:', error);
@@ -150,7 +181,7 @@ export default function Mydashboard(): ReactNode {
         body: { inviteAccepted: false },
       });
       alert('초대를 거절했습니다.');
-      refetchInvitations(); // 거절 후 초대 목록 새로고침
+      await refresh(); // 거절 후 초대 목록 새로고침
     } catch (error) {
       console.error('초대 거절 실패:', error);
     } finally {
@@ -167,7 +198,6 @@ export default function Mydashboard(): ReactNode {
             dashboards={getCurrentPageData()}
             totalPages={totalPages}
             currentPage={currentPage}
-            // colorCode={colorCode} // 필요하다면 props로 전달
             onPrevPage={handlePrevPage}
             onNextPage={handleNextPage}
             onOpenModal={handleOpenModal}
@@ -177,8 +207,9 @@ export default function Mydashboard(): ReactNode {
           <InvitationList
             inviteData={inviteData}
             searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
             handleComposition={handleComposition}
+            loaderRef={ref}
+            hasMore={hasMore}
             onAccept={handleAcceptInvitation}
             onReject={handleRejectInvitation}
             onChange={handleChange}
@@ -195,6 +226,7 @@ export default function Mydashboard(): ReactNode {
     </>
   );
 }
+
 Mydashboard.getLayout = function getLayout(page: ReactNode) {
   return <DashboardLayout>{page}</DashboardLayout>;
 };
