@@ -76,27 +76,19 @@ export default function Mydashboard(): ReactNode {
     deps: [debouncedSearchQuery], // 디바운싱된 검색어가 변경될 때만 훅 재실행
   });
 
+  const handleComposition = (e: React.CompositionEvent<HTMLInputElement>) => {
+    if (e.type === 'compositionstart') {
+      setIsComposing(true);
+    }
+    if (e.type === 'compositionend') {
+      setIsComposing(false);
+      setSearchQuery(e.currentTarget.value);
+    }
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
   };
-
-  const handleComposition = (e: React.CompositionEvent<HTMLInputElement>) => {
-    setIsComposing(e.type === 'compositionstart');
-  };
-
-  // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setSearchQuery(e.target.value);
-  // };
-
-  // const handleComposition = (e: React.CompositionEvent<HTMLInputElement>) => {
-  //   if (e.type === 'compositionstart') {
-  //     setIsComposing(true);
-  //   }
-  //   if (e.type === 'compositionend') {
-  //     setIsComposing(false);
-  //     setSearchQuery(e.currentTarget.value);
-  //   }
-  // };
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
