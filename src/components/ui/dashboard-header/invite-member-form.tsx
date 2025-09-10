@@ -1,14 +1,15 @@
-import type { ReactNode } from 'react';
-import type { InviteMemberFormData } from '@/components/mydashboard/type';
+import type { ChangeEventHandler, ReactNode } from 'react';
 
 interface InviteMemberFormProps {
-  formData: InviteMemberFormData;
-  setFormData: React.Dispatch<React.SetStateAction<InviteMemberFormData>>;
+  email: string;
+  onChange: ChangeEventHandler<HTMLInputElement>;
+  onBlur: () => void;
 }
 
 export default function InviteMemberForm({
-  formData,
-  setFormData,
+  email,
+  onChange,
+  onBlur,
 }: InviteMemberFormProps): ReactNode {
   return (
     <>
@@ -26,10 +27,9 @@ export default function InviteMemberForm({
           type='email'
           placeholder='이메일을 입력해주세요'
           className='w-full rounded-lg border border-gray-300 p-4 focus:outline-none'
-          value={formData.email}
-          onChange={(e) => {
-            setFormData((prev) => ({ ...prev, email: e.target.value }));
-          }}
+          value={email}
+          onChange={onChange}
+          onBlur={onBlur}
         />
       </div>
     </>

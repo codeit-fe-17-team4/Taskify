@@ -28,7 +28,7 @@ export const updateMyInfoSchema = z.object({
 });
 
 export const uploadProfileImageSchema = z.object({
-  profileImageUrl: z.string(),
+  profileImageUrl: z.union([z.string(), z.null()]),
 });
 
 export type UserType = z.infer<typeof userSchema>;

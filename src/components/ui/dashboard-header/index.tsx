@@ -1,16 +1,39 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { type ReactNode, useState } from 'react';
-import HeaderDropdown from '@/components/ui/dashboard-header/header-dropdown';
+import { useRouter } from 'next/router';
+import { type ReactNode, useEffect, useState } from 'react';
+import HeaderProfileDropdwon from '@/components/ui/dashboard-header/header-profile-dropdown';
 import InviteMemberModal from '@/components/ui/dashboard-header/invite-member-modal';
 import ProfileList from '@/components/ui/dashboard-header/profile-list';
+import ModalPortal from '@/components/ui/modal/modal-portal';
+import { useFetch } from '@/hooks/useAsync';
+import { getDashBoard } from '@/lib/dashboards/api';
+import { getMyInfo } from '@/lib/users/api';
+import { getStringFromQuery } from '@/utils/getContextQuery';
 
 const buttonClass =
   'flex-center border-gray-3 text-md mobile:px-3 mobile:py-1.5 h-9 cursor-pointer gap-2 rounded-lg border-1 px-4 py-2.5 hover:bg-gray-4 active:bg-gray-3';
 
 export default function DashboardHeader(): ReactNode {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const dashboardId = 1;
+  const router = useRouter();
+  const dashboardId = getStringFromQuery(router.query, 'dashboardId');
+
+  const { data: myInfo } = useFetch({
+    asyncFunction: () => getMyInfo(),
+  });
+  const { data: dashboardData, refetch } = useFetch({
+    asyncFunction: () => getDashBoard(Number(dashboardId)),
+    deps: [dashboardId],
+    immediate: false,
+  });
+  const isMyDashboard = dashboardId && dashboardData?.createdByMe;
+
+  useEffect(() => {
+    if (dashboardId) {
+      refetch();
+    }
+  }, [dashboardId, refetch]);
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -20,54 +43,57 @@ export default function DashboardHeader(): ReactNode {
     setIsModalOpen(false);
   };
 
-  const handleSubmitInviteMember = () => {
-    handleCloseModal();
-  };
+  const title = pathnameToTitle(router.pathname);
 
   return (
-    <header className='mobile:h-[3.75rem] border-gray-3 tablet:pl-48 mobile:pl-12 tablet:justify-end fixed top-0 right-0 left-0 z-50 flex h-[4.375rem] w-full items-center justify-between border-b-1 bg-white pl-96'>
+    <header className='mobile:h-[3.75rem] border-gray-3 tablet:pl-48 mobile:pl-12 tablet:justify-end fixed top-0 right-0 left-0 z-20 flex h-[4.375rem] w-full items-center justify-between border-b-1 bg-white pl-96'>
       <div className='tablet:hidden flex gap-2 text-xl font-bold text-black'>
-        <h1>내 대시보드</h1>
-        <Image
-          className='h-4 w-5 self-center'
-          src={'/icon/mydashboard.svg'}
-          alt='왕관: 내 대시보드 아이콘'
-          width={20}
-          height={16}
-        />
+        <h1>{title ?? dashboardData?.title}</h1>
+        {isMyDashboard && (
+          <Image
+            className='h-4 w-5 self-center'
+            src={'/icon/mydashboard.svg'}
+            alt='왕관: 내 대시보드 아이콘'
+            width={20}
+            height={16}
+          />
+        )}
       </div>
       <nav className='mobile:gap-2 flex h-full items-center gap-8'>
-        <div className='mobile:gap-1.5 flex gap-3'>
-          <Link
-            href={`/dashboard/${String(dashboardId)}/edit`}
-            className={buttonClass}
-            aria-label='대시보드 관리 페이지로 이동'
-          >
-            <span className='mobile:hidden *:fill-gray-1'>
-              <SettingIcon />
-            </span>
-            <span>관리</span>
-          </Link>
-          <button className={buttonClass} onClick={handleOpenModal}>
-            <span className='mobile:hidden *:fill-gray-1'>
-              <AddBoxIcon />
-            </span>
-            <span>초대하기</span>
-          </button>
-        </div>
+        {dashboardId && (
+          <div className='mobile:gap-1.5 flex gap-3'>
+            <Link
+              href={`/dashboard/${dashboardId}/edit`}
+              className={buttonClass}
+              aria-label='대시보드 관리 페이지로 이동'
+            >
+              <span className='mobile:hidden *:fill-gray-1'>
+                <SettingIcon />
+              </span>
+              <span>관리</span>
+            </Link>
+
+            <button className={buttonClass} onClick={handleOpenModal}>
+              <span className='mobile:hidden *:fill-gray-1'>
+                <AddBoxIcon />
+              </span>
+              <span>초대하기</span>
+            </button>
+          </div>
+        )}
         <div className='mobile:gap-3 flex h-full gap-6'>
-          <ProfileList />
-          <HeaderDropdown
-            nickname={'권수형'}
-            profileColor={'red'}
-            profileLabel={'K'}
-          />
+          {dashboardId && myInfo && (
+            <ProfileList dashboardId={dashboardId} myId={myInfo.id} />
+          )}
+          {myInfo && <HeaderProfileDropdwon myNickname={myInfo.nickname} />}
         </div>
-        <InviteMemberModal
-          isOpen={isModalOpen}
-          onClose={handleCloseModal}
-          onSubmit={handleSubmitInviteMember}
-        />
+        <ModalPortal>
+          <InviteMemberModal
+            isOpen={isModalOpen}
+            dashboardId={dashboardId}
+            onClose={handleCloseModal}
+          />
+        </ModalPortal>
       </nav>
     </header>
   );
@@ -99,3 +125,18 @@ function AddBoxIcon() {
     </svg>
   );
 }
+
+const pathnameToTitle = (pathname: string) => {
+  switch (pathname) {
+    case '/mydashboard': {
+      return '나의 대시보드';
+    }
+    case '/mypage': {
+      return '계정관리';
+    }
+    default: {
+      return null;
+      break;
+    }
+  }
+};

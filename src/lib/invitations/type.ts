@@ -23,7 +23,7 @@ export const invitationSchema = z.object({
 });
 
 export const invitationListSchema = z.object({
-  cursorId: z.number(),
+  cursorId: z.union([z.number(), z.null()]),
   invitations: z.array(invitationSchema),
 });
 export type InvitationType = z.infer<typeof invitationSchema>;

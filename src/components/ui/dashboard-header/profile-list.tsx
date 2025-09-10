@@ -1,21 +1,69 @@
 import type { ReactNode } from 'react';
 import ChipProfile from '@/components/ui/chip/chip-profile';
+import { useFetch } from '@/hooks/useAsync';
+import useIsBreakPoint from '@/hooks/useIsBreakPoint';
+import { getMemberList } from '@/lib/members/api';
 
-export default function ProfileList(): ReactNode {
+export const PROFILE_COLORS = [
+  'green',
+  'blue',
+  'orange',
+  'yellow',
+  'brown',
+  'red',
+] as const;
+
+export const getRandomProfileColor = () => {
+  const randomIndex = Math.floor(Math.random() * PROFILE_COLORS.length);
+
+  return PROFILE_COLORS[randomIndex];
+};
+export default function ProfileList({
+  dashboardId,
+  myId,
+}: {
+  dashboardId: string;
+  myId: number;
+}): ReactNode {
+  const { data, error } = useFetch({
+    asyncFunction: () => getMemberList({ dashboardId: Number(dashboardId) }),
+    deps: [dashboardId],
+  });
+  const tabletBreakPointAsRem = 80;
+  const isTablet = useIsBreakPoint(tabletBreakPointAsRem);
+
+  if (!data || error) {
+    return null;
+  }
+  const maxDisplayLength = isTablet ? 2 : 4;
+  const excessNumber = data.totalCount - maxDisplayLength;
+
   return (
     <ul className='flex items-center **:not-first:-ml-3'>
-      {Array(2)
-        .fill('0')
-        .map((num: number) => {
-          return (
-            <li key={`${crypto.randomUUID()}-${String(num)}`}>
-              <ChipProfile label={'Y'} size='lg' color='yellow' />
-            </li>
-          );
-        })}
-      <li>
-        <ChipProfile label={`+${String(2)}`} size='lg' color='red' />
-      </li>
+      {data.members.slice(0, maxDisplayLength).map((member) => {
+        if (member.userId === myId) {
+          return;
+        }
+
+        return (
+          <li key={member.id}>
+            <ChipProfile
+              label={member.nickname.slice(0, 1)}
+              size='lg'
+              color={getRandomProfileColor()}
+            />
+          </li>
+        );
+      })}
+      {excessNumber > 0 && (
+        <li>
+          <ChipProfile
+            label={`+${String(excessNumber)}`}
+            size='lg'
+            color='red'
+          />
+        </li>
+      )}
     </ul>
   );
 }

@@ -1,4 +1,5 @@
 import { BASE_API_URL } from '@/lib/constants';
+import { CustomError } from '@/lib/custom-error';
 import customFetch from '@/lib/custom-fetch';
 import type * as i from '@/lib/dashboards/interface';
 import * as z from '@/lib/dashboards/type';
@@ -78,18 +79,25 @@ export const createInvitation = async ({
   body,
   id,
 }: i.CreateInvitationParams): Promise<z.InvitationType> => {
-  const data = await customFetch(
-    `${BASE_API_URL}/dashboards/${String(id)}/invitations`,
-    z.invitationSchema,
-    {
-      method: 'POST',
-      body: JSON.stringify({
-        ...body,
-      }),
-    }
-  );
+  try {
+    const data = await customFetch(
+      `${BASE_API_URL}/dashboards/${String(id)}/invitations`,
+      z.invitationSchema,
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          ...body,
+        }),
+      }
+    );
 
-  return data;
+    return data;
+  } catch (error) {
+    if (error instanceof CustomError && error.status) {
+      throw error;
+    }
+    throw error;
+  }
 };
 
 export const getInvitationList = async ({
@@ -114,7 +122,7 @@ export const deleteInvitation = async ({
   invitationId,
 }: i.DeleteInvitationParams): Promise<void> => {
   await customFetch(
-    `${BASE_API_URL}/dashboards/${String(dashboardId)}/invitations/${String(invitationId)}}`,
+    `${BASE_API_URL}/dashboards/${String(dashboardId)}/invitations/${String(invitationId)}`,
     z.deleteSchema,
     {
       method: 'DELETE',
