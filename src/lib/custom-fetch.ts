@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { CustomError, type parseType } from '@/lib/custom-error';
 
 /**
  * 쿠키에서 access_token을 가져오는 함수
@@ -36,8 +37,15 @@ export default async function customFetch<T extends z.ZodType>(
 
   if (!res.ok) {
     const errorText = await res.text();
+    const { status } = res;
+    let errorData: parseType;
 
-    throw new Error(`[${String(res.status)}] ${errorText}`);
+    try {
+      errorData = JSON.parse(errorText);
+    } catch {
+      errorData = { message: errorText };
+    }
+    throw new CustomError(errorText, status, errorData);
   }
   const data = await res.json();
 
@@ -45,8 +53,7 @@ export default async function customFetch<T extends z.ZodType>(
     return schema.parse(data);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      console.error('API 응답 검증 실패:', error.issues);
-      throw new TypeError(
+      console.error(
         `서버 응답 형식이 올바르지 않습니다: ${JSON.stringify(error.issues)}`
       );
     }

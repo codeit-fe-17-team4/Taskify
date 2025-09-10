@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { CustomError } from '@/lib/custom-error';
 
 interface useFetchParams<T> {
   asyncFunction: () => Promise<T>;
@@ -37,8 +38,9 @@ export default function useAsync<T>({
 
         setState((prev) => ({ ...prev, loading: false, data: response }));
       } catch (error) {
-        if (error instanceof Error) {
+        if (error instanceof CustomError) {
           setState({ data: null, loading: false, error });
+          throw error;
         }
       }
     };

@@ -4,6 +4,20 @@ import { useFetch } from '@/hooks/useAsync';
 import useIsBreakPoint from '@/hooks/useIsBreakPoint';
 import { getMemberList } from '@/lib/members/api';
 
+export const PROFILE_COLORS = [
+  'green',
+  'blue',
+  'orange',
+  'yellow',
+  'brown',
+  'red',
+] as const;
+
+export const getRandomProfileColor = () => {
+  const randomIndex = Math.floor(Math.random() * PROFILE_COLORS.length);
+
+  return PROFILE_COLORS[randomIndex];
+};
 export default function ProfileList({
   dashboardId,
   myId,
@@ -11,11 +25,12 @@ export default function ProfileList({
   dashboardId: string;
   myId: number;
 }): ReactNode {
-  const { data, loading, error } = useFetch({
+  const { data, error } = useFetch({
     asyncFunction: () => getMemberList({ dashboardId: Number(dashboardId) }),
     deps: [dashboardId],
   });
-  const isTablet = useIsBreakPoint(80);
+  const tabletBreakPointAsRem = 80;
+  const isTablet = useIsBreakPoint(tabletBreakPointAsRem);
 
   if (!data || error) {
     return null;
@@ -35,7 +50,7 @@ export default function ProfileList({
             <ChipProfile
               label={member.nickname.slice(0, 1)}
               size='lg'
-              color='yellow'
+              color={getRandomProfileColor()}
             />
           </li>
         );
