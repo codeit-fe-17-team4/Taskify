@@ -268,7 +268,6 @@ export default function SignupPage(): React.JSX.Element {
 
               {/* 회원가입 버튼 */}
               <AuthButton
-                type='submit'
                 disabled={!isFormValidNow}
                 isLoading={isLoading}
                 loadingText='가입 중...'

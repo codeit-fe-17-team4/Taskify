@@ -1,5 +1,6 @@
-import { cva, type VariantProps } from 'class-variance-authority';
-import type { ButtonHTMLAttributes, ReactNode } from 'react';
+import { cva } from 'class-variance-authority';
+import { motion } from 'framer-motion';
+import type { FormEvent, ReactNode } from 'react';
 import { cn } from '@/utils/cn';
 
 export const ButtonVariants = cva(
@@ -30,9 +31,7 @@ export const ButtonVariants = cva(
     },
   }
 );
-interface ButtonProps
-  extends ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof ButtonVariants> {
+interface ButtonProps {
   /** 버튼 형태 */
   variant: 'primary' | 'invitation' | 'modal';
   /** 배경 색상 */
@@ -46,7 +45,7 @@ interface ButtonProps
   /** button disabled 여부 */
   disabled?: boolean;
   /** 클릭 이벤트 핸들러 */
-  onClick?: () => void;
+  onClick?: (() => void) | ((e: FormEvent) => Promise<void>);
   children?: ReactNode;
 }
 /**
@@ -68,21 +67,25 @@ export default function Button({
   labelColor,
   additionalClass = '',
   onClick,
+  disabled,
   ...props
 }: ButtonProps): ReactNode {
   return (
     <>
-      <button
+      <motion.button
+        whileHover={{ scale: disabled ? 1 : 1.05 }}
+        whileTap={{ scale: disabled ? 1 : 0.95 }}
         className={cn(
           ButtonVariants({ variant, backgroundColor, labelColor }),
           additionalClass
         )}
         onClick={onClick}
         {...props}
+        disabled={disabled}
       >
         {children}
         {label}
-      </button>
+      </motion.button>
     </>
   );
 }

@@ -2,7 +2,9 @@ import Image from 'next/image';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import InfiniteCommentList from '@/components/dashboard/infinite-comment-list';
 import type { TaskDetailModalProps } from '@/components/dashboard/type';
-import ChipProfile from '@/components/ui/chip/chip-profile';
+import ChipProfile, {
+  getProfileColorByIdHash,
+} from '@/components/ui/chip/chip-profile';
 import ChipTag from '@/components/ui/chip/chip-tag';
 import Dropdown from '@/components/ui/dropdown';
 import BaseModal from '@/components/ui/modal/modal-base';
@@ -13,7 +15,6 @@ import {
   editComment,
   getCommentList,
 } from '@/lib/comments/api';
-import { getProfileColor } from '@/utils/profile-color';
 
 const formatDueDate = (dueDate: string) => {
   if (!dueDate) {
@@ -267,7 +268,7 @@ export default function TaskDetailModal({
               <span className='mb-2 block text-sm font-bold'>담당자</span>
               <div className='flex items-center gap-2'>
                 <ChipProfile
-                  color={getProfileColor(task.manager.profileColor)}
+                  color={getProfileColorByIdHash(Number(task.manager.id))}
                   size='md'
                   profileImageUrl={task.manager.profileImageUrl}
                   label={

@@ -3,6 +3,7 @@ import DashboardLayout from '@/components/layout/dashboard-layout';
 import CreateNewboardModal from '@/components/mydashboard/create-newboard-modal';
 import DashboardList from '@/components/mydashboard/dashboard-list';
 import InvitationList from '@/components/mydashboard/invitation-list';
+import LoadingCircle from '@/components/ui/loading-circle';
 import ModalPortal from '@/components/ui/modal/modal-portal';
 import { useFetch } from '@/hooks/useAsync';
 import { getDashBoardList } from '@/lib/dashboards/api';
@@ -29,7 +30,7 @@ export default function Mydashboard(): ReactNode {
     deps: [currentPage],
   });
   const { data: invitationListData, refetch: refetchInvitations } = useFetch({
-    asyncFunction: () => getInvitationList({ size: 100 }),
+    asyncFunction: () => getInvitationList({ size: 100, title: 'invitation' }),
     deps: [searchQuery],
   });
   const inviteData = invitationListData?.invitations ?? [];
@@ -41,7 +42,7 @@ export default function Mydashboard(): ReactNode {
   };
 
   if (!dashboardData || loading) {
-    return <div> loading</div>;
+    return <LoadingCircle />;
   }
 
   if (error) {

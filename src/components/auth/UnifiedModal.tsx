@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 // 인증 페이지용 통합 모달 컴포넌트 (성공/에러 메시지)
 import type React from 'react';
 import { createPortal } from 'react-dom';
@@ -22,12 +24,9 @@ export default function UnifiedModal({
     <div
       className='fixed inset-0 z-50 flex items-center justify-center'
       style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
-      aria-hidden='true'
       onClick={onClose}
     >
-      {/* 모달 컨테이너 */}
-      <button
-        type='button'
+      <div
         className='relative h-[192px] w-[368px] rounded-lg bg-white shadow-lg max-[375px]:h-[220px] max-[375px]:w-[327px]'
         onClick={(e) => {
           e.stopPropagation();
@@ -57,7 +56,7 @@ export default function UnifiedModal({
             </button>
           </div>
         </div>
-      </button>
+      </div>
     </div>
   );
 

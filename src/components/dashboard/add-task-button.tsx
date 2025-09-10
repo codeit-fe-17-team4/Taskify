@@ -1,10 +1,13 @@
+import { motion } from 'framer-motion';
 import Image from 'next/image';
 import type { AddTaskButtonProps } from '@/components/dashboard/type';
 
 export default function AddTaskButton({ onClick }: AddTaskButtonProps) {
   return (
-    <button
-      className='flex h-11 w-full flex-shrink-0 cursor-pointer items-center justify-center gap-3 rounded-lg border border-gray-300 bg-white'
+    <motion.button
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      className='hover:bg-gray-4 flex h-11 w-full flex-shrink-0 cursor-pointer items-center justify-center gap-3 rounded-lg border border-gray-300 bg-white'
       onClick={onClick}
     >
       <Image
@@ -13,6 +16,6 @@ export default function AddTaskButton({ onClick }: AddTaskButtonProps) {
         width={22}
         height={22}
       />
-    </button>
+    </motion.button>
   );
 }

@@ -69,7 +69,7 @@
   --breakpoint-*: initial;
 }
 @custom-variant tablet (@media (max-width: 80rem));
-@custom-variant mobile (@media (max-width: 48rem));
+@custom-variant mobile (@media (max-width: 47rem));
 
 @theme inline {
   --color-background: var(--background);
@@ -79,6 +79,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+@utility skeleton {
+  animation: var(--animate-pulse);
+  background-color: var(--color-gray-3);
 }
 
 html,

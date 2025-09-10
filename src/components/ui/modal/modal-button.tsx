@@ -49,7 +49,6 @@ export default function ButtonModal({
               />
             )}
             <Button
-              type='submit'
               variant='modal'
               backgroundColor='violet'
               label={submitText}

@@ -5,10 +5,12 @@ import { type ReactNode, useEffect, useState } from 'react';
 import HeaderProfileDropdwon from '@/components/ui/dashboard-header/header-profile-dropdown';
 import InviteMemberModal from '@/components/ui/dashboard-header/invite-member-modal';
 import ProfileList from '@/components/ui/dashboard-header/profile-list';
+import { DashboardHeaderSkeleton } from '@/components/ui/dashboard-header/skeleton';
 import ModalPortal from '@/components/ui/modal/modal-portal';
 import { useFetch } from '@/hooks/useAsync';
 import { getDashBoard } from '@/lib/dashboards/api';
 import { getMyInfo } from '@/lib/users/api';
+import { cn } from '@/utils/cn';
 import { getStringFromQuery } from '@/utils/getContextQuery';
 
 const buttonClass =
@@ -22,12 +24,15 @@ export default function DashboardHeader(): ReactNode {
   const { data: myInfo } = useFetch({
     asyncFunction: () => getMyInfo(),
   });
-  const { data: dashboardData, refetch } = useFetch({
+  const {
+    data: dashboardData,
+    loading,
+    refetch,
+  } = useFetch({
     asyncFunction: () => getDashBoard(Number(dashboardId)),
     deps: [dashboardId],
     immediate: false,
   });
-  const isMyDashboard = dashboardId && dashboardData?.createdByMe;
 
   useEffect(() => {
     if (dashboardId) {
@@ -45,10 +50,17 @@ export default function DashboardHeader(): ReactNode {
 
   const title = pathnameToTitle(router.pathname);
 
+  if (loading) {
+    return <DashboardHeaderSkeleton />;
+  }
+
+  const isMyDashboard = dashboardId && dashboardData?.createdByMe;
+
   return (
     <header className='mobile:h-[3.75rem] border-gray-3 tablet:pl-48 mobile:pl-12 tablet:justify-end fixed top-0 right-0 left-0 z-20 flex h-[4.375rem] w-full items-center justify-between border-b-1 bg-white pl-96'>
       <div className='tablet:hidden flex gap-2 text-xl font-bold text-black'>
         <h1>{title ?? dashboardData?.title}</h1>
+
         {isMyDashboard && (
           <Image
             className='h-4 w-5 self-center'
@@ -64,10 +76,10 @@ export default function DashboardHeader(): ReactNode {
           <div className='mobile:gap-1.5 flex gap-3'>
             <Link
               href={`/dashboard/${dashboardId}/edit`}
-              className={buttonClass}
+              className={cn(buttonClass, 'active:*:first:rotate-90')}
               aria-label='대시보드 관리 페이지로 이동'
             >
-              <span className='mobile:hidden *:fill-gray-1'>
+              <span className='mobile:hidden *:fill-gray-1 transition-transform duration-200'>
                 <SettingIcon />
               </span>
               <span>관리</span>
@@ -85,7 +97,13 @@ export default function DashboardHeader(): ReactNode {
           {dashboardId && myInfo && (
             <ProfileList dashboardId={dashboardId} myId={myInfo.id} />
           )}
-          {myInfo && <HeaderProfileDropdwon myNickname={myInfo.nickname} />}
+          {myInfo && (
+            <HeaderProfileDropdwon
+              myNickname={myInfo.nickname}
+              myId={myInfo.id}
+              profileImageUrl={myInfo.profileImageUrl}
+            />
+          )}
         </div>
         <ModalPortal>
           <InviteMemberModal
@@ -136,7 +154,6 @@ const pathnameToTitle = (pathname: string) => {
     }
     default: {
       return null;
-      break;
     }
   }
 };
