@@ -17,7 +17,7 @@ export const invitationSchema = z.object({
     email: z.string(),
     id: z.number(),
   }),
-  inviteAccepted: z.boolean(),
+  inviteAccepted: z.union([z.boolean(), z.null()]),
   createdAt: z.string(),
   updatedAt: z.string(),
 });
