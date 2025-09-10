@@ -28,8 +28,12 @@ export const getCardList = async ({
   const queryParams = new URLSearchParams({
     size: String(size),
     columnId: String(columnId),
-    cursorId: String(cursorId),
   });
+
+  if (cursorId && cursorId !== 0) {
+    queryParams.append('cursorId', String(cursorId));
+  }
+
   const data = await customFetch(
     `${BASE_API_URL}/cards?${queryParams}`,
     cardListSchema
@@ -68,5 +72,20 @@ export const editCard = async ({
 export const deleteCard = async (cardId: number): Promise<void> => {
   await customFetch(`${BASE_API_URL}/cards/${String(cardId)}`, deleteSchema, {
     method: 'DELETE',
+  });
+};
+
+/**
+ * 카드 순서 업데이트 (드래그 앤 드롭용)
+ */
+export const updateCardOrder = async (
+  cardId: number,
+  order: number
+): Promise<CardType> => {
+  return editCard({
+    cardId,
+    body: {
+      order,
+    },
   });
 };

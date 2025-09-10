@@ -5,7 +5,6 @@ export interface TagType {
   color: chipTagColor;
 }
 
-// 사용 가능한 태그 색상 목록 (global CSS의 color-chip 색상만 사용)
 export const TAG_COLORS = ['blue', 'pink', 'green', 'brown', 'red'] as const;
 
 /**
@@ -29,6 +28,7 @@ export interface TaskType {
     name: string;
     nickname: string;
     profileColor: string;
+    profileImageUrl?: string | null;
   };
 }
 
@@ -126,6 +126,8 @@ export interface TaskDetailModalProps {
   onClose: () => void;
   task: TaskType | null;
   columnTitle?: string;
+  dashboardId?: string;
+  columnId?: string;
   currentUser?: {
     id: string;
     name: string;

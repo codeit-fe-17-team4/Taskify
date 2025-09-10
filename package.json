@@ -11,6 +11,8 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
     "@tanstack/react-query": "^5.85.9",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

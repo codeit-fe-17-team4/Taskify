@@ -1,14 +1,18 @@
 import Image from 'next/image';
-import { useState } from 'react';
-import type {
-  CommentType,
-  TaskDetailModalProps,
-} from '@/components/dashboard/type';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import InfiniteCommentList from '@/components/dashboard/infinite-comment-list';
+import type { TaskDetailModalProps } from '@/components/dashboard/type';
 import ChipProfile from '@/components/ui/chip/chip-profile';
 import ChipTag from '@/components/ui/chip/chip-tag';
 import Dropdown from '@/components/ui/dropdown';
 import BaseModal from '@/components/ui/modal/modal-base';
 import { useModalKeyHandler } from '@/hooks/useModal';
+import {
+  createComment,
+  deleteComment,
+  editComment,
+  getCommentList,
+} from '@/lib/comments/api';
 import { getProfileColor } from '@/utils/profile-color';
 
 const formatDueDate = (dueDate: string) => {
@@ -31,83 +35,107 @@ export default function TaskDetailModal({
   onClose,
   task,
   columnTitle,
-  currentUser,
+  dashboardId,
+  columnId,
   onEdit,
   onDelete,
 }: TaskDetailModalProps): React.ReactElement | null {
   const [newComment, setNewComment] = useState('');
-  const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
-  const [editingContent, setEditingContent] = useState('');
-  const [comments, setComments] = useState<CommentType[]>([]);
+  const commentRefreshRef = useRef<(() => void) | null>(null);
+
   const handleClose = (): void => {
     setNewComment('');
-    setEditingCommentId(null);
-    setEditingContent('');
     onClose();
   };
 
   useModalKeyHandler(isOpen, handleClose);
 
-  const handleCommentSubmit = () => {
-    if (!newComment.trim()) {
+  /**
+   * 댓글 생성 함수
+   */
+  const handleCommentSubmit = async () => {
+    if (!newComment.trim() || !task || !dashboardId || !columnId) {
       return;
     }
 
-    const newCommentObj: CommentType = {
-      id: `comment_${String(Date.now())}_${Math.random().toString(36).slice(2, 11)}`,
-      content: newComment.trim(),
-      author: {
-        id: currentUser?.id || 'current-user',
-        name: currentUser?.name || '사용자',
-        profileColor: currentUser?.profileColor || '#8B5CF6',
-      },
-      createdAt: new Date()
-        .toLocaleString('ko-KR', {
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit',
-          hour: '2-digit',
-          minute: '2-digit',
-        })
-        .replaceAll('.', '.')
-        .replaceAll(',', ''),
-    };
-
-    setComments((prev) => [...prev, newCommentObj]);
-    setNewComment('');
-  };
-
-  const handleEditComment = (commentId: string, content: string) => {
-    setEditingCommentId(commentId);
-    setEditingContent(content);
-  };
-
-  const handleUpdateComment = () => {
-    if (!editingCommentId || !editingContent.trim()) {
-      return;
-    }
-
-    setComments((prev) => {
-      return prev.map((comment) => {
-        return comment.id === editingCommentId
-          ? { ...comment, content: editingContent.trim() }
-          : comment;
+    try {
+      await createComment({
+        content: newComment.trim(),
+        cardId: Number(task.id),
+        columnId: Number(columnId),
+        dashboardId: Number(dashboardId),
       });
-    });
-    setEditingCommentId(null);
-    setEditingContent('');
-  };
 
-  const handleDeleteComment = (commentId: string) => {
-    if (window.confirm('댓글을 삭제하시겠습니까?')) {
-      setComments((prev) => prev.filter((comment) => comment.id !== commentId));
+      setNewComment('');
+
+      if (commentRefreshRef.current) {
+        commentRefreshRef.current();
+      }
+    } catch (error) {
+      // 댓글 생성 실패
     }
   };
 
-  const handleCancelEdit = () => {
-    setEditingCommentId(null);
-    setEditingContent('');
+  /**
+   * 댓글 수정 함수
+   */
+  const handleEditComment = async (commentId: number, content: string) => {
+    try {
+      await editComment({
+        commentId,
+        body: { content },
+      });
+
+      if (commentRefreshRef.current) {
+        commentRefreshRef.current();
+      }
+    } catch (error) {
+      // 댓글 수정 실패
+    }
   };
+
+  /**
+   * 댓글 삭제 함수
+   */
+  const handleDeleteComment = async (commentId: number) => {
+    if (window.confirm('댓글을 삭제하시겠습니까?')) {
+      try {
+        await deleteComment(commentId);
+
+        if (commentRefreshRef.current) {
+          commentRefreshRef.current();
+        }
+      } catch (error) {
+        // 댓글 삭제 실패
+      }
+    }
+  };
+
+  /**
+   * 댓글 목록 가져오기 함수
+   */
+  const fetchComments = useCallback(
+    async (cardId: number, cursorId?: number) => {
+      try {
+        const result = await getCommentList({
+          cardId,
+          size: 4,
+          cursorId,
+        });
+
+        return {
+          data: result.comments,
+          nextCursorId: result.cursorId,
+        };
+      } catch (error) {
+        return {
+          data: [],
+          nextCursorId: null,
+        };
+      }
+    },
+    []
+  );
 
   const handleEdit = () => {
     if (!task || !onEdit) {
@@ -136,32 +164,34 @@ export default function TaskDetailModal({
         <h2 className='text-xl font-bold'>{task.title}</h2>
         <div className='flex items-center gap-3'>
           {/* 메뉴 버튼 */}
-          <Dropdown>
-            <Dropdown.Toggle>
-              <div className='flex-center h-8 w-8 rounded hover:bg-gray-100'>
-                <Image
-                  src='/dashboard/menu-icon.svg'
-                  alt='메뉴'
-                  width={28}
-                  height={28}
-                />
-              </div>
-            </Dropdown.Toggle>
-            <Dropdown.List additionalClassName='w-24 top-1 -left-16'>
-              <Dropdown.Item
-                additionalClassName='justify-center py-1'
-                onClick={handleEdit}
-              >
-                <div className='text-sm'>수정하기</div>
-              </Dropdown.Item>
-              <Dropdown.Item
-                additionalClassName='justify-center py-1'
-                onClick={handleDelete}
-              >
-                <div className='text-sm'>삭제하기</div>
-              </Dropdown.Item>
-            </Dropdown.List>
-          </Dropdown>
+          <div className='relative'>
+            <Dropdown>
+              <Dropdown.Toggle>
+                <div className='flex-center h-8 w-8 rounded hover:bg-gray-100'>
+                  <Image
+                    src='/dashboard/menu-icon.svg'
+                    alt='메뉴'
+                    width={28}
+                    height={28}
+                  />
+                </div>
+              </Dropdown.Toggle>
+              <Dropdown.List additionalClassName='w-24 top-full mt-1 -left-16'>
+                <Dropdown.Item
+                  additionalClassName='justify-center py-1'
+                  onClick={handleEdit}
+                >
+                  <div className='text-sm'>수정하기</div>
+                </Dropdown.Item>
+                <Dropdown.Item
+                  additionalClassName='justify-center py-1'
+                  onClick={handleDelete}
+                >
+                  <div className='text-sm'>삭제하기</div>
+                </Dropdown.Item>
+              </Dropdown.List>
+            </Dropdown>
+          </div>
           {/* 닫기 버튼 */}
           <button
             className='flex h-8 w-8 cursor-pointer items-center justify-center rounded hover:bg-gray-100'
@@ -209,22 +239,27 @@ export default function TaskDetailModal({
           <div className='flex-1 space-y-6'>
             <div>
               <p className='leading-relaxed text-gray-700'>
-                {task.description ||
-                  'Lorem Ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum finibus nibh arcu, quis consequat ante cursus eget. Cras mattis, nulla non laceret porttitor, diam justo laceret eros, vel aliquet diam elit sit et leo.'}
+                {task.description || '설명이 없습니다.'}
               </p>
             </div>
 
-            {task.imageUrl && (
-              <div>
-                <Image
-                  src={task.imageUrl}
-                  alt='할일 이미지'
-                  width={400}
-                  height={240}
-                  className='w-full rounded-lg object-cover'
-                />
-              </div>
-            )}
+            {task.imageUrl &&
+              task.imageUrl.trim() !== '' &&
+              !(
+                JSON.parse(
+                  localStorage.getItem('deletedImageCards') || '[]'
+                ) as string[]
+              ).includes(task.id) && (
+                <div>
+                  <Image
+                    src={task.imageUrl}
+                    alt='할일 이미지'
+                    width={400}
+                    height={240}
+                    className='w-full rounded-lg object-cover'
+                  />
+                </div>
+              )}
           </div>
 
           <div className='flex w-52 flex-col gap-6 self-start rounded-lg border border-gray-300 p-4'>
@@ -234,6 +269,7 @@ export default function TaskDetailModal({
                 <ChipProfile
                   color={getProfileColor(task.manager.profileColor)}
                   size='md'
+                  profileImageUrl={task.manager.profileImageUrl}
                   label={
                     typeof task.manager.nickname === 'string'
                       ? task.manager.nickname.slice(0, 1)
@@ -269,9 +305,21 @@ export default function TaskDetailModal({
             onChange={(e) => {
               setNewComment(e.target.value);
             }}
+            onKeyDown={(e) => {
+              if (e.key !== 'Enter' || e.shiftKey) {
+                return;
+              }
+              e.preventDefault();
+              handleCommentSubmit();
+            }}
           />
           <button
-            className='text-violet absolute right-4 bottom-4 cursor-pointer rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium hover:bg-gray-50'
+            disabled={!newComment.trim()}
+            className={`absolute right-4 bottom-4 rounded-lg border px-6 py-2 text-sm font-medium ${
+              newComment.trim()
+                ? 'text-violet cursor-pointer border-gray-300 bg-white hover:bg-gray-50'
+                : 'cursor-not-allowed border-gray-200 bg-gray-50 text-gray-400'
+            }`}
             onClick={handleCommentSubmit}
           >
             입력
@@ -279,82 +327,15 @@ export default function TaskDetailModal({
         </div>
 
         {/* 댓글 목록 */}
-        {comments.length > 0 && (
-          <div className='mt-6 space-y-6'>
-            {comments.map((comment) => {
-              return (
-                <div key={comment.id} className='flex gap-3'>
-                  <ChipProfile
-                    label={(comment.author.name || '').slice(0, 1)}
-                    color={getProfileColor(comment.author.profileColor)}
-                    size='md'
-                  />
-                  <div className='flex-1'>
-                    <div className='mb-1 flex items-center gap-2'>
-                      <span className='text-sm font-medium'>
-                        {comment.author.name}
-                      </span>
-                      <span className='text-xs text-gray-500'>
-                        {comment.createdAt}
-                      </span>
-                    </div>
-
-                    {editingCommentId === comment.id ? (
-                      <div className='space-y-3'>
-                        <textarea
-                          value={editingContent}
-                          className='focus:border-violet w-full resize-none rounded-lg border border-gray-300 p-3 text-sm focus:outline-none'
-                          rows={3}
-                          onChange={(e) => {
-                            setEditingContent(e.target.value);
-                          }}
-                        />
-                        <div className='flex gap-3'>
-                          <button
-                            className='cursor-pointer text-xs text-gray-500 underline'
-                            onClick={handleUpdateComment}
-                          >
-                            저장
-                          </button>
-                          <button
-                            className='cursor-pointer text-xs text-gray-500 underline'
-                            onClick={handleCancelEdit}
-                          >
-                            취소
-                          </button>
-                        </div>
-                      </div>
-                    ) : (
-                      <>
-                        <p className='text-sm text-gray-700'>
-                          {comment.content}
-                        </p>
-                        <div className='mt-2 flex gap-3'>
-                          <button
-                            className='cursor-pointer text-xs text-gray-500 underline'
-                            onClick={() => {
-                              handleEditComment(comment.id, comment.content);
-                            }}
-                          >
-                            수정
-                          </button>
-                          <button
-                            className='cursor-pointer text-xs text-gray-500 underline'
-                            onClick={() => {
-                              handleDeleteComment(comment.id);
-                            }}
-                          >
-                            삭제
-                          </button>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
+        <div className='mt-6'>
+          <InfiniteCommentList
+            cardId={Number(task.id)}
+            fetchComments={fetchComments}
+            onEditComment={handleEditComment}
+            onDeleteComment={handleDeleteComment}
+            onRefreshRef={commentRefreshRef}
+          />
+        </div>
       </div>
     </BaseModal>
   );
