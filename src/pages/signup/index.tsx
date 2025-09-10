@@ -190,20 +190,20 @@ export default function SignupPage(): React.JSX.Element {
         minHeight: '1211px',
       }}
     >
-      <div className='flex h-auto min-h-[653px] w-[520px] shrink-0 flex-col items-center gap-[30px] max-[375px]:w-[351px] max-[375px]:gap-[36px]'>
+      <div className='flex h-auto min-h-[653px] w-full max-w-[520px] shrink-0 flex-col items-center gap-[30px] px-4 max-[375px]:max-w-[351px] max-[375px]:gap-[36px]'>
         {/* Hero Block */}
         <AuthHero title='첫 방문을 환영합니다!' />
 
         {/* Form Wrapper */}
-        <div className='flex w-[520px] flex-col items-center max-[375px]:w-[351px]'>
+        <div className='flex w-full max-w-[520px] flex-col items-center max-[375px]:max-w-[351px]'>
           <form
-            className='flex w-[520px] flex-col items-start max-[375px]:w-[351px]'
+            className='flex w-full max-w-[520px] flex-col items-start max-[375px]:max-w-[351px]'
             onSubmit={handleSubmit}
           >
             {/* 폼 요소들 */}
             <div className='flex flex-col space-y-6 max-[375px]:space-y-2'>
               {/* 입력 필드들 */}
-              <div className='flex w-[520px] flex-col items-start max-[375px]:w-[351px]'>
+              <div className='flex w-full max-w-[520px] flex-col items-start max-[375px]:max-w-[351px]'>
                 <TextInput
                   id='nickname'
                   label='닉네임'
@@ -250,7 +250,7 @@ export default function SignupPage(): React.JSX.Element {
               </div>
 
               {/* 약관 동의 */}
-              <div className='flex w-[520px] items-center gap-3'>
+              <div className='flex w-full max-w-[520px] items-center gap-3'>
                 <input
                   id='terms'
                   type='checkbox'
@@ -278,7 +278,7 @@ export default function SignupPage(): React.JSX.Element {
 
               {/* 하단 링크 */}
               <div
-                className={`${styles.textStrong} w-[520px] text-center text-[16px] leading-[19px] max-[375px]:w-[351px]`}
+                className={`${styles.textStrong} w-full max-w-[520px] text-center text-[16px] leading-[19px] max-[375px]:max-w-[351px]`}
               >
                 <span>이미 회원이신가요? </span>
                 <Link
