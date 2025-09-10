@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { useState } from 'react';
+import { type KeyboardEvent, useState } from 'react';
 import {
   type EditTaskFormData,
   getRandomTagColor,
@@ -30,7 +30,6 @@ export default function EditTaskForm({
   columns = [],
   members = [],
 }: EditTaskFormProps) {
-  const [currentTag, setCurrentTag] = useState('');
   const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
   const [isAssigneeDropdownOpen, setIsAssigneeDropdownOpen] = useState(false);
 
@@ -63,24 +62,27 @@ export default function EditTaskForm({
     }
   };
 
-  const handleTagKeyDown = (e: React.KeyboardEvent) => {
+  const handleTagKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    const inputText = e.currentTarget.value.trim();
+
     if (e.key !== 'Enter') {
       return;
     }
-    if (!currentTag.trim()) {
+    if (!inputText) {
       return;
     }
-    e.preventDefault();
+    // 한글 조합 중이면 무시
+    if (e.nativeEvent.isComposing) {
+      return;
+    }
     setFormData((prev) => {
       return {
         ...prev,
-        tags: [
-          ...prev.tags,
-          { label: currentTag.trim(), color: getRandomTagColor() },
-        ],
+        tags: [...prev.tags, { label: inputText, color: getRandomTagColor() }],
       };
     });
-    setCurrentTag('');
+    e.currentTarget.value = '';
+    e.preventDefault();
   };
 
   const removeTag = (indexToRemove: number) => {
@@ -374,11 +376,7 @@ export default function EditTaskForm({
             type='text'
             placeholder={formData.tags.length === 0 ? '입력 후 Enter' : ''}
             className='min-w-[120px] flex-1 border-0 bg-transparent p-1 focus:outline-none'
-            value={currentTag}
             onKeyDown={handleTagKeyDown}
-            onChange={(e) => {
-              setCurrentTag(e.target.value);
-            }}
           />
         </div>
       </div>
