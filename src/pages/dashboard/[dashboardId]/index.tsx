@@ -13,6 +13,7 @@ import CreateTaskModal from '@/components/dashboard/modal/create-task-modal';
 import EditTaskModal from '@/components/dashboard/modal/edit-task-modal';
 import ManageColumnModal from '@/components/dashboard/modal/manage-column-modal';
 import TaskDetailModal from '@/components/dashboard/modal/task-detail-modal';
+import ColumnSkeleton from '@/components/dashboard/skeleton/column';
 import {
   type ColumnType,
   type CreateColumnFormData,
@@ -58,7 +59,7 @@ export default function DashboardDetailPage({
    * ===== 카드 순서 관리 =====
    */
   const saveCardOrder = (columnId: string, taskIds: string[]) => {
-    const orderKey = `card-order-${dashboardId}-${columnId}`;
+    const orderKey = `card-order-${String(dashboardId)}-${columnId}`;
 
     localStorage.setItem(orderKey, JSON.stringify(taskIds));
   };
@@ -174,7 +175,7 @@ export default function DashboardDetailPage({
     try {
       const newColumn = await createColumn({
         title: columnData.name,
-        dashboardId: Number(dashboardId),
+        dashboardId,
       });
 
       const columnWithTasks: ColumnType = {
@@ -233,12 +234,8 @@ export default function DashboardDetailPage({
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className='flex min-h-screen items-center justify-center bg-gray-50'>
-        <div className='text-lg'>로딩 중...</div>
-      </div>
-    );
+  if (!isLoading) {
+    return <ColumnSkeleton />;
   }
 
   return (
@@ -322,7 +319,7 @@ export default function DashboardDetailPage({
         isOpen={isDetailModalOpen}
         task={selectedTask}
         columnTitle={getSelectedTaskColumn()?.title}
-        dashboardId={dashboardId}
+        dashboardId={String(dashboardId)}
         columnId={getSelectedTaskColumn()?.id}
         currentUser={{
           id: String(userInfo?.id ?? 'user-1'),

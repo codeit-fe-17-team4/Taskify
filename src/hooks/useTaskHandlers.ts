@@ -17,7 +17,7 @@ interface UseTaskHandlersProps {
     email: string;
     profileImageUrl: string | null;
   }[];
-  dashboardId: string;
+  dashboardId: number;
   getTagColorByLabel: (
     label: string
   ) => 'blue' | 'pink' | 'green' | 'brown' | 'red';
@@ -219,7 +219,7 @@ export const useTaskHandlers = ({
         imageUrl?: string;
       } = {
         assigneeUserId: assigneeMember?.userId ?? 1,
-        dashboardId: Number(dashboardId),
+        dashboardId,
         columnId: Number(selectedColumnId),
         title: taskData.title,
         description: taskData.description,
