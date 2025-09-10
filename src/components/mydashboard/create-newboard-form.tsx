@@ -12,11 +12,11 @@ export default function CreateNewboardForm({
   setFormData,
 }: CreateNewboardFormProps): ReactNode {
   const colors = [
-    { name: 'green', bgClass: 'bg-lime-500' },
-    { name: 'purple', bgClass: 'bg-purple-700' },
-    { name: 'orange', bgClass: 'bg-amber-500' },
-    { name: 'blue', bgClass: 'bg-blue-300' },
-    { name: 'pink', bgClass: 'bg-fuchsia-400' },
+    { name: 'green', bgClass: 'bg-lime-500', hexCode: '#7AC555' },
+    { name: 'purple', bgClass: 'bg-purple-700', hexCode: '#760DDE' },
+    { name: 'orange', bgClass: 'bg-amber-500', hexCode: '#FFA500' },
+    { name: 'blue', bgClass: 'bg-blue-300', hexCode: '#76A5EA' },
+    { name: 'pink', bgClass: 'bg-fuchsia-400', hexCode: '#E876EA' },
   ];
 
   return (
@@ -58,7 +58,10 @@ export default function CreateNewboardForm({
                     : 'border-transparent hover:scale-110'
                 }`}
                 onClick={() => {
-                  setFormData((prev) => ({ ...prev, color: color.name }));
+                  console.log(color.hexCode);
+                  setFormData((prev) => ({ ...prev, color: color.hexCode }));
+                  console.log(formData);
+                  console.log(formData);
                 }}
               >
                 {formData.color === color.name && (
