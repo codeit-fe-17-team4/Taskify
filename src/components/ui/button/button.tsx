@@ -1,6 +1,6 @@
 import { cva } from 'class-variance-authority';
 import { motion } from 'framer-motion';
-import type { ReactNode } from 'react';
+import type { FormEvent, ReactNode } from 'react';
 import { cn } from '@/utils/cn';
 
 export const ButtonVariants = cva(
@@ -45,7 +45,7 @@ interface ButtonProps {
   /** button disabled 여부 */
   disabled?: boolean;
   /** 클릭 이벤트 핸들러 */
-  onClick?: () => void;
+  onClick?: (() => void) | ((e: FormEvent) => Promise<void>);
   children?: ReactNode;
 }
 /**
@@ -67,19 +67,21 @@ export default function Button({
   labelColor,
   additionalClass = '',
   onClick,
+  disabled,
   ...props
 }: ButtonProps): ReactNode {
   return (
     <>
       <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
+        whileHover={{ scale: disabled ? 1 : 1.05 }}
+        whileTap={{ scale: disabled ? 1 : 0.95 }}
         className={cn(
           ButtonVariants({ variant, backgroundColor, labelColor }),
           additionalClass
         )}
         onClick={onClick}
         {...props}
+        disabled={disabled}
       >
         {children}
         {label}

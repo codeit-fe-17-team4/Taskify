@@ -11,6 +11,7 @@ import {
 import BackButton from '@/components/auth/back-button';
 import UnifiedModal from '@/components/auth/UnifiedModal';
 import DashboardLayout from '@/components/layout/dashboard-layout';
+import Button from '@/components/ui/button/button';
 import { BASE_API_URL } from '@/lib/constants';
 import type { UserType } from '@/lib/users/type';
 import styles from '@/styles/auth-variables.module.css';
@@ -469,19 +470,14 @@ export default function MyPage({
               </div>
 
               {/* 저장 버튼 */}
-              <button
-                type='button'
-                className='w-full shrink-0 cursor-pointer rounded-[8px] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50'
+              <Button
+                variant='primary'
+                backgroundColor='violet'
+                label={isLoading ? '저장 중...' : '저장'}
+                additionalClass='mt-6'
                 disabled={isLoading || !nickname.trim()}
-                style={{
-                  ...COMMON_STYLES.button,
-                  height: '54px',
-                  marginTop: '24px',
-                }}
                 onClick={handleUpdateNickname}
-              >
-                {isLoading ? '저장 중...' : '저장'}
-              </button>
+              />
             </div>
           </div>
         </div>
@@ -568,14 +564,11 @@ export default function MyPage({
             </div>
 
             {/* 변경 버튼 */}
-            <button
-              type='submit'
-              className='w-full shrink-0 cursor-pointer rounded-[8px] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50'
-              style={{
-                ...COMMON_STYLES.button,
-                height: '54px',
-                marginTop: '24px',
-              }}
+            <Button
+              variant='primary'
+              backgroundColor='violet'
+              label={isLoading ? '변경 중...' : '변경'}
+              additionalClass='mt-6'
               disabled={
                 isLoading ||
                 !currentPassword ||
@@ -583,9 +576,7 @@ export default function MyPage({
                 !confirmPassword
               }
               onClick={handlePasswordChange}
-            >
-              {isLoading ? '변경 중...' : '변경'}
-            </button>
+            />
           </form>
         </div>
       </div>

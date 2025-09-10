@@ -169,7 +169,6 @@ export default function LoginPage(): JSX.Element {
 
               {/* 로그인 버튼 */}
               <AuthButton
-                type='submit'
                 disabled={!isFormValidNow}
                 isLoading={isLoading}
                 loadingText='로그인 중...'
