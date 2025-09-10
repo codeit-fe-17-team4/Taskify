@@ -8,6 +8,7 @@ interface InviteListProps {
   onReject: (inviteId: number) => void;
   handleComposition: (e: React.CompositionEvent<HTMLInputElement>) => void;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   loaderRef: (node?: Element | null) => void;
   hasMore: boolean;
 }
@@ -21,6 +22,7 @@ export default function InvitationList({
   loaderRef,
   hasMore,
   onChange,
+  onKeyDown,
 }: InviteListProps) {
   return (
     <div>
@@ -69,6 +71,7 @@ export default function InvitationList({
                     onCompositionStart={handleComposition}
                     onCompositionEnd={handleComposition}
                     onChange={onChange}
+                    onKeyDown={onKeyDown}
                   />
                 </div>
               </div>

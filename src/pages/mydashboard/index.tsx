@@ -1,4 +1,4 @@
-import { type ReactNode, useCallback, useEffect, useState } from 'react';
+import { type ReactNode, useCallback, useState } from 'react';
 import DashboardLayout from '@/components/layout/dashboard-layout';
 import CreateNewboardModal from '@/components/mydashboard/create-newboard-modal';
 import DashboardList from '@/components/mydashboard/dashboard-list';
@@ -15,7 +15,7 @@ export default function Mydashboard(): ReactNode {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
-  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
+  const [submittedSearchQuery, setSubmittedSearchQuery] = useState('');
   const [isComposing, setIsComposing] = useState<boolean>(false);
 
   const {
@@ -34,24 +34,6 @@ export default function Mydashboard(): ReactNode {
     deps: [currentPage],
   });
 
-  // 검색어 디바운싱 처리
-  useEffect(() => {
-    // 한글 조합 중에는 API 호출 방지
-    if (isComposing) {
-      return;
-    }
-
-    /**
-     * 300ms 후 API 호출
-     */
-    const handler = setTimeout(() => {
-      setDebouncedSearchQuery(searchQuery);
-    }, 300);
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [searchQuery, isComposing]);
   /* 초대받은 목록 API 연동 */
   const {
     data: inviteData,
@@ -65,29 +47,33 @@ export default function Mydashboard(): ReactNode {
       async (cursorId?: number) => {
         const result = await getInvitationList({
           size: 10,
-          title: debouncedSearchQuery, // 디바운싱된 검색어로 API 호출
+          title: submittedSearchQuery,
           cursorId,
         });
 
         return { data: result.invitations, nextCursorId: result.cursorId };
       },
-      [debouncedSearchQuery]
+      [submittedSearchQuery]
     ),
-    deps: [debouncedSearchQuery], // 디바운싱된 검색어가 변경될 때만 훅 재실행
+    deps: [submittedSearchQuery], // Enter 키 입력으로 확정된 검색어로만 훅 재실행
   });
 
   const handleComposition = (e: React.CompositionEvent<HTMLInputElement>) => {
-    if (e.type === 'compositionstart') {
-      setIsComposing(true);
-    }
-    if (e.type === 'compositionend') {
-      setIsComposing(false);
-      setSearchQuery(e.currentTarget.value);
-    }
+    setIsComposing(e.type === 'compositionstart');
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.nativeEvent.isComposing) {
+      return;
+    }
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      setSubmittedSearchQuery(searchQuery);
+    }
   };
 
   const handleOpenModal = () => {
@@ -205,6 +191,7 @@ export default function Mydashboard(): ReactNode {
             onAccept={handleAcceptInvitation}
             onReject={handleRejectInvitation}
             onChange={handleChange}
+            onKeyDown={handleKeyDown}
           />
         </div>
       </div>

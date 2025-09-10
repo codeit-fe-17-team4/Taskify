@@ -6,6 +6,7 @@ import * as z from '@/lib/invitations/type';
 export const getInvitationList = async ({
   cursorId,
   size = 10,
+  title,
 }: i.GetInvitationList): Promise<z.InvitationListType> => {
   const queryParams = new URLSearchParams({
     size: String(size),
@@ -13,6 +14,9 @@ export const getInvitationList = async ({
 
   if (cursorId) {
     queryParams.append('cursorId', String(cursorId));
+  }
+  if (title) {
+    queryParams.append('title', title);
   }
   const data = await customFetch(
     `${BASE_API_URL}/invitations?${queryParams}`,
