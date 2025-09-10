@@ -26,15 +26,9 @@ export default function ManageColumnModal({
   existingColumns = [],
 }: ManageColumnModalProps) {
   const [formData, setFormData] = useState<ManageColumnFormData>({
-    name: '',
+    name: column?.title || '',
   });
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-
-  useEffect(() => {
-    if (column) {
-      setFormData({ name: column.title });
-    }
-  }, [column]);
 
   const handleClose = () => {
     onClose();
@@ -51,7 +45,7 @@ export default function ManageColumnModal({
   };
 
   const handleDelete = () => {
-    handleClose(); // 기존 모달 먼저 닫기
+    handleClose();
     setIsDeleteModalOpen(true);
   };
 

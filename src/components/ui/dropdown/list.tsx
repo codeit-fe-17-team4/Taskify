@@ -25,7 +25,7 @@ export default function List({
         role='menu'
         aria-label={ariaLabel}
         className={cn(
-          `text-md absolute -top-4 right-0 left-0 w-full translate-y-1/2 overflow-hidden rounded-md border border-gray-300 bg-white p-1.5 font-medium shadow-lg`,
+          `text-md absolute top-full right-0 left-0 z-[60] mt-1 w-full overflow-hidden rounded-md border border-gray-300 bg-white p-1.5 font-medium shadow-lg`,
           additionalClassName
         )}
       >

@@ -28,21 +28,27 @@ export default function ColumnTaskCard({ task, onEditTask }: TaskCardProps) {
 
   return (
     <button
-      className='flex cursor-pointer flex-col gap-4 rounded-lg border border-gray-300 bg-white p-4'
+      className='flex w-full cursor-pointer flex-col gap-4 rounded-lg border border-gray-300 bg-white p-4'
       onClick={handleCardClick}
     >
       {/* 썸네일 */}
-      {task.imageUrl && (
-        <div className='h-40 w-full overflow-hidden rounded-lg'>
-          <Image
-            src={task.imageUrl}
-            alt='카드 이미지'
-            width={300}
-            height={160}
-            className='h-full w-full object-cover'
-          />
-        </div>
-      )}
+      {task.imageUrl &&
+        task.imageUrl.trim() !== '' &&
+        !(
+          JSON.parse(
+            localStorage.getItem('deletedImageCards') || '[]'
+          ) as string[]
+        ).includes(task.id) && (
+          <div className='relative h-40 w-full overflow-hidden rounded-lg'>
+            <Image
+              fill
+              src={task.imageUrl}
+              alt='카드 이미지'
+              sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
+              className='object-cover'
+            />
+          </div>
+        )}
 
       {/* 본문 */}
       <div className='flex flex-col justify-between'>
@@ -56,7 +62,7 @@ export default function ColumnTaskCard({ task, onEditTask }: TaskCardProps) {
             {task.tags.map((tag) => {
               return (
                 <ChipTag
-                  key={tag.label}
+                  key={`${tag.label}-${String(tag.color)}`}
                   label={tag.label}
                   size='md'
                   color={
@@ -84,6 +90,7 @@ export default function ColumnTaskCard({ task, onEditTask }: TaskCardProps) {
                 label={(task.manager.nickname || '').slice(0, 1)}
                 color={getProfileColor(task.manager.profileColor)}
                 size='sm'
+                profileImageUrl={task.manager.profileImageUrl}
               />
             </div>
           </div>

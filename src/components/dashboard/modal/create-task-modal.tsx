@@ -10,6 +10,12 @@ interface CreateTaskModalProps {
   onClose: () => void;
   onSubmit: (taskData: CreateTaskFormData) => void;
   userInfo: UserType | null;
+  members?: {
+    userId: number;
+    nickname: string;
+    email: string;
+    profileImageUrl: string | null;
+  }[];
 }
 
 export default function CreateTaskModal({
@@ -17,6 +23,7 @@ export default function CreateTaskModal({
   onClose,
   onSubmit,
   userInfo,
+  members = [],
 }: CreateTaskModalProps) {
   const [formData, setFormData] = useState<CreateTaskFormData>({
     assignee: '',
@@ -42,9 +49,7 @@ export default function CreateTaskModal({
   useModalKeyHandler(isOpen, handleClose);
 
   const handleSubmit = () => {
-    console.log('CreateTaskModal handleSubmit called');
     onSubmit(formData);
-    console.log('Calling handleClose');
     handleClose();
   };
 
@@ -65,6 +70,7 @@ export default function CreateTaskModal({
         formData={formData}
         setFormData={setFormData}
         userInfo={userInfo}
+        members={members}
       />
     </ButtonModal>
   );

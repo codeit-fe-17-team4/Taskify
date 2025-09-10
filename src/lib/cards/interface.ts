@@ -4,9 +4,9 @@ export interface CreateCardParams {
   columnId: number;
   title: string;
   description: string;
-  dueDate: string;
+  dueDate?: string;
   tags: string[];
-  imageUrl: string;
+  imageUrl?: string;
 }
 export interface GetCardListParams {
   size?: number;
@@ -15,5 +15,16 @@ export interface GetCardListParams {
 }
 export interface EditCardParams {
   cardId: number;
-  body: CreateCardParams;
+  body: UpdateCardParams;
+}
+
+export interface UpdateCardParams {
+  columnId?: number;
+  assigneeUserId?: number;
+  title?: string;
+  description?: string;
+  dueDate?: string;
+  tags?: string[];
+  imageUrl?: string;
+  order?: number; // 카드 순서 필드 추가
 }

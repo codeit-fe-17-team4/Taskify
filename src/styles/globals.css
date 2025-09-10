@@ -110,3 +110,30 @@ input[type='datetime-local']::-webkit-calendar-picker-indicator {
   display: none;
   -webkit-appearance: none;
 }
+
+/* 스크롤바  - 대시보드 칼럼 가로 스크롤용 */
+.horizontal-scroll-only {
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  -ms-overflow-style: auto;
+}
+
+.horizontal-scroll-only::-webkit-scrollbar {
+  height: 8px;
+  width: 0;
+}
+
+.horizontal-scroll-only::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.horizontal-scroll-only::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.horizontal-scroll-only::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}

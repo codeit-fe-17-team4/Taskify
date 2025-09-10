@@ -1,4 +1,4 @@
-import { BASE_API_URL } from '@/lib//constants';
+import { BASE_API_URL } from '@/lib/constants';
 import customFetch from '@/lib/custom-fetch';
 import type * as i from '@/lib/members/interface';
 import * as z from '@/lib/members/type';

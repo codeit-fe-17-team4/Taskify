@@ -25,10 +25,14 @@ export default async function customFetch<T extends z.ZodType>(
   // 쿠키에서 토큰 가져오기
   const accessToken = getAccessToken();
 
+  // FormData인 경우 Content-Type 헤더를 제거
+  const isFormData = init?.body instanceof FormData;
+
   const res = await fetch(input, {
     ...init,
     headers: {
-      'Content-Type': 'application/json',
+      // FormData가 아닌 경우에만 Content-Type 헤더 추가
+      ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
       // 토큰이 있으면 Authorization 헤더 추가
       ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
       ...init?.headers,
@@ -47,7 +51,24 @@ export default async function customFetch<T extends z.ZodType>(
     }
     throw new CustomError(errorText, status, errorData);
   }
-  const data = await res.json();
+
+  // 응답 텍스트 확인
+  const responseText = await res.text();
+
+  // 빈 응답인 경우 빈 객체 반환
+  if (!responseText.trim()) {
+    return {} as z.infer<T>;
+  }
+
+  // JSON 파싱 시도
+  let data;
+  try {
+    data = JSON.parse(responseText);
+  } catch (jsonError) {
+    console.error('JSON 파싱 실패:', jsonError);
+    console.error('응답 텍스트:', responseText);
+    throw new Error('서버 응답을 파싱할 수 없습니다.');
+  }
 
   try {
     return schema.parse(data);

@@ -190,7 +190,7 @@ export const useSignupValidation = (): ReturnType<typeof useFormValidation> & {
 
       return baseValid && confirmValid;
     },
-    [baseValidation.isFormValid, validateConfirmPasswordField]
+    [baseValidation, validateConfirmPasswordField]
   );
 
   return {
