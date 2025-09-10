@@ -13,6 +13,8 @@ export default function Mydashboard(): ReactNode {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isComposing, setIsComposing] = useState<boolean>(false);
+
   const {
     data: dashboardData,
     loading: dashboardLoading,
@@ -40,10 +42,24 @@ export default function Mydashboard(): ReactNode {
     deps: [],
   });
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // 조합 중에는 무시
+    setSearchQuery(e.target.value);
+  };
+  const handleComposition = (e: React.CompositionEvent<HTMLInputElement>) => {
+    if (e.type === 'compositionstart') {
+      setIsComposing(true);
+    }
+    if (e.type === 'compositionend') {
+      setIsComposing(false);
+      setSearchQuery(e.currentTarget.value);
+    }
+  };
+
   const rawInviteData = invitationListData?.invitations ?? [];
 
   const inviteData =
-    searchQuery.trim() === ''
+    searchQuery.trim() === '' || isComposing
       ? rawInviteData
       : rawInviteData.filter((invite) => {
           return invite.dashboard.title
@@ -162,8 +178,10 @@ export default function Mydashboard(): ReactNode {
             inviteData={inviteData}
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
+            handleComposition={handleComposition}
             onAccept={handleAcceptInvitation}
             onReject={handleRejectInvitation}
+            onChange={handleChange}
           />
         </div>
       </div>

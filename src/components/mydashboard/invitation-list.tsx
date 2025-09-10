@@ -7,6 +7,8 @@ interface InviteListProps {
   setSearchQuery: (query: string) => void;
   onAccept: (inviteId: number) => void;
   onReject: (inviteId: number) => void;
+  handleComposition: (e: React.CompositionEvent<HTMLInputElement>) => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export default function InvitationList({
@@ -15,9 +17,9 @@ export default function InvitationList({
   setSearchQuery,
   onAccept,
   onReject,
+  handleComposition,
+  onChange,
 }: InviteListProps) {
-  console.log(inviteData);
-
   return (
     <div>
       {inviteData.length === 0 ? (
@@ -62,9 +64,9 @@ export default function InvitationList({
                     placeholder='검색'
                     className='h-[40px] w-full rounded border border-gray-300 pr-4 pl-10 text-sm focus:ring-1 focus:ring-gray-300 focus:outline-none'
                     value={searchQuery}
-                    onChange={(e) => {
-                      setSearchQuery(e.target.value);
-                    }}
+                    onCompositionStart={handleComposition}
+                    onCompositionEnd={handleComposition}
+                    onChange={onChange}
                   />
                 </div>
               </div>
