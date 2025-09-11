@@ -27,7 +27,7 @@ export default function CreateColumnForm({
               : 'text-gray-900'
           }`}
         >
-          대시보드 이름
+          컬럼 이름
           <span
             className={`align-baseline text-lg ${
               theme === 'dark' ? 'text-green-500' : 'text-violet'

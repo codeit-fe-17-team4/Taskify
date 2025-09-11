@@ -45,7 +45,7 @@ export default function SortableTaskCard({
       </div>
       <div
         {...listeners}
-        className={`absolute top-2 right-2 h-6 w-6 cursor-grab rounded opacity-0 transition-opacity hover:opacity-100 active:cursor-grabbing ${
+        className={`absolute top-2 right-2 h-6 w-6 cursor-grab rounded opacity-0 transition-opacity group-hover:opacity-100 active:cursor-grabbing ${
           theme === 'dark' ? 'bg-[var(--auth-border)]' : 'bg-gray-200'
         }`}
       >
