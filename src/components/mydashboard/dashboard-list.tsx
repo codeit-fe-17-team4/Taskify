@@ -38,7 +38,9 @@ export default function DashboardList({
         className='tablet:w-3xs mobile:w-3xs flex h-[60px] w-2xs cursor-pointer items-center justify-center gap-1 rounded-lg border border-gray-200 bg-white hover:bg-gray-100'
         onClick={onOpenModal}
       >
-        <span className='text-sm font-bold text-gray-600'>새로운 대시보드</span>
+        <span className='text-base font-bold text-gray-600'>
+          새로운 대시보드
+        </span>
         <Image
           src='/icon/newDashboard.svg'
           alt='새로운 대시보드'
@@ -59,7 +61,7 @@ export default function DashboardList({
           className='tablet:w-3xs mobile:w-2xs flex h-[60px] w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white hover:bg-gray-100'
           onClick={onOpenModal}
         >
-          <span className='text-sm font-bold text-gray-600'>
+          <span className='text-base font-bold text-gray-600'>
             새로운 대시보드
           </span>
           <Image
@@ -86,7 +88,7 @@ export default function DashboardList({
                   className={`h-2 w-2 rounded-full ${colorCode[dashboard.color]}`}
                 />
                 <div>
-                  <span className='text-sm font-bold text-gray-600'>
+                  <span className='text-base font-bold text-gray-600'>
                     {dashboard.title} {dashboard.createdByMe && '👑'}
                   </span>
                 </div>
@@ -97,7 +99,7 @@ export default function DashboardList({
 
         {/* 페이지네이션 */}
         <div className='col-span-full mt-4 flex items-center justify-end gap-2'>
-          <p className='text-xs text-gray-600'>
+          <p className='text-sm text-gray-600'>
             {totalPages} 페이지 중 {currentPage}
           </p>
           <div className='flex'>

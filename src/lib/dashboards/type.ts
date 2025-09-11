@@ -29,7 +29,7 @@ export const invitationSchema = z.object({
     email: z.string(),
     id: z.number(),
   }),
-  inviteAccepted: z.boolean(),
+  inviteAccepted: z.boolean().nullable(),
   createdAt: z.string(),
   updatedAt: z.string(),
 });

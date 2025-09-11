@@ -111,7 +111,7 @@ export const getInvitationList = async ({
     size: String(size),
   });
   const data = await customFetch(
-    `${BASE_API_URL}/dashboards/${queryParams}`,
+    `${BASE_API_URL}/dashboards/${String(dashboardId)}/invitations?${queryParams}`,
     z.invitationListSchema
   );
 
