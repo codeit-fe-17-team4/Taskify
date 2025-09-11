@@ -80,17 +80,34 @@ Taskify는 팀 협업을 위한 칸반 보드 기반 프로젝트/일정 관리 
 
 ## 🧱 기술 스택
 
-팀 규칙에 맞춘 실제 적용 스택
+### Tech Stack
+![Next JS](https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white)
+![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)
 
-- **Framework**: Next.js (Page Router)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS (디자인 토큰/유틸리티)
-- **State**: 로컬 state & URL 기반 (전역 상태 라이브러리 미사용, Context 지양)
-- **Data**: 공용 fetch 래퍼 사용 (credentials: 'include')
-- **Code Quality**: ESLint, Prettier
-- **Deploy**: Vercel
+### Development Environment
+![Visual Studio Code](https://img.shields.io/badge/Visual%20Studio%20Code-0078d7.svg?style=for-the-badge&logo=visual-studio-code&logoColor=white)
+![Git](https://img.shields.io/badge/git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white)
+![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)
+![ESLint](https://img.shields.io/badge/ESLint-4B3263?style=for-the-badge&logo=eslint&logoColor=white)
+![Prettier](https://img.shields.io/badge/prettier-%23F7B93E.svg?style=for-the-badge&logo=prettier&logoColor=black)
+![Vercel](https://img.shields.io/badge/vercel-%23000000.svg?style=for-the-badge&logo=vercel&logoColor=white)
+![Storybook](https://img.shields.io/badge/-Storybook-FF4785?style=for-the-badge&logo=storybook&logoColor=white)
+![Vitest](https://img.shields.io/badge/-Vitest-252529?style=for-the-badge&logo=vitest&logoColor=FCC72B)
 
-선택/확장 요소(옵션): Storybook(컴포넌트 문서화), Vitest(테스트) 
+### Architecture / State Management
+- Local state & URL 기반
+- Avoided global state libraries (Context API 지양)
+
+### Data Layer
+- Shared fetch wrapper
+- Configured with `credentials: 'include'`
+
+### Collaboration Tools
+![Discord](https://img.shields.io/badge/Discord-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white)
+![Notion](https://img.shields.io/badge/Notion-%23000000.svg?style=for-the-badge&logo=notion&logoColor=white)
+![Figma](https://img.shields.io/badge/figma-%23F24E1E.svg?style=for-the-badge&logo=figma&logoColor=white)
+
 
 ## 🔗 API & 인증
 
