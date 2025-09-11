@@ -26,7 +26,7 @@ export default function InvitationListCard({
         <h2 className='text-xl font-bold'>초대 내역</h2>
         <div className='mobile:absolute mobile:right-5 mobile:top-5 flex items-center justify-end gap-3'>
           <div className='flex items-center justify-end gap-2'>
-            <p className='text-xs text-gray-600'>
+            <p className='text-sm text-gray-600'>
               {totalPages} 페이지 중 {currentPage}
             </p>
             <div className='flex items-center justify-center'>
@@ -64,12 +64,12 @@ export default function InvitationListCard({
               width={20}
               height={20}
             />
-            <span className='text-xs'>초대하기</span>
+            <span className='text-sm'>초대하기</span>
           </button>
         </div>
       </div>
       <div>
-        <table className='mt-5 w-full text-center text-xs'>
+        <table className='mt-5 w-full text-center text-base'>
           <thead>
             <tr>
               <th className='pr-8 pl-8 text-start font-normal text-gray-400'>
@@ -96,7 +96,7 @@ export default function InvitationListCard({
                   <td className='py-3'>
                     <button
                       type='button'
-                      className='mobile:w-12 w-16 cursor-pointer rounded border border-gray-200 px-3 py-1 text-xs text-violet-500 transition-colors hover:bg-gray-50'
+                      className='mobile:w-12 w-16 cursor-pointer rounded border border-gray-200 px-3 py-1 text-sm text-violet-500 transition-colors hover:bg-gray-50'
                       onClick={() => {
                         onDeleteMember(invitation.id);
                       }}

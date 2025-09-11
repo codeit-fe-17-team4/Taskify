@@ -37,7 +37,7 @@ export default function EditDashboardForm({
       <form className='mt-4 space-y-4' onSubmit={handleEditSubmit}>
         {/* 이름 수정 */}
         <div>
-          <label htmlFor='name' className='font-sm block text-base'>
+          <label htmlFor='name' className='font-xl block text-base'>
             대시보드 이름
           </label>
           <input

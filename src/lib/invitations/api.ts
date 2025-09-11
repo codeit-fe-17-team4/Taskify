@@ -4,15 +4,20 @@ import type * as i from '@/lib/invitations/interface';
 import * as z from '@/lib/invitations/type';
 
 export const getInvitationList = async ({
-  cursorId = 0,
+  cursorId,
   size = 10,
-  title = '',
+  title,
 }: i.GetInvitationList): Promise<z.InvitationListType> => {
   const queryParams = new URLSearchParams({
     size: String(size),
-    cursorId: String(cursorId),
-    title,
   });
+
+  if (cursorId) {
+    queryParams.append('cursorId', String(cursorId));
+  }
+  if (title) {
+    queryParams.append('title', title);
+  }
   const data = await customFetch(
     `${BASE_API_URL}/invitations?${queryParams}`,
     z.invitationListSchema

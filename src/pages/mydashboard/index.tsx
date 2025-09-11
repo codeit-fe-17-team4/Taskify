@@ -1,4 +1,4 @@
-import { type ReactNode, useState } from 'react';
+import { type ReactNode, useCallback, useState } from 'react';
 import DashboardLayout from '@/components/layout/dashboard-layout';
 import CreateNewboardModal from '@/components/mydashboard/create-newboard-modal';
 import DashboardList from '@/components/mydashboard/dashboard-list';
@@ -6,18 +6,23 @@ import InvitationList from '@/components/mydashboard/invitation-list';
 import LoadingCircle from '@/components/ui/loading-circle';
 import ModalPortal from '@/components/ui/modal/modal-portal';
 import { useFetch } from '@/hooks/useAsync';
+import { useCursorInfiniteScroll } from '@/hooks/useCursorInfiniteScroll';
 import { getDashBoardList } from '@/lib/dashboards/api';
 import { acceptInvitation, getInvitationList } from '@/lib/invitations/api';
+import type { InvitationType } from '@/lib/invitations/type';
 
 export default function Mydashboard(): ReactNode {
   const [isAcceptingInvitation, setIsAcceptingInvitation] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
+  const [submittedSearchQuery, setSubmittedSearchQuery] = useState('');
+  const [isComposing, setIsComposing] = useState<boolean>(false);
+
   const {
     data: dashboardData,
-    loading,
-    error,
+    loading: dashboardLoading,
+    error: dashboardError,
     refetch,
   } = useFetch({
     asyncFunction: () => {
@@ -29,11 +34,49 @@ export default function Mydashboard(): ReactNode {
     },
     deps: [currentPage],
   });
-  const { data: invitationListData, refetch: refetchInvitations } = useFetch({
-    asyncFunction: () => getInvitationList({ size: 100, title: 'invitation' }),
-    deps: [searchQuery],
+
+  /* 초대받은 목록 API 연동 */
+  const {
+    data: inviteData,
+    isLoading,
+    error: invitationError,
+    hasMore,
+    ref,
+    refresh,
+  } = useCursorInfiniteScroll<InvitationType>({
+    fetchData: useCallback(
+      async (cursorId?: number) => {
+        const result = await getInvitationList({
+          size: 10,
+          title: submittedSearchQuery,
+          cursorId,
+        });
+
+        return { data: result.invitations, nextCursorId: result.cursorId };
+      },
+      [submittedSearchQuery]
+    ),
+    deps: [submittedSearchQuery], // Enter 키 입력으로 확정된 검색어로만 훅 재실행
   });
-  const inviteData = invitationListData?.invitations ?? [];
+
+  const handleComposition = (e: React.CompositionEvent<HTMLInputElement>) => {
+    setIsComposing(e.type === 'compositionstart');
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.nativeEvent.isComposing) {
+      return;
+    }
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      setSubmittedSearchQuery(searchQuery);
+    }
+  };
+
   const handleOpenModal = () => {
     setIsModalOpen(true);
   };
@@ -45,9 +88,14 @@ export default function Mydashboard(): ReactNode {
     return <LoadingCircle />;
   }
 
-  if (error) {
-    return <div>에러가 발생했습니다.</div>;
+  // if (!inviteData || invitationLoading) {
+  //   return <div> loading ...</div>;
+  // }
+
+  if (invitationError) {
+    return <div>Error ... </div>;
   }
+
   // 페이지네이션 (라이브러리 x)
   const itemsPerPage = 5;
   const totalPages = Math.ceil(dashboardData.totalCount / itemsPerPage);
@@ -68,6 +116,7 @@ export default function Mydashboard(): ReactNode {
   const addDashboardToList = () => {
     refetch();
   };
+
   /**
    * 초대 수락 API 연동
    */
@@ -80,21 +129,19 @@ export default function Mydashboard(): ReactNode {
       });
       // 대시보드 목록과 초대 목록을 새로고침
       addDashboardToList();
-      refetchInvitations();
+      await refresh();
       alert('초대를 수락했습니다!');
     } catch (error) {
       console.error('초대 수락 실패:', error);
       if (error instanceof Error) {
         alert(`초대 수락에 실패했습니다: ${error.message}`);
-      } else {
-        alert('초대 수락에 실패했습니다. 다시 시도해주세요.');
       }
     } finally {
       setIsAcceptingInvitation(false);
     }
   };
   /**
-   * 초대 거절 API 연동 (일단 구현해봤는데 그냥 삭제하는 것으로 구현하는 것도 있을 듯)
+   * 초대 거절 API 연동
    */
   const handleRejectInvitation = async (inviteId: number) => {
     if (isAcceptingInvitation) {
@@ -107,7 +154,7 @@ export default function Mydashboard(): ReactNode {
         body: { inviteAccepted: false },
       });
       alert('초대를 거절했습니다.');
-      refetchInvitations(); // 거절 후 초대 목록 새로고침
+      await refresh(); // 거절 후 초대 목록 새로고침
     } catch (error) {
       console.error('초대 거절 실패:', error);
     } finally {
@@ -124,7 +171,6 @@ export default function Mydashboard(): ReactNode {
             dashboards={getCurrentPageData()}
             totalPages={totalPages}
             currentPage={currentPage}
-            // colorCode={colorCode} // 필요하다면 props로 전달
             onPrevPage={handlePrevPage}
             onNextPage={handleNextPage}
             onOpenModal={handleOpenModal}
@@ -134,9 +180,13 @@ export default function Mydashboard(): ReactNode {
           <InvitationList
             inviteData={inviteData}
             searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
+            handleComposition={handleComposition}
+            loaderRef={ref}
+            hasMore={hasMore}
             onAccept={handleAcceptInvitation}
             onReject={handleRejectInvitation}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
           />
         </div>
       </div>
@@ -150,6 +200,7 @@ export default function Mydashboard(): ReactNode {
     </>
   );
 }
+
 Mydashboard.getLayout = function getLayout(page: ReactNode) {
   return <DashboardLayout>{page}</DashboardLayout>;
 };

@@ -10,24 +10,29 @@ interface InviteMemberModalProps {
   isOpen: boolean;
   onClose: () => void;
   dashboardId: string | null;
+  onSubmit: (formData: {
+    nickname: string;
+    email: string;
+  }) => void | Promise<void>;
 }
 export default function InviteMemberModal({
   isOpen,
   onClose,
   dashboardId,
+  onSubmit,
 }: InviteMemberModalProps): ReactNode {
   const [email, setEmail] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const { mutate } = useMutate({
-    asyncFunction: () => {
-      return createInvitation({
-        id: Number(dashboardId),
-        body: {
-          email,
-        },
-      });
-    },
-  });
+  // const { mutate } = useMutate({
+  //   asyncFunction: () => {
+  //     return createInvitation({
+  //       id: Number(dashboardId),
+  //       body: {
+  //         email,
+  //       },
+  //     });
+  //   },
+  // });
 
   useModalKeyHandler(isOpen, onClose);
 
@@ -47,14 +52,19 @@ export default function InviteMemberModal({
   };
 
   const handleSubmit = () => {
+    // e.preventDefault();
     if (!dashboardId || !email) {
       return;
     }
-    mutate()?.catch((error) => {
-      if (error instanceof CustomError && error.details) {
-        setErrorMessage(error.details.message);
-      }
-    });
+    onSubmit({ nickname: '', email });
+    // if (!dashboardId || !email) {
+    //   return;
+    // }
+    // mutate()?.catch((error) => {
+    //   if (error instanceof CustomError && error.details) {
+    //     setErrorMessage(error.details.message);
+    //   }
+    // });
   };
 
   return (

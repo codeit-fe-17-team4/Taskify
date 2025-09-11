@@ -16,7 +16,7 @@ import {
   getInvitationList,
 } from '@/lib/dashboards/api';
 import type { DashboardType, InvitationType } from '@/lib/dashboards/type';
-import { getMemberList } from '@/lib/members/api';
+import { deleteMember, getMemberList } from '@/lib/members/api';
 import type { MemberListType } from '@/lib/members/type';
 import { getStringFromQuery } from '@/utils/getContextQuery';
 
@@ -36,7 +36,7 @@ export default function MydashboardEdit(): ReactNode {
   const [invitations, setInvitations] = useState<InvitationType[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // 대시보드 정보 가져오기
+  // 대시보드 정보 가져오기 (최초 렌더링)
   useEffect(() => {
     if (!dashboardId) {
       return;
@@ -83,41 +83,73 @@ export default function MydashboardEdit(): ReactNode {
     fetchMembers();
   }, [dashboardId]);
 
-  // 초대내역 가져오기
-  useEffect(() => {
+  const fetchInvitationEmails = async () => {
     if (!dashboardId) {
       return;
     }
+    try {
+      const data = await getInvitationList({
+        dashboardId: Number(dashboardId),
+        page: 1,
+        size: 10,
+      });
 
-    const fetchInvitationEmails = async () => {
-      try {
-        console.log('getInvitationList params:', {
-          dashboardId: Number(dashboardId),
-          page: 1,
-          size: 10,
-        });
+      console.log('초대 API 응답:', data);
+      console.log('invitations 필드:', data.invitations);
 
-        const data = await getInvitationList({
-          dashboardId: Number(dashboardId),
-          page: 1,
-          size: 10,
-        });
+      setInvitations(data.invitations);
+    } catch (error) {
+      console.error('초대내역 불러오기 실패:', error);
+    }
+  };
 
-        setInvitations(data.invitations);
-      } catch (error) {
-        console.error('초대내역 불러오기 실패:', error);
-      }
-    };
-
+  // 초대내역 가져오기 (최초 렌더링 시 보임))
+  useEffect(() => {
     fetchInvitationEmails();
   }, [dashboardId]);
+
+  /**
+   * 초대
+   */
+  const handleSubmitInviteMember = async (formData: {
+    nickname: string;
+    email: string;
+  }) => {
+    if (!dashboardId) {
+      return;
+    }
+    try {
+      await createInvitation({ id: Number(dashboardId), body: formData });
+      alert('초대요청을 보냈습니다.');
+      handleCloseModal();
+
+      await fetchInvitationEmails();
+    } catch (error) {
+      console.error('초대 실패:', error);
+      alert('초대요청이 실패했습니다.');
+    }
+  };
 
   /**
    * 구성원 삭제 api 연동
    */
   const handleDeleteMember = async (memberId: number) => {
-    setMembers((prev) => prev.filter((member) => member.id !== memberId));
-    alert('구성원이 삭제되었습니다.');
+    if (!dashboardId) {
+      return;
+    }
+
+    if (!window.confirm('구성원을 삭제하시겠습니까?')) {
+      return;
+    }
+    try {
+      await deleteMember(memberId);
+      alert('구성원을 삭제했습니다.');
+      // 목록 새로고침
+      setMembers((prev) => prev.filter((member) => member.id !== memberId));
+    } catch (error) {
+      console.error('구성원 삭제 실패:', error);
+      alert('구성원 삭제에 실패했습니다.');
+    }
   };
 
   /**
@@ -233,7 +265,7 @@ export default function MydashboardEdit(): ReactNode {
                 width={10}
                 height={10}
               />
-              <span>돌아가기</span>
+              <span className='text-base'>돌아가기</span>
             </div>
           </Link>
         )}
@@ -291,7 +323,7 @@ export default function MydashboardEdit(): ReactNode {
         <div className='h-20 w-full'>
           {/* <button
             type='button'
-            className='mobile:max-w-2xs my-6 h-12 w-xs cursor-pointer rounded-sm border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-100'
+            className='mobile:max-w-2xs my-6 h-12 w-xs cursor-pointer rounded-sm border border-gray-300 px-4 py-2 text-lg font-medium hover:bg-gray-100'
             disabled={deletingDashboard}
             onClick={handleDeleteDashboard}
           >
@@ -310,11 +342,13 @@ export default function MydashboardEdit(): ReactNode {
           isOpen={isModalOpen}
           dashboardId={dashboardId}
           onClose={handleCloseModal}
+          onSubmit={handleSubmitInviteMember}
         />
       </div>
     </div>
   );
 }
+
 MydashboardEdit.getLayout = function getLayout(page: ReactNode) {
   return <DashboardLayout>{page}</DashboardLayout>;
 };
