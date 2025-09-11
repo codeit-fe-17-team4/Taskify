@@ -164,7 +164,8 @@ ManageColumnForm
 
 내가 만든 대시보드(👑), 초대받은 대시보드(무한 스크롤/검색/수락·거절)
 
-<img width="800" alt="나의 대시보드" src="https://github.com/user-attachments/assets/eb53b6aa-4d97-47f4-a41d-fa8fe2430044" />
+<img width="800" alt="나의대시보드 페이지" src="https://github.com/user-attachments/assets/f100b36f-8e53-40ce-b4c4-bb8f1cdd65a0" />
+>
 
 <img width="400" alt="할 일 카드 상세 모달" src="https://github.com/user-attachments/assets/cfeabd78-1a36-4e69-9242-753cdd8f13ba" />
 
