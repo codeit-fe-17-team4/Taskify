@@ -57,22 +57,27 @@ export default function DashboardHeader(): ReactNode {
   const isMyDashboard = dashboardId && dashboardData?.createdByMe;
 
   return (
-    <header className='mobile:h-[3.75rem] border-gray-3 tablet:pl-48 mobile:pl-12 tablet:justify-end fixed top-0 right-0 left-0 z-20 flex h-[4.375rem] w-full items-center justify-between border-b-1 bg-white pl-96'>
-      <div className='tablet:hidden flex gap-2 text-xl font-bold text-black'>
-        <h1>{title ?? dashboardData?.title}</h1>
-
-        {isMyDashboard && (
-          <Image
-            className='h-4 w-5 self-center'
-            src={'/icon/mydashboard.svg'}
-            alt='왕관: 내 대시보드 아이콘'
-            width={20}
-            height={16}
-          />
+    <header className='mobile:h-[3.75rem] border-gray-3 tablet:pl-48 mobile:pl-18 tablet:justify-end fixed top-0 right-0 left-0 z-20 flex h-[4.375rem] w-full items-center justify-between border-b-1 bg-white pl-84'>
+      <div className='tablet:flex-1 text-xl font-bold text-black'>
+        {title ? (
+          <h1>{title}</h1>
+        ) : (
+          <div className='mobile:hidden flex gap-2'>
+            <h1>{dashboardData?.title}</h1>
+            {isMyDashboard && (
+              <Image
+                className='h-3 w-4 self-center'
+                src={'/icon/mydashboard.svg'}
+                alt='왕관: 내 대시보드 아이콘'
+                width={16}
+                height={12}
+              />
+            )}
+          </div>
         )}
       </div>
       <nav className='mobile:gap-2 flex h-full items-center gap-8'>
-        {dashboardId && (
+        {isMyDashboard && (
           <div className='mobile:gap-1.5 flex gap-3'>
             <Link
               href={`/dashboard/${dashboardId}/edit`}
