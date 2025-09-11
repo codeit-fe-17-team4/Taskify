@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import DeleteColumnModal from '@/components/dashboard/modal/delete-column-modal';
 import ManageColumnForm from '@/components/dashboard/modal/manage-column-form';
 import type {
@@ -26,9 +26,18 @@ export default function ManageColumnModal({
   existingColumns = [],
 }: ManageColumnModalProps) {
   const [formData, setFormData] = useState<ManageColumnFormData>({
-    name: column?.title || '',
+    name: '',
   });
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const prevIsOpenRef = useRef(false);
+
+  // 모달이 열릴 때마다 formData 초기화
+  if (isOpen && !prevIsOpenRef.current && column) {
+    setFormData({
+      name: column.title || '',
+    });
+  }
+  prevIsOpenRef.current = isOpen;
 
   const handleClose = () => {
     onClose();
