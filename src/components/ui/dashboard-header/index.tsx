@@ -57,7 +57,7 @@ export default function DashboardHeader(): ReactNode {
   const isMyDashboard = dashboardId && dashboardData?.createdByMe;
 
   return (
-    <header className='mobile:h-[3.75rem] border-gray-3 tablet:pl-48 mobile:pl-18 tablet:justify-end fixed top-0 right-0 left-0 z-20 flex h-[4.375rem] w-full items-center justify-between border-b-1 bg-white pl-84'>
+    <header className='mobile:h-[3.75rem] border-gray-3 tablet:pl-48 mobile:pl-18 tablet:justify-end font-pretendard fixed top-0 right-0 left-0 z-20 flex h-[4.375rem] w-full items-center justify-between border-b-1 bg-white pl-84'>
       <div className='tablet:flex-1 text-xl font-bold text-black'>
         {title ? (
           <h1>{title}</h1>
