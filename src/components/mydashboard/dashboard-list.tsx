@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
+import ButtonPagination from '@/components/ui/button/button-pagination';
 
 const colorCode: { [key: string]: string } = {
   '#7AC555': 'bg-green-500',
@@ -98,35 +99,17 @@ export default function DashboardList({
         })}
 
         {/* 페이지네이션 */}
-        <div className='col-span-full mt-4 flex items-center justify-end gap-2'>
+        <div className='col-span-full mt-4 flex items-center justify-end gap-3'>
           <p className='text-sm text-gray-600'>
             {currentPage} / {totalPages}
           </p>
           <div className='flex'>
-            <button
-              className='flex h-7 w-7 cursor-pointer items-center justify-center rounded border border-gray-200 bg-white hover:bg-gray-100 disabled:cursor-not-allowed'
-              disabled={currentPage === 1}
-              onClick={onPrevPage}
-            >
-              <Image
-                src='/icon/prevPage.svg'
-                alt='이전 페이지'
-                width={7}
-                height={7}
-              />
-            </button>
-            <button
-              className='flex h-7 w-7 cursor-pointer items-center justify-center rounded border border-gray-200 bg-white hover:bg-gray-100 disabled:cursor-not-allowed'
-              disabled={currentPage === totalPages}
-              onClick={onNextPage}
-            >
-              <Image
-                src='/icon/nextPage.svg'
-                alt='다음 페이지'
-                width={7}
-                height={7}
-              />
-            </button>
+            <ButtonPagination
+              isPrevDisabled={currentPage === 1}
+              isNextDisabled={currentPage === totalPages}
+              onPrevClick={onPrevPage}
+              onNextClick={onNextPage}
+            />
           </div>
         </div>
       </div>

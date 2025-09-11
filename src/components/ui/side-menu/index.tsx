@@ -32,7 +32,8 @@ export default function SideMenu(): ReactNode {
   if (!dashboardListData || error) {
     return null;
   }
-  const pageCount = Math.ceil(dashboardListData.totalCount / pageSize);
+  const pageCount = Math.ceil(dashboardListData.totalCount / pageSize) || 1;
+
   const isPrevButtonDisabled = page <= 1;
   const isNextButtonDisabled = pageCount === page;
   const handleClickPrev = () => {

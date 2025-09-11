@@ -90,7 +90,8 @@ export default function Mydashboard(): ReactNode {
 
   // 페이지네이션 (라이브러리 x)
   const itemsPerPage = 5;
-  const totalPages = Math.ceil((dashboardData?.totalCount ?? 5) / itemsPerPage);
+  const totalPages =
+    Math.ceil((dashboardData?.totalCount ?? 5) / itemsPerPage) || 1;
 
   const handlePrevPage = () => {
     if (currentPage > 1) {

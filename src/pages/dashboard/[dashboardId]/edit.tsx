@@ -191,7 +191,8 @@ export default function MydashboardEdit(): ReactNode {
   // 구성원 페이지네이션
   const [membersCurrentPage, setMembersCurrentPage] = useState(1);
   const membersItemsPerPage = 4;
-  const membersTotalPages = Math.ceil(members.length / membersItemsPerPage);
+  const membersTotalPages =
+    Math.ceil(members.length / membersItemsPerPage) || 1;
 
   const getCurrentMembersPageData = () => {
     const startIndex = (membersCurrentPage - 1) * membersItemsPerPage;
@@ -215,10 +216,10 @@ export default function MydashboardEdit(): ReactNode {
   // 초대내역 페이지네이션
   const [invitationsCurrentPage, setInvitationsCurrentPage] = useState(1);
   const invitationsItemsPerPage = 5;
-  const invitationsTotalPages = Math.ceil(
-    invitations.length / invitationsItemsPerPage
-  );
+  const invitationsTotalPages =
+    Math.ceil(invitations.length / invitationsItemsPerPage) || 1;
 
+  console.log(invitations);
   const getCurrentInvitationsPageData = () => {
     const startIndex = (invitationsCurrentPage - 1) * invitationsItemsPerPage;
     const endIndex = startIndex + invitationsItemsPerPage;
