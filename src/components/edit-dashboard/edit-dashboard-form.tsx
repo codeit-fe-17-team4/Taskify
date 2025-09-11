@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { useState } from 'react';
+import { useTheme } from '@/contexts/ThemeContext';
 import Button from '@/components/ui/button/button';
 
 const colorCode: { [key: string]: string } = {
@@ -23,6 +24,7 @@ export default function EditDashboardForm({
   prevColor,
   onSubmit,
 }: EditDashboardFormProps) {
+  const { theme } = useTheme();
   const [changeTitle, setChangeTitle] = useState(prevTitle);
   const [changeColor, setChangeColor] = useState(prevColor);
 
@@ -32,19 +34,40 @@ export default function EditDashboardForm({
   };
 
   return (
-    <div className='tablet:min-w-lg mobile:min-w-2xs tablet:w-full mobile:w-full mt-8 h-[340px] w-[620px] rounded-lg bg-white p-7'>
-      <h2 className='text-xl font-bold'>{prevTitle}</h2>
+    <div
+      className={`tablet:min-w-lg mobile:min-w-2xs tablet:w-full mobile:w-full mt-8 h-[340px] w-[620px] rounded-lg p-7 ${
+        theme === 'dark' ? 'bg-[#201f23]' : 'bg-white'
+      }`}
+    >
+      <h2
+        className={`text-xl font-bold ${
+          theme === 'dark' ? 'text-[var(--auth-text-strong)]' : 'text-gray-900'
+        }`}
+      >
+        {prevTitle}
+      </h2>
       <form className='mt-4 space-y-4' onSubmit={handleEditSubmit}>
         {/* 이름 수정 */}
         <div>
-          <label htmlFor='name' className='font-xl block text-base'>
+          <label
+            htmlFor='name'
+            className={`font-xl block text-base ${
+              theme === 'dark'
+                ? 'text-[var(--auth-text-strong)]'
+                : 'text-gray-900'
+            }`}
+          >
             대시보드 이름
           </label>
           <input
             id='name'
             key={prevTitle}
             value={changeTitle}
-            className='mt-3 block h-12 w-full rounded-md border border-gray-300 px-4 focus:border-violet-500 focus:ring-violet-500 focus:outline-none'
+            className={`mt-3 block h-12 w-full rounded-md border px-4 focus:border-violet-500 focus:ring-violet-500 focus:outline-none ${
+              theme === 'dark'
+                ? 'border-[var(--auth-border)] bg-[var(--auth-input-bg)] text-[var(--auth-text-strong)]'
+                : 'border-gray-300 bg-white text-gray-900'
+            }`}
             onChange={(e) => {
               setChangeTitle(e.target.value);
             }}

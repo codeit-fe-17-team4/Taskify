@@ -49,7 +49,7 @@ const items: Item[] = [
 export default function SettingsGrid(): ReactElement {
   return (
     <section className='mx-auto mt-[90px] w-full max-w-[1200px] px-4 max-[744px]:max-w-[664px] max-[375px]:mt-[90px] max-[375px]:max-w-[343px]'>
-      <h3 className='text-[28px] leading-[33px] font-bold text-white max-[744px]:flex max-[744px]:h-[33px] max-[744px]:items-center max-[744px]:justify-center max-[744px]:text-center max-[744px]:text-[24px] max-[744px]:leading-[28px] max-[375px]:mx-auto max-[375px]:h-[26px] max-[375px]:w-[343px] max-[375px]:text-center max-[375px]:text-[22px] max-[375px]:leading-[26px] max-[375px]:font-bold max-[375px]:tracking-[0px] max-[375px]:whitespace-nowrap'>
+      <h3 className='text-[28px] leading-[33px] font-bold text-[var(--main-text)] max-[744px]:flex max-[744px]:h-[33px] max-[744px]:items-center max-[744px]:justify-center max-[744px]:text-center max-[744px]:text-[24px] max-[744px]:leading-[28px] max-[375px]:mx-auto max-[375px]:h-[26px] max-[375px]:w-[343px] max-[375px]:text-center max-[375px]:text-[22px] max-[375px]:leading-[26px] max-[375px]:font-bold max-[375px]:tracking-[0px] max-[375px]:whitespace-nowrap'>
         생산성을 높이는 다양한 설정 ⚡
       </h3>
 
@@ -62,7 +62,7 @@ export default function SettingsGrid(): ReactElement {
               className='w-full max-w-[378px] max-[375px]:max-w-[343px]'
             >
               {/* 썸네일 영역 378×260 안에 실제 이미지 크기 중앙 배치 */}
-              <div className='flex h-[260px] w-full items-center justify-center overflow-hidden rounded-t-[8px] bg-[#4B4B4B] max-[375px]:h-[235.93px]'>
+              <div className='flex h-[260px] w-full items-center justify-center overflow-hidden rounded-t-[8px] bg-[var(--c-ink-muted)] max-[375px]:h-[235.93px]'>
                 <Image
                   src={it.img}
                   alt={it.alt}
@@ -97,11 +97,11 @@ export default function SettingsGrid(): ReactElement {
                   })()}
                 />
               </div>
-              <div className='h-[124px] w-full rounded-b-[8px] bg-[#171717] px-8 py-6 max-[375px]:h-[112.52px]'>
-                <h4 className='mb-3 text-[18px] leading-[21px] font-bold text-white max-[744px]:text-[16px] max-[744px]:leading-[19px]'>
+              <div className='h-[124px] w-full rounded-b-[8px] bg-[var(--c-ink-strong)] px-8 py-6 max-[375px]:h-[112.52px]'>
+                <h4 className='mb-3 text-[18px] leading-[21px] font-bold text-[var(--main-text)] max-[744px]:text-[16px] max-[744px]:leading-[19px]'>
                   {it.title}
                 </h4>
-                <p className='text-[16px] leading-[19px] font-medium text-white max-[744px]:text-[14px] max-[744px]:leading-[17px]'>
+                <p className='text-[16px] leading-[19px] font-medium text-[var(--main-text)] max-[744px]:text-[14px] max-[744px]:leading-[17px]'>
                   {it.desc}
                 </p>
               </div>

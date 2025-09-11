@@ -14,7 +14,7 @@ import { cn } from '@/utils/cn';
 import { getStringFromQuery } from '@/utils/getContextQuery';
 
 const buttonClass =
-  'flex-center border-gray-3 text-md mobile:px-3 mobile:py-1.5 h-9 cursor-pointer gap-2 rounded-lg border-1 px-4 py-2.5 hover:bg-gray-4 active:bg-gray-3';
+  'flex-center border-[var(--auth-border)] text-md mobile:px-3 mobile:py-1.5 h-9 cursor-pointer gap-2 rounded-lg border-1 px-4 py-2.5 hover:bg-[var(--button-secondary-hover)] active:bg-[var(--button-secondary-hover)]';
 
 export default function DashboardHeader(): ReactNode {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -57,8 +57,8 @@ export default function DashboardHeader(): ReactNode {
   const isMyDashboard = dashboardId && dashboardData?.createdByMe;
 
   return (
-    <header className='mobile:h-[3.75rem] border-gray-3 tablet:pl-48 mobile:pl-12 tablet:justify-end fixed top-0 right-0 left-0 z-20 flex h-[4.375rem] w-full items-center justify-between border-b-1 bg-white pl-96'>
-      <div className='tablet:hidden flex gap-2 text-xl font-bold text-black'>
+    <header className='mobile:h-[3.75rem] tablet:pl-48 mobile:pl-12 tablet:justify-end fixed top-0 right-0 left-0 z-20 flex h-[4.375rem] w-full items-center justify-between border-b-1 border-[var(--auth-border)] bg-[var(--auth-bg)] pl-96'>
+      <div className='tablet:hidden flex gap-2 text-xl font-bold text-[var(--auth-text-strong)]'>
         <h1>{title ?? dashboardData?.title}</h1>
 
         {isMyDashboard && (
@@ -79,14 +79,14 @@ export default function DashboardHeader(): ReactNode {
               className={cn(buttonClass, 'active:*:first:rotate-90')}
               aria-label='대시보드 관리 페이지로 이동'
             >
-              <span className='mobile:hidden *:fill-gray-1 transition-transform duration-200'>
+              <span className='mobile:hidden transition-transform duration-200 *:fill-[var(--auth-text-strong)]'>
                 <SettingIcon />
               </span>
               <span>관리</span>
             </Link>
 
             <button className={buttonClass} onClick={handleOpenModal}>
-              <span className='mobile:hidden *:fill-gray-1'>
+              <span className='mobile:hidden *:fill-[var(--auth-text-strong)]'>
                 <AddBoxIcon />
               </span>
               <span>초대하기</span>

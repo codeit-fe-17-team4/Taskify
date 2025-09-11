@@ -20,3 +20,55 @@
 .auth .ringAuth {
   --tw-ring-color: var(--auth-primary);
 }
+
+/* 모달 관련 스타일 - 전역 스코프 */
+:global(.modalOverlay) {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+:global(.modalContainer) {
+  background-color: #ffffff;
+}
+
+:global(.modalText) {
+  color: #000000;
+}
+
+:global(.modalButton) {
+  background-color: var(--auth-primary);
+  color: #ffffff;
+}
+
+:global(.modalButton:hover) {
+  opacity: 0.9;
+}
+
+/* 다크모드 Auth 스타일 */
+:global(.dark) .auth {
+  --auth-bg: #1b1a1f;
+  --auth-primary: #00a200;
+  --auth-text-strong: #d6d5d9;
+  --auth-border: #524f5b;
+  --auth-placeholder: #a39fb2;
+  --auth-error: #ca372b;
+  --auth-input-bg: #201f23;
+  --auth-input-border: #524f5b;
+}
+
+/* 다크모드 모달 스타일 - 전역 스코프 */
+:global(.dark) :global(.modalContainer) {
+  background-color: #201f23;
+}
+
+:global(.dark) :global(.modalText) {
+  color: #d6d5d9;
+}
+
+:global(.dark) :global(.modalButton) {
+  background-color: var(--auth-primary);
+  color: #ffffff;
+}
+
+:global(.dark) :global(.modalButton:hover) {
+  opacity: 0.9;
+}

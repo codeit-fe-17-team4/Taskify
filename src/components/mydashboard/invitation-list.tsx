@@ -1,5 +1,7 @@
 import Image from 'next/image';
+import { useTheme } from '@/contexts/ThemeContext';
 import type { InvitationType } from '@/lib/invitations/type';
+import { getThemeIcon } from '@/utils/getThemeIcon';
 
 interface InviteListProps {
   inviteData: InvitationType[];
@@ -24,40 +26,92 @@ export default function InvitationList({
   onChange,
   onKeyDown,
 }: InviteListProps) {
+  const { theme } = useTheme();
+
+  const CONTAINER_STYLES = {
+    dark: 'bg-[var(--auth-input-bg)]',
+    light: 'bg-white',
+  };
+
+  const TEXT_STYLES = {
+    dark: 'text-[var(--auth-text-strong)]',
+    light: 'text-gray-700',
+  };
+
+  const PLACEHOLDER_STYLES = {
+    dark: 'text-[var(--auth-placeholder)]',
+    light: 'text-gray-400',
+  };
+
+  const INPUT_STYLES = {
+    dark: 'border-[var(--auth-input-border)] bg-[var(--auth-input-bg)] text-[var(--auth-text-strong)] placeholder:text-[var(--auth-placeholder)] focus:ring-[var(--auth-primary)]',
+    light: 'border-gray-300 focus:ring-gray-300',
+  };
+
+  const BORDER_STYLES = {
+    dark: 'border-[var(--auth-border)]',
+    light: 'border-gray-200',
+  };
+
+  const REJECT_BUTTON_STYLES = {
+    dark: 'border-[var(--auth-border)] bg-[var(--auth-input-bg)] text-[var(--button-reject-text)] hover:bg-[var(--auth-input-bg)]',
+    light: 'border-gray-300 bg-white text-violet-500 hover:bg-gray-100',
+  };
   const searchEmpty = () => {
     if (searchQuery.trim()) {
       return (
-        <div className='tablet:w-lg mobile:w-2xs flex h-[650px] w-4xl flex-col rounded-lg border-0 bg-white'>
-          <h2 className='mobile:text-xl py-6 pl-[28px] text-2xl font-bold text-gray-700'>
+        <div
+          className={`tablet:w-lg mobile:w-2xs flex h-[650px] w-4xl flex-col rounded-lg border-0 ${
+            theme === 'dark' ? CONTAINER_STYLES.dark : CONTAINER_STYLES.light
+          }`}
+        >
+          <h2
+            className={`mobile:text-xl py-6 pl-[28px] text-2xl font-bold ${
+              theme === 'dark' ? TEXT_STYLES.dark : TEXT_STYLES.light
+            }`}
+          >
             초대받은 대시보드
           </h2>
           <div className='relative px-[28px]'>
             <div className='pointer-events-none absolute inset-y-0 left-[28px] flex items-center pl-3'>
-              <Image src='/icon/search.svg' alt='검색' width={20} height={20} />
+              <Image
+                alt='검색'
+                height={20}
+                src={getThemeIcon('search', theme)}
+                width={20}
+              />
             </div>
             <div>
               <input
                 id='search'
-                type='text'
                 name='search'
                 placeholder='검색'
-                className='h-[40px] w-full rounded border border-gray-300 pr-4 pl-10 text-sm focus:ring-1 focus:ring-gray-300 focus:outline-none'
+                type='text'
                 value={searchQuery}
-                onCompositionStart={handleComposition}
-                onCompositionEnd={handleComposition}
+                className={`h-[40px] w-full rounded border pr-4 pl-10 text-sm focus:ring-1 focus:outline-none ${
+                  theme === 'dark' ? INPUT_STYLES.dark : INPUT_STYLES.light
+                }`}
                 onChange={onChange}
+                onCompositionEnd={handleComposition}
+                onCompositionStart={handleComposition}
                 onKeyDown={onKeyDown}
               />
             </div>
           </div>
           <div className='flex flex-grow flex-col items-center justify-center gap-2'>
             <Image
-              src='/icon/search.svg'
               alt='검색 없음'
-              width={50}
               height={50}
+              src={getThemeIcon('search', theme)}
+              width={50}
             />
-            <p className='pt-5 text-lg text-gray-400'>
+            <p
+              className={`pt-5 text-lg ${
+                theme === 'dark'
+                  ? PLACEHOLDER_STYLES.dark
+                  : PLACEHOLDER_STYLES.light
+              }`}
+            >
               `{searchQuery}`에 대한 결과가 없습니다.
             </p>
           </div>
@@ -66,18 +120,32 @@ export default function InvitationList({
     }
 
     return (
-      <div className='tablet:w-lg mobile:w-3xs mt-10 flex h-[280px] w-2xl flex-col rounded-lg border-0 bg-white'>
-        <h2 className='pt-4 pl-[28px] text-2xl font-bold text-gray-600'>
+      <div
+        className={`tablet:w-lg mobile:w-3xs mt-10 flex h-[280px] w-2xl flex-col rounded-lg border-0 ${
+          theme === 'dark' ? CONTAINER_STYLES.dark : CONTAINER_STYLES.light
+        }`}
+      >
+        <h2
+          className={`pt-4 pl-[28px] text-2xl font-bold ${
+            theme === 'dark' ? TEXT_STYLES.dark : 'text-gray-600'
+          }`}
+        >
           초대받은 대시보드
         </h2>
         <div className='flex flex-grow flex-col items-center justify-center gap-2'>
           <Image
-            src='/icon/inviteEmpty.svg'
             alt='초대받은 대시보드'
-            width={80}
             height={80}
+            src={getThemeIcon('inviteEmpty', theme)}
+            width={80}
           />
-          <p className='pt-5 text-lg text-gray-400'>
+          <p
+            className={`pt-5 text-lg ${
+              theme === 'dark'
+                ? PLACEHOLDER_STYLES.dark
+                : PLACEHOLDER_STYLES.light
+            }`}
+          >
             아직 초대받은 대시보드가 없어요
           </p>
         </div>
@@ -91,31 +159,52 @@ export default function InvitationList({
 
   return (
     <div className='mt-10'>
-      <div className='tablet:w-lg mobile:w-2xs flex h-[650px] w-4xl flex-col rounded-lg border-0 bg-white'>
-        <h2 className='mobile:text-xl py-6 pl-[28px] text-2xl font-bold text-gray-700'>
+      <div
+        className={`tablet:w-lg mobile:w-2xs flex h-[650px] w-4xl flex-col rounded-lg border-0 ${
+          theme === 'dark' ? CONTAINER_STYLES.dark : CONTAINER_STYLES.light
+        }`}
+      >
+        <h2
+          className={`mobile:text-xl py-6 pl-[28px] text-2xl font-bold ${
+            theme === 'dark' ? TEXT_STYLES.dark : TEXT_STYLES.light
+          }`}
+        >
           초대받은 대시보드
         </h2>
         <div className='relative px-[28px]'>
           <div className='pointer-events-none absolute inset-y-0 left-[28px] flex items-center pl-3'>
-            <Image src='/icon/search.svg' alt='검색' width={20} height={20} />
+            <Image
+              alt='검색'
+              height={20}
+              src={getThemeIcon('search', theme)}
+              width={20}
+            />
           </div>
           <div>
             <input
               id='search'
-              type='text'
               name='search'
               placeholder='검색'
-              className='h-[40px] w-full rounded border border-gray-300 pr-4 pl-10 text-sm focus:ring-1 focus:ring-gray-300 focus:outline-none'
+              type='text'
               value={searchQuery}
-              onCompositionStart={handleComposition}
-              onCompositionEnd={handleComposition}
+              className={`h-[40px] w-full rounded border pr-4 pl-10 text-sm focus:ring-1 focus:outline-none ${
+                theme === 'dark' ? INPUT_STYLES.dark : INPUT_STYLES.light
+              }`}
               onChange={onChange}
+              onCompositionEnd={handleComposition}
+              onCompositionStart={handleComposition}
               onKeyDown={onKeyDown}
             />
           </div>
         </div>
 
-        <div className='mobile:hidden tablet:grid-cols-[150px_80px_200px] tablet:pl-8 grid w-full max-w-2xl min-w-2xs grid-cols-[250px_250px_200px] gap-2 pt-5 pl-12 text-base text-gray-400'>
+        <div
+          className={`mobile:hidden tablet:grid-cols-[150px_80px_200px] tablet:pl-8 grid w-full max-w-2xl min-w-2xs grid-cols-[250px_250px_200px] gap-2 pt-5 pl-12 text-base ${
+            theme === 'dark'
+              ? PLACEHOLDER_STYLES.dark
+              : PLACEHOLDER_STYLES.light
+          }`}
+        >
           <div>이름</div>
           <div>초대자</div>
           <div className='mobile:hidden text-center'>수락 여부</div>
@@ -125,23 +214,40 @@ export default function InvitationList({
             return (
               <div
                 key={invite.id}
-                className='mobile:flex mobile:flex-col mobile:w-full tablet:w-lg tablet:grid-cols-[150px_80px_200px] tablet:pl-8 grid grid-cols-[250px_250px_200px] items-center gap-2 border-b border-gray-200 py-5 pl-12 text-base text-gray-600'
+                className={`mobile:flex mobile:flex-col mobile:w-full tablet:w-lg tablet:grid-cols-[150px_80px_200px] tablet:pl-8 grid grid-cols-[250px_250px_200px] items-center gap-2 border-b py-5 pl-12 text-base ${
+                  theme === 'dark'
+                    ? `${BORDER_STYLES.dark} text-[var(--auth-text-strong)]`
+                    : `${BORDER_STYLES.light} text-gray-600`
+                }`}
               >
                 <div className='mobile:flex mobile:w-full'>
-                  <p className='tablet:hidden mobile:w-16 mobile:block hidden text-gray-400'>
+                  <p
+                    className={`tablet:hidden mobile:w-16 mobile:block hidden ${
+                      theme === 'dark'
+                        ? PLACEHOLDER_STYLES.dark
+                        : PLACEHOLDER_STYLES.light
+                    }`}
+                  >
                     이름
                   </p>
                   <span className='mobile:ml-4'>{invite.dashboard.title}</span>
                 </div>
                 <div className='mobile:flex mobile:w-full'>
-                  <p className='tablet:hidden mobile:w-16 mobile:block hidden text-gray-400'>
+                  <p
+                    className={`tablet:hidden mobile:w-16 mobile:block hidden ${
+                      theme === 'dark'
+                        ? PLACEHOLDER_STYLES.dark
+                        : PLACEHOLDER_STYLES.light
+                    }`}
+                  >
                     초대자
                   </p>
                   <span className='mobile:ml-4'>{invite.inviter.nickname}</span>
                 </div>
                 <div className='mobile:flex mobile:mt-2 mobile:w-full mobile:mr-8 flex items-center justify-center gap-2'>
                   <button
-                    className='mobile:w-full w-20 cursor-pointer rounded bg-violet-500 py-1 text-base text-white hover:bg-violet-600'
+                    className='mobile:w-full w-20 cursor-pointer rounded py-1 text-base text-white hover:opacity-80'
+                    style={{ backgroundColor: 'var(--auth-primary)' }}
                     onClick={() => {
                       onAccept(invite.id);
                     }}
@@ -149,7 +255,11 @@ export default function InvitationList({
                     수락
                   </button>
                   <button
-                    className='mobile:w-full w-20 cursor-pointer rounded border border-gray-300 bg-white py-1 text-base text-violet-500 hover:bg-gray-100'
+                    className={`mobile:w-full w-20 cursor-pointer rounded border py-1 text-base hover:opacity-80 ${
+                      theme === 'dark'
+                        ? REJECT_BUTTON_STYLES.dark
+                        : REJECT_BUTTON_STYLES.light
+                    }`}
                     onClick={() => {
                       onReject(invite.id);
                     }}

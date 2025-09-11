@@ -33,11 +33,20 @@ const validateSignupForm = (
     options: { skipConfirmPassword: boolean }
   ) => boolean
 ): boolean => {
+  // 모든 필드가 입력되었는지 확인
+  const allFieldsFilled = Boolean(
+    formData.nickname.trim() &&
+      formData.email.trim() &&
+      formData.password.trim() &&
+      formData.confirmPassword.trim()
+  );
+
+  // 폼 유효성 검증
   const isFormValid = isSignupFormValid(formData, {
     skipConfirmPassword: false,
   });
 
-  return isFormValid && hasAgreedToTerms;
+  return allFieldsFilled && isFormValid && hasAgreedToTerms;
 };
 
 export default function SignupPage(): React.JSX.Element {
@@ -91,20 +100,22 @@ export default function SignupPage(): React.JSX.Element {
   }, [validateConfirmPassword, password, confirmPassword]);
 
   const isFormValidNow = useMemo(() => {
-    return (
-      isSignupFormValid(
-        { nickname, email, password, confirmPassword },
-        { skipConfirmPassword: true }
-      ) && agreedToTerms
+    // 모든 필드가 입력되었는지 확인
+    const allFieldsFilled = Boolean(
+      nickname.trim() &&
+        email.trim() &&
+        password.trim() &&
+        confirmPassword.trim()
     );
-  }, [
-    isSignupFormValid,
-    nickname,
-    email,
-    password,
-    confirmPassword,
-    agreedToTerms,
-  ]);
+
+    // 폼 유효성 검증
+    const isFormValid = isSignupFormValid(
+      { nickname, email, password, confirmPassword },
+      { skipConfirmPassword: false }
+    );
+
+    return allFieldsFilled && isFormValid && agreedToTerms;
+  }, [nickname, email, password, confirmPassword, agreedToTerms]);
 
   const handleModalClose = useCallback(() => {
     setShowModal(false);
@@ -268,6 +279,7 @@ export default function SignupPage(): React.JSX.Element {
 
               {/* 회원가입 버튼 */}
               <AuthButton
+                type='submit'
                 disabled={!isFormValidNow}
                 isLoading={isLoading}
                 loadingText='가입 중...'

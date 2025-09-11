@@ -33,10 +33,10 @@ export default function DashboardList({
           <li key={dashboard.id}>
             <button
               className={cn(
-                `mobile:flex-center hover:bg-gray-5 active:bg-violet-light flex w-full cursor-pointer gap-2.5 rounded-sm p-3`,
+                `mobile:flex-center flex w-full cursor-pointer gap-2.5 rounded-sm p-3 hover:bg-[var(--button-secondary-hover)] active:bg-[var(--button-secondary)]`,
                 dashboardId &&
                   Number(dashboardId) === dashboard.id &&
-                  `bg-violet-light hover:bg-violet-light active:bg-violet-light`
+                  `bg-[var(--button-secondary)] hover:bg-[var(--button-secondary)] active:bg-[var(--button-secondary)]`
               )}
               onClick={() => {
                 handleClickItem(dashboard.id);

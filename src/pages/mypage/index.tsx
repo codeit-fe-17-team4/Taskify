@@ -11,7 +11,7 @@ import {
 import BackButton from '@/components/auth/back-button';
 import UnifiedModal from '@/components/auth/UnifiedModal';
 import DashboardLayout from '@/components/layout/dashboard-layout';
-import Button from '@/components/ui/button/button';
+import { useTheme } from '@/contexts/ThemeContext';
 import { BASE_API_URL } from '@/lib/constants';
 import type { UserType } from '@/lib/users/type';
 import styles from '@/styles/auth-variables.module.css';
@@ -32,29 +32,46 @@ const SUCCESS_MESSAGES = {
   PASSWORD_CHANGED: '비밀번호가 변경되었습니다.',
 } as const;
 
-// 반복되는 스타일 상수들
-const COMMON_STYLES = {
-  container: {
-    backgroundColor: '#ffffff',
-    padding: '24px',
-    borderRadius: '8px',
-    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-  },
-  title: {
-    color: '#333236',
-    fontFamily: 'Pretendard',
-    fontWeight: 700,
-    fontSize: '24px',
-  },
-  button: {
-    backgroundColor: '#5534DA',
-    fontFamily: 'Pretendard',
-    fontWeight: 600,
-    fontSize: '16px',
-    textAlign: 'center' as const,
-    color: '#ffffff',
-  },
-} as const;
+/**
+ * 테마별 스타일 함수
+ */
+const getThemeStyles = (theme: string) => {
+  const isDark = theme === 'dark';
+
+  return {
+    container: {
+      backgroundColor: isDark ? '#201f23' : '#ffffff',
+      padding: '24px',
+      borderRadius: '8px',
+      boxShadow: isDark
+        ? '0 2px 8px rgba(0, 0, 0, 0.3)'
+        : '0 2px 8px rgba(0, 0, 0, 0.1)',
+    },
+    title: {
+      color: isDark ? 'var(--auth-text-strong)' : '#333236',
+      fontFamily: 'Pretendard',
+      fontWeight: 700,
+      fontSize: '24px',
+    },
+    button: {
+      backgroundColor: 'var(--auth-primary)',
+      fontFamily: 'Pretendard',
+      fontWeight: 600,
+      fontSize: '16px',
+      textAlign: 'center' as const,
+      color: '#ffffff',
+    },
+  };
+};
+
+// 입력 필드 스타일 상수
+const INPUT_STYLES = {
+  base: 'h-[50px] w-full rounded-[8px] border px-[16px] py-[12px] placeholder:text-[var(--auth-placeholder)] focus:outline-none focus-visible:outline-none',
+  light: 'border-[#D9D9D9] bg-white',
+  lightDisabled: 'border-[#D9D9D9] bg-gray-100 text-gray-500',
+  dark: 'border-[var(--auth-input-border)] bg-[var(--auth-input-bg)] text-[var(--auth-text-strong)]',
+  focus: 'focus:ring-2 focus:ring-[var(--auth-primary)]',
+};
 
 /**
  * 유틸리티 함수들
@@ -90,6 +107,7 @@ export default function MyPage({
   accessToken,
 }: MyPageProps): ReactElement {
   const router = useRouter();
+  const { theme } = useTheme();
 
   // 사용자 정보 상태
   const [userInfo, setUserInfo] = useState<UserType | null>(initialUserInfo);
@@ -341,8 +359,10 @@ export default function MyPage({
 
   return (
     <div
-      className='bg-gray-5 tablet:left-40 mobile:left-10 tablet:top-[4.375rem] mobile:top-[3.75rem] fixed top-[4.375rem] right-0 left-[18.75rem] overflow-y-auto'
       style={{ zIndex: 1, height: 'calc(100vh - 4.375rem)' }}
+      className={`tablet:left-40 mobile:left-10 tablet:top-[4.375rem] mobile:top-[3.75rem] fixed top-[4.375rem] right-0 left-[18.75rem] overflow-y-auto ${
+        theme === 'dark' ? 'bg-[var(--auth-bg)]' : 'bg-gray-5'
+      }`}
     >
       <div className='pt-5 pl-5'>
         <BackButton />
@@ -362,13 +382,13 @@ export default function MyPage({
         <div
           className={`${mypageStyles.mobilePaddingOverride} ${mypageStyles.mobileProfileContainer} w-full`}
           style={{
-            ...COMMON_STYLES.container,
+            ...getThemeStyles(theme).container,
             height: '366px',
           }}
         >
           <h2
             className={`${mypageStyles.mobileTitleFont} mb-4 max-[375px]:mb-10`}
-            style={COMMON_STYLES.title}
+            style={getThemeStyles(theme).title}
           >
             프로필
           </h2>
@@ -381,11 +401,11 @@ export default function MyPage({
             {/* 프로필 정사각형 상자 */}
             <button
               type='button'
-              className={`${mypageStyles.mobileProfileImage} relative flex cursor-pointer items-center justify-center max-[375px]:mx-auto`}
+              className={`${mypageStyles.mobileProfileImage} relative flex cursor-pointer items-center justify-center overflow-hidden max-[375px]:mx-auto`}
               style={{
                 width: '182px',
                 height: '182px',
-                backgroundColor: '#F5F5F5',
+                backgroundColor: 'var(--profile-image-bg)',
                 marginLeft: '0px',
               }}
               onClick={handleProfileImageClick}
@@ -396,14 +416,24 @@ export default function MyPage({
                   alt='프로필 이미지'
                   width={182}
                   height={182}
-                  style={{ objectFit: 'cover', borderRadius: '8px' }}
+                  className='h-full w-full'
+                  style={{
+                    objectFit: 'cover',
+                    borderRadius: '8px',
+                    width: '100%',
+                    height: '100%',
+                  }}
                 />
               ) : (
                 <Image
-                  src='/auth/icon/addimage.svg'
                   alt='프로필 이미지 추가'
                   width={30.01}
                   height={30.01}
+                  src={
+                    theme === 'dark'
+                      ? '/darkauth/icon/add_box.svg'
+                      : '/auth/icon/addimage.svg'
+                  }
                 />
               )}
               <input
@@ -442,7 +472,11 @@ export default function MyPage({
                   type='email'
                   value={userInfo?.email || ''}
                   placeholder='이메일 입력'
-                  className={`${mypageStyles.mobileInputFont} h-[50px] w-full cursor-not-allowed rounded-[8px] border border-[#D9D9D9] bg-gray-100 px-[16px] py-[12px] text-gray-500 placeholder:text-[#9FA6B2]`}
+                  className={`${mypageStyles.mobileInputFont} ${INPUT_STYLES.base} cursor-not-allowed ${
+                    theme === 'dark'
+                      ? INPUT_STYLES.dark
+                      : INPUT_STYLES.lightDisabled
+                  }`}
                 />
               </div>
 
@@ -462,7 +496,9 @@ export default function MyPage({
                   type='text'
                   value={nickname}
                   placeholder='닉네임 입력'
-                  className={`${mypageStyles.mobileInputFont} h-[50px] w-full rounded-[8px] border border-[#D9D9D9] bg-white px-[16px] py-[12px] placeholder:text-[#9FA6B2] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none`}
+                  className={`${mypageStyles.mobileInputFont} ${INPUT_STYLES.base} ${INPUT_STYLES.focus} ${
+                    theme === 'dark' ? INPUT_STYLES.dark : INPUT_STYLES.light
+                  }`}
                   onChange={(e) => {
                     setNickname(e.target.value);
                   }}
@@ -470,14 +506,19 @@ export default function MyPage({
               </div>
 
               {/* 저장 버튼 */}
-              <Button
-                variant='primary'
-                backgroundColor='violet'
-                label={isLoading ? '저장 중...' : '저장'}
-                additionalClass='mt-6'
+              <button
+                type='button'
+                className='w-full shrink-0 cursor-pointer rounded-[8px] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50'
                 disabled={isLoading || !nickname.trim()}
+                style={{
+                  ...getThemeStyles(theme).button,
+                  height: '54px',
+                  marginTop: '24px',
+                }}
                 onClick={handleUpdateNickname}
-              />
+              >
+                {isLoading ? '저장 중...' : '저장'}
+              </button>
             </div>
           </div>
         </div>
@@ -486,13 +527,13 @@ export default function MyPage({
         <div
           className={`${mypageStyles.mobilePaddingOverride} mt-6 w-full max-[375px]:mt-4`}
           style={{
-            ...COMMON_STYLES.container,
+            ...getThemeStyles(theme).container,
             height: '466px',
           }}
         >
           <h2
             className={mypageStyles.mobileTitleFont}
-            style={COMMON_STYLES.title}
+            style={getThemeStyles(theme).title}
           >
             비밀번호 변경
           </h2>
@@ -516,7 +557,9 @@ export default function MyPage({
                 type='password'
                 value={currentPassword}
                 placeholder='비밀번호 입력'
-                className={`${mypageStyles.mobileInputFont} h-[50px] w-full rounded-[8px] border border-[#D9D9D9] bg-white px-[16px] py-[12px] placeholder:text-[#9FA6B2] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none`}
+                className={`${mypageStyles.mobileInputFont} ${INPUT_STYLES.base} ${INPUT_STYLES.focus} ${
+                  theme === 'dark' ? INPUT_STYLES.dark : INPUT_STYLES.light
+                }`}
                 onChange={(e) => {
                   setCurrentPassword(e.target.value);
                 }}
@@ -536,7 +579,9 @@ export default function MyPage({
                 type='password'
                 value={newPassword}
                 placeholder='새 비밀번호 입력'
-                className={`${mypageStyles.mobileInputFont} h-[50px] w-full rounded-[8px] border border-[#D9D9D9] bg-white px-[16px] py-[12px] placeholder:text-[#9FA6B2] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none`}
+                className={`${mypageStyles.mobileInputFont} ${INPUT_STYLES.base} ${INPUT_STYLES.focus} ${
+                  theme === 'dark' ? INPUT_STYLES.dark : INPUT_STYLES.light
+                }`}
                 onChange={(e) => {
                   setNewPassword(e.target.value);
                 }}
@@ -556,7 +601,9 @@ export default function MyPage({
                 type='password'
                 value={confirmPassword}
                 placeholder='새 비밀번호 입력'
-                className={`${mypageStyles.mobileInputFont} h-[50px] w-full rounded-[8px] border border-[#D9D9D9] bg-white px-[16px] py-[12px] placeholder:text-[#9FA6B2] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none`}
+                className={`${mypageStyles.mobileInputFont} ${INPUT_STYLES.base} ${INPUT_STYLES.focus} ${
+                  theme === 'dark' ? INPUT_STYLES.dark : INPUT_STYLES.light
+                }`}
                 onChange={(e) => {
                   setConfirmPassword(e.target.value);
                 }}
@@ -564,11 +611,14 @@ export default function MyPage({
             </div>
 
             {/* 변경 버튼 */}
-            <Button
-              variant='primary'
-              backgroundColor='violet'
-              label={isLoading ? '변경 중...' : '변경'}
-              additionalClass='mt-6'
+            <button
+              type='submit'
+              className='w-full shrink-0 cursor-pointer rounded-[8px] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50'
+              style={{
+                ...getThemeStyles(theme).button,
+                height: '54px',
+                marginTop: '24px',
+              }}
               disabled={
                 isLoading ||
                 !currentPassword ||
@@ -576,7 +626,9 @@ export default function MyPage({
                 !confirmPassword
               }
               onClick={handlePasswordChange}
-            />
+            >
+              {isLoading ? '변경 중...' : '변경'}
+            </button>
           </form>
         </div>
       </div>

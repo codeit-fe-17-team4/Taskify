@@ -5,6 +5,7 @@ import DashboardList from '@/components/mydashboard/dashboard-list';
 import InvitationList from '@/components/mydashboard/invitation-list';
 import LoadingCircle from '@/components/ui/loading-circle';
 import ModalPortal from '@/components/ui/modal/modal-portal';
+import { useTheme } from '@/contexts/ThemeContext';
 import { useFetch } from '@/hooks/useAsync';
 import { useCursorInfiniteScroll } from '@/hooks/useCursorInfiniteScroll';
 import { getDashBoardList } from '@/lib/dashboards/api';
@@ -12,6 +13,7 @@ import { acceptInvitation, getInvitationList } from '@/lib/invitations/api';
 import type { InvitationType } from '@/lib/invitations/type';
 
 export default function Mydashboard(): ReactNode {
+  const { theme } = useTheme();
   const [isAcceptingInvitation, setIsAcceptingInvitation] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -164,7 +166,11 @@ export default function Mydashboard(): ReactNode {
 
   return (
     <>
-      <div className='flex h-full min-h-screen w-full flex-col bg-gray-50'>
+      <div
+        className={`flex h-full min-h-screen w-full flex-col ${
+          theme === 'dark' ? 'bg-[var(--auth-bg)]' : 'bg-gray-50'
+        }`}
+      >
         {/* 새로운 대시보드 */}
         <div className='max-w-7xl p-6'>
           <DashboardList

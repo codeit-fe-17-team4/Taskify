@@ -4,6 +4,7 @@ import Image from 'next/image';
 import ChipProfile, {
   getProfileColorByIdHash,
 } from '@/components/ui/chip/chip-profile';
+import { useTheme } from '@/contexts/ThemeContext';
 import type { MemberListType } from '@/lib/members/type';
 
 // 접근을 하지 못하고 있길래 빼봄!
@@ -28,17 +29,40 @@ export default function MemberList({
   onPrevPage,
   onNextPage,
 }: MemberListProps) {
+  const { theme } = useTheme();
   return (
-    <div className='tablet:w-full mobile:w-full tablet:min-w-lg mobile:min-w-2xs mt-8 h-[340px] w-[620px] rounded-lg bg-white pt-5'>
+    <div
+      className={`tablet:w-full mobile:w-full tablet:min-w-lg mobile:min-w-2xs mt-8 h-[340px] w-[620px] rounded-lg pt-5 ${
+        theme === 'dark' ? 'bg-[#201f23]' : 'bg-white'
+      }`}
+    >
       <div className='flex items-center justify-between pr-8 pl-8'>
-        <h2 className='text-xl font-bold'>구성원</h2>
+        <h2
+          className={`text-xl font-bold ${
+            theme === 'dark'
+              ? 'text-[var(--auth-text-strong)]'
+              : 'text-gray-900'
+          }`}
+        >
+          구성원
+        </h2>
         <div className='flex items-center justify-end gap-2'>
-          <p className='text-sm text-gray-600'>
+          <p
+            className={`text-sm ${
+              theme === 'dark'
+                ? 'text-[var(--auth-placeholder)]'
+                : 'text-gray-600'
+            }`}
+          >
             {totalPages} 페이지 중 {currentPage}
           </p>
           <div className='flex items-center justify-center'>
             <button
-              className='flex h-7 w-7 cursor-pointer items-center justify-center rounded border border-gray-200 bg-white hover:bg-gray-100'
+              className={`flex h-7 w-7 cursor-pointer items-center justify-center rounded border ${
+                theme === 'dark'
+                  ? 'border-[var(--auth-border)] bg-[var(--auth-input-bg)] hover:bg-[var(--button-secondary-hover)]'
+                  : 'border-gray-200 bg-white hover:bg-gray-100'
+              }`}
               onClick={onPrevPage}
             >
               <Image
@@ -49,7 +73,11 @@ export default function MemberList({
               />
             </button>
             <button
-              className='flex h-7 w-7 cursor-pointer items-center justify-center rounded border border-gray-200 bg-white hover:bg-gray-100'
+              className={`flex h-7 w-7 cursor-pointer items-center justify-center rounded border ${
+                theme === 'dark'
+                  ? 'border-[var(--auth-border)] bg-[var(--auth-input-bg)] hover:bg-[var(--button-secondary-hover)]'
+                  : 'border-gray-200 bg-white hover:bg-gray-100'
+              }`}
               onClick={onNextPage}
             >
               <Image
@@ -65,7 +93,13 @@ export default function MemberList({
       <table className='mt-5 w-full text-center text-base'>
         <thead>
           <tr>
-            <th className='pr-8 pl-8 text-start font-normal text-gray-400'>
+            <th
+              className={`pr-8 pl-8 text-start font-normal ${
+                theme === 'dark'
+                  ? 'text-[var(--auth-placeholder)]'
+                  : 'text-gray-400'
+              }`}
+            >
               이름
             </th>
           </tr>
@@ -78,7 +112,13 @@ export default function MemberList({
             return (
               <tr
                 key={member.id}
-                className={`flex items-center justify-between pr-8 pl-8 ${!isLastItem ? 'border-b border-gray-200' : ''}`}
+                className={`flex items-center justify-between pr-8 pl-8 ${
+                  !isLastItem
+                    ? theme === 'dark'
+                      ? 'border-b border-[var(--auth-border)]'
+                      : 'border-b border-gray-200'
+                    : ''
+                }`}
               >
                 <td className='py-3'>
                   <div className='flex items-center gap-2'>

@@ -1,13 +1,14 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { type ReactNode, useEffect, useState } from 'react';
+import { type ReactNode, useCallback, useEffect, useState } from 'react';
 import EditDashboardForm from '@/components/edit-dashboard/edit-dashboard-form';
 import InvitationListCard from '@/components/edit-dashboard/invitation-listcard';
 import MemberList from '@/components/edit-dashboard/member-list';
 import DashboardLayout from '@/components/layout/dashboard-layout';
 import Button from '@/components/ui/button/button';
 import InviteMemberModal from '@/components/ui/dashboard-header/invite-member-modal';
+import { useTheme } from '@/contexts/ThemeContext';
 import {
   createInvitation,
   deleteDashBoard,
@@ -25,6 +26,7 @@ type Member = MemberListType['members'][number];
 
 export default function MydashboardEdit(): ReactNode {
   const router = useRouter();
+  const { theme } = useTheme();
   const dashboardId = getStringFromQuery(router.query, 'dashboardId');
   // 대시보드 API 연동 정보
   const [dashboardData, setDashboardData] = useState<DashboardType | null>(
@@ -84,7 +86,7 @@ export default function MydashboardEdit(): ReactNode {
     fetchMembers();
   }, [dashboardId]);
 
-  const fetchInvitationEmails = async () => {
+  const fetchInvitationEmails = useCallback(async () => {
     if (!dashboardId) {
       return;
     }
@@ -102,12 +104,12 @@ export default function MydashboardEdit(): ReactNode {
     } catch (error) {
       console.error('초대내역 불러오기 실패:', error);
     }
-  };
+  }, [dashboardId]);
 
   // 초대내역 가져오기 (최초 렌더링 시 보임))
   useEffect(() => {
     fetchInvitationEmails();
-  }, [dashboardId]);
+  }, [dashboardId, fetchInvitationEmails]);
 
   /**
    * 초대
@@ -255,7 +257,11 @@ export default function MydashboardEdit(): ReactNode {
   };
 
   return (
-    <div className='min-h-screen bg-gray-50'>
+    <div
+      className={`min-h-screen ${
+        theme === 'dark' ? 'bg-[var(--auth-bg)]' : 'bg-gray-50'
+      }`}
+    >
       <div className='mr-120 ml-5 min-w-2xs pt-5'>
         {dashboardId && (
           <Link href={`/dashboard/${dashboardId}`}>
@@ -333,9 +339,11 @@ export default function MydashboardEdit(): ReactNode {
           <Button
             variant='primary'
             backgroundColor='white'
-            additionalClass='mobile:max-w-2xs w-xs my-6 text-red'
             disabled={deletingDashboard}
             label={deletingDashboard ? '삭제 중...' : '대시보드 삭제하기'}
+            additionalClass={`mobile:max-w-2xs w-xs my-6 ${
+              theme === 'dark' ? 'text-red-400' : 'text-red'
+            }`}
             onClick={handleDeleteDashboard}
           />
         </div>

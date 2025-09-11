@@ -4,15 +4,15 @@
 
 :root {
   --landing-brand-violet: #5534da;
-  --landing-black-000: #000000;
-  --landing-black-171: #171717;
-  --landing-gray-9fa: #9fa6b2;
+  --landing-black-000: var(--c-fg);
+  --landing-black-171: var(--c-ink-strong);
+  --landing-gray-9fa: var(--c-ink-tertiary);
   --landing-radius-lg: 8px;
 
   /* ===== [landing] footer tokens ===== */
-  --color-inverse: #000000; /* footer bg (Figma) */
-  --on-inverse: #ffffff; /* text on black */
-  --muted-on-inverse: #9fa6b2; /* subtle text on black (Figma text color) */
+  --color-inverse: var(--c-bg); /* footer bg - 테마별로 변경됨 */
+  --on-inverse: var(--c-fg); /* text - 테마별로 변경됨 */
+  --muted-on-inverse: var(--c-ink-tertiary); /* subtle text - 테마별로 변경됨 */
 }
 
 /* ===== 랜딩 페이지 전용 유틸리티 ===== */

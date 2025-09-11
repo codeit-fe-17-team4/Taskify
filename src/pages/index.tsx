@@ -9,7 +9,7 @@ import SettingsGrid from '@/components/home/SettingsGrid';
 
 export default function LandingPage(): ReactElement {
   return (
-    <div className='min-h-screen bg-black'>
+    <div className='min-h-screen bg-[var(--c-bg)]'>
       {/* 헤더 */}
       <Header />
 

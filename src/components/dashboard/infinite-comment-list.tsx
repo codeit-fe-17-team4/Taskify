@@ -2,6 +2,7 @@ import Image from 'next/image';
 import { useCallback, useState } from 'react';
 import { useCursorInfiniteScroll } from '@/hooks/useCursorInfiniteScroll';
 import type { CommentType } from '@/lib/comments/type';
+import { useTheme } from '@/contexts/ThemeContext';
 import { cn } from '@/utils/cn';
 
 interface InfiniteCommentListProps {
@@ -30,6 +31,7 @@ export default function InfiniteCommentList({
   className,
   onRefreshRef,
 }: InfiniteCommentListProps) {
+  const { theme } = useTheme();
   const fetchData = useCallback(
     async (cursorId?: number) => fetchComments(cardId, cursorId),
     [cardId, fetchComments]
@@ -167,7 +169,11 @@ export default function InfiniteCommentList({
 
                 <div className='min-w-0 flex-1'>
                   <div className='mb-1 flex items-center gap-2'>
-                    <span className='text-black-2 text-sm font-semibold'>
+                    <span
+                      className={`text-sm font-semibold ${
+                        theme === 'dark' ? 'text-white' : 'text-black-2'
+                      }`}
+                    >
                       {comment.author.nickname}
                     </span>
                     <span className='text-gray-2 text-xs'>
@@ -177,7 +183,11 @@ export default function InfiniteCommentList({
 
                   {editingCommentId !== comment.id ? (
                     <>
-                      <p className='text-black-2 text-sm whitespace-pre-wrap'>
+                      <p
+                        className={`text-sm whitespace-pre-wrap ${
+                          theme === 'dark' ? 'text-white' : 'text-black-2'
+                        }`}
+                      >
                         {comment.content}
                       </p>
 

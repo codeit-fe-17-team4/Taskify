@@ -10,6 +10,7 @@ import ChipProfile, {
 } from '@/components/ui/chip/chip-profile';
 import ChipTag from '@/components/ui/chip/chip-tag';
 import Dropdown from '@/components/ui/dropdown';
+import { useTheme } from '@/contexts/ThemeContext';
 import type { UserType } from '@/lib/users/type';
 
 interface CreateTaskFormProps {
@@ -27,12 +28,16 @@ interface CreateTaskFormProps {
   }[];
 }
 
+const DARK_TEXT_COLOR = 'text-[var(--auth-text-strong)]';
+const LIGHT_TEXT_COLOR = 'text-gray-900';
+
 export default function CreateTaskForm({
   formData,
   setFormData,
   userInfo,
   members = [],
 }: CreateTaskFormProps): React.ReactElement {
+  const { theme } = useTheme();
   const [isAssigneeDropdownOpen, setIsAssigneeDropdownOpen] = useState(false);
 
   const assigneeOptions = members.map((member) => {
@@ -119,14 +124,26 @@ export default function CreateTaskForm({
     <>
       {/* 담당자 */}
       <div>
-        <span className='mb-2 block text-lg font-medium'>담당자</span>
+        <span
+          className={`mb-2 block text-lg font-medium ${
+            theme === 'dark' ? DARK_TEXT_COLOR : LIGHT_TEXT_COLOR
+          }`}
+        >
+          담당자
+        </span>
         <Dropdown>
           <Dropdown.Toggle
             onClick={() => {
               setIsAssigneeDropdownOpen(!isAssigneeDropdownOpen);
             }}
           >
-            <div className='flex w-full appearance-none items-center justify-between rounded-lg border border-gray-300 p-4 pr-4 text-left focus:outline-none'>
+            <div
+              className={`flex w-full appearance-none items-center justify-between rounded-lg border p-4 pr-4 text-left focus:outline-none ${
+                theme === 'dark'
+                  ? 'border-[var(--auth-border)] bg-[var(--auth-input-bg)] text-white focus-within:border-green-500'
+                  : 'focus-within:border-violet border-gray-300 bg-white text-gray-900'
+              }`}
+            >
               <div className='flex items-center gap-2'>
                 {formData.assignee ? (
                   <>
@@ -147,7 +164,13 @@ export default function CreateTaskForm({
                     </span>
                   </>
                 ) : (
-                  <span className='text-gray-500'>이름을 입력해 주세요</span>
+                  <span
+                    className={
+                      theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                    }
+                  >
+                    이름을 입력해 주세요
+                  </span>
                 )}
               </div>
               <Image
@@ -199,9 +222,18 @@ export default function CreateTaskForm({
       <div>
         <label
           htmlFor='title'
-          className='mb-2 block text-lg leading-6 font-medium'
+          className={`mb-2 block text-lg leading-6 font-medium ${
+            theme === 'dark' ? DARK_TEXT_COLOR : LIGHT_TEXT_COLOR
+          }`}
         >
-          제목 <span className='text-violet align-baseline text-lg'>*</span>
+          제목{' '}
+          <span
+            className={`align-baseline text-lg ${
+              theme === 'dark' ? 'text-green-500' : 'text-violet'
+            }`}
+          >
+            *
+          </span>
         </label>
         <input
           required
@@ -209,8 +241,12 @@ export default function CreateTaskForm({
           name='title'
           type='text'
           placeholder='제목을 입력해 주세요'
-          className='focus:border-violet w-full rounded-lg border border-gray-300 p-4 focus:outline-none'
           value={formData.title}
+          className={`w-full rounded-lg border p-4 focus:outline-none ${
+            theme === 'dark'
+              ? 'border-[var(--auth-border)] bg-[var(--auth-input-bg)] text-white placeholder:text-gray-400 focus:border-green-500'
+              : 'focus:border-violet border-gray-300 bg-white text-gray-900 placeholder:text-gray-500'
+          }`}
           onChange={(e) => {
             setFormData((prev) => ({ ...prev, title: e.target.value }));
           }}
@@ -221,9 +257,18 @@ export default function CreateTaskForm({
       <div>
         <label
           htmlFor='description'
-          className='mb-2 block text-lg leading-6 font-medium'
+          className={`mb-2 block text-lg leading-6 font-medium ${
+            theme === 'dark' ? DARK_TEXT_COLOR : LIGHT_TEXT_COLOR
+          }`}
         >
-          설명 <span className='text-violet align-baseline text-lg'>*</span>
+          설명{' '}
+          <span
+            className={`align-baseline text-lg ${
+              theme === 'dark' ? 'text-green-500' : 'text-violet'
+            }`}
+          >
+            *
+          </span>
         </label>
         <textarea
           required
@@ -231,8 +276,12 @@ export default function CreateTaskForm({
           name='description'
           placeholder='설명을 입력해 주세요'
           rows={4}
-          className='focus:border-violet w-full resize-none rounded-lg border border-gray-300 p-4 focus:outline-none'
           value={formData.description}
+          className={`w-full resize-none rounded-lg border p-4 focus:outline-none ${
+            theme === 'dark'
+              ? 'border-[var(--auth-border)] bg-[var(--auth-input-bg)] text-white placeholder:text-gray-400 focus:border-green-500'
+              : 'focus:border-violet border-gray-300 bg-white text-gray-900 placeholder:text-gray-500'
+          }`}
           onChange={(e) => {
             setFormData((prev) => {
               return {
@@ -246,7 +295,12 @@ export default function CreateTaskForm({
 
       {/* 마감일 */}
       <div>
-        <label htmlFor='dueDate' className='mb-2 block text-lg font-medium'>
+        <label
+          htmlFor='dueDate'
+          className={`mb-2 block text-lg font-medium ${
+            theme === 'dark' ? DARK_TEXT_COLOR : LIGHT_TEXT_COLOR
+          }`}
+        >
           마감일
         </label>
         <div className='relative'>
@@ -254,9 +308,13 @@ export default function CreateTaskForm({
             id='dueDate'
             name='dueDate'
             type='datetime-local'
-            className='focus:border-violet w-full cursor-pointer rounded-lg border border-gray-300 p-4 pl-12 focus:outline-none'
             value={formData.dueDate}
             placeholder='날짜와 시간을 선택하세요'
+            className={`w-full cursor-pointer rounded-lg border p-4 pl-12 focus:outline-none ${
+              theme === 'dark'
+                ? 'border-[var(--auth-border)] bg-[var(--auth-input-bg)] text-white focus:border-green-500'
+                : 'focus:border-violet border-gray-300 bg-white text-gray-900'
+            }`}
             onChange={(e) => {
               setFormData((prev) => ({ ...prev, dueDate: e.target.value }));
             }}
@@ -288,10 +346,21 @@ export default function CreateTaskForm({
 
       {/* 태그 */}
       <div>
-        <label htmlFor='tags' className='mb-2 block text-lg font-medium'>
+        <label
+          htmlFor='tags'
+          className={`mb-2 block text-lg font-medium ${
+            theme === 'dark' ? DARK_TEXT_COLOR : LIGHT_TEXT_COLOR
+          }`}
+        >
           태그
         </label>
-        <div className='flex min-h-[3.5rem] flex-wrap items-center gap-2 rounded-lg border border-gray-300 p-3 focus-within:border-gray-300'>
+        <div
+          className={`flex min-h-[3.5rem] flex-wrap items-center gap-2 rounded-lg border p-3 ${
+            theme === 'dark'
+              ? 'border-[var(--auth-border)] bg-[var(--auth-input-bg)] focus-within:border-green-500'
+              : 'border-gray-300 bg-white focus-within:border-gray-300'
+          }`}
+        >
           {/* 기존 태그들 */}
           {formData.tags.map((tag, index) => {
             return (
@@ -328,7 +397,11 @@ export default function CreateTaskForm({
             name='tags'
             type='text'
             placeholder={formData.tags.length === 0 ? '입력 후 Enter' : ''}
-            className='min-w-[120px] flex-1 border-0 bg-transparent p-1 focus:outline-none'
+            className={`min-w-[120px] flex-1 border-0 bg-transparent p-1 focus:outline-none ${
+              theme === 'dark'
+                ? 'text-white placeholder:text-gray-400'
+                : 'text-gray-900 placeholder:text-gray-500'
+            }`}
             onKeyDown={handleTagKeyDown}
           />
         </div>
@@ -338,7 +411,9 @@ export default function CreateTaskForm({
       <div>
         <label
           htmlFor='image-upload'
-          className='mb-2 block text-lg font-medium'
+          className={`mb-2 block text-lg font-medium ${
+            theme === 'dark' ? DARK_TEXT_COLOR : LIGHT_TEXT_COLOR
+          }`}
         >
           이미지
         </label>
@@ -390,11 +465,15 @@ export default function CreateTaskForm({
                 onClick={removeImage}
               >
                 <Image
-                  src='/dashboard/close-icon.svg'
                   alt='이미지 삭제'
                   width={12}
                   height={12}
                   className='brightness-0 invert filter'
+                  src={
+                    theme === 'dark'
+                      ? '/darkauth/icon/close-icon.svg'
+                      : '/dashboard/close-icon.svg'
+                  }
                 />
               </button>
             </motion.div>
@@ -404,13 +483,21 @@ export default function CreateTaskForm({
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               htmlFor='image-upload'
-              className='flex h-20 w-20 cursor-pointer items-center justify-center rounded-lg bg-gray-100 hover:bg-gray-200'
+              className={`flex h-20 w-20 cursor-pointer items-center justify-center rounded-lg ${
+                theme === 'dark'
+                  ? 'bg-[#3a3a3a] hover:bg-[#4a4a4a]'
+                  : 'bg-gray-100 hover:bg-gray-200'
+              }`}
             >
               <Image
-                src='/dashboard/add-image-btn.svg'
                 alt='이미지 추가'
                 width={18}
                 height={18}
+                src={
+                  theme === 'dark'
+                    ? '/darkauth/icon/add_box.svg'
+                    : '/dashboard/add-image-btn.svg'
+                }
               />
             </motion.label>
           )}

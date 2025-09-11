@@ -1,9 +1,172 @@
 @import 'tailwindcss';
 
+/* ===== 기본 테마 변수 (라이트 모드) ===== */
 :root {
+  /* 기본 색상 */
   --background: #ffffff;
   --foreground: #171717;
+
+  /* 랜딩페이지 semantic 토큰 */
+  --c-bg: #000000;
+  --c-fg: #ffffff;
+  --c-ink-strong: #171717;
+  --c-ink-muted: #4b4b4b;
+  --c-ink-tertiary: #9fa6b2;
+
+  /* 메인페이지 텍스트 색상 */
+  --main-text: #ffffff;
+
+  /* Auth 색상 변수 */
+  --auth-bg: #fafafa;
+  --auth-primary: #5534da;
+  --auth-text-strong: #333236;
+  --auth-border: #d9d9d9;
+  --auth-placeholder: #9fa6b2;
+  --auth-error: #d6173a;
+  --auth-input-bg: #ffffff;
+  --auth-input-border: #d9d9d9;
+  --auth-button-disabled-bg: #7ac555;
+  --auth-button-disabled-text: #00330d;
+
+  /* 모달 관련 색상 */
+  --modal-bg: #ffffff;
+  --modal-text: #171717;
+  --modal-border: #d9d9d9;
+  --modal-overlay: rgba(0, 0, 0, 0.5);
+
+  /* 버튼 관련 색상 */
+  --button-primary: #5534da;
+  --button-primary-hover: #4c2db8;
+  --button-primary-active: #3a2093;
+  --button-secondary: #f8f9fa;
+  --button-secondary-hover: #e9ecef;
+  --button-disabled: #7ac555;
+  --button-disabled-text: #00330d;
+  --button-reject-text: #7ac555;
+
+  /* Chip 컴포넌트 색상 */
+  --chip-blue: #4981d5;
+  --chip-blue-bg: #dbe6f7;
+  --chip-pink: #d549b6;
+  --chip-pink-bg: #f7dbf0;
+  --chip-green: #86d549;
+  --chip-green-bg: #e7f7db;
+  --chip-brown: #d58d49;
+  --chip-brown-bg: #f9eee3;
+  --chip-red: #d25b68;
+  --chip-red-bg: #f4d7da;
+
+  /* 대시보드 관련 색상 */
+  --dashboard-bg: #fafafa;
+  --dashboard-card-bg: #ffffff;
+  --dashboard-header-bg: #ffffff;
+  --dashboard-sidebar-bg: #ffffff;
+  --dashboard-text: #333236;
+  --dashboard-border: #d9d9d9;
+
+  /* 프로필 이미지 박스 색상 */
+  --profile-image-bg: #f5f5f5;
+
+  /* 랜딩페이지 전용 변수 */
+  --landing-brand-violet: #5534da;
+  --landing-black-000: var(--c-fg);
+  --landing-black-171: var(--c-ink-strong);
+  --landing-gray-9fa: var(--c-ink-tertiary);
+  --landing-radius-lg: 8px;
 }
+
+/* ===== 다크 모드 변수 ===== */
+.dark {
+  /* 기본 색상 */
+  --background: #1b1a1f;
+  --foreground: #d6d5d9;
+
+  /* 랜딩페이지 semantic 토큰 */
+  --c-bg: #ffffff;
+  --c-fg: #000000;
+  --c-ink-strong: #e8e8e8;
+  --c-ink-muted: #b4b4b4;
+  --c-ink-tertiary: #a39fb2;
+
+  /* 메인페이지 텍스트 색상 */
+  --main-text: #000000;
+
+  /* Auth 색상 오버라이드 */
+  --auth-bg: #1b1a1f;
+  --auth-primary: #00a200;
+  --auth-text-strong: #d6d5d9;
+  --auth-border: #524f5b;
+  --auth-placeholder: #a39fb2;
+  --auth-error: #ca372b;
+  --auth-input-bg: #201f23;
+  --auth-input-border: #524f5b;
+  --auth-button-disabled-bg: #7ac555;
+  --auth-button-disabled-text: #00330d;
+
+  /* 모달 관련 다크모드 색상 */
+  --modal-bg: #262629;
+  --modal-text: #d6d5d9;
+  --modal-border: #524f5b;
+  --modal-overlay: rgba(0, 0, 0, 0.7);
+
+  /* 버튼 관련 다크모드 색상 */
+  --button-primary: #00a200;
+  --button-primary-hover: #10671f;
+  --button-primary-active: #0d4d1a;
+  --button-secondary: #3a3a3a;
+  --button-secondary-hover: #4a4a4a;
+  --button-disabled: #7ac555;
+  --button-disabled-text: #00330d;
+  --button-reject-text: #7ac555;
+
+  /* Chip 컴포넌트 다크모드 색상 */
+  --chip-blue: #4dabf7;
+  --chip-blue-bg: #1e3a8a;
+  --chip-pink: #f472b6;
+  --chip-pink-bg: #831843;
+  --chip-green: #51cf66;
+  --chip-green-bg: #14532d;
+  --chip-brown: #d97706;
+  --chip-brown-bg: #451a03;
+  --chip-red: #f87171;
+  --chip-red-bg: #7f1d1d;
+
+  /* 대시보드 관련 다크모드 색상 */
+  --dashboard-bg: #1b1a1f;
+  --dashboard-card-bg: #262629;
+  --dashboard-header-bg: #1b1a1f;
+  --dashboard-sidebar-bg: #1b1a1f;
+  --dashboard-text: #d6d5d9;
+  --dashboard-border: #524f5b;
+
+  /* 프로필 이미지 박스 다크모드 색상 */
+  --profile-image-bg: #3a3a3a;
+
+  /* 랜딩페이지 다크모드 변수 (자동으로 --c-* 변수에 따라 변경됨) */
+  --landing-brand-violet: #5534da; /* 브랜드 색상은 다크모드에서도 동일 */
+  --landing-black-000: var(--c-fg);
+  --landing-black-171: var(--c-ink-strong);
+  --landing-gray-9fa: var(--c-ink-tertiary);
+  --landing-radius-lg: 8px;
+}
+
+/* ===== 테마 전환 애니메이션 ===== */
+* {
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    border-color 0.3s ease;
+}
+
+/* 깜빡임 방지 */
+html {
+  color-scheme: light dark;
+}
+
+.dark {
+  color-scheme: dark;
+}
+
 @theme {
   /** @color */
   --color-black: #090909;

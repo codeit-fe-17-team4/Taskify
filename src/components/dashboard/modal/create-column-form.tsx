@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import type { CreateColumnFormData } from '@/components/dashboard/type';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface CreateColumnFormProps {
   formData: CreateColumnFormData;
@@ -12,16 +13,28 @@ export default function CreateColumnForm({
   setFormData,
   hasError = false,
 }: CreateColumnFormProps): ReactNode {
+  const { theme } = useTheme();
   return (
     <>
       {/* 이름 */}
       <div>
         <label
           htmlFor='new-column-name'
-          className='mb-2 block text-lg leading-6 font-medium'
+          className={`mb-2 block text-lg leading-6 font-medium ${
+            theme === 'dark'
+              ? 'text-[var(--auth-text-strong)]'
+              : 'text-gray-900'
+          }`}
         >
           대시보드 이름
-          <span className='text-violet align-baseline text-lg'> *</span>
+          <span
+            className={`align-baseline text-lg ${
+              theme === 'dark' ? 'text-green-500' : 'text-violet'
+            }`}
+          >
+            {' '}
+            *
+          </span>
         </label>
         <input
           required
@@ -33,7 +46,9 @@ export default function CreateColumnForm({
           className={`w-full rounded-lg border p-4 focus:outline-none ${
             hasError
               ? 'border-red-500 focus:border-red-500'
-              : 'focus:border-violet border-gray-300'
+              : theme === 'dark'
+                ? 'border-[var(--auth-border)] bg-[var(--auth-input-bg)] text-white focus:border-green-500'
+                : 'focus:border-violet border-gray-300 bg-white text-gray-900'
           }`}
           onChange={(e) => {
             setFormData((prev) => ({ ...prev, name: e.target.value }));

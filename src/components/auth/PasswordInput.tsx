@@ -1,6 +1,8 @@
 // 인증 페이지용 비밀번호 입력 컴포넌트 (토글 버튼 포함)
 import Image from 'next/image';
+import { useTheme } from '@/contexts/ThemeContext';
 import styles from '@/styles/auth-variables.module.css';
+import { getThemeIcon } from '@/utils/getThemeIcon';
 
 interface PasswordInputProps {
   id: string;
@@ -27,6 +29,7 @@ export default function PasswordInput({
   onTogglePassword,
   className = '',
 }: PasswordInputProps): React.JSX.Element {
+  const { theme } = useTheme();
   return (
     <div
       className={`flex w-[520px] flex-col gap-0 max-[375px]:w-[351px] ${className}`}
@@ -45,7 +48,7 @@ export default function PasswordInput({
           placeholder={placeholder}
           aria-invalid={Boolean(error)}
           aria-describedby={error ? `${id}-error` : undefined}
-          className={`h-[50px] w-[520px] rounded-[8px] bg-white px-[16px] py-[12px] pr-10 ring-1 placeholder:text-[var(--auth-placeholder)] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none max-[375px]:w-[351px] ${
+          className={`h-[50px] w-[520px] rounded-[8px] bg-[var(--auth-input-bg)] px-[16px] py-[12px] pr-10 ring-1 placeholder:text-[var(--auth-placeholder)] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none max-[375px]:w-[351px] dark:bg-[#201f23] dark:ring-[#524f5b] dark:focus:ring-[#00a200] ${
             error
               ? 'ring-[var(--auth-error)] focus:ring-[var(--auth-error)]'
               : 'ring-[var(--auth-border)]'
@@ -58,21 +61,21 @@ export default function PasswordInput({
         {onTogglePassword && (
           <button
             type='button'
-            className='absolute top-1/2 right-3 flex h-[24px] w-[24px] -translate-y-1/2 items-center justify-center text-[#9FA6B2] transition-colors duration-200 hover:text-[#5534da]'
+            className='absolute top-1/2 right-3 flex h-[24px] w-[24px] -translate-y-1/2 items-center justify-center text-[var(--auth-placeholder)] transition-colors duration-200 hover:text-[var(--auth-primary)]'
             aria-label={showPassword ? '비밀번호 숨기기' : '비밀번호 보기'}
             aria-pressed={showPassword}
             onClick={onTogglePassword}
           >
             {showPassword ? (
               <Image
-                src='/auth/icon/visibility.svg'
+                src={getThemeIcon('visibility', theme)}
                 alt='비밀번호 숨기기'
                 width={24}
                 height={24}
               />
             ) : (
               <Image
-                src='/auth/icon/visibility-off.svg'
+                src={getThemeIcon('visibility-off', theme)}
                 alt='비밀번호 보기'
                 width={24}
                 height={24}

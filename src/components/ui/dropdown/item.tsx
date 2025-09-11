@@ -34,7 +34,7 @@ export default function Item({
       type='button'
       whileTap={{ scale: 0.9 }}
       className={cn(
-        'hover:bg-violet-light hover:text-violet flex h-full w-full items-center gap-2 rounded-md px-1 py-3',
+        'flex h-full w-full items-center gap-2 rounded-md px-1 py-3 text-[var(--auth-text-strong)] hover:bg-[var(--button-secondary-hover)] hover:text-[var(--auth-primary)]',
         additionalClassName
       )}
       onClick={onClick}
