@@ -44,6 +44,13 @@ export default function TaskDetailModal({
   const [newComment, setNewComment] = useState('');
   const commentRefreshRef = useRef<(() => void) | null>(null);
 
+  // 모달이 열리거나 task가 변경될 때마다 newComment 초기화
+  useEffect(() => {
+    if (isOpen) {
+      setNewComment('');
+    }
+  }, [isOpen, task?.id]);
+
   const handleClose = (): void => {
     setNewComment('');
     onClose();
