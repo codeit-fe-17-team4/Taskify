@@ -9,7 +9,6 @@ import DashboardLayout from '@/components/layout/dashboard-layout';
 import Button from '@/components/ui/button/button';
 import InviteMemberModal from '@/components/ui/dashboard-header/invite-member-modal';
 import {
-  createInvitation,
   deleteDashBoard,
   deleteInvitation,
   editDashBoard,
@@ -112,23 +111,11 @@ export default function MydashboardEdit(): ReactNode {
   /**
    * 초대
    */
-  const handleSubmitInviteMember = async (formData: {
-    nickname: string;
-    email: string;
-  }) => {
+  const handleSubmitInviteMember = async () => {
     if (!dashboardId) {
       return;
     }
-    try {
-      await createInvitation({ id: Number(dashboardId), body: formData });
-      alert('초대요청을 보냈습니다.');
-      handleCloseModal();
-
-      await fetchInvitationEmails();
-    } catch (error) {
-      console.error('초대 실패:', error);
-      alert('초대요청이 실패했습니다.');
-    }
+    await fetchInvitationEmails();
   };
 
   /**
@@ -322,14 +309,6 @@ export default function MydashboardEdit(): ReactNode {
 
         {/* 대시보드 삭제 */}
         <div className='h-20 w-full'>
-          {/* <button
-            type='button'
-            className='mobile:max-w-2xs my-6 h-12 w-xs cursor-pointer rounded-sm border border-gray-300 px-4 py-2 text-lg font-medium hover:bg-gray-100'
-            disabled={deletingDashboard}
-            onClick={handleDeleteDashboard}
-          >
-            {deletingDashboard ? '삭제 중...' : '대시보드 삭제하기'}
-          </button> */}
           <Button
             variant='primary'
             backgroundColor='white'
