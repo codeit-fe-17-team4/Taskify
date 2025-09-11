@@ -56,7 +56,7 @@ export default function SideMenu(): ReactNode {
   };
 
   return (
-    <section className='tablet:w-[10rem] mobile:w-auto mobile:min-w-10 border-gray-3 fixed top-0 bottom-0 left-0 z-25 flex w-[18.75rem] flex-col gap-14 border-r-1 bg-white px-3 py-5'>
+    <section className='tablet:w-[10rem] mobile:w-auto mobile:min-w-10 border-gray-3 scrollbar-hide fixed top-0 bottom-0 left-0 z-25 flex w-[18.75rem] flex-col gap-14 overflow-scroll border-r-1 bg-white px-3 py-5'>
       <Link
         href={'/'}
         className='flex-center tablet:self-center justify-center self-start'
