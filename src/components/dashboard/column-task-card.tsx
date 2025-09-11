@@ -109,6 +109,7 @@ export default function ColumnTaskCard({ task, onEditTask }: TaskCardProps) {
                 label={(task.manager.nickname || '').slice(0, 1)}
                 color={getProfileColorByIdHash(Number(task.manager.id))}
                 size='sm'
+                profileImageUrl={task.manager.profileImageUrl}
               />
             </div>
           </div>
