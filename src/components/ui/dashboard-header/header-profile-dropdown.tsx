@@ -45,14 +45,16 @@ export default function HeaderProfileDropdwon({
   return (
     <Dropdown>
       <Dropdown.Toggle>
-        <div className='border-l-gray-3 hover:bg-gray-4 active:bg-gray-3 mobile:pl-3 tablet:pr-8 mobile:pr-2 flex h-full cursor-pointer items-center gap-3 border-l-1 pr-20 pl-6'>
+        <div className='mobile:pl-3 tablet:pr-8 mobile:pr-2 flex h-full cursor-pointer items-center gap-3 border-l-1 border-l-[var(--auth-border)] pr-20 pl-6 hover:bg-[var(--button-secondary-hover)] active:bg-[var(--button-secondary)]'>
           <ChipProfile
             label={profileLabel}
             size='lg'
             color={getProfileColorByIdHash(myId)}
             profileImageUrl={profileImageUrl}
           />
-          <span className='mobile:hidden font-medium'>{myNickname}</span>
+          <span className='mobile:hidden font-medium text-[var(--auth-text-strong)]'>
+            {myNickname}
+          </span>
         </div>
       </Dropdown.Toggle>
       <Dropdown.List

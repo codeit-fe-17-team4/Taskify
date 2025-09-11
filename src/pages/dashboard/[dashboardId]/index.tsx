@@ -23,6 +23,7 @@ import {
   type TaskType,
 } from '@/components/dashboard/type';
 import DashboardLayout from '@/components/layout/dashboard-layout';
+import { useTheme } from '@/contexts/ThemeContext';
 import { useDashboardData } from '@/hooks/useDashboardData';
 import { useTaskHandlers } from '@/hooks/useTaskHandlers';
 import { getCardList } from '@/lib/cards/api';
@@ -40,6 +41,7 @@ export default function DashboardDetailPage({
   // dashboardId,
 }: DashboardDetailPageProps): React.ReactElement {
   const router = useRouter();
+  const { theme } = useTheme();
   const dashboardId = Number(getStringFromQuery(router.query, 'dashboardId'));
   /**
    * ===== 유틸리티 함수 =====
@@ -245,9 +247,15 @@ export default function DashboardDetailPage({
         <title>Taskify | 대시보드</title>
         <meta property='og:title' content='Taskify | 대시보드' key='title' />
       </Head>
-      <div className='min-h-screen bg-gray-50'>
+      <div
+        className={`min-h-screen ${
+          theme === 'dark' ? 'bg-[var(--auth-bg)]' : 'bg-gray-50'
+        }`}
+      >
         <main
-          className='horizontal-scroll-only h-screen bg-gray-50'
+          className={`horizontal-scroll-only h-screen ${
+            theme === 'dark' ? 'bg-[var(--auth-bg)]' : 'bg-gray-50'
+          }`}
           style={{
             overflowX: 'auto',
             scrollbarWidth: 'thin',
@@ -276,11 +284,29 @@ export default function DashboardDetailPage({
             <DragOverlay>
               {activeTask ? (
                 <div className='rotate-3 opacity-90'>
-                  <div className='w-80 rounded-lg border border-gray-300 bg-white p-4 shadow-lg'>
-                    <h3 className='font-medium text-gray-900'>
+                  <div
+                    className={`w-80 rounded-lg border p-4 shadow-lg ${
+                      theme === 'dark'
+                        ? 'border-[var(--auth-border)] bg-[#201f23]'
+                        : 'border-gray-300 bg-white'
+                    }`}
+                  >
+                    <h3
+                      className={`font-medium ${
+                        theme === 'dark'
+                          ? 'text-[var(--auth-text-strong)]'
+                          : 'text-gray-900'
+                      }`}
+                    >
                       {activeTask.title}
                     </h3>
-                    <p className='text-sm text-gray-600'>
+                    <p
+                      className={`text-sm ${
+                        theme === 'dark'
+                          ? 'text-[var(--auth-placeholder)]'
+                          : 'text-gray-600'
+                      }`}
+                    >
                       {activeTask.description}
                     </p>
                   </div>

@@ -104,10 +104,17 @@ export default function LoginPage(): JSX.Element {
         const errorMessage =
           error instanceof Error ? error.message : '알 수 없는 오류';
 
-        if (errorMessage.includes('[400]')) {
-          setModalMessage(ERROR_MESSAGES.INVALID_PASSWORD);
-        } else if (errorMessage.includes('[404]')) {
-          setModalMessage(ERROR_MESSAGES.USER_NOT_FOUND);
+        // CustomError인 경우 status 코드로 판단
+        if (error instanceof Error && 'status' in error) {
+          const customError = error as { status?: number };
+
+          if (customError.status === 400) {
+            setModalMessage(ERROR_MESSAGES.INVALID_PASSWORD);
+          } else if (customError.status === 404) {
+            setModalMessage(ERROR_MESSAGES.USER_NOT_FOUND);
+          } else {
+            setModalMessage(ERROR_MESSAGES.LOGIN_FAILED);
+          }
         } else if (errorMessage.includes('Session creation failed')) {
           setModalMessage(ERROR_MESSAGES.SESSION_CREATION_FAILED);
         } else {
@@ -132,12 +139,13 @@ export default function LoginPage(): JSX.Element {
         style={{
           height: '1080px',
           minHeight: '1080px',
+          marginTop: '95.5px',
+          marginBottom: '95.5px',
         }}
       >
-        <div className='flex h-auto min-h-[653px] w-[520px] shrink-0 flex-col items-center gap-[30px] max-[375px]:w-[351px] max-[375px]:gap-[36px]'>
+        <div className='flex h-auto w-[520px] shrink-0 flex-col items-center gap-[30px] max-[375px]:w-[351px] max-[375px]:gap-[36px]'>
           {/* Hero Block */}
           <AuthHero title='오늘도 만나서 반가워요!' />
-
           {/* Form Wrapper */}
           <div className='flex w-[520px] flex-col items-center max-[375px]:w-[351px]'>
             <form
@@ -172,9 +180,9 @@ export default function LoginPage(): JSX.Element {
                     }, [showPassword])}
                   />
                 </div>
-
                 {/* 로그인 버튼 */}
                 <AuthButton
+                  type='submit'
                   disabled={!isFormValidNow}
                   isLoading={isLoading}
                   loadingText='로그인 중...'

@@ -1,6 +1,7 @@
 import Button from '@/components/ui/button/button';
 import BaseModal from '@/components/ui/modal/modal-base';
 import type { ButtonModalProps } from '@/components/ui/type';
+import { useTheme } from '@/contexts/ThemeContext';
 
 export default function ButtonModal({
   isOpen,
@@ -16,6 +17,7 @@ export default function ButtonModal({
   hideCancelButton = false,
   errorMessage,
 }: ButtonModalProps) {
+  const { theme } = useTheme();
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (onSubmit) {
@@ -26,7 +28,15 @@ export default function ButtonModal({
   return (
     <BaseModal isOpen={isOpen} width={width} onClose={onClose}>
       <div>
-        <h2 className='mb-8 text-left text-2xl font-bold'>{title}</h2>
+        <h2
+          className={`mb-8 text-left text-2xl font-bold ${
+            theme === 'dark'
+              ? 'text-[var(--auth-text-strong)]'
+              : 'text-gray-900'
+          }`}
+        >
+          {title}
+        </h2>
         <form onSubmit={handleSubmit}>
           <div className='space-y-6'>
             {children}

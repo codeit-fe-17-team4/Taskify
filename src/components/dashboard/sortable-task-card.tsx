@@ -2,6 +2,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import ColumnTaskCard from '@/components/dashboard/column-task-card';
 import type { TaskType } from '@/components/dashboard/type';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface SortableTaskCardProps {
   task: TaskType;
@@ -12,6 +13,7 @@ export default function SortableTaskCard({
   task,
   onEditTask,
 }: SortableTaskCardProps) {
+  const { theme } = useTheme();
   const {
     attributes,
     listeners,
@@ -43,9 +45,17 @@ export default function SortableTaskCard({
       </div>
       <div
         {...listeners}
-        className='absolute top-2 right-2 h-6 w-6 cursor-grab rounded bg-gray-200 opacity-0 transition-opacity group-hover:opacity-100 active:cursor-grabbing'
+        className={`absolute top-2 right-2 h-6 w-6 cursor-grab rounded opacity-0 transition-opacity hover:opacity-100 active:cursor-grabbing ${
+          theme === 'dark' ? 'bg-[var(--auth-border)]' : 'bg-gray-200'
+        }`}
       >
-        <div className='flex h-full w-full items-center justify-center text-xs text-gray-500'>
+        <div
+          className={`flex h-full w-full items-center justify-center text-xs ${
+            theme === 'dark'
+              ? 'text-[var(--auth-placeholder)]'
+              : 'text-gray-500'
+          }`}
+        >
           ↕
         </div>
       </div>

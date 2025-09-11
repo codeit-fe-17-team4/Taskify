@@ -1,22 +1,46 @@
 /* Auth 전용 CSS 변수들 - CSS Module */
-.auth {
-  --auth-bg: #fafafa;
-  --auth-primary: #5534da;
-  --auth-text-strong: #333236;
-  --auth-border: #d9d9d9;
-  --auth-placeholder: #9fa6b2;
-  --auth-error: #d6173a;
+/* 기본 변수들은 globals.css에서 정의되므로 여기서는 auth 스코프 내에서만 사용되는 변수만 정의 */
+
+/* auth 스코프 내에서만 작동하는 utility 클래스들 - 사용되지 않는 클래스들 제거 */
+
+/* 모달 관련 스타일 - 전역 스코프 */
+:global(.modalOverlay) {
+  background-color: rgba(0, 0, 0, 0.7);
 }
 
-/* auth 스코프 내에서만 작동하는 utility 클래스들 */
-.auth .bgAuth {
-  background: var(--auth-bg);
+:global(.modalContainer) {
+  background-color: #ffffff;
 }
 
-.auth .textStrong {
-  color: var(--auth-text-strong);
+:global(.modalText) {
+  color: #000000;
 }
 
-.auth .ringAuth {
-  --tw-ring-color: var(--auth-primary);
+:global(.modalButton) {
+  background-color: var(--auth-primary);
+  color: #ffffff;
+}
+
+:global(.modalButton:hover) {
+  opacity: 0.9;
+}
+
+/* 다크모드 Auth 스타일은 globals.css에서 전역으로 정의되므로 제거 */
+
+/* 다크모드 모달 스타일 - 전역 스코프 */
+:global(.dark) :global(.modalContainer) {
+  background-color: #201f23;
+}
+
+:global(.dark) :global(.modalText) {
+  color: #d6d5d9;
+}
+
+:global(.dark) :global(.modalButton) {
+  background-color: var(--auth-primary);
+  color: #ffffff;
+}
+
+:global(.dark) :global(.modalButton:hover) {
+  opacity: 0.9;
 }

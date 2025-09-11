@@ -6,6 +6,7 @@ import { Montserrat } from 'next/font/google';
 import localFont from 'next/font/local';
 import Head from 'next/head';
 import type { ReactNode } from 'react';
+import { ThemeProvider } from '@/contexts/ThemeContext';
 
 const pretendardVariable = localFont({
   src: '../../public/fonts/Pretendard/PretendardVariable.woff2',
@@ -25,16 +26,20 @@ export default function App({
 }): ReactNode {
   const getLayout = Component.getLayout ?? ((page: ReactNode) => page);
 
-  return getLayout(
-    <main
-      className={`${pretendardVariable.variable} font-pretendard ${montserrat.variable}`}
-    >
-      <Head>
-        <title>Taskify</title>
-        <meta property='og:title' content='Taskify' key='title' />
-        <link rel='icon' href='/favicon.ico' />
-      </Head>
-      <Component {...pageProps} />
-    </main>
+  return (
+    <ThemeProvider>
+      {getLayout(
+        <main
+          className={`${pretendardVariable.variable} font-pretendard ${montserrat.variable}`}
+        >
+          <Head>
+            <title>Taskify</title>
+            <meta property='og:title' content='Taskify' key='title' />
+            <link rel='icon' href='/favicon.ico' />
+          </Head>
+          <Component {...pageProps} />
+        </main>
+      )}
+    </ThemeProvider>
   );
 }

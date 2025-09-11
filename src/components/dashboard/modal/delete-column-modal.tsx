@@ -1,4 +1,5 @@
 import ButtonModal from '@/components/ui/modal/modal-button';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface DeleteColumnModalProps {
   isOpen: boolean;
@@ -13,6 +14,7 @@ export default function DeleteColumnModal({
   onConfirm,
   columnTitle,
 }: DeleteColumnModalProps) {
+  const { theme } = useTheme();
   const handleConfirm = () => {
     onConfirm();
     onClose();
@@ -30,7 +32,13 @@ export default function DeleteColumnModal({
       onCancel={onClose}
     >
       <div className='py-4 text-center'>
-        <p className='text-lg font-medium text-gray-900'>
+        <p
+          className={`text-lg font-medium ${
+            theme === 'dark'
+              ? 'text-[var(--auth-text-strong)]'
+              : 'text-gray-900'
+          }`}
+        >
           컬럼의 모든 카드가 삭제됩니다.
         </p>
       </div>

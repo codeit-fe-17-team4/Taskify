@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import InfiniteCommentList from '@/components/dashboard/infinite-comment-list';
 import type { TaskDetailModalProps } from '@/components/dashboard/type';
 import ChipProfile, {
@@ -8,6 +8,7 @@ import ChipProfile, {
 import ChipTag from '@/components/ui/chip/chip-tag';
 import Dropdown from '@/components/ui/dropdown';
 import BaseModal from '@/components/ui/modal/modal-base';
+import { useTheme } from '@/contexts/ThemeContext';
 import { useModalKeyHandler } from '@/hooks/useModal';
 import {
   createComment,
@@ -31,6 +32,9 @@ const formatDueDate = (dueDate: string) => {
   return `${year}-${month}-${day} ${hours}:${minutes}`;
 };
 
+const DARK_TEXT_COLOR = 'text-[var(--auth-text-strong)]';
+const LIGHT_TEXT_COLOR = 'text-gray-900';
+
 export default function TaskDetailModal({
   isOpen,
   onClose,
@@ -41,6 +45,7 @@ export default function TaskDetailModal({
   onEdit,
   onDelete,
 }: TaskDetailModalProps): React.ReactElement | null {
+  const { theme } = useTheme();
   const [newComment, setNewComment] = useState('');
   const commentRefreshRef = useRef<(() => void) | null>(null);
 
@@ -169,18 +174,34 @@ export default function TaskDetailModal({
     <BaseModal isOpen={isOpen} onClose={onClose}>
       {/* 헤더 */}
       <div className='flex items-center justify-between p-6'>
-        <h2 className='text-xl font-bold'>{task.title}</h2>
+        <h2
+          className={`text-xl font-bold ${
+            theme === 'dark' ? DARK_TEXT_COLOR : LIGHT_TEXT_COLOR
+          }`}
+        >
+          {task.title}
+        </h2>
         <div className='flex items-center gap-3'>
           {/* 메뉴 버튼 */}
           <div className='relative'>
             <Dropdown>
               <Dropdown.Toggle>
-                <div className='flex-center h-8 w-8 rounded hover:bg-gray-100'>
+                <div
+                  className={`flex-center h-8 w-8 rounded ${
+                    theme === 'dark'
+                      ? 'hover:bg-[var(--button-secondary-hover)]'
+                      : 'hover:bg-gray-100'
+                  }`}
+                >
                   <Image
-                    src='/dashboard/menu-icon.svg'
                     alt='메뉴'
                     width={28}
                     height={28}
+                    src={
+                      theme === 'dark'
+                        ? '/darkauth/icon/menu-icon.svg'
+                        : '/dashboard/menu-icon.svg'
+                    }
                   />
                 </div>
               </Dropdown.Toggle>
@@ -202,14 +223,22 @@ export default function TaskDetailModal({
           </div>
           {/* 닫기 버튼 */}
           <button
-            className='flex h-8 w-8 cursor-pointer items-center justify-center rounded hover:bg-gray-100'
+            className={`flex h-8 w-8 cursor-pointer items-center justify-center rounded ${
+              theme === 'dark'
+                ? 'hover:bg-[var(--button-secondary-hover)]'
+                : 'hover:bg-gray-100'
+            }`}
             onClick={handleClose}
           >
             <Image
-              src='/dashboard/close-icon.svg'
               alt='닫기'
               width={28}
               height={28}
+              src={
+                theme === 'dark'
+                  ? '/darkauth/icon/close-icon.svg'
+                  : '/dashboard/close-icon.svg'
+              }
             />
           </button>
         </div>
@@ -218,14 +247,28 @@ export default function TaskDetailModal({
       {/* 카테고리와 태그 */}
       <div className='px-6 pb-6'>
         <div className='flex flex-wrap items-center gap-2'>
-          <span className='bg-violet-light text-violet flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium'>
-            <span className='bg-violet h-2 w-2 rounded-full' />
+          <span
+            className={`flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium ${
+              theme === 'dark'
+                ? 'bg-[var(--button-secondary)] text-[var(--auth-primary)]'
+                : 'bg-violet-light text-violet'
+            }`}
+          >
+            <span
+              className={`h-2 w-2 rounded-full ${
+                theme === 'dark' ? 'bg-[var(--auth-primary)]' : 'bg-violet'
+              }`}
+            />
             {columnTitle || 'To Do'}
           </span>
 
           {task.tags.length > 0 && (
             <>
-              <div className='h-4 w-px bg-gray-300' />
+              <div
+                className={`h-4 w-px ${
+                  theme === 'dark' ? 'bg-[var(--auth-border)]' : 'bg-gray-300'
+                }`}
+              />
               {task.tags.map((tag) => {
                 return (
                   <ChipTag
@@ -246,7 +289,13 @@ export default function TaskDetailModal({
         <div className='flex gap-6'>
           <div className='flex-1 space-y-6'>
             <div>
-              <p className='leading-relaxed text-gray-700'>
+              <p
+                className={`leading-relaxed ${
+                  theme === 'dark'
+                    ? 'text-[var(--auth-placeholder)]'
+                    : 'text-gray-700'
+                }`}
+              >
                 {task.description || '설명이 없습니다.'}
               </p>
             </div>
@@ -270,9 +319,21 @@ export default function TaskDetailModal({
               )}
           </div>
 
-          <div className='flex w-52 flex-col gap-6 self-start rounded-lg border border-gray-300 p-4'>
+          <div
+            className={`flex w-52 flex-col gap-6 self-start rounded-lg border p-4 ${
+              theme === 'dark'
+                ? 'border-[var(--auth-border)]'
+                : 'border-gray-300'
+            }`}
+          >
             <div>
-              <span className='mb-2 block text-sm font-bold'>담당자</span>
+              <span
+                className={`mb-2 block text-sm font-bold ${
+                  theme === 'dark' ? DARK_TEXT_COLOR : LIGHT_TEXT_COLOR
+                }`}
+              >
+                담당자
+              </span>
               <div className='flex items-center gap-2'>
                 <ChipProfile
                   color={getProfileColorByIdHash(Number(task.manager.id))}
@@ -284,14 +345,30 @@ export default function TaskDetailModal({
                       : ''
                   }
                 />
-                <span className='text-sm font-medium'>{task.manager.name}</span>
+                <span
+                  className={`text-sm font-medium ${
+                    theme === 'dark' ? DARK_TEXT_COLOR : LIGHT_TEXT_COLOR
+                  }`}
+                >
+                  {task.manager.name}
+                </span>
               </div>
             </div>
 
             {task.dueDate && (
               <div>
-                <span className='mb-2 block text-sm font-bold'>마감일</span>
-                <p className='text-sm font-medium'>
+                <span
+                  className={`mb-2 block text-sm font-bold ${
+                    theme === 'dark' ? DARK_TEXT_COLOR : LIGHT_TEXT_COLOR
+                  }`}
+                >
+                  마감일
+                </span>
+                <p
+                  className={`text-sm font-medium ${
+                    theme === 'dark' ? DARK_TEXT_COLOR : LIGHT_TEXT_COLOR
+                  }`}
+                >
                   {formatDueDate(task.dueDate)}
                 </p>
               </div>
@@ -302,14 +379,24 @@ export default function TaskDetailModal({
 
       {/* 댓글 섹션 */}
       <div className='px-6 pt-6 pb-6'>
-        <h3 className='mb-4 text-lg font-medium'>댓글</h3>
+        <h3
+          className={`mb-4 text-lg font-medium ${
+            theme === 'dark' ? DARK_TEXT_COLOR : LIGHT_TEXT_COLOR
+          }`}
+        >
+          댓글
+        </h3>
 
         <div className='relative'>
           <textarea
             placeholder='댓글 작성하기'
             rows={3}
-            className='focus:border-violet w-full resize-none overflow-hidden rounded-lg border border-gray-300 p-4 pr-20 focus:outline-none'
             value={newComment}
+            className={`w-full resize-none overflow-hidden rounded-lg border p-4 pr-20 focus:outline-none ${
+              theme === 'dark'
+                ? 'border-[var(--auth-border)] bg-[var(--auth-input-bg)] text-white placeholder:text-gray-400 focus:border-green-500'
+                : 'focus:border-violet border-gray-300 bg-white text-gray-900 placeholder:text-gray-500'
+            }`}
             onChange={(e) => {
               setNewComment(e.target.value);
             }}
@@ -321,17 +408,28 @@ export default function TaskDetailModal({
               handleCommentSubmit();
             }}
           />
-          <button
-            disabled={!newComment.trim()}
-            className={`absolute right-4 bottom-4 rounded-lg border px-6 py-2 text-sm font-medium ${
-              newComment.trim()
-                ? 'text-violet cursor-pointer border-gray-300 bg-white hover:bg-gray-50'
-                : 'cursor-not-allowed border-gray-200 bg-gray-50 text-gray-400'
-            }`}
-            onClick={handleCommentSubmit}
-          >
-            입력
-          </button>
+          {(() => {
+            let buttonClass =
+              'absolute right-4 bottom-4 rounded-lg border px-6 py-2 text-sm font-medium ';
+
+            if (!newComment.trim()) {
+              buttonClass = `${buttonClass}cursor-not-allowed border-gray-200 bg-gray-50 text-gray-400`;
+            } else if (theme === 'dark') {
+              buttonClass = `${buttonClass}cursor-pointer border-[var(--auth-border)] bg-[var(--auth-input-bg)] text-green-400 hover:bg-[var(--button-secondary-hover)]`;
+            } else {
+              buttonClass = `${buttonClass}text-violet cursor-pointer border-gray-300 bg-white hover:bg-gray-50`;
+            }
+
+            return (
+              <button
+                disabled={!newComment.trim()}
+                className={buttonClass}
+                onClick={handleCommentSubmit}
+              >
+                입력
+              </button>
+            );
+          })()}
         </div>
 
         {/* 댓글 목록 */}

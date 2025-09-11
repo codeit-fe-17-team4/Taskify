@@ -1,5 +1,4 @@
 import type { GetServerSideProps } from 'next';
-import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import {
@@ -12,7 +11,7 @@ import {
 import BackButton from '@/components/auth/back-button';
 import UnifiedModal from '@/components/auth/UnifiedModal';
 import DashboardLayout from '@/components/layout/dashboard-layout';
-import Button from '@/components/ui/button/button';
+import { useTheme } from '@/contexts/ThemeContext';
 import { BASE_API_URL } from '@/lib/constants';
 import type { UserType } from '@/lib/users/type';
 import styles from '@/styles/auth-variables.module.css';
@@ -33,29 +32,46 @@ const SUCCESS_MESSAGES = {
   PASSWORD_CHANGED: '비밀번호가 변경되었습니다.',
 } as const;
 
-// 반복되는 스타일 상수들
-const COMMON_STYLES = {
-  container: {
-    backgroundColor: '#ffffff',
-    padding: '24px',
-    borderRadius: '8px',
-    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-  },
-  title: {
-    color: '#333236',
-    fontFamily: 'Pretendard',
-    fontWeight: 700,
-    fontSize: '24px',
-  },
-  button: {
-    backgroundColor: '#5534DA',
-    fontFamily: 'Pretendard',
-    fontWeight: 600,
-    fontSize: '16px',
-    textAlign: 'center' as const,
-    color: '#ffffff',
-  },
-} as const;
+/**
+ * 테마별 스타일 함수
+ */
+const getThemeStyles = (theme: string) => {
+  const isDark = theme === 'dark';
+
+  return {
+    container: {
+      backgroundColor: isDark ? '#201f23' : '#ffffff',
+      padding: '24px',
+      borderRadius: '8px',
+      boxShadow: isDark
+        ? '0 2px 8px rgba(0, 0, 0, 0.3)'
+        : '0 2px 8px rgba(0, 0, 0, 0.1)',
+    },
+    title: {
+      color: isDark ? 'var(--auth-text-strong)' : '#333236',
+      fontFamily: 'Pretendard',
+      fontWeight: 700,
+      fontSize: '24px',
+    },
+    button: {
+      backgroundColor: 'var(--auth-primary)',
+      fontFamily: 'Pretendard',
+      fontWeight: 600,
+      fontSize: '16px',
+      textAlign: 'center' as const,
+      color: '#ffffff',
+    },
+  };
+};
+
+// 입력 필드 스타일 상수
+const INPUT_STYLES = {
+  base: 'h-[50px] w-full rounded-[8px] border px-[16px] py-[12px] placeholder:text-[var(--auth-placeholder)] focus:outline-none focus-visible:outline-none',
+  light: 'border-[#D9D9D9] bg-white',
+  lightDisabled: 'border-[#D9D9D9] bg-gray-100 text-gray-500',
+  dark: 'border-[var(--auth-input-border)] bg-[var(--auth-input-bg)] text-[var(--auth-text-strong)]',
+  focus: 'focus:ring-2 focus:ring-[var(--auth-primary)]',
+};
 
 /**
  * 유틸리티 함수들
@@ -91,6 +107,7 @@ export default function MyPage({
   accessToken,
 }: MyPageProps): ReactElement {
   const router = useRouter();
+  const { theme } = useTheme();
 
   // 사용자 정보 상태
   const [userInfo, setUserInfo] = useState<UserType | null>(initialUserInfo);
@@ -341,273 +358,292 @@ export default function MyPage({
   }
 
   return (
-    <>
-      <Head>
-        <title>Taskify | 계정관리</title>
-        <meta property='og:title' content='Taskify | 계정관리' key='title' />
-      </Head>
-      <div
-        className='bg-gray-5 tablet:left-40 mobile:left-10 tablet:top-[4.375rem] mobile:top-[3.75rem] fixed top-[4.375rem] right-0 left-[18.75rem] overflow-y-auto'
-        style={{ zIndex: 1, height: 'calc(100vh - 4.375rem)' }}
-      >
-        <div className='pt-5 pl-5'>
-          <BackButton />
-        </div>
+    <div
+      style={{ zIndex: 1, height: 'calc(100vh - 4.375rem)' }}
+      className={`tablet:left-40 mobile:left-10 tablet:top-[4.375rem] mobile:top-[3.75rem] fixed top-[4.375rem] right-0 left-[18.75rem] overflow-y-auto ${
+        theme === 'dark' ? 'bg-[var(--auth-bg)]' : 'bg-gray-5'
+      }`}
+    >
+      <div className='pt-5 pl-5'>
+        <BackButton />
+      </div>
 
-        {/* 메인 컨테이너 - 최대 레이아웃, 오른쪽 간격 20px일 때부터 줄어듦 */}
+      {/* 메인 컨테이너 - 최대 레이아웃, 오른쪽 간격 20px일 때부터 줄어듦 */}
+      <div
+        className='mt-[29px] mr-3 ml-3 max-[375px]:mt-[6px]'
+        style={{
+          width: 'calc(100% - 24px)', // 좌우 마진 12px씩 제외
+          maxWidth: '672.01px',
+          height: '856px',
+          padding: '0px',
+        }}
+      >
+        {/* 프로필 컨테이너 */}
         <div
-          className='mt-[29px] mr-3 ml-3 max-[375px]:mt-[6px]'
+          className={`${mypageStyles.mobilePaddingOverride} ${mypageStyles.mobileProfileContainer} w-full`}
           style={{
-            width: 'calc(100% - 24px)', // 좌우 마진 12px씩 제외
-            maxWidth: '672.01px',
-            height: '856px',
-            padding: '0px',
+            ...getThemeStyles(theme).container,
+            height: '366px',
           }}
         >
-          {/* 프로필 컨테이너 */}
-          <div
-            className={`${mypageStyles.mobilePaddingOverride} ${mypageStyles.mobileProfileContainer} w-full`}
-            style={{
-              ...COMMON_STYLES.container,
-              height: '366px',
-            }}
+          <h2
+            className={`${mypageStyles.mobileTitleFont} mb-4 max-[375px]:mb-10`}
+            style={getThemeStyles(theme).title}
           >
-            <h2
-              className={`${mypageStyles.mobileTitleFont} mb-4 max-[375px]:mb-10`}
-              style={COMMON_STYLES.title}
-            >
-              프로필
-            </h2>
+            프로필
+          </h2>
 
-            {/* 프로필 영역 */}
-            <div
-              className='flex max-[375px]:flex-col max-[375px]:gap-4'
-              style={{ marginTop: '24px' }}
+          {/* 프로필 영역 */}
+          <div
+            className='flex max-[375px]:flex-col max-[375px]:gap-4'
+            style={{ marginTop: '24px' }}
+          >
+            {/* 프로필 정사각형 상자 */}
+            <button
+              type='button'
+              className={`${mypageStyles.mobileProfileImage} relative flex cursor-pointer items-center justify-center overflow-hidden max-[375px]:mx-auto`}
+              style={{
+                width: '182px',
+                height: '182px',
+                backgroundColor: 'var(--profile-image-bg)',
+                marginLeft: '0px',
+              }}
+              onClick={handleProfileImageClick}
             >
-              {/* 프로필 정사각형 상자 */}
+              {userInfo?.profileImageUrl ? (
+                <Image
+                  src={userInfo.profileImageUrl}
+                  alt='프로필 이미지'
+                  width={182}
+                  height={182}
+                  className='h-full w-full'
+                  style={{
+                    objectFit: 'cover',
+                    borderRadius: '8px',
+                    width: '100%',
+                    height: '100%',
+                  }}
+                />
+              ) : (
+                <Image
+                  alt='프로필 이미지 추가'
+                  width={30.01}
+                  height={30.01}
+                  src={
+                    theme === 'dark'
+                      ? '/darkauth/icon/add_box.svg'
+                      : '/auth/icon/addimage.svg'
+                  }
+                />
+              )}
+              <input
+                id='profile-image-input'
+                type='file'
+                accept='image/*'
+                className='hidden'
+                disabled={isLoading}
+                onChange={handleImageUpload}
+              />
+            </button>
+
+            {/* 프로필 폼 */}
+            <div
+              className={`${mypageStyles.mobileProfileForm} flex flex-col max-[375px]:ml-0 max-[375px]:w-full`}
+              style={{
+                marginLeft: '42px',
+                width: '424px',
+                height: '182px',
+              }}
+            >
+              {/* 이메일 */}
+              <div
+                className={`${mypageStyles.mobileEmailField} flex flex-col gap-0 max-[375px]:mt-10`}
+                style={{ marginTop: '0px' }}
+              >
+                <label
+                  htmlFor='email'
+                  className={`${styles.textStrong} ${mypageStyles.mobileLabelFont} mb-2 text-[16px] leading-[26px]`}
+                >
+                  이메일
+                </label>
+                <input
+                  disabled
+                  id='email'
+                  type='email'
+                  value={userInfo?.email || ''}
+                  placeholder='이메일 입력'
+                  className={`${mypageStyles.mobileInputFont} ${INPUT_STYLES.base} cursor-not-allowed ${
+                    theme === 'dark'
+                      ? INPUT_STYLES.dark
+                      : INPUT_STYLES.lightDisabled
+                  }`}
+                />
+              </div>
+
+              {/* 닉네임 */}
+              <div
+                className='flex flex-col gap-0'
+                style={{ marginTop: '16px' }}
+              >
+                <label
+                  htmlFor='nickname'
+                  className={`${styles.textStrong} ${mypageStyles.mobileLabelFont} mb-2 text-[16px] leading-[26px]`}
+                >
+                  닉네임
+                </label>
+                <input
+                  id='nickname'
+                  type='text'
+                  value={nickname}
+                  placeholder='닉네임 입력'
+                  className={`${mypageStyles.mobileInputFont} ${INPUT_STYLES.base} ${INPUT_STYLES.focus} ${
+                    theme === 'dark' ? INPUT_STYLES.dark : INPUT_STYLES.light
+                  }`}
+                  onChange={(e) => {
+                    setNickname(e.target.value);
+                  }}
+                />
+              </div>
+
+              {/* 저장 버튼 */}
               <button
                 type='button'
-                className={`${mypageStyles.mobileProfileImage} relative flex cursor-pointer items-center justify-center max-[375px]:mx-auto`}
+                className='w-full shrink-0 cursor-pointer rounded-[8px] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50'
+                disabled={isLoading || !nickname.trim()}
                 style={{
-                  width: '182px',
-                  height: '182px',
-                  backgroundColor: '#F5F5F5',
-                  marginLeft: '0px',
+                  ...getThemeStyles(theme).button,
+                  height: '54px',
+                  marginTop: '24px',
                 }}
-                onClick={handleProfileImageClick}
+                onClick={handleUpdateNickname}
               >
-                {userInfo?.profileImageUrl ? (
-                  <Image
-                    src={userInfo.profileImageUrl}
-                    alt='프로필 이미지'
-                    width={182}
-                    height={182}
-                    style={{ objectFit: 'cover', borderRadius: '8px' }}
-                  />
-                ) : (
-                  <Image
-                    src='/auth/icon/addimage.svg'
-                    alt='프로필 이미지 추가'
-                    width={30.01}
-                    height={30.01}
-                  />
-                )}
-                <input
-                  id='profile-image-input'
-                  type='file'
-                  accept='image/*'
-                  className='hidden'
-                  disabled={isLoading}
-                  onChange={handleImageUpload}
-                />
+                {isLoading ? '저장 중...' : '저장'}
               </button>
-
-              {/* 프로필 폼 */}
-              <div
-                className={`${mypageStyles.mobileProfileForm} flex flex-col max-[375px]:ml-0 max-[375px]:w-full`}
-                style={{
-                  marginLeft: '42px',
-                  width: '424px',
-                  height: '182px',
-                }}
-              >
-                {/* 이메일 */}
-                <div
-                  className={`${mypageStyles.mobileEmailField} flex flex-col gap-0 max-[375px]:mt-10`}
-                  style={{ marginTop: '0px' }}
-                >
-                  <label
-                    htmlFor='email'
-                    className={`${styles.textStrong} ${mypageStyles.mobileLabelFont} mb-2 text-[16px] leading-[26px]`}
-                  >
-                    이메일
-                  </label>
-                  <input
-                    disabled
-                    id='email'
-                    type='email'
-                    value={userInfo?.email || ''}
-                    placeholder='이메일 입력'
-                    className={`${mypageStyles.mobileInputFont} h-[50px] w-full cursor-not-allowed rounded-[8px] border border-[#D9D9D9] bg-gray-100 px-[16px] py-[12px] text-gray-500 placeholder:text-[#9FA6B2]`}
-                  />
-                </div>
-
-                {/* 닉네임 */}
-                <div
-                  className='flex flex-col gap-0'
-                  style={{ marginTop: '16px' }}
-                >
-                  <label
-                    htmlFor='nickname'
-                    className={`${styles.textStrong} ${mypageStyles.mobileLabelFont} mb-2 text-[16px] leading-[26px]`}
-                  >
-                    닉네임
-                  </label>
-                  <input
-                    id='nickname'
-                    type='text'
-                    value={nickname}
-                    placeholder='닉네임 입력'
-                    className={`${mypageStyles.mobileInputFont} h-[50px] w-full rounded-[8px] border border-[#D9D9D9] bg-white px-[16px] py-[12px] placeholder:text-[#9FA6B2] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none`}
-                    onChange={(e) => {
-                      setNickname(e.target.value);
-                    }}
-                  />
-                </div>
-
-                {/* 저장 버튼 */}
-                <Button
-                  variant='primary'
-                  backgroundColor='violet'
-                  label={isLoading ? '저장 중...' : '저장'}
-                  additionalClass='mt-6'
-                  disabled={isLoading || !nickname.trim()}
-                  onClick={handleUpdateNickname}
-                />
-              </div>
             </div>
-          </div>
-
-          {/* 비밀번호 변경 컨테이너 */}
-          <div
-            className={`${mypageStyles.mobilePaddingOverride} mt-6 w-full max-[375px]:mt-4`}
-            style={{
-              ...COMMON_STYLES.container,
-              height: '466px',
-            }}
-          >
-            <h2
-              className={mypageStyles.mobileTitleFont}
-              style={COMMON_STYLES.title}
-            >
-              비밀번호 변경
-            </h2>
-
-            {/* 비밀번호 변경 폼 */}
-            <form
-              className='flex flex-col'
-              style={{ height: '362px' }}
-              onSubmit={handlePasswordChange}
-            >
-              {/* 현재 비밀번호 */}
-              <div
-                className='flex flex-col gap-0'
-                style={{ marginTop: '24px' }}
-              >
-                <label
-                  htmlFor='currentPassword'
-                  className={`${styles.textStrong} ${mypageStyles.mobileLabelFont} mb-2 text-[16px] leading-[26px]`}
-                >
-                  현재 비밀번호
-                </label>
-                <input
-                  id='currentPassword'
-                  type='password'
-                  value={currentPassword}
-                  placeholder='비밀번호 입력'
-                  className={`${mypageStyles.mobileInputFont} h-[50px] w-full rounded-[8px] border border-[#D9D9D9] bg-white px-[16px] py-[12px] placeholder:text-[#9FA6B2] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none`}
-                  onChange={(e) => {
-                    setCurrentPassword(e.target.value);
-                  }}
-                />
-              </div>
-
-              {/* 새 비밀번호 */}
-              <div
-                className='flex flex-col gap-0'
-                style={{ marginTop: '16px' }}
-              >
-                <label
-                  htmlFor='newPassword'
-                  className={`${styles.textStrong} ${mypageStyles.mobileLabelFont} mb-2 text-[16px] leading-[26px]`}
-                >
-                  새 비밀번호
-                </label>
-                <input
-                  id='newPassword'
-                  type='password'
-                  value={newPassword}
-                  placeholder='새 비밀번호 입력'
-                  className={`${mypageStyles.mobileInputFont} h-[50px] w-full rounded-[8px] border border-[#D9D9D9] bg-white px-[16px] py-[12px] placeholder:text-[#9FA6B2] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none`}
-                  onChange={(e) => {
-                    setNewPassword(e.target.value);
-                  }}
-                />
-              </div>
-
-              {/* 새 비밀번호 확인 */}
-              <div
-                className='flex flex-col gap-0'
-                style={{ marginTop: '16px' }}
-              >
-                <label
-                  htmlFor='confirmPassword'
-                  className={`${styles.textStrong} ${mypageStyles.mobileLabelFont} mb-2 text-[16px] leading-[26px]`}
-                >
-                  새 비밀번호 확인
-                </label>
-                <input
-                  id='confirmPassword'
-                  type='password'
-                  value={confirmPassword}
-                  placeholder='새 비밀번호 입력'
-                  className={`${mypageStyles.mobileInputFont} h-[50px] w-full rounded-[8px] border border-[#D9D9D9] bg-white px-[16px] py-[12px] placeholder:text-[#9FA6B2] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none focus-visible:outline-none`}
-                  onChange={(e) => {
-                    setConfirmPassword(e.target.value);
-                  }}
-                />
-              </div>
-
-              {/* 변경 버튼 */}
-              <Button
-                variant='primary'
-                backgroundColor='violet'
-                label={isLoading ? '변경 중...' : '변경'}
-                additionalClass='mt-6'
-                disabled={
-                  isLoading ||
-                  !currentPassword ||
-                  !newPassword ||
-                  !confirmPassword
-                }
-                onClick={handlePasswordChange}
-              />
-            </form>
           </div>
         </div>
 
-        {/* 디자인 시안에 따른 하단 여백 79px */}
-        <div style={{ height: '79px' }} />
+        {/* 비밀번호 변경 컨테이너 */}
+        <div
+          className={`${mypageStyles.mobilePaddingOverride} mt-6 w-full max-[375px]:mt-4`}
+          style={{
+            ...getThemeStyles(theme).container,
+            height: '466px',
+          }}
+        >
+          <h2
+            className={mypageStyles.mobileTitleFont}
+            style={getThemeStyles(theme).title}
+          >
+            비밀번호 변경
+          </h2>
 
-        {/* 모달 */}
-        <UnifiedModal
-          isOpen={isModalOpen}
-          message={modalMessage}
-          type={modalType}
-          onClose={closeModal}
-        />
+          {/* 비밀번호 변경 폼 */}
+          <form
+            className='flex flex-col'
+            style={{ height: '362px' }}
+            onSubmit={handlePasswordChange}
+          >
+            {/* 현재 비밀번호 */}
+            <div className='flex flex-col gap-0' style={{ marginTop: '24px' }}>
+              <label
+                htmlFor='currentPassword'
+                className={`${styles.textStrong} ${mypageStyles.mobileLabelFont} mb-2 text-[16px] leading-[26px]`}
+              >
+                현재 비밀번호
+              </label>
+              <input
+                id='currentPassword'
+                type='password'
+                value={currentPassword}
+                placeholder='비밀번호 입력'
+                className={`${mypageStyles.mobileInputFont} ${INPUT_STYLES.base} ${INPUT_STYLES.focus} ${
+                  theme === 'dark' ? INPUT_STYLES.dark : INPUT_STYLES.light
+                }`}
+                onChange={(e) => {
+                  setCurrentPassword(e.target.value);
+                }}
+              />
+            </div>
+
+            {/* 새 비밀번호 */}
+            <div className='flex flex-col gap-0' style={{ marginTop: '16px' }}>
+              <label
+                htmlFor='newPassword'
+                className={`${styles.textStrong} ${mypageStyles.mobileLabelFont} mb-2 text-[16px] leading-[26px]`}
+              >
+                새 비밀번호
+              </label>
+              <input
+                id='newPassword'
+                type='password'
+                value={newPassword}
+                placeholder='새 비밀번호 입력'
+                className={`${mypageStyles.mobileInputFont} ${INPUT_STYLES.base} ${INPUT_STYLES.focus} ${
+                  theme === 'dark' ? INPUT_STYLES.dark : INPUT_STYLES.light
+                }`}
+                onChange={(e) => {
+                  setNewPassword(e.target.value);
+                }}
+              />
+            </div>
+
+            {/* 새 비밀번호 확인 */}
+            <div className='flex flex-col gap-0' style={{ marginTop: '16px' }}>
+              <label
+                htmlFor='confirmPassword'
+                className={`${styles.textStrong} ${mypageStyles.mobileLabelFont} mb-2 text-[16px] leading-[26px]`}
+              >
+                새 비밀번호 확인
+              </label>
+              <input
+                id='confirmPassword'
+                type='password'
+                value={confirmPassword}
+                placeholder='새 비밀번호 입력'
+                className={`${mypageStyles.mobileInputFont} ${INPUT_STYLES.base} ${INPUT_STYLES.focus} ${
+                  theme === 'dark' ? INPUT_STYLES.dark : INPUT_STYLES.light
+                }`}
+                onChange={(e) => {
+                  setConfirmPassword(e.target.value);
+                }}
+              />
+            </div>
+
+            {/* 변경 버튼 */}
+            <button
+              type='submit'
+              className='w-full shrink-0 cursor-pointer rounded-[8px] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50'
+              style={{
+                ...getThemeStyles(theme).button,
+                height: '54px',
+                marginTop: '24px',
+              }}
+              disabled={
+                isLoading ||
+                !currentPassword ||
+                !newPassword ||
+                !confirmPassword
+              }
+              onClick={handlePasswordChange}
+            >
+              {isLoading ? '변경 중...' : '변경'}
+            </button>
+          </form>
+        </div>
       </div>
-    </>
+
+      {/* 디자인 시안에 따른 하단 여백 79px */}
+      <div style={{ height: '79px' }} />
+
+      {/* 모달 */}
+      <UnifiedModal
+        isOpen={isModalOpen}
+        message={modalMessage}
+        type={modalType}
+        onClose={closeModal}
+      />
+    </div>
   );
 }
 

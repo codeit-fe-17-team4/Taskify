@@ -1,6 +1,8 @@
 // 인증 페이지용 로고 + 제목 영역 컴포넌트
 import Image from 'next/image';
 import Link from 'next/link';
+import { useTheme } from '@/contexts/ThemeContext';
+import { getThemeIcon } from '@/utils/getThemeIcon';
 import styles from '@/styles/auth-variables.module.css';
 
 interface AuthHeroProps {
@@ -8,6 +10,8 @@ interface AuthHeroProps {
 }
 
 export default function AuthHero({ title }: AuthHeroProps): React.JSX.Element {
+  const { theme } = useTheme();
+
   return (
     <div className='flex h-[322px] w-[200px] flex-col items-center gap-[10px]'>
       <div className='flex h-[280px] w-[200px] flex-col items-center gap-[30px]'>
@@ -16,7 +20,7 @@ export default function AuthHero({ title }: AuthHeroProps): React.JSX.Element {
             <Image
               fill
               priority
-              src='/auth/image/login-signup-logo.svg'
+              src={getThemeIcon('login-signup-logo', theme)}
               alt='Taskify Logo'
               className='object-contain object-center'
             />
