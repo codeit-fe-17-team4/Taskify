@@ -27,7 +27,7 @@ export default function InvitationListCard({
         <div className='mobile:absolute mobile:right-5 mobile:top-5 flex items-center justify-end gap-3'>
           <div className='flex items-center justify-end gap-2'>
             <p className='text-sm text-gray-600'>
-              {totalPages} 페이지 중 {currentPage}
+              {currentPage} / {totalPages}
             </p>
             <div className='flex items-center justify-center'>
               <button

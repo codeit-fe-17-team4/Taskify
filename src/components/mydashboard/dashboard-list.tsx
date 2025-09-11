@@ -100,7 +100,7 @@ export default function DashboardList({
         {/* 페이지네이션 */}
         <div className='col-span-full mt-4 flex items-center justify-end gap-2'>
           <p className='text-sm text-gray-600'>
-            {totalPages} 페이지 중 {currentPage}
+            {currentPage} / {totalPages}
           </p>
           <div className='flex'>
             <button

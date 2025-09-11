@@ -96,7 +96,7 @@ export default function SideMenu(): ReactNode {
           dashboards={dashboardListData.dashboards}
           loading={loading}
         />
-        <div className='mt-3'>
+        <div className='mt-3 flex items-center justify-between gap-4 px-2'>
           <ButtonPagination
             additionalClass='mobile:hidden'
             isPrevDisabled={isPrevButtonDisabled}
@@ -104,6 +104,9 @@ export default function SideMenu(): ReactNode {
             onPrevClick={handleClickPrev}
             onNextClick={handleClickNext}
           />
+          <span className='text-sm'>
+            {pageCount > 1 && `${String(page)} / ${String(pageCount)}`}
+          </span>
         </div>
       </nav>
       <ModalPortal>
