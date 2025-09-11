@@ -33,7 +33,7 @@ export default function DashboardList({
           <li key={dashboard.id}>
             <button
               className={cn(
-                `mobile:flex-center flex w-full cursor-pointer gap-2.5 rounded-sm p-3 hover:bg-[var(--button-secondary-hover)] active:bg-[var(--button-secondary)]`,
+                `text-gray-1 mobile:flex-center flex w-full cursor-pointer gap-2.5 rounded-sm p-3 hover:bg-[var(--button-secondary-hover)] active:bg-[var(--button-secondary)]`,
                 dashboardId &&
                   Number(dashboardId) === dashboard.id &&
                   `bg-[var(--button-secondary)] hover:bg-[var(--button-secondary)] active:bg-[var(--button-secondary)]`

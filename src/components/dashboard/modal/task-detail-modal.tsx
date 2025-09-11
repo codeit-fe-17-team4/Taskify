@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import InfiniteCommentList from '@/components/dashboard/infinite-comment-list';
 import type { TaskDetailModalProps } from '@/components/dashboard/type';
 import ChipProfile, {
