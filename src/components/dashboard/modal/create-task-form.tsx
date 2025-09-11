@@ -1,14 +1,16 @@
+import { AnimatePresence, motion } from 'framer-motion';
 import Image from 'next/image';
-import { useState } from 'react';
+import { type KeyboardEvent, useState } from 'react';
 import {
   type CreateTaskFormData,
   getRandomTagColor,
 } from '@/components/dashboard/type';
-import ChipProfile from '@/components/ui/chip/chip-profile';
+import ChipProfile, {
+  getProfileColorByIdHash,
+} from '@/components/ui/chip/chip-profile';
 import ChipTag from '@/components/ui/chip/chip-tag';
 import Dropdown from '@/components/ui/dropdown';
 import type { UserType } from '@/lib/users/type';
-import { getProfileColor } from '@/utils/profile-color';
 
 interface CreateTaskFormProps {
   formData: CreateTaskFormData;
@@ -19,6 +21,7 @@ interface CreateTaskFormProps {
   ) => void;
   userInfo: UserType | null;
   members?: {
+    userId: number;
     nickname: string;
     profileImageUrl: string | null;
   }[];
@@ -30,14 +33,13 @@ export default function CreateTaskForm({
   userInfo,
   members = [],
 }: CreateTaskFormProps): React.ReactElement {
-  const [currentTag, setCurrentTag] = useState('');
   const [isAssigneeDropdownOpen, setIsAssigneeDropdownOpen] = useState(false);
 
   const assigneeOptions = members.map((member) => {
     return {
       value: member.nickname,
       label: member.nickname,
-      profileColor: '#7AC555',
+      profileColor: getProfileColorByIdHash(member.userId),
       profileImageUrl: member.profileImageUrl,
     };
   });
@@ -46,9 +48,7 @@ export default function CreateTaskForm({
     (opt) => opt.value === formData.assignee
   );
   const chipProfileLabel = (selectedAssignee?.label || '').slice(0, 1);
-  const chipProfileColor = getProfileColor(
-    selectedAssignee?.profileColor || '#10b981'
-  );
+  const chipProfileColor = selectedAssignee?.profileColor ?? 'green';
 
   const handleAssigneeSelect = (assignee: string) => {
     setFormData((prev) => ({ ...prev, assignee }));
@@ -58,24 +58,27 @@ export default function CreateTaskForm({
   /**
    * ===== 태그 관련 핸들러 =====
    */
-  const handleTagKeyDown = (e: React.KeyboardEvent) => {
+  const handleTagKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    const inputText = e.currentTarget.value.trim();
+
     if (e.key !== 'Enter') {
       return;
     }
-    if (!currentTag.trim()) {
+    if (!inputText) {
       return;
     }
-    e.preventDefault();
+    // 한글 조합 중이면 무시
+    if (e.nativeEvent.isComposing) {
+      return;
+    }
     setFormData((prev) => {
       return {
         ...prev,
-        tags: [
-          ...prev.tags,
-          { label: currentTag.trim(), color: getRandomTagColor() },
-        ],
+        tags: [...prev.tags, { label: inputText, color: getRandomTagColor() }],
       };
     });
-    setCurrentTag('');
+    e.currentTarget.value = '';
+    e.preventDefault();
   };
 
   const removeTag = (indexToRemove: number) => {
@@ -179,7 +182,7 @@ export default function CreateTaskForm({
                   <div className='flex items-center gap-2'>
                     <ChipProfile
                       label={(option.label || '').slice(0, 1)}
-                      color={getProfileColor(option.profileColor)}
+                      color={option.profileColor}
                       size='md'
                       profileImageUrl={option.profileImageUrl}
                     />
@@ -292,27 +295,31 @@ export default function CreateTaskForm({
           {/* 기존 태그들 */}
           {formData.tags.map((tag, index) => {
             return (
-              <div
-                key={`${tag.label}-${tag.color}`}
-                className='flex items-center gap-1'
-              >
-                <ChipTag
-                  label={tag.label}
-                  size='md'
-                  color={
-                    tag.color as 'blue' | 'pink' | 'green' | 'brown' | 'red'
-                  }
-                />
-                <button
-                  type='button'
-                  className='ml-1 text-blue-400 hover:text-blue-600'
-                  onClick={() => {
-                    removeTag(index);
-                  }}
+              <AnimatePresence key={`${tag.label}-${tag.color}`}>
+                <motion.div
+                  className='flex items-center gap-1'
+                  initial={{ opacity: 0, scale: 0.5, x: 20, y: -20 }}
+                  animate={{ opacity: 1, scale: 1, x: 0, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.5, x: 20, y: 20 }}
                 >
-                  ×
-                </button>
-              </div>
+                  <ChipTag
+                    label={tag.label}
+                    size='md'
+                    color={
+                      tag.color as 'blue' | 'pink' | 'green' | 'brown' | 'red'
+                    }
+                  />
+                  <button
+                    type='button'
+                    className='ml-1 text-blue-400 hover:text-blue-600'
+                    onClick={() => {
+                      removeTag(index);
+                    }}
+                  >
+                    ×
+                  </button>
+                </motion.div>
+              </AnimatePresence>
             );
           })}
           {/* 새 태그 입력 */}
@@ -322,11 +329,7 @@ export default function CreateTaskForm({
             type='text'
             placeholder={formData.tags.length === 0 ? '입력 후 Enter' : ''}
             className='min-w-[120px] flex-1 border-0 bg-transparent p-1 focus:outline-none'
-            value={currentTag}
             onKeyDown={handleTagKeyDown}
-            onChange={(e) => {
-              setCurrentTag(e.target.value);
-            }}
           />
         </div>
       </div>
@@ -351,7 +354,11 @@ export default function CreateTaskForm({
 
           {/* 이미지가 있는 경우 */}
           {formData.imageFile ? (
-            <div className='group relative'>
+            <motion.div
+              className='group relative'
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
               <div className='h-20 w-20 overflow-hidden rounded-lg'>
                 <Image
                   src={URL.createObjectURL(formData.imageFile)}
@@ -390,10 +397,12 @@ export default function CreateTaskForm({
                   className='brightness-0 invert filter'
                 />
               </button>
-            </div>
+            </motion.div>
           ) : (
             /* 이미지가 없는 경우 */
-            <label
+            <motion.label
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               htmlFor='image-upload'
               className='flex h-20 w-20 cursor-pointer items-center justify-center rounded-lg bg-gray-100 hover:bg-gray-200'
             >
@@ -403,7 +412,7 @@ export default function CreateTaskForm({
                 width={18}
                 height={18}
               />
-            </label>
+            </motion.label>
           )}
         </div>
       </div>

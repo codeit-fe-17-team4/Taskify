@@ -1,5 +1,6 @@
 // 랜딩페이지 상단 헤더 컴포넌트 (로고 + 네비게이션)
 import Image from 'next/image';
+import Link from 'next/link';
 import { type ReactElement, useEffect, useState } from 'react';
 
 export default function Header(): ReactElement {
@@ -44,20 +45,20 @@ export default function Header(): ReactElement {
 
       {/* 네비게이션 */}
       <nav className='flex items-center gap-6'>
-        <a
+        <Link
           href={isAuth ? '/mydashboard' : '/login'}
           className='text-[16px] leading-[26px] text-white hover:opacity-80 focus:ring-2 focus:ring-violet-600 focus:ring-offset-2 focus:ring-offset-black focus:outline-none max-[375px]:text-[14px]'
           aria-label='로그인 페이지로 이동'
         >
           로그인
-        </a>
-        <a
+        </Link>
+        <Link
           href={isAuth ? '/mydashboard' : '/signup'}
           className='text-[16px] leading-[26px] text-white hover:opacity-80 focus:ring-2 focus:ring-violet-600 focus:ring-offset-2 focus:ring-offset-black focus:outline-none max-[375px]:text-[14px]'
           aria-label='회원가입 페이지로 이동'
         >
           회원가입
-        </a>
+        </Link>
       </nav>
     </header>
   );

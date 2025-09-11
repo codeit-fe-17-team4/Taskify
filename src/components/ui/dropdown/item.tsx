@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { type ReactNode, useContext, useRef } from 'react';
 import { DropdownContext } from '@/components/ui/dropdown';
 import useCallbackWhenClickItem from '@/components/ui/dropdown/useCallbackWhenClickItem';
@@ -27,10 +28,11 @@ export default function Item({
   useCallbackWhenClickItem(itemButtonRef, handleClose);
 
   return (
-    <button
+    <motion.button
       ref={itemButtonRef}
       role='menuitem'
       type='button'
+      whileTap={{ scale: 0.9 }}
       className={cn(
         'hover:bg-violet-light hover:text-violet flex h-full w-full items-center gap-2 rounded-md px-1 py-3',
         additionalClassName
@@ -38,6 +40,6 @@ export default function Item({
       onClick={onClick}
     >
       {children}
-    </button>
+    </motion.button>
   );
 }

@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { useState } from 'react';
+import Button from '@/components/ui/button/button';
 
 const colorCode: { [key: string]: string } = {
   '#7AC555': 'bg-green-500',
@@ -79,12 +80,7 @@ export default function EditDashboardForm({
           </div>
         </div>
         <div className='mt-10 flex'>
-          <button
-            type='submit'
-            className='h-12 w-xl cursor-pointer rounded-md bg-violet-500 px-4 py-2 text-base font-medium text-white hover:bg-violet-600'
-          >
-            변경
-          </button>
+          <Button variant='primary' backgroundColor='violet' label='변경' />
         </div>
       </form>
     </div>

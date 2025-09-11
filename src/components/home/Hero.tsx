@@ -1,5 +1,7 @@
 // 랜딩페이지 메인 히어로 섹션 컴포넌트 (로고 + 제목 + 로그인 버튼)
+import { motion } from 'framer-motion';
 import Image from 'next/image';
+import Link from 'next/link';
 import { type ReactElement, useEffect, useState } from 'react';
 
 export default function Hero(): ReactElement {
@@ -42,14 +44,16 @@ export default function Hero(): ReactElement {
       </h1>
 
       {/* 로그인하기 버튼 */}
-      <a
-        href={isAuth ? '/mydashboard' : '/login'}
-        className='mx-auto mt-[111px] inline-flex h-[54px] w-[280px] items-center justify-center rounded-[8px] bg-violet-600 text-[18px] leading-[26px] font-[500] text-white hover:opacity-90 focus:ring-2 focus:ring-violet-600 focus:ring-offset-2 focus:ring-offset-black focus:outline-none max-[744px]:mt-[111px] max-[375px]:mt-[101px] max-[375px]:h-[46px] max-[375px]:w-[235px]'
-        aria-label='로그인 페이지로 이동'
-        role='button'
-      >
-        로그인하기
-      </a>
+      <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+        <Link
+          href={isAuth ? '/mydashboard' : '/login'}
+          className='mx-auto mt-[111px] inline-flex h-[54px] w-[280px] items-center justify-center rounded-[8px] bg-violet-600 text-[18px] leading-[26px] font-[500] text-white hover:opacity-90 focus:ring-2 focus:ring-violet-600 focus:ring-offset-2 focus:ring-offset-black focus:outline-none max-[744px]:mt-[111px] max-[375px]:mt-[101px] max-[375px]:h-[46px] max-[375px]:w-[235px]'
+          aria-label='로그인 페이지로 이동'
+          role='button'
+        >
+          로그인하기
+        </Link>
+      </motion.button>
     </section>
   );
 }

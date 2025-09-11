@@ -3,7 +3,7 @@ import DashboardLayout from '@/components/layout/dashboard-layout';
 import CreateNewboardModal from '@/components/mydashboard/create-newboard-modal';
 import DashboardList from '@/components/mydashboard/dashboard-list';
 import InvitationList from '@/components/mydashboard/invitation-list';
-import PeekabooLoader from '@/components/ui/loader/peekabooLoader';
+import LoadingCircle from '@/components/ui/loading-circle';
 import ModalPortal from '@/components/ui/modal/modal-portal';
 import { useFetch } from '@/hooks/useAsync';
 import { useCursorInfiniteScroll } from '@/hooks/useCursorInfiniteScroll';
@@ -84,12 +84,8 @@ export default function Mydashboard(): ReactNode {
     setIsModalOpen(false);
   };
 
-  if (!dashboardData || dashboardLoading) {
-    return <PeekabooLoader />;
-  }
-
-  if (dashboardError) {
-    return <div>Error ... </div>;
+  if (!dashboardData || loading) {
+    return <LoadingCircle />;
   }
 
   // if (!inviteData || invitationLoading) {

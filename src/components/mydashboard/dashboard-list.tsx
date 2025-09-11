@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -54,7 +55,9 @@ export default function DashboardList({
     <div className='tablet:w-lg mobile:w-2xs mb-10 w-full max-w-4xl'>
       <div className='tablet:grid-cols-2 mobile:grid-cols-1 relative grid grid-cols-3 gap-2'>
         {/* 새로운 대시보드 버튼 */}
-        <button
+        <motion.button
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.95 }}
           className='tablet:w-3xs mobile:w-2xs flex h-[60px] w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white hover:bg-gray-100'
           onClick={onOpenModal}
         >
@@ -67,7 +70,7 @@ export default function DashboardList({
             width={20}
             height={20}
           />
-        </button>
+        </motion.button>
 
         {/* 대시보드 카드 */}
         {dashboards.map((dashboard) => {
@@ -76,7 +79,11 @@ export default function DashboardList({
               key={dashboard.id}
               href={`/dashboard/${String(dashboard.id)}`}
             >
-              <button className='tablet:w-3xs mobile:w-2xs relative flex h-[60px] w-full cursor-pointer items-center gap-3 rounded-md border border-gray-200 bg-white p-4 hover:bg-gray-100'>
+              <motion.button
+                className='tablet:w-3xs mobile:w-2xs relative flex h-[60px] w-full cursor-pointer items-center gap-3 rounded-md border border-gray-200 bg-white p-4 hover:bg-gray-100'
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.95 }}
+              >
                 <div
                   className={`h-2 w-2 rounded-full ${colorCode[dashboard.color]}`}
                 />
@@ -85,7 +92,7 @@ export default function DashboardList({
                     {dashboard.title} {dashboard.createdByMe && '👑'}
                   </span>
                 </div>
-              </button>
+              </motion.button>
             </Link>
           );
         })}

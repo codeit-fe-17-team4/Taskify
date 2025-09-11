@@ -2,6 +2,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import type { ReactNode } from 'react';
 import Dot from '@/components/ui/side-menu/dot';
+import SideMenuSkeleton from '@/components/ui/side-menu/skeleton';
 import type { DashboardType } from '@/lib/dashboards/type';
 import { cn } from '@/utils/cn';
 import type { dashboardColorType } from '@/utils/dashboard-color';
@@ -9,15 +10,21 @@ import { getStringFromQuery } from '@/utils/getContextQuery';
 
 interface DashboardListProps {
   dashboards: DashboardType[];
+  loading: boolean;
 }
 export default function DashboardList({
   dashboards,
+  loading,
 }: DashboardListProps): ReactNode {
   const router = useRouter();
   const dashboardId = getStringFromQuery(router.query, 'dashboardId');
   const handleClickItem = (id: number) => {
     router.push(`/dashboard/${String(id)}`);
   };
+
+  if (loading) {
+    return <SideMenuSkeleton />;
+  }
 
   return (
     <ul>

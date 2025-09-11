@@ -1,6 +1,9 @@
 // 구성원 목록 조회 및 삭제 UI 컴포넌트
 
 import Image from 'next/image';
+import ChipProfile, {
+  getProfileColorByIdHash,
+} from '@/components/ui/chip/chip-profile';
 import type { MemberListType } from '@/lib/members/type';
 
 // 접근을 하지 못하고 있길래 빼봄!
@@ -70,6 +73,7 @@ export default function MemberList({
         <tbody>
           {getCurrentPageData().map((member, index, arr) => {
             const isLastItem = index === arr.length - 1;
+            const profileLabel = member.nickname.slice(0, 1).toUpperCase();
 
             return (
               <tr
@@ -78,9 +82,12 @@ export default function MemberList({
               >
                 <td className='py-3'>
                   <div className='flex items-center gap-2'>
-                    <div className='flex h-5 w-5 items-center justify-center rounded-full bg-sky-200 text-sm text-white'>
-                      {member.nickname.slice(0, 1).toUpperCase()}
-                    </div>
+                    <ChipProfile
+                      label={profileLabel}
+                      size='sm'
+                      color={getProfileColorByIdHash(member.userId)}
+                      profileImageUrl={member.profileImageUrl}
+                    />
                     <span>{member.nickname}</span>
                   </div>
                 </td>
@@ -89,7 +96,7 @@ export default function MemberList({
                     type='button'
                     className='mobile:w-12 w-15.5 cursor-pointer rounded border border-gray-200 px-3 py-1 text-sm text-violet-500 transition-colors hover:bg-gray-50'
                     onClick={() => {
-                      onDeleteMember(member.id);
+                      onDeleteMember(member.userId);
                     }}
                   >
                     삭제

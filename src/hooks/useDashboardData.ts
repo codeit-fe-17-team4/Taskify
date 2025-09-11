@@ -4,7 +4,7 @@ import { getColumnList } from '@/lib/columns/api';
 import { getMemberList } from '@/lib/members/api';
 
 interface UseDashboardDataProps {
-  dashboardId: string;
+  dashboardId: number;
   getCardList: (params: { columnId: number; size: number }) => Promise<{
     cursorId: number | null;
     totalCount: number;
@@ -57,7 +57,7 @@ export const useDashboardData = ({
 
   const getCardOrder = useCallback(
     (columnId: string): string[] | null => {
-      const orderKey = `card-order-${dashboardId}-${columnId}`;
+      const orderKey = `card-order-${String(dashboardId)}-${columnId}`;
       const saved = localStorage.getItem(orderKey);
 
       return saved ? (JSON.parse(saved) as string[]) : null;
@@ -70,7 +70,7 @@ export const useDashboardData = ({
       try {
         setIsLoading(true);
 
-        const columnsData = await getColumnList(Number(dashboardId));
+        const columnsData = await getColumnList(dashboardId);
         const columnsWithTasks = await Promise.all(
           columnsData.data.map(async (column) => {
             const cardsData = await getCardList({
@@ -127,7 +127,7 @@ export const useDashboardData = ({
         setColumns(columnsWithTasks);
 
         const membersData = await getMemberList({
-          dashboardId: Number(dashboardId),
+          dashboardId,
           size: 100,
         });
 
