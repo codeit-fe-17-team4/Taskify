@@ -271,8 +271,18 @@ export default function MydashboardEdit(): ReactNode {
                 alt='go-back'
                 width={10}
                 height={10}
+                style={{
+                  filter: theme === 'dark' ? 'brightness(0) invert(1)' : 'none',
+                }}
               />
-              <span className='text-base'>돌아가기</span>
+              <span
+                className='text-base'
+                style={{
+                  color: theme === 'dark' ? '#ffffff' : 'inherit',
+                }}
+              >
+                돌아가기
+              </span>
             </div>
           </Link>
         )}
@@ -328,14 +338,6 @@ export default function MydashboardEdit(): ReactNode {
 
         {/* 대시보드 삭제 */}
         <div className='h-20 w-full'>
-          {/* <button
-            type='button'
-            className='mobile:max-w-2xs my-6 h-12 w-xs cursor-pointer rounded-sm border border-gray-300 px-4 py-2 text-lg font-medium hover:bg-gray-100'
-            disabled={deletingDashboard}
-            onClick={handleDeleteDashboard}
-          >
-            {deletingDashboard ? '삭제 중...' : '대시보드 삭제하기'}
-          </button> */}
           <Button
             variant='primary'
             backgroundColor='white'

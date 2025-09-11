@@ -57,7 +57,7 @@ export default function Footer(): ReactElement {
             href='https://www.facebook.com'
             target='_blank'
             rel='noopener noreferrer'
-            className='text-on-inverse'
+            className='text-on-inverse focus:outline-none'
           >
             <svg
               width='18'
@@ -86,7 +86,7 @@ export default function Footer(): ReactElement {
             href='https://www.instagram.com'
             target='_blank'
             rel='noopener noreferrer'
-            className='text-on-inverse'
+            className='text-on-inverse focus:outline-none'
           >
             <svg
               width='18'

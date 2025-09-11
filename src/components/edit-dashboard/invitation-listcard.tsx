@@ -141,7 +141,11 @@ export default function InvitationListCard({
                   <td className='py-3'>
                     <button
                       type='button'
-                      className='mobile:w-12 w-16 cursor-pointer rounded border border-gray-200 px-3 py-1 text-sm text-violet-500 transition-colors hover:bg-gray-50'
+                      className={`mobile:w-12 w-16 cursor-pointer rounded border px-3 py-1 text-sm transition-colors ${
+                        theme === 'dark'
+                          ? 'border-[var(--auth-input-border)] text-green-400 hover:bg-[var(--button-secondary-hover)]'
+                          : 'border-gray-200 text-violet-500 hover:bg-gray-50'
+                      }`}
                       onClick={() => {
                         onDeleteMember(invitation.id);
                       }}

@@ -30,6 +30,7 @@ export default function PasswordInput({
   className = '',
 }: PasswordInputProps): React.JSX.Element {
   const { theme } = useTheme();
+
   return (
     <div
       className={`flex w-[520px] flex-col gap-0 max-[375px]:w-[351px] ${className}`}

@@ -1,25 +1,7 @@
 /* Auth 전용 CSS 변수들 - CSS Module */
-.auth {
-  --auth-bg: #fafafa;
-  --auth-primary: #5534da;
-  --auth-text-strong: #333236;
-  --auth-border: #d9d9d9;
-  --auth-placeholder: #9fa6b2;
-  --auth-error: #d6173a;
-}
+/* 기본 변수들은 globals.css에서 정의되므로 여기서는 auth 스코프 내에서만 사용되는 변수만 정의 */
 
-/* auth 스코프 내에서만 작동하는 utility 클래스들 */
-.auth .bgAuth {
-  background: var(--auth-bg);
-}
-
-.auth .textStrong {
-  color: var(--auth-text-strong);
-}
-
-.auth .ringAuth {
-  --tw-ring-color: var(--auth-primary);
-}
+/* auth 스코프 내에서만 작동하는 utility 클래스들 - 사용되지 않는 클래스들 제거 */
 
 /* 모달 관련 스타일 - 전역 스코프 */
 :global(.modalOverlay) {
@@ -43,17 +25,7 @@
   opacity: 0.9;
 }
 
-/* 다크모드 Auth 스타일 */
-:global(.dark) .auth {
-  --auth-bg: #1b1a1f;
-  --auth-primary: #00a200;
-  --auth-text-strong: #d6d5d9;
-  --auth-border: #524f5b;
-  --auth-placeholder: #a39fb2;
-  --auth-error: #ca372b;
-  --auth-input-bg: #201f23;
-  --auth-input-border: #524f5b;
-}
+/* 다크모드 Auth 스타일은 globals.css에서 전역으로 정의되므로 제거 */
 
 /* 다크모드 모달 스타일 - 전역 스코프 */
 :global(.dark) :global(.modalContainer) {

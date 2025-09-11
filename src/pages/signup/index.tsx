@@ -199,9 +199,11 @@ export default function SignupPage(): React.JSX.Element {
       style={{
         height: '1211px',
         minHeight: '1211px',
+        marginTop: '30px',
+        marginBottom: '30px',
       }}
     >
-      <div className='flex h-auto min-h-[653px] w-full max-w-[520px] shrink-0 flex-col items-center gap-[30px] px-4 max-[375px]:max-w-[351px] max-[375px]:gap-[36px]'>
+      <div className='flex h-auto w-full max-w-[520px] shrink-0 flex-col items-center gap-[30px] px-4 max-[375px]:max-w-[351px] max-[375px]:gap-[36px]'>
         {/* Hero Block */}
         <AuthHero title='첫 방문을 환영합니다!' />
 

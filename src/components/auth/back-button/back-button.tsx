@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { type ReactNode, useCallback } from 'react';
+import { useTheme } from '@/contexts/ThemeContext';
 import mypageStyles from '@/styles/mypage.module.css';
 
 interface BackButtonProps {
@@ -15,6 +16,7 @@ export default function BackButton({
   className = '',
 }: BackButtonProps): ReactNode {
   const router = useRouter();
+  const { theme } = useTheme();
 
   const handleClick = useCallback(() => {
     if (href) {
@@ -34,11 +36,19 @@ export default function BackButton({
       }}
       onClick={handleClick}
     >
-      <Image src='/icon/goback.svg' alt='go-back' width={10} height={10} />
+      <Image
+        src='/icon/goback.svg'
+        alt='go-back'
+        width={10}
+        height={10}
+        style={{
+          filter: theme === 'dark' ? 'brightness(0) invert(1)' : 'none',
+        }}
+      />
       <span
         className={mypageStyles.mobileBackButtonFont}
         style={{
-          color: '#333236',
+          color: theme === 'dark' ? '#ffffff' : '#333236',
           fontFamily: 'Pretendard',
           fontWeight: 500,
           fontSize: '16px',

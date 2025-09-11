@@ -2,13 +2,9 @@
 /* SPEC: 채팅 로그 기반 랜딩 페이지 스타일 변수 */
 /* 전역 오염 방지를 위한 명확한 네이밍 */
 
+/* 랜딩페이지 변수들은 globals.css에서 정의되므로 중복 제거 */
+/* footer 전용 변수만 유지 */
 :root {
-  --landing-brand-violet: #5534da;
-  --landing-black-000: var(--c-fg);
-  --landing-black-171: var(--c-ink-strong);
-  --landing-gray-9fa: var(--c-ink-tertiary);
-  --landing-radius-lg: 8px;
-
   /* ===== [landing] footer tokens ===== */
   --color-inverse: var(--c-bg); /* footer bg - 테마별로 변경됨 */
   --on-inverse: var(--c-fg); /* text - 테마별로 변경됨 */
@@ -17,22 +13,6 @@
 
 /* ===== 랜딩 페이지 전용 유틸리티 ===== */
 @layer utilities {
-  .bg-brand {
-    background: var(--landing-brand-violet) !important;
-  }
-
-  .text-brand {
-    color: var(--landing-brand-violet) !important;
-  }
-
-  .bg-black-171 {
-    background: var(--landing-black-171) !important;
-  }
-
-  .text-gray-9fa {
-    color: var(--landing-gray-9fa) !important;
-  }
-
   /* [landing] 한글 줄바꿈 제어 */
   .break-keep {
     word-break: keep-all !important;
