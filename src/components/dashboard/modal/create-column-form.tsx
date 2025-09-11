@@ -20,7 +20,7 @@ export default function CreateColumnForm({
           htmlFor='new-column-name'
           className='mb-2 block text-lg leading-6 font-medium'
         >
-          대시보드 이름
+          컬럼 이름
           <span className='text-violet align-baseline text-lg'> *</span>
         </label>
         <input
