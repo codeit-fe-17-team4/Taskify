@@ -36,14 +36,14 @@ export default function SortableTaskCard({
       ref={setNodeRef}
       style={style}
       {...attributes}
-      className='relative w-full'
+      className='group relative w-full'
     >
       <div className='w-full'>
         <ColumnTaskCard task={task} onEditTask={onEditTask} />
       </div>
       <div
         {...listeners}
-        className='absolute top-2 right-2 h-6 w-6 cursor-grab rounded bg-gray-200 opacity-0 transition-opacity hover:opacity-100 active:cursor-grabbing'
+        className='absolute top-2 right-2 h-6 w-6 cursor-grab rounded bg-gray-200 opacity-0 transition-opacity group-hover:opacity-100 active:cursor-grabbing'
       >
         <div className='flex h-full w-full items-center justify-center text-xs text-gray-500'>
           ↕
