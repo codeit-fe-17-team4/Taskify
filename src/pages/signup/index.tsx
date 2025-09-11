@@ -1,4 +1,5 @@
 import type { GetServerSideProps } from 'next';
+import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useCallback, useMemo, useState } from 'react';
@@ -183,123 +184,129 @@ export default function SignupPage(): React.JSX.Element {
   );
 
   return (
-    <main
-      className={`${styles.auth} ${styles.bgAuth} flex items-center justify-center`}
-      style={{
-        height: '1211px',
-        minHeight: '1211px',
-      }}
-    >
-      <div className='flex h-auto min-h-[653px] w-full max-w-[520px] shrink-0 flex-col items-center gap-[30px] px-4 max-[375px]:max-w-[351px] max-[375px]:gap-[36px]'>
-        {/* Hero Block */}
-        <AuthHero title='첫 방문을 환영합니다!' />
+    <>
+      <Head>
+        <title>Taskify | 회원가입</title>
+        <meta property='og:title' content='Taskify | 회원가입' key='title' />
+      </Head>
+      <main
+        className={`${styles.auth} ${styles.bgAuth} flex items-center justify-center`}
+        style={{
+          height: '1211px',
+          minHeight: '1211px',
+        }}
+      >
+        <div className='flex h-auto min-h-[653px] w-full max-w-[520px] shrink-0 flex-col items-center gap-[30px] px-4 max-[375px]:max-w-[351px] max-[375px]:gap-[36px]'>
+          {/* Hero Block */}
+          <AuthHero title='첫 방문을 환영합니다!' />
 
-        {/* Form Wrapper */}
-        <div className='flex w-full max-w-[520px] flex-col items-center max-[375px]:max-w-[351px]'>
-          <form
-            className='flex w-full max-w-[520px] flex-col items-start max-[375px]:max-w-[351px]'
-            onSubmit={handleSubmit}
-          >
-            {/* 폼 요소들 */}
-            <div className='flex flex-col space-y-6 max-[375px]:space-y-2'>
-              {/* 입력 필드들 */}
-              <div className='flex w-full max-w-[520px] flex-col items-start max-[375px]:max-w-[351px]'>
-                <TextInput
-                  id='nickname'
-                  label='닉네임'
-                  value={nickname}
-                  placeholder='닉네임을 입력해 주세요'
-                  error={errors.nickname}
-                  onChange={setNickname}
-                  onBlur={handleNicknameBlur}
-                />
-                <EmailInput
-                  id='email'
-                  label='이메일'
-                  value={email}
-                  placeholder='이메일을 입력해 주세요'
-                  error={errors.email}
-                  className='mt-[16px] max-[375px]:mt-0'
-                  onChange={setEmail}
-                  onBlur={handleEmailBlur}
-                />
-                <PasswordInput
-                  id='password'
-                  label='비밀번호'
-                  value={password}
-                  placeholder='비밀번호를 입력해 주세요'
-                  error={errors.password}
-                  showPassword={showPassword}
-                  className='mt-[16px] max-[375px]:mt-0'
-                  onChange={setPassword}
-                  onBlur={handlePasswordBlur}
-                  onTogglePassword={handleTogglePassword}
-                />
-                <PasswordInput
-                  id='confirmPassword'
-                  label='비밀번호 확인'
-                  value={confirmPassword}
-                  placeholder='비밀번호를 다시 입력해 주세요'
-                  error={confirmPasswordError}
-                  showPassword={showConfirmPassword}
-                  className='mt-[16px] max-[375px]:mt-0'
-                  onChange={setConfirmPassword}
-                  onBlur={handleConfirmPasswordBlur}
-                  onTogglePassword={handleToggleConfirmPassword}
-                />
-              </div>
+          {/* Form Wrapper */}
+          <div className='flex w-full max-w-[520px] flex-col items-center max-[375px]:max-w-[351px]'>
+            <form
+              className='flex w-full max-w-[520px] flex-col items-start max-[375px]:max-w-[351px]'
+              onSubmit={handleSubmit}
+            >
+              {/* 폼 요소들 */}
+              <div className='flex flex-col space-y-6 max-[375px]:space-y-2'>
+                {/* 입력 필드들 */}
+                <div className='flex w-full max-w-[520px] flex-col items-start max-[375px]:max-w-[351px]'>
+                  <TextInput
+                    id='nickname'
+                    label='닉네임'
+                    value={nickname}
+                    placeholder='닉네임을 입력해 주세요'
+                    error={errors.nickname}
+                    onChange={setNickname}
+                    onBlur={handleNicknameBlur}
+                  />
+                  <EmailInput
+                    id='email'
+                    label='이메일'
+                    value={email}
+                    placeholder='이메일을 입력해 주세요'
+                    error={errors.email}
+                    className='mt-[16px] max-[375px]:mt-0'
+                    onChange={setEmail}
+                    onBlur={handleEmailBlur}
+                  />
+                  <PasswordInput
+                    id='password'
+                    label='비밀번호'
+                    value={password}
+                    placeholder='비밀번호를 입력해 주세요'
+                    error={errors.password}
+                    showPassword={showPassword}
+                    className='mt-[16px] max-[375px]:mt-0'
+                    onChange={setPassword}
+                    onBlur={handlePasswordBlur}
+                    onTogglePassword={handleTogglePassword}
+                  />
+                  <PasswordInput
+                    id='confirmPassword'
+                    label='비밀번호 확인'
+                    value={confirmPassword}
+                    placeholder='비밀번호를 다시 입력해 주세요'
+                    error={confirmPasswordError}
+                    showPassword={showConfirmPassword}
+                    className='mt-[16px] max-[375px]:mt-0'
+                    onChange={setConfirmPassword}
+                    onBlur={handleConfirmPasswordBlur}
+                    onTogglePassword={handleToggleConfirmPassword}
+                  />
+                </div>
 
-              {/* 약관 동의 */}
-              <div className='flex w-full max-w-[520px] items-center gap-3'>
-                <input
-                  id='terms'
-                  type='checkbox'
-                  checked={agreedToTerms}
-                  className='h-5 w-5 rounded border-gray-300 text-[var(--auth-primary)] focus:ring-[var(--auth-primary)]'
-                  onChange={handleTermsChange}
-                />
-                <label
-                  htmlFor='terms'
-                  className={`${styles.textStrong} cursor-pointer text-[16px] leading-[26px]`}
+                {/* 약관 동의 */}
+                <div className='flex w-full max-w-[520px] items-center gap-3'>
+                  <input
+                    id='terms'
+                    type='checkbox'
+                    checked={agreedToTerms}
+                    className='h-5 w-5 rounded border-gray-300 text-[var(--auth-primary)] focus:ring-[var(--auth-primary)]'
+                    onChange={handleTermsChange}
+                  />
+                  <label
+                    htmlFor='terms'
+                    className={`${styles.textStrong} cursor-pointer text-[16px] leading-[26px]`}
+                  >
+                    이용약관에 동의합니다
+                  </label>
+                </div>
+
+                {/* 회원가입 버튼 */}
+                <AuthButton
+                  disabled={!isFormValidNow}
+                  isLoading={isLoading}
+                  loadingText='가입 중...'
                 >
-                  이용약관에 동의합니다
-                </label>
-              </div>
+                  가입하기
+                </AuthButton>
 
-              {/* 회원가입 버튼 */}
-              <AuthButton
-                disabled={!isFormValidNow}
-                isLoading={isLoading}
-                loadingText='가입 중...'
-              >
-                가입하기
-              </AuthButton>
-
-              {/* 하단 링크 */}
-              <div
-                className={`${styles.textStrong} w-full max-w-[520px] text-center text-[16px] leading-[19px] max-[375px]:max-w-[351px]`}
-              >
-                <span>이미 회원이신가요? </span>
-                <Link
-                  href='/login'
-                  className='text-[var(--auth-primary)] underline transition-opacity hover:opacity-80'
+                {/* 하단 링크 */}
+                <div
+                  className={`${styles.textStrong} w-full max-w-[520px] text-center text-[16px] leading-[19px] max-[375px]:max-w-[351px]`}
                 >
-                  로그인하기
-                </Link>
+                  <span>이미 회원이신가요? </span>
+                  <Link
+                    href='/login'
+                    className='text-[var(--auth-primary)] underline transition-opacity hover:opacity-80'
+                  >
+                    로그인하기
+                  </Link>
+                </div>
               </div>
-            </div>
-          </form>
+            </form>
+          </div>
         </div>
-      </div>
 
-      {/* 통합 모달 */}
-      <UnifiedModal
-        isOpen={showModal}
-        message={modalMessage}
-        type={modalMessage === SUCCESS_MESSAGE ? 'success' : 'error'}
-        onClose={handleModalClose}
-      />
-    </main>
+        {/* 통합 모달 */}
+        <UnifiedModal
+          isOpen={showModal}
+          message={modalMessage}
+          type={modalMessage === SUCCESS_MESSAGE ? 'success' : 'error'}
+          onClose={handleModalClose}
+        />
+      </main>
+    </>
   );
 }
 

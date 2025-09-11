@@ -1,4 +1,5 @@
 import type { GetServerSideProps } from 'next';
+import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { type JSX, useCallback, useMemo, useState } from 'react';
@@ -121,86 +122,92 @@ export default function LoginPage(): JSX.Element {
   );
 
   return (
-    <main
-      className={`${styles.auth} ${styles.bgAuth} flex items-center justify-center`}
-      style={{
-        height: '1080px',
-        minHeight: '1080px',
-      }}
-    >
-      <div className='flex h-auto min-h-[653px] w-[520px] shrink-0 flex-col items-center gap-[30px] max-[375px]:w-[351px] max-[375px]:gap-[36px]'>
-        {/* Hero Block */}
-        <AuthHero title='오늘도 만나서 반가워요!' />
+    <>
+      <Head>
+        <title>Taskify | 로그인</title>
+        <meta property='og:title' content='Taskify | 로그인' key='title' />
+      </Head>
+      <main
+        className={`${styles.auth} ${styles.bgAuth} flex items-center justify-center`}
+        style={{
+          height: '1080px',
+          minHeight: '1080px',
+        }}
+      >
+        <div className='flex h-auto min-h-[653px] w-[520px] shrink-0 flex-col items-center gap-[30px] max-[375px]:w-[351px] max-[375px]:gap-[36px]'>
+          {/* Hero Block */}
+          <AuthHero title='오늘도 만나서 반가워요!' />
 
-        {/* Form Wrapper */}
-        <div className='flex w-[520px] flex-col items-center max-[375px]:w-[351px]'>
-          <form
-            className='flex w-[520px] flex-col items-start max-[375px]:w-[351px]'
-            onSubmit={handleSubmit}
-          >
-            {/* 폼 요소들 */}
-            <div className='flex flex-col space-y-6 max-[744px]:space-y-[13px] max-[375px]:space-y-4'>
-              {/* 입력 필드들 */}
-              <div className='flex w-[520px] flex-col items-start max-[375px]:w-[351px]'>
-                <EmailInput
-                  id='email'
-                  label='이메일'
-                  value={email}
-                  placeholder='이메일을 입력해 주세요'
-                  error={errors.email}
-                  onChange={setEmail}
-                  onBlur={handleEmailBlur}
-                />
-                <PasswordInput
-                  id='password'
-                  label='비밀번호'
-                  value={password}
-                  placeholder='비밀번호를 입력해 주세요'
-                  error={errors.password}
-                  showPassword={showPassword}
-                  className='mt-[16px] max-[744px]:mt-[9px]'
-                  onChange={setPassword}
-                  onBlur={handlePasswordBlur}
-                  onTogglePassword={useCallback(() => {
-                    setShowPassword(!showPassword);
-                  }, [showPassword])}
-                />
-              </div>
+          {/* Form Wrapper */}
+          <div className='flex w-[520px] flex-col items-center max-[375px]:w-[351px]'>
+            <form
+              className='flex w-[520px] flex-col items-start max-[375px]:w-[351px]'
+              onSubmit={handleSubmit}
+            >
+              {/* 폼 요소들 */}
+              <div className='flex flex-col space-y-6 max-[744px]:space-y-[13px] max-[375px]:space-y-4'>
+                {/* 입력 필드들 */}
+                <div className='flex w-[520px] flex-col items-start max-[375px]:w-[351px]'>
+                  <EmailInput
+                    id='email'
+                    label='이메일'
+                    value={email}
+                    placeholder='이메일을 입력해 주세요'
+                    error={errors.email}
+                    onChange={setEmail}
+                    onBlur={handleEmailBlur}
+                  />
+                  <PasswordInput
+                    id='password'
+                    label='비밀번호'
+                    value={password}
+                    placeholder='비밀번호를 입력해 주세요'
+                    error={errors.password}
+                    showPassword={showPassword}
+                    className='mt-[16px] max-[744px]:mt-[9px]'
+                    onChange={setPassword}
+                    onBlur={handlePasswordBlur}
+                    onTogglePassword={useCallback(() => {
+                      setShowPassword(!showPassword);
+                    }, [showPassword])}
+                  />
+                </div>
 
-              {/* 로그인 버튼 */}
-              <AuthButton
-                disabled={!isFormValidNow}
-                isLoading={isLoading}
-                loadingText='로그인 중...'
-              >
-                로그인
-              </AuthButton>
-
-              {/* 하단 링크 */}
-              <div
-                className={`${styles.textStrong} w-[520px] text-center text-[16px] leading-[19px] max-[375px]:w-[351px]`}
-              >
-                <span>계정이 없으신가요? </span>
-                <Link
-                  href='/signup'
-                  className='text-[var(--auth-primary)] underline transition-opacity hover:opacity-80'
+                {/* 로그인 버튼 */}
+                <AuthButton
+                  disabled={!isFormValidNow}
+                  isLoading={isLoading}
+                  loadingText='로그인 중...'
                 >
-                  회원가입하기
-                </Link>
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
+                  로그인
+                </AuthButton>
 
-      {/* 통합 모달 */}
-      <UnifiedModal
-        isOpen={showModal}
-        message={modalMessage}
-        type='error'
-        onClose={handleModalClose}
-      />
-    </main>
+                {/* 하단 링크 */}
+                <div
+                  className={`${styles.textStrong} w-[520px] text-center text-[16px] leading-[19px] max-[375px]:w-[351px]`}
+                >
+                  <span>계정이 없으신가요? </span>
+                  <Link
+                    href='/signup'
+                    className='text-[var(--auth-primary)] underline transition-opacity hover:opacity-80'
+                  >
+                    회원가입하기
+                  </Link>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        {/* 통합 모달 */}
+        <UnifiedModal
+          isOpen={showModal}
+          message={modalMessage}
+          type='error'
+          onClose={handleModalClose}
+        />
+      </main>
+    </>
   );
 }
 

@@ -4,6 +4,7 @@ import type { NextPage } from 'next';
 import type { AppProps } from 'next/app';
 import { Montserrat } from 'next/font/google';
 import localFont from 'next/font/local';
+import Head from 'next/head';
 import type { ReactNode } from 'react';
 
 const pretendardVariable = localFont({
@@ -28,6 +29,11 @@ export default function App({
     <main
       className={`${pretendardVariable.variable} font-pretendard ${montserrat.variable}`}
     >
+      <Head>
+        <title>Taskify</title>
+        <meta property='og:title' content='Taskify' key='title' />
+        <link rel='icon' href='/favicon.ico' />
+      </Head>
       <Component {...pageProps} />
     </main>
   );

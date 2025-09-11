@@ -1,3 +1,4 @@
+import Head from 'next/head';
 import { type ReactNode, useCallback, useState } from 'react';
 import DashboardLayout from '@/components/layout/dashboard-layout';
 import CreateNewboardModal from '@/components/mydashboard/create-newboard-modal';
@@ -91,7 +92,6 @@ export default function Mydashboard(): ReactNode {
   const itemsPerPage = 5;
   const totalPages = Math.ceil((dashboardData?.totalCount ?? 5) / itemsPerPage);
 
-  console.log(dashboardData?.totalCount, itemsPerPage);
   const handlePrevPage = () => {
     if (currentPage > 1) {
       setCurrentPage((prevPage) => prevPage - 1);
@@ -160,6 +160,14 @@ export default function Mydashboard(): ReactNode {
 
   return (
     <>
+      <Head>
+        <title>Taskify | 나의 대시보드</title>
+        <meta
+          property='og:title'
+          content='Taskify | 나의 대시보드'
+          key='title'
+        />
+      </Head>
       <div className='flex h-full min-h-screen w-full flex-col bg-gray-50'>
         {/* 새로운 대시보드 */}
         <div className='max-w-7xl p-6'>

@@ -1,3 +1,4 @@
+import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -73,7 +74,6 @@ export default function MydashboardEdit(): ReactNode {
       try {
         const data = await getMemberList({ dashboardId: Number(dashboardId) });
 
-        console.log('구성원 API 응답:', data);
         setMembers(data.members);
       } catch (error) {
         console.error('구성원 목록 불러오기 실패:', error);
@@ -93,9 +93,6 @@ export default function MydashboardEdit(): ReactNode {
         page: 1,
         size: 10,
       });
-
-      console.log('초대 API 응답:', data);
-      console.log('invitations 필드:', data.invitations);
 
       setInvitations(data.invitations);
     } catch (error) {
@@ -242,90 +239,100 @@ export default function MydashboardEdit(): ReactNode {
   };
 
   return (
-    <div className='min-h-screen bg-gray-50'>
-      <div className='mr-120 ml-5 min-w-2xs pt-5'>
-        {dashboardId && (
-          <Link href={`/dashboard/${dashboardId}`}>
-            <div className='flex w-full cursor-pointer items-center gap-2'>
-              <Image
-                src='/icon/goback.svg'
-                alt='go-back'
-                width={10}
-                height={10}
-              />
-              <span className='text-base'>돌아가기</span>
-            </div>
-          </Link>
-        )}
+    <>
+      <Head>
+        <title>Taskify | 대시보드 관리</title>
+        <meta
+          property='og:title'
+          content='Taskify | 대시보드 관리'
+          key='title'
+        />
+      </Head>
+      <div className='min-h-screen bg-gray-50'>
+        <div className='mr-120 ml-5 min-w-2xs pt-5'>
+          {dashboardId && (
+            <Link href={`/dashboard/${dashboardId}`}>
+              <div className='flex w-full cursor-pointer items-center gap-2'>
+                <Image
+                  src='/icon/goback.svg'
+                  alt='go-back'
+                  width={10}
+                  height={10}
+                />
+                <span className='text-base'>돌아가기</span>
+              </div>
+            </Link>
+          )}
 
-        {/* 대시보드 정보 수정 */}
-        {dashboardData && (
-          <EditDashboardForm
-            prevTitle={dashboardData.title}
-            prevColor={dashboardData.color}
-            onSubmit={async ({ title, color }) => {
-              if (!dashboardId || updating) {
-                return;
-              }
-              try {
-                setUpdating(true);
-                const updatedDashboard = await editDashBoard({
-                  id: Number(dashboardId),
-                  body: { title, color }, // hex 값
-                });
+          {/* 대시보드 정보 수정 */}
+          {dashboardData && (
+            <EditDashboardForm
+              prevTitle={dashboardData.title}
+              prevColor={dashboardData.color}
+              onSubmit={async ({ title, color }) => {
+                if (!dashboardId || updating) {
+                  return;
+                }
+                try {
+                  setUpdating(true);
+                  const updatedDashboard = await editDashBoard({
+                    id: Number(dashboardId),
+                    body: { title, color }, // hex 값
+                  });
 
-                setDashboardData(updatedDashboard); // 상태 갱신
-                alert('대시보드가 수정되었습니다.');
-              } catch (error) {
-                console.error('대시보드 수정 실패:', error);
-                alert('수정에 실패했습니다.');
-              } finally {
-                setUpdating(false);
-              }
-            }}
+                  setDashboardData(updatedDashboard); // 상태 갱신
+                  alert('대시보드가 수정되었습니다.');
+                } catch (error) {
+                  console.error('대시보드 수정 실패:', error);
+                  alert('수정에 실패했습니다.');
+                } finally {
+                  setUpdating(false);
+                }
+              }}
+            />
+          )}
+
+          {/* 구성원 */}
+          <MemberList
+            members={members}
+            currentPage={membersCurrentPage}
+            totalPages={membersTotalPages}
+            getCurrentPageData={getCurrentMembersPageData}
+            onDeleteMember={handleDeleteMember}
+            onPrevPage={handleMembersPrevPage}
+            onNextPage={handleMembersNextPage}
           />
-        )}
+          {/* 초대내역 */}
+          <InvitationListCard
+            currentPage={invitationsCurrentPage}
+            totalPages={invitationsTotalPages}
+            getCurrentPageData={getCurrentInvitationsPageData}
+            onDeleteMember={handleDeleteInvitation}
+            onPrevPage={handleInvitationsPrevPage}
+            onNextPage={handleInvitationsNextPage}
+            onOpenModal={handleOpenModal}
+          />
 
-        {/* 구성원 */}
-        <MemberList
-          members={members}
-          currentPage={membersCurrentPage}
-          totalPages={membersTotalPages}
-          getCurrentPageData={getCurrentMembersPageData}
-          onDeleteMember={handleDeleteMember}
-          onPrevPage={handleMembersPrevPage}
-          onNextPage={handleMembersNextPage}
-        />
-        {/* 초대내역 */}
-        <InvitationListCard
-          currentPage={invitationsCurrentPage}
-          totalPages={invitationsTotalPages}
-          getCurrentPageData={getCurrentInvitationsPageData}
-          onDeleteMember={handleDeleteInvitation}
-          onPrevPage={handleInvitationsPrevPage}
-          onNextPage={handleInvitationsNextPage}
-          onOpenModal={handleOpenModal}
-        />
-
-        {/* 대시보드 삭제 */}
-        <div className='h-20 w-full'>
-          <Button
-            variant='primary'
-            backgroundColor='white'
-            additionalClass='mobile:max-w-2xs w-xs my-6 text-red'
-            disabled={deletingDashboard}
-            label={deletingDashboard ? '삭제 중...' : '대시보드 삭제하기'}
-            onClick={handleDeleteDashboard}
+          {/* 대시보드 삭제 */}
+          <div className='h-20 w-full'>
+            <Button
+              variant='primary'
+              backgroundColor='white'
+              additionalClass='mobile:max-w-2xs w-xs my-6 text-red'
+              disabled={deletingDashboard}
+              label={deletingDashboard ? '삭제 중...' : '대시보드 삭제하기'}
+              onClick={handleDeleteDashboard}
+            />
+          </div>
+          <InviteMemberModal
+            isOpen={isModalOpen}
+            dashboardId={dashboardId}
+            onClose={handleCloseModal}
+            onSubmit={handleSubmitInviteMember}
           />
         </div>
-        <InviteMemberModal
-          isOpen={isModalOpen}
-          dashboardId={dashboardId}
-          onClose={handleCloseModal}
-          onSubmit={handleSubmitInviteMember}
-        />
       </div>
-    </div>
+    </>
   );
 }
 

@@ -1,3 +1,4 @@
+import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useCallback, useState } from 'react';
 import {
@@ -239,117 +240,123 @@ export default function DashboardDetailPage({
   }
 
   return (
-    <div className='min-h-screen bg-gray-50'>
-      <main
-        className='horizontal-scroll-only h-screen bg-gray-50'
-        style={{
-          overflowX: 'auto',
-          scrollbarWidth: 'thin',
-          msOverflowStyle: 'auto',
-        }}
-      >
-        <DndContext
-          collisionDetection={closestCenter}
-          onDragStart={handleDragStart}
-          onDragEnd={handleDragEnd}
+    <>
+      <Head>
+        <title>Taskify | 대시보드</title>
+        <meta property='og:title' content='Taskify | 대시보드' key='title' />
+      </Head>
+      <div className='min-h-screen bg-gray-50'>
+        <main
+          className='horizontal-scroll-only h-screen bg-gray-50'
+          style={{
+            overflowX: 'auto',
+            scrollbarWidth: 'thin',
+            msOverflowStyle: 'auto',
+          }}
         >
-          <ColumnLayout
-            columns={columns}
-            maxColumns={10}
-            onAddColumnClick={handleAddColumnClick}
-            onColumnSettingsClick={handleColumnSettingsClick}
-            onTaskClick={(task) => {
-              handleTaskClick(task);
-              setIsDetailModalOpen(true);
-            }}
-            onAddTaskClick={(columnId) => {
-              handleAddTaskClick(columnId);
-              setIsCreateTaskModalOpen(true);
-            }}
-          />
-          <DragOverlay>
-            {activeTask ? (
-              <div className='rotate-3 opacity-90'>
-                <div className='w-80 rounded-lg border border-gray-300 bg-white p-4 shadow-lg'>
-                  <h3 className='font-medium text-gray-900'>
-                    {activeTask.title}
-                  </h3>
-                  <p className='text-sm text-gray-600'>
-                    {activeTask.description}
-                  </p>
+          <DndContext
+            collisionDetection={closestCenter}
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
+          >
+            <ColumnLayout
+              columns={columns}
+              maxColumns={10}
+              onAddColumnClick={handleAddColumnClick}
+              onColumnSettingsClick={handleColumnSettingsClick}
+              onTaskClick={(task) => {
+                handleTaskClick(task);
+                setIsDetailModalOpen(true);
+              }}
+              onAddTaskClick={(columnId) => {
+                handleAddTaskClick(columnId);
+                setIsCreateTaskModalOpen(true);
+              }}
+            />
+            <DragOverlay>
+              {activeTask ? (
+                <div className='rotate-3 opacity-90'>
+                  <div className='w-80 rounded-lg border border-gray-300 bg-white p-4 shadow-lg'>
+                    <h3 className='font-medium text-gray-900'>
+                      {activeTask.title}
+                    </h3>
+                    <p className='text-sm text-gray-600'>
+                      {activeTask.description}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ) : null}
-          </DragOverlay>
-        </DndContext>
-      </main>
+              ) : null}
+            </DragOverlay>
+          </DndContext>
+        </main>
 
-      <CreateColumnModal
-        isOpen={isColumnModalOpen}
-        existingColumns={columns.map((col) => col.title)}
-        maxColumns={10}
-        onSubmit={handleColumnSubmit}
-        onClose={() => {
-          setIsColumnModalOpen(false);
-        }}
-      />
+        <CreateColumnModal
+          isOpen={isColumnModalOpen}
+          existingColumns={columns.map((col) => col.title)}
+          maxColumns={10}
+          onSubmit={handleColumnSubmit}
+          onClose={() => {
+            setIsColumnModalOpen(false);
+          }}
+        />
 
-      <CreateTaskModal
-        isOpen={isCreateTaskModalOpen}
-        userInfo={userInfo}
-        members={members}
-        onSubmit={handleCreateTask}
-        onClose={() => {
-          setIsCreateTaskModalOpen(false);
-        }}
-      />
+        <CreateTaskModal
+          isOpen={isCreateTaskModalOpen}
+          userInfo={userInfo}
+          members={members}
+          onSubmit={handleCreateTask}
+          onClose={() => {
+            setIsCreateTaskModalOpen(false);
+          }}
+        />
 
-      <ManageColumnModal
-        isOpen={isManageColumnModalOpen}
-        column={selectedColumn}
-        existingColumns={columns.map((col) => col.title)}
-        onUpdate={handleColumnUpdate}
-        onDelete={handleColumnDelete}
-        onClose={() => {
-          setIsManageColumnModalOpen(false);
-        }}
-      />
+        <ManageColumnModal
+          isOpen={isManageColumnModalOpen}
+          column={selectedColumn}
+          existingColumns={columns.map((col) => col.title)}
+          onUpdate={handleColumnUpdate}
+          onDelete={handleColumnDelete}
+          onClose={() => {
+            setIsManageColumnModalOpen(false);
+          }}
+        />
 
-      <TaskDetailModal
-        isOpen={isDetailModalOpen}
-        task={selectedTask}
-        columnTitle={getSelectedTaskColumn()?.title}
-        dashboardId={String(dashboardId)}
-        columnId={getSelectedTaskColumn()?.id}
-        currentUser={{
-          id: String(userInfo?.id ?? 'user-1'),
-          name: userInfo?.nickname ?? '사용자',
-          profileColor: '#7AC555',
-        }}
-        onDelete={handleTaskDelete}
-        onEdit={(task) => {
-          handleTaskEdit(task);
-          setIsDetailModalOpen(false);
-          setIsEditTaskModalOpen(true);
-        }}
-        onClose={() => {
-          setIsDetailModalOpen(false);
-        }}
-      />
+        <TaskDetailModal
+          isOpen={isDetailModalOpen}
+          task={selectedTask}
+          columnTitle={getSelectedTaskColumn()?.title}
+          dashboardId={String(dashboardId)}
+          columnId={getSelectedTaskColumn()?.id}
+          currentUser={{
+            id: String(userInfo?.id ?? 'user-1'),
+            name: userInfo?.nickname ?? '사용자',
+            profileColor: '#7AC555',
+          }}
+          onDelete={handleTaskDelete}
+          onEdit={(task) => {
+            handleTaskEdit(task);
+            setIsDetailModalOpen(false);
+            setIsEditTaskModalOpen(true);
+          }}
+          onClose={() => {
+            setIsDetailModalOpen(false);
+          }}
+        />
 
-      <EditTaskModal
-        isOpen={isEditTaskModalOpen}
-        initialTask={selectedTask ?? undefined}
-        columns={columns.map((col) => ({ id: col.id, title: col.title }))}
-        currentColumnTitle={getSelectedTaskColumn()?.title ?? undefined}
-        userInfo={userInfo}
-        members={members}
-        onSubmit={handleTaskUpdate}
-        onClose={() => {
-          setIsEditTaskModalOpen(false);
-        }}
-      />
-    </div>
+        <EditTaskModal
+          isOpen={isEditTaskModalOpen}
+          initialTask={selectedTask ?? undefined}
+          columns={columns.map((col) => ({ id: col.id, title: col.title }))}
+          currentColumnTitle={getSelectedTaskColumn()?.title ?? undefined}
+          userInfo={userInfo}
+          members={members}
+          onSubmit={handleTaskUpdate}
+          onClose={() => {
+            setIsEditTaskModalOpen(false);
+          }}
+        />
+      </div>
+    </>
   );
 }
 
