@@ -178,7 +178,7 @@ export default function Mydashboard(): ReactNode {
 
           {/* 초대받은 대시보드 */}
 
-          {!inviteData || invitationLoading ? (
+          {invitationLoading ? (
             <InvitationListSkeleton />
           ) : (
             <InvitationList
