@@ -3,7 +3,7 @@
 당신을 위한 새로운 일정관리, Taskify 웹과 모바일에서 팀과 함께 편리하게
 사용해보세요!
 
-🔗 배포 주소: https://taskify-schedule.vercel.app/
+🔗 배포 주소: https://taskify-liard-three.vercel.app/
 
 <img width="800" alt="랜딩 페이지 PC" src="https://github.com/user-attachments/assets/007e689d-7a47-47ce-98af-2e349d23d6fa" />
 
