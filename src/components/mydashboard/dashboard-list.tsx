@@ -76,7 +76,7 @@ export default function DashboardList({
         {dashboards.map((dashboard) => {
           return (
             <Link
-              key={dashboard.id}
+              key={`${crypto.randomUUID()}-${String(dashboard.id)}`}
               href={`/dashboard/${String(dashboard.id)}`}
             >
               <motion.button

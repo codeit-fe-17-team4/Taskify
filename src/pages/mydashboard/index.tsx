@@ -3,7 +3,10 @@ import DashboardLayout from '@/components/layout/dashboard-layout';
 import CreateNewboardModal from '@/components/mydashboard/create-newboard-modal';
 import DashboardList from '@/components/mydashboard/dashboard-list';
 import InvitationList from '@/components/mydashboard/invitation-list';
-import LoadingCircle from '@/components/ui/loading-circle';
+import {
+  DashboardListSkeleton,
+  InvitationListSkeleton,
+} from '@/components/mydashboard/skeleton';
 import ModalPortal from '@/components/ui/modal/modal-portal';
 import { useFetch } from '@/hooks/useAsync';
 import { useCursorInfiniteScroll } from '@/hooks/useCursorInfiniteScroll';
@@ -38,7 +41,7 @@ export default function Mydashboard(): ReactNode {
   /* 초대받은 목록 API 연동 */
   const {
     data: inviteData,
-    isLoading,
+    isLoading: invitationLoading,
     error: invitationError,
     hasMore,
     ref,
@@ -84,22 +87,11 @@ export default function Mydashboard(): ReactNode {
     setIsModalOpen(false);
   };
 
-  if (!dashboardData || dashboardLoading) {
-    return <LoadingCircle />;
-  }
-
-  // if (!inviteData || invitationLoading) {
-  //   return <div> loading ...</div>;
-  // }
-
-  if (invitationError) {
-    return <div>Error ... </div>;
-  }
-
   // 페이지네이션 (라이브러리 x)
   const itemsPerPage = 5;
-  const totalPages = Math.ceil(dashboardData.totalCount / itemsPerPage);
-  const getCurrentPageData = () => dashboardData.dashboards;
+  const totalPages = Math.ceil((dashboardData?.totalCount ?? 5) / itemsPerPage);
+
+  console.log(dashboardData?.totalCount, itemsPerPage);
   const handlePrevPage = () => {
     if (currentPage > 1) {
       setCurrentPage((prevPage) => prevPage - 1);
@@ -162,32 +154,45 @@ export default function Mydashboard(): ReactNode {
     }
   };
 
+  if (invitationError || dashboardError) {
+    return <div>Error ... </div>;
+  }
+
   return (
     <>
       <div className='flex h-full min-h-screen w-full flex-col bg-gray-50'>
         {/* 새로운 대시보드 */}
         <div className='max-w-7xl p-6'>
-          <DashboardList
-            dashboards={getCurrentPageData()}
-            totalPages={totalPages}
-            currentPage={currentPage}
-            onPrevPage={handlePrevPage}
-            onNextPage={handleNextPage}
-            onOpenModal={handleOpenModal}
-          />
+          {!dashboardData || dashboardLoading ? (
+            <DashboardListSkeleton />
+          ) : (
+            <DashboardList
+              dashboards={dashboardData.dashboards}
+              totalPages={totalPages}
+              currentPage={currentPage}
+              onPrevPage={handlePrevPage}
+              onNextPage={handleNextPage}
+              onOpenModal={handleOpenModal}
+            />
+          )}
 
           {/* 초대받은 대시보드 */}
-          <InvitationList
-            inviteData={inviteData}
-            searchQuery={searchQuery}
-            handleComposition={handleComposition}
-            loaderRef={ref}
-            hasMore={hasMore}
-            onAccept={handleAcceptInvitation}
-            onReject={handleRejectInvitation}
-            onChange={handleChange}
-            onKeyDown={handleKeyDown}
-          />
+
+          {!inviteData || invitationLoading ? (
+            <InvitationListSkeleton />
+          ) : (
+            <InvitationList
+              inviteData={inviteData}
+              searchQuery={searchQuery}
+              handleComposition={handleComposition}
+              loaderRef={ref}
+              hasMore={hasMore}
+              onAccept={handleAcceptInvitation}
+              onReject={handleRejectInvitation}
+              onChange={handleChange}
+              onKeyDown={handleKeyDown}
+            />
+          )}
         </div>
       </div>
       <ModalPortal>
