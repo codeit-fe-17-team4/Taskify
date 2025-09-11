@@ -48,18 +48,18 @@ export default function DashboardList({
                 <Dot />
               </span>
               <div className='mobile:hidden flex gap-1.5'>
-                <span className='text-2lg tablet:text-md font-medium'>
-                  {dashboard.title.length > 20
-                    ? `${dashboard.title.slice(0, 20)}...`
+                <span className='text-2lg tablet:text-md text-left font-medium'>
+                  {dashboard.title.length > 10
+                    ? `${dashboard.title.slice(0, 10)}...`
                     : dashboard.title}
                 </span>
                 {dashboard.createdByMe && (
                   <Image
                     src={'/icon/mydashboard.svg'}
-                    className='h-[14px] w-[18px] self-center'
+                    className='h-[10px] w-[12px] self-center'
                     alt='왕관 아이콘'
-                    width={16}
-                    height={12}
+                    width={12}
+                    height={10}
                   />
                 )}
               </div>

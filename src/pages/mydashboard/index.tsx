@@ -1,9 +1,10 @@
+import Head from 'next/head';
 import { type ReactNode, useCallback, useState } from 'react';
 import DashboardLayout from '@/components/layout/dashboard-layout';
 import CreateNewboardModal from '@/components/mydashboard/create-newboard-modal';
 import DashboardList from '@/components/mydashboard/dashboard-list';
 import InvitationList from '@/components/mydashboard/invitation-list';
-import LoadingCircle from '@/components/ui/loading-circle';
+import { DashboardListSkeleton } from '@/components/mydashboard/skeleton';
 import ModalPortal from '@/components/ui/modal/modal-portal';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useFetch } from '@/hooks/useAsync';
@@ -40,7 +41,7 @@ export default function Mydashboard(): ReactNode {
   /* 초대받은 목록 API 연동 */
   const {
     data: inviteData,
-    isLoading,
+    isLoading: invitationLoading,
     error: invitationError,
     hasMore,
     ref,
@@ -86,22 +87,11 @@ export default function Mydashboard(): ReactNode {
     setIsModalOpen(false);
   };
 
-  if (!dashboardData || dashboardLoading) {
-    return <LoadingCircle />;
-  }
-
-  // if (!inviteData || invitationLoading) {
-  //   return <div> loading ...</div>;
-  // }
-
-  if (invitationError) {
-    return <div>Error ... </div>;
-  }
-
   // 페이지네이션 (라이브러리 x)
   const itemsPerPage = 5;
-  const totalPages = Math.ceil(dashboardData.totalCount / itemsPerPage);
-  const getCurrentPageData = () => dashboardData.dashboards;
+  const totalPages =
+    Math.ceil((dashboardData?.totalCount ?? 5) / itemsPerPage) || 1;
+
   const handlePrevPage = () => {
     if (currentPage > 1) {
       setCurrentPage((prevPage) => prevPage - 1);
@@ -164,8 +154,20 @@ export default function Mydashboard(): ReactNode {
     }
   };
 
+  if (invitationError || dashboardError) {
+    return <div>Error ... </div>;
+  }
+
   return (
     <>
+      <Head>
+        <title>Taskify | 나의 대시보드</title>
+        <meta
+          property='og:title'
+          content='Taskify | 나의 대시보드'
+          key='title'
+        />
+      </Head>
       <div
         className={`flex h-full min-h-screen w-full flex-col ${
           theme === 'dark' ? 'bg-[var(--auth-bg)]' : 'bg-gray-50'
@@ -173,18 +175,22 @@ export default function Mydashboard(): ReactNode {
       >
         {/* 새로운 대시보드 */}
         <div className='max-w-7xl p-6'>
-          <DashboardList
-            dashboards={getCurrentPageData()}
-            totalPages={totalPages}
-            currentPage={currentPage}
-            onPrevPage={handlePrevPage}
-            onNextPage={handleNextPage}
-            onOpenModal={handleOpenModal}
-          />
-
+          {!dashboardData || dashboardLoading ? (
+            <DashboardListSkeleton />
+          ) : (
+            <DashboardList
+              dashboards={dashboardData.dashboards}
+              totalPages={totalPages}
+              currentPage={currentPage}
+              onPrevPage={handlePrevPage}
+              onNextPage={handleNextPage}
+              onOpenModal={handleOpenModal}
+            />
+          )}
           {/* 초대받은 대시보드 */}
           <InvitationList
             inviteData={inviteData}
+            invitationLoading={invitationLoading}
             searchQuery={searchQuery}
             handleComposition={handleComposition}
             loaderRef={ref}

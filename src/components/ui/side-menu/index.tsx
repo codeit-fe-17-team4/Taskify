@@ -35,7 +35,8 @@ export default function SideMenu(): ReactNode {
   if (!dashboardListData || error) {
     return null;
   }
-  const pageCount = Math.ceil(dashboardListData.totalCount / pageSize);
+  const pageCount = Math.ceil(dashboardListData.totalCount / pageSize) || 1;
+
   const isPrevButtonDisabled = page <= 1;
   const isNextButtonDisabled = pageCount === page;
   const handleClickPrev = () => {
@@ -59,7 +60,7 @@ export default function SideMenu(): ReactNode {
   };
 
   return (
-    <section className='tablet:w-[10rem] mobile:w-auto mobile:min-w-10 fixed top-0 bottom-0 left-0 z-25 flex w-[18.75rem] flex-col gap-14 border-r-1 border-[var(--auth-border)] bg-[var(--auth-bg)] px-3 py-5'>
+    <section className='font-pretendard tablet:w-[10rem] mobile:w-auto mobile:min-w-10 border-gray-3 scrollbar-hide fixed top-0 bottom-0 left-0 z-25 flex w-[18.75rem] flex-col gap-14 overflow-scroll border-r-1 bg-white px-3 py-5'>
       <Link
         href={'/'}
         className='flex-center tablet:self-center justify-center self-start'
@@ -99,7 +100,7 @@ export default function SideMenu(): ReactNode {
           dashboards={dashboardListData.dashboards}
           loading={loading}
         />
-        <div className='mt-3'>
+        <div className='mt-3 flex items-center justify-between gap-4 px-2'>
           <ButtonPagination
             additionalClass='mobile:hidden'
             isPrevDisabled={isPrevButtonDisabled}
@@ -107,6 +108,9 @@ export default function SideMenu(): ReactNode {
             onPrevClick={handleClickPrev}
             onNextClick={handleClickNext}
           />
+          <span className='text-sm'>
+            {pageCount > 1 && `${String(page)} / ${String(pageCount)}`}
+          </span>
         </div>
       </nav>
       <ModalPortal>

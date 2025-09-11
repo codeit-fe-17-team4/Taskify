@@ -14,6 +14,7 @@ export default function CreateColumnForm({
   hasError = false,
 }: CreateColumnFormProps): ReactNode {
   const { theme } = useTheme();
+
   return (
     <>
       {/* 이름 */}
@@ -44,6 +45,7 @@ export default function CreateColumnForm({
           placeholder='새로운 프로젝트'
           value={formData.name}
           className={`w-full rounded-lg border p-4 focus:outline-none ${
+            // eslint-disable-next-line no-nested-ternary
             hasError
               ? 'border-red-500 focus:border-red-500'
               : theme === 'dark'

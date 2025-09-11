@@ -1,6 +1,6 @@
 // 구성원 목록 조회 및 삭제 UI 컴포넌트
 
-import Image from 'next/image';
+import ButtonPagination from '@/components/ui/button/button-pagination';
 import ChipProfile, {
   getProfileColorByIdHash,
 } from '@/components/ui/chip/chip-profile';
@@ -30,6 +30,7 @@ export default function MemberList({
   onNextPage,
 }: MemberListProps) {
   const { theme } = useTheme();
+
   return (
     <div
       className={`tablet:w-full mobile:w-full tablet:min-w-lg mobile:min-w-2xs mt-8 h-[340px] w-[620px] rounded-lg pt-5 ${
@@ -46,7 +47,7 @@ export default function MemberList({
         >
           구성원
         </h2>
-        <div className='flex items-center justify-end gap-2'>
+        <div className='flex items-center justify-end gap-4'>
           <p
             className={`text-sm ${
               theme === 'dark'
@@ -54,40 +55,19 @@ export default function MemberList({
                 : 'text-gray-600'
             }`}
           >
-            {totalPages} 페이지 중 {currentPage}
+            {currentPage} / {totalPages}
           </p>
-          <div className='flex items-center justify-center'>
-            <button
-              className={`flex h-7 w-7 cursor-pointer items-center justify-center rounded border ${
-                theme === 'dark'
-                  ? 'border-[var(--auth-border)] bg-[var(--auth-input-bg)] hover:bg-[var(--button-secondary-hover)]'
-                  : 'border-gray-200 bg-white hover:bg-gray-100'
-              }`}
-              onClick={onPrevPage}
-            >
-              <Image
-                src='/icon/prevPage.svg'
-                alt='이전 페이지'
-                width={7}
-                height={7}
-              />
-            </button>
-            <button
-              className={`flex h-7 w-7 cursor-pointer items-center justify-center rounded border ${
-                theme === 'dark'
-                  ? 'border-[var(--auth-border)] bg-[var(--auth-input-bg)] hover:bg-[var(--button-secondary-hover)]'
-                  : 'border-gray-200 bg-white hover:bg-gray-100'
-              }`}
-              onClick={onNextPage}
-            >
-              <Image
-                src='/icon/nextPage.svg'
-                alt='다음 페이지'
-                width={7}
-                height={7}
-              />
-            </button>
-          </div>
+          <ButtonPagination
+            isPrevDisabled={currentPage === 1}
+            isNextDisabled={currentPage === totalPages}
+            additionalClass={
+              theme === 'dark'
+                ? 'border-[var(--auth-border)] bg-[var(--auth-input-bg)] hover:bg-[var(--button-secondary-hover)]'
+                : 'border-gray-200 bg-white hover:bg-gray-100'
+            }
+            onPrevClick={onPrevPage}
+            onNextClick={onNextPage}
+          />
         </div>
       </div>
       <table className='mt-5 w-full text-center text-base'>
@@ -113,6 +93,7 @@ export default function MemberList({
               <tr
                 key={member.id}
                 className={`flex items-center justify-between pr-8 pl-8 ${
+                  // eslint-disable-next-line no-nested-ternary
                   !isLastItem
                     ? theme === 'dark'
                       ? 'border-b border-[var(--auth-border)]'

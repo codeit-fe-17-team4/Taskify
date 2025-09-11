@@ -1,6 +1,6 @@
 export default function LoadingCircle() {
   return (
-    <div role='status' className='fixed top-1/2 left-1/2'>
+    <div role='status' className='absolute top-1/2 left-1/2'>
       <svg
         aria-hidden='true'
         className='fill-violet h-8 w-8 animate-spin text-gray-200 dark:text-gray-600'

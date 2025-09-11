@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import ButtonPagination from '@/components/ui/button/button-pagination';
 import { useTheme } from '@/contexts/ThemeContext';
 import type { InvitationType } from '@/lib/invitations/type';
 
@@ -48,40 +49,19 @@ export default function InvitationListCard({
                   : 'text-gray-600'
               }`}
             >
-              {totalPages} 페이지 중 {currentPage}
+              {currentPage} / {totalPages}
             </p>
-            <div className='flex items-center justify-center'>
-              <button
-                className={`flex h-7 w-7 cursor-pointer items-center justify-center rounded border ${
-                  theme === 'dark'
-                    ? 'border-[var(--auth-border)] bg-[var(--auth-input-bg)] hover:bg-[var(--button-secondary-hover)]'
-                    : 'border-gray-200 bg-white hover:bg-gray-100'
-                }`}
-                onClick={onPrevPage}
-              >
-                <Image
-                  src='/icon/prevPage.svg'
-                  alt='이전 페이지'
-                  width={7}
-                  height={7}
-                />
-              </button>
-              <button
-                className={`flex h-7 w-7 cursor-pointer items-center justify-center rounded border ${
-                  theme === 'dark'
-                    ? 'border-[var(--auth-border)] bg-[var(--auth-input-bg)] hover:bg-[var(--button-secondary-hover)]'
-                    : 'border-gray-200 bg-white hover:bg-gray-100'
-                }`}
-                onClick={onNextPage}
-              >
-                <Image
-                  src='/icon/nextPage.svg'
-                  alt='다음 페이지'
-                  width={7}
-                  height={7}
-                />
-              </button>
-            </div>
+            <ButtonPagination
+              isPrevDisabled={currentPage === 1}
+              isNextDisabled={currentPage === totalPages}
+              additionalClass={
+                theme === 'dark'
+                  ? 'border-[var(--auth-border)] bg-[var(--auth-input-bg)] hover:bg-[var(--button-secondary-hover)]'
+                  : 'border-gray-200 bg-white hover:bg-gray-100'
+              }
+              onPrevClick={onPrevPage}
+              onNextClick={onNextPage}
+            />
           </div>
           <button
             className={`mobile:absolute mobile:right-3 mobile:top-10 flex cursor-pointer items-center gap-2 rounded-sm py-1 pr-2 pl-2 text-white ${

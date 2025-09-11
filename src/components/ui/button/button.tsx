@@ -86,15 +86,14 @@ export default function Button({
       );
     }
 
-    if (backgroundColor === 'white') {
-      return cn(
-        baseStyles,
-        theme === 'dark'
-          ? 'bg-[var(--auth-input-bg)] border-[var(--auth-border)] text-[var(--auth-text-strong)] hover:bg-[var(--button-secondary-hover)] active:bg-[var(--button-secondary)]'
-          : 'bg-white border-gray-300 text-violet hover:bg-gray-4 active:bg-gray-3',
-        additionalClass
-      );
-    }
+    //white
+    return cn(
+      baseStyles,
+      theme === 'dark'
+        ? 'bg-[var(--auth-input-bg)] border-[var(--auth-border)] text-[var(--auth-text-strong)] hover:bg-[var(--button-secondary-hover)] active:bg-[var(--button-secondary)]'
+        : 'bg-white border-gray-300 text-violet hover:bg-gray-4 active:bg-gray-3',
+      additionalClass
+    );
 
     return cn(baseStyles, additionalClass);
   };
@@ -102,9 +101,9 @@ export default function Button({
   return (
     <>
       <motion.button
-        whileHover={{ scale: disabled ? 1 : 1.05 }}
-        whileTap={{ scale: disabled ? 1 : 0.95 }}
         className={getButtonStyles()}
+        whileHover={{ scale: disabled ? 1 : 1.03 }}
+        whileTap={{ scale: disabled ? 1 : 0.97 }}
         onClick={onClick}
         {...props}
         disabled={disabled}

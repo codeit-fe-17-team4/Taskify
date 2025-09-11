@@ -1,3 +1,4 @@
+import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -10,7 +11,6 @@ import Button from '@/components/ui/button/button';
 import InviteMemberModal from '@/components/ui/dashboard-header/invite-member-modal';
 import { useTheme } from '@/contexts/ThemeContext';
 import {
-  createInvitation,
   deleteDashBoard,
   deleteInvitation,
   editDashBoard,
@@ -76,7 +76,6 @@ export default function MydashboardEdit(): ReactNode {
       try {
         const data = await getMemberList({ dashboardId: Number(dashboardId) });
 
-        console.log('구성원 API 응답:', data);
         setMembers(data.members);
       } catch (error) {
         console.error('구성원 목록 불러오기 실패:', error);
@@ -97,9 +96,6 @@ export default function MydashboardEdit(): ReactNode {
         size: 10,
       });
 
-      console.log('초대 API 응답:', data);
-      console.log('invitations 필드:', data.invitations);
-
       setInvitations(data.invitations);
     } catch (error) {
       console.error('초대내역 불러오기 실패:', error);
@@ -114,23 +110,11 @@ export default function MydashboardEdit(): ReactNode {
   /**
    * 초대
    */
-  const handleSubmitInviteMember = async (formData: {
-    nickname: string;
-    email: string;
-  }) => {
+  const handleSubmitInviteMember = async () => {
     if (!dashboardId) {
       return;
     }
-    try {
-      await createInvitation({ id: Number(dashboardId), body: formData });
-      alert('초대요청을 보냈습니다.');
-      handleCloseModal();
-
-      await fetchInvitationEmails();
-    } catch (error) {
-      console.error('초대 실패:', error);
-      alert('초대요청이 실패했습니다.');
-    }
+    await fetchInvitationEmails();
   };
 
   /**
@@ -209,7 +193,8 @@ export default function MydashboardEdit(): ReactNode {
   // 구성원 페이지네이션
   const [membersCurrentPage, setMembersCurrentPage] = useState(1);
   const membersItemsPerPage = 4;
-  const membersTotalPages = Math.ceil(members.length / membersItemsPerPage);
+  const membersTotalPages =
+    Math.ceil(members.length / membersItemsPerPage) || 1;
 
   const getCurrentMembersPageData = () => {
     const startIndex = (membersCurrentPage - 1) * membersItemsPerPage;
@@ -233,10 +218,10 @@ export default function MydashboardEdit(): ReactNode {
   // 초대내역 페이지네이션
   const [invitationsCurrentPage, setInvitationsCurrentPage] = useState(1);
   const invitationsItemsPerPage = 5;
-  const invitationsTotalPages = Math.ceil(
-    invitations.length / invitationsItemsPerPage
-  );
+  const invitationsTotalPages =
+    Math.ceil(invitations.length / invitationsItemsPerPage) || 1;
 
+  console.log(invitations);
   const getCurrentInvitationsPageData = () => {
     const startIndex = (invitationsCurrentPage - 1) * invitationsItemsPerPage;
     const endIndex = startIndex + invitationsItemsPerPage;
@@ -257,106 +242,117 @@ export default function MydashboardEdit(): ReactNode {
   };
 
   return (
-    <div
-      className={`min-h-screen ${
-        theme === 'dark' ? 'bg-[var(--auth-bg)]' : 'bg-gray-50'
-      }`}
-    >
-      <div className='mr-120 ml-5 min-w-2xs pt-5'>
-        {dashboardId && (
-          <Link href={`/dashboard/${dashboardId}`}>
-            <div className='flex w-full cursor-pointer items-center gap-2'>
-              <Image
-                src='/icon/goback.svg'
-                alt='go-back'
-                width={10}
-                height={10}
-                style={{
-                  filter: theme === 'dark' ? 'brightness(0) invert(1)' : 'none',
-                }}
-              />
-              <span
-                className='text-base'
-                style={{
-                  color: theme === 'dark' ? '#ffffff' : 'inherit',
-                }}
-              >
-                돌아가기
-              </span>
-            </div>
-          </Link>
-        )}
+    <>
+      <Head>
+        <title>Taskify | 대시보드 관리</title>
+        <meta
+          property='og:title'
+          content='Taskify | 대시보드 관리'
+          key='title'
+        />
+      </Head>
+      <div
+        className={`min-h-screen ${
+          theme === 'dark' ? 'bg-[var(--auth-bg)]' : 'bg-gray-50'
+        }`}
+      >
+        <div className='mr-120 ml-5 min-w-2xs pt-5'>
+          {dashboardId && (
+            <Link href={`/dashboard/${dashboardId}`}>
+              <div className='flex w-full cursor-pointer items-center gap-2'>
+                <Image
+                  src='/icon/goback.svg'
+                  alt='go-back'
+                  width={10}
+                  height={10}
+                  style={{
+                    filter:
+                      theme === 'dark' ? 'brightness(0) invert(1)' : 'none',
+                  }}
+                />
+                <span
+                  className='text-base'
+                  style={{
+                    color: theme === 'dark' ? '#ffffff' : 'inherit',
+                  }}
+                >
+                  돌아가기
+                </span>
+              </div>
+            </Link>
+          )}
 
-        {/* 대시보드 정보 수정 */}
-        {dashboardData && (
-          <EditDashboardForm
-            prevTitle={dashboardData.title}
-            prevColor={dashboardData.color}
-            onSubmit={async ({ title, color }) => {
-              if (!dashboardId || updating) {
-                return;
-              }
-              try {
-                setUpdating(true);
-                const updatedDashboard = await editDashBoard({
-                  id: Number(dashboardId),
-                  body: { title, color }, // hex 값
-                });
+          {/* 대시보드 정보 수정 */}
+          {dashboardData && (
+            <EditDashboardForm
+              prevTitle={dashboardData.title}
+              prevColor={dashboardData.color}
+              onSubmit={async ({ title, color }) => {
+                if (!dashboardId || updating) {
+                  return;
+                }
+                try {
+                  setUpdating(true);
+                  const updatedDashboard = await editDashBoard({
+                    id: Number(dashboardId),
+                    body: { title, color }, // hex 값
+                  });
 
-                setDashboardData(updatedDashboard); // 상태 갱신
-                alert('대시보드가 수정되었습니다.');
-              } catch (error) {
-                console.error('대시보드 수정 실패:', error);
-                alert('수정에 실패했습니다.');
-              } finally {
-                setUpdating(false);
-              }
-            }}
+                  setDashboardData(updatedDashboard); // 상태 갱신
+                  alert('대시보드가 수정되었습니다.');
+                } catch (error) {
+                  console.error('대시보드 수정 실패:', error);
+                  alert('수정에 실패했습니다.');
+                } finally {
+                  setUpdating(false);
+                }
+              }}
+            />
+          )}
+
+          {/* 구성원 */}
+          <MemberList
+            members={members}
+            currentPage={membersCurrentPage}
+            totalPages={membersTotalPages}
+            getCurrentPageData={getCurrentMembersPageData}
+            onDeleteMember={handleDeleteMember}
+            onPrevPage={handleMembersPrevPage}
+            onNextPage={handleMembersNextPage}
           />
-        )}
+          {/* 초대내역 */}
+          <InvitationListCard
+            currentPage={invitationsCurrentPage}
+            totalPages={invitationsTotalPages}
+            getCurrentPageData={getCurrentInvitationsPageData}
+            onDeleteMember={handleDeleteInvitation}
+            onPrevPage={handleInvitationsPrevPage}
+            onNextPage={handleInvitationsNextPage}
+            onOpenModal={handleOpenModal}
+          />
 
-        {/* 구성원 */}
-        <MemberList
-          members={members}
-          currentPage={membersCurrentPage}
-          totalPages={membersTotalPages}
-          getCurrentPageData={getCurrentMembersPageData}
-          onDeleteMember={handleDeleteMember}
-          onPrevPage={handleMembersPrevPage}
-          onNextPage={handleMembersNextPage}
-        />
-        {/* 초대내역 */}
-        <InvitationListCard
-          currentPage={invitationsCurrentPage}
-          totalPages={invitationsTotalPages}
-          getCurrentPageData={getCurrentInvitationsPageData}
-          onDeleteMember={handleDeleteInvitation}
-          onPrevPage={handleInvitationsPrevPage}
-          onNextPage={handleInvitationsNextPage}
-          onOpenModal={handleOpenModal}
-        />
-
-        {/* 대시보드 삭제 */}
-        <div className='h-20 w-full'>
-          <Button
-            variant='primary'
-            backgroundColor='white'
-            disabled={deletingDashboard}
-            label={deletingDashboard ? '삭제 중...' : '대시보드 삭제하기'}
-            additionalClass={`mobile:max-w-2xs w-xs my-6 ${
-              theme === 'dark' ? 'text-red-400' : 'text-red'
-            }`}
-            onClick={handleDeleteDashboard}
+          {/* 대시보드 삭제 */}
+          <div className='h-20 w-full'>
+            <Button
+              variant='primary'
+              backgroundColor='white'
+              disabled={deletingDashboard}
+              label={deletingDashboard ? '삭제 중...' : '대시보드 삭제하기'}
+              additionalClass={`mobile:max-w-2xs w-xs my-6 ${
+                theme === 'dark' ? 'text-red-400' : 'text-red'
+              }`}
+              onClick={handleDeleteDashboard}
+            />
+          </div>
+          <InviteMemberModal
+            isOpen={isModalOpen}
+            dashboardId={dashboardId}
+            onClose={handleCloseModal}
+            onSubmit={handleSubmitInviteMember}
           />
         </div>
-        <InviteMemberModal
-          isOpen={isModalOpen}
-          dashboardId={dashboardId}
-          onClose={handleCloseModal}
-          onSubmit={handleSubmitInviteMember}
-        />
       </div>
-    </div>
+    </>
   );
 }
 

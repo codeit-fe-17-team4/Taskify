@@ -245,7 +245,7 @@ html {
 }
 @utility skeleton {
   animation: var(--animate-pulse);
-  background-color: var(--color-gray-3);
+  background-color: var(--color-gray-4);
 }
 
 html,

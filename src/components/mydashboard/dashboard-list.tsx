@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
+import ButtonPagination from '@/components/ui/button/button-pagination';
 import { useTheme } from '@/contexts/ThemeContext';
 import { getThemeIcon } from '@/utils/getThemeIcon';
 
@@ -108,7 +109,7 @@ export default function DashboardList({
         {dashboards.map((dashboard) => {
           return (
             <Link
-              key={dashboard.id}
+              key={`${crypto.randomUUID()}-${String(dashboard.id)}`}
               href={`/dashboard/${String(dashboard.id)}`}
             >
               <motion.button
@@ -136,47 +137,26 @@ export default function DashboardList({
         })}
 
         {/* 페이지네이션 */}
-        <div className='col-span-full mt-4 flex items-center justify-end gap-2'>
+        <div className='col-span-full mt-4 flex items-center justify-end gap-3'>
           <p
             className={`text-sm ${
               theme === 'dark' ? TEXT_STYLES.dark : TEXT_STYLES.light
             }`}
           >
-            {totalPages} 페이지 중 {currentPage}
+            {currentPage} / {totalPages}
           </p>
           <div className='flex'>
-            <button
-              disabled={currentPage === 1}
-              className={`flex h-7 w-7 cursor-pointer items-center justify-center rounded border hover:opacity-80 disabled:cursor-not-allowed ${
+            <ButtonPagination
+              isPrevDisabled={currentPage === 1}
+              isNextDisabled={currentPage === totalPages}
+              additionalClass={
                 theme === 'dark'
                   ? PAGINATION_STYLES.dark
                   : PAGINATION_STYLES.light
-              }`}
-              onClick={onPrevPage}
-            >
-              <Image
-                alt='이전 페이지'
-                height={7}
-                src={getThemeIcon('prevPage', theme)}
-                width={7}
-              />
-            </button>
-            <button
-              disabled={currentPage === totalPages}
-              className={`flex h-7 w-7 cursor-pointer items-center justify-center rounded border hover:opacity-80 disabled:cursor-not-allowed ${
-                theme === 'dark'
-                  ? PAGINATION_STYLES.dark
-                  : PAGINATION_STYLES.light
-              }`}
-              onClick={onNextPage}
-            >
-              <Image
-                alt='다음 페이지'
-                height={7}
-                src={getThemeIcon('nextPage', theme)}
-                width={7}
-              />
-            </button>
+              }
+              onPrevClick={onPrevPage}
+              onNextClick={onNextPage}
+            />
           </div>
         </div>
       </div>

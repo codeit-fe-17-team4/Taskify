@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { type ReactNode, useContext } from 'react';
 import { DropdownContext } from '@/components/ui/dropdown';
 import { cn } from '@/utils/cn';
@@ -21,12 +21,9 @@ export default function List({
   const { isOpen } = context;
 
   return (
-    <AnimatePresence>
+    <>
       {isOpen && (
         <motion.div
-          initial={{ opacity: 0, scale: 0.5, x: 20, y: -50 }}
-          animate={{ opacity: 1, scale: 1, x: 0, y: 0 }}
-          exit={{ opacity: 0, scale: 0.5, x: 20, y: -50 }}
           role='menu'
           aria-label={ariaLabel}
           className={cn(
@@ -37,6 +34,6 @@ export default function List({
           {children}
         </motion.div>
       )}
-    </AnimatePresence>
+    </>
   );
 }

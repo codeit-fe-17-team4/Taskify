@@ -1,7 +1,7 @@
 export function DashboardHeaderSkeleton() {
   return (
-    <header className='mobile:h-[3.75rem] border-gray-3 tablet:pl-48 mobile:pl-12 tablet:justify-end fixed top-0 right-0 left-0 z-20 flex h-[4.375rem] w-full items-center justify-between border-b-1 bg-white pl-96'>
-      <div className='tablet:hidden skeleton h-8 w-56' />
+    <header className='mobile:h-[3.75rem] border-gray-3 tablet:pl-48 mobile:pl-12 tablet:justify-between mobile:justify-end fixed top-0 right-0 left-0 z-20 flex h-[4.375rem] w-full items-center justify-between border-b-1 bg-white pl-84'>
+      <div className='mobile:hidden skeleton tablet:w-32 h-8 w-56' />
       <nav className='mobile:gap-2 flex h-full items-center gap-8'>
         <div className='mobile:gap-1.5 flex gap-3'>
           <div className='mobile:w-[3.125rem] skeleton h-9 w-[5.375rem]' />

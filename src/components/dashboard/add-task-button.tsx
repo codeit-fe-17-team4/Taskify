@@ -18,14 +18,14 @@ export default function AddTaskButton({ onClick }: AddTaskButtonProps) {
       onClick={onClick}
     >
       <Image
+        alt='카드 추가'
+        width={22}
+        height={22}
         src={
           theme === 'dark'
             ? '/darkauth/icon/add_box.svg'
             : '/dashboard/add-btn.svg'
         }
-        alt='카드 추가'
-        width={22}
-        height={22}
       />
     </motion.button>
   );

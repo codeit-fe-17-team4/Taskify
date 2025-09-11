@@ -38,7 +38,7 @@ export default function SortableTaskCard({
       ref={setNodeRef}
       style={style}
       {...attributes}
-      className='relative w-full'
+      className='group relative w-full'
     >
       <div className='w-full'>
         <ColumnTaskCard task={task} onEditTask={onEditTask} />
