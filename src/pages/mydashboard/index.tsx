@@ -84,7 +84,7 @@ export default function Mydashboard(): ReactNode {
     setIsModalOpen(false);
   };
 
-  if (!dashboardData || loading) {
+  if (!dashboardData || dashboardLoading) {
     return <LoadingCircle />;
   }
 

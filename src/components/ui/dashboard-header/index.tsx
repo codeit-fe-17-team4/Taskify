@@ -110,6 +110,7 @@ export default function DashboardHeader(): ReactNode {
             isOpen={isModalOpen}
             dashboardId={dashboardId}
             onClose={handleCloseModal}
+            onSubmit={handleCloseModal}
           />
         </ModalPortal>
       </nav>
