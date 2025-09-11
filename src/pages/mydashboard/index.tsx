@@ -4,10 +4,7 @@ import DashboardLayout from '@/components/layout/dashboard-layout';
 import CreateNewboardModal from '@/components/mydashboard/create-newboard-modal';
 import DashboardList from '@/components/mydashboard/dashboard-list';
 import InvitationList from '@/components/mydashboard/invitation-list';
-import {
-  DashboardListSkeleton,
-  InvitationListSkeleton,
-} from '@/components/mydashboard/skeleton';
+import { DashboardListSkeleton } from '@/components/mydashboard/skeleton';
 import ModalPortal from '@/components/ui/modal/modal-portal';
 import { useFetch } from '@/hooks/useAsync';
 import { useCursorInfiniteScroll } from '@/hooks/useCursorInfiniteScroll';
@@ -184,24 +181,19 @@ export default function Mydashboard(): ReactNode {
               onOpenModal={handleOpenModal}
             />
           )}
-
           {/* 초대받은 대시보드 */}
-
-          {invitationLoading ? (
-            <InvitationListSkeleton />
-          ) : (
-            <InvitationList
-              inviteData={inviteData}
-              searchQuery={searchQuery}
-              handleComposition={handleComposition}
-              loaderRef={ref}
-              hasMore={hasMore}
-              onAccept={handleAcceptInvitation}
-              onReject={handleRejectInvitation}
-              onChange={handleChange}
-              onKeyDown={handleKeyDown}
-            />
-          )}
+          <InvitationList
+            inviteData={inviteData}
+            invitationLoading={invitationLoading}
+            searchQuery={searchQuery}
+            handleComposition={handleComposition}
+            loaderRef={ref}
+            hasMore={hasMore}
+            onAccept={handleAcceptInvitation}
+            onReject={handleRejectInvitation}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
+          />
         </div>
       </div>
       <ModalPortal>

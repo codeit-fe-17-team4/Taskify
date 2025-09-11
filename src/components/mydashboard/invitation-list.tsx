@@ -1,8 +1,10 @@
 import Image from 'next/image';
+import LoadingCircle from '@/components//ui/loading-circle';
 import type { InvitationType } from '@/lib/invitations/type';
 
 interface InviteListProps {
   inviteData: InvitationType[];
+  invitationLoading: boolean;
   searchQuery: string;
   onAccept: (inviteId: number) => void;
   onReject: (inviteId: number) => void;
@@ -15,6 +17,7 @@ interface InviteListProps {
 
 export default function InvitationList({
   inviteData,
+  invitationLoading,
   searchQuery,
   onAccept,
   onReject,
@@ -120,7 +123,7 @@ export default function InvitationList({
           <div>초대자</div>
           <div className='mobile:hidden text-center'>수락 여부</div>
         </div>
-        <div className='flex-1 overflow-y-auto'>
+        <div className='relative flex-1 overflow-y-auto'>
           {inviteData.map((invite) => {
             return (
               <div
@@ -160,6 +163,7 @@ export default function InvitationList({
               </div>
             );
           })}
+          <span>{invitationLoading && <LoadingCircle />}</span>
           {hasMore && <div ref={loaderRef} className='h-10' />}
         </div>
       </div>

@@ -15,10 +15,3 @@ export function DashboardListSkeleton() {
     </>
   );
 }
-export function InvitationListSkeleton() {
-  return (
-    <>
-      <div className='skeleton tablet:w-lg mobile:w-2xs h-[650px] w-4xl rounded-lg'></div>
-    </>
-  );
-}
