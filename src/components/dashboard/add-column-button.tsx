@@ -7,7 +7,7 @@ export default function AddColumnButton({ onClick }: AddColumnButtonProps) {
     <motion.button
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
-      className='hover:bg-gray-4 flex h-[4.7rem] w-full cursor-pointer items-center justify-center gap-[0.7rem] rounded-[0.8rem] border border-gray-300 bg-white whitespace-nowrap'
+      className='hover:bg-gray-5 flex h-[4.7rem] w-full cursor-pointer items-center justify-center gap-[0.7rem] rounded-[0.8rem] border border-gray-300 bg-white whitespace-nowrap'
       onClick={onClick}
     >
       <span className='text-black-500 font-bold'>새로운 칼럼 추가하기</span>

@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { type KeyboardEvent, useState } from 'react';
 import {
@@ -295,31 +295,27 @@ export default function CreateTaskForm({
           {/* 기존 태그들 */}
           {formData.tags.map((tag, index) => {
             return (
-              <AnimatePresence key={`${tag.label}-${tag.color}`}>
-                <motion.div
-                  className='flex items-center gap-1'
-                  initial={{ opacity: 0, scale: 0.5, x: 20, y: -20 }}
-                  animate={{ opacity: 1, scale: 1, x: 0, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.5, x: 20, y: 20 }}
+              <div
+                className='flex items-center gap-1'
+                key={`${tag.label}-${tag.color}`}
+              >
+                <ChipTag
+                  label={tag.label}
+                  size='md'
+                  color={
+                    tag.color as 'blue' | 'pink' | 'green' | 'brown' | 'red'
+                  }
+                />
+                <button
+                  type='button'
+                  className='ml-1 text-blue-400 hover:text-blue-600'
+                  onClick={() => {
+                    removeTag(index);
+                  }}
                 >
-                  <ChipTag
-                    label={tag.label}
-                    size='md'
-                    color={
-                      tag.color as 'blue' | 'pink' | 'green' | 'brown' | 'red'
-                    }
-                  />
-                  <button
-                    type='button'
-                    className='ml-1 text-blue-400 hover:text-blue-600'
-                    onClick={() => {
-                      removeTag(index);
-                    }}
-                  >
-                    ×
-                  </button>
-                </motion.div>
-              </AnimatePresence>
+                  ×
+                </button>
+              </div>
             );
           })}
           {/* 새 태그 입력 */}

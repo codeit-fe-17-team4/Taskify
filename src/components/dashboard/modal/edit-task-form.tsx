@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { type KeyboardEvent, useState } from 'react';
 import {
@@ -353,25 +353,21 @@ export default function EditTaskForm({
           {/* 기존 태그들 */}
           {formData.tags.map((tag, index) => {
             return (
-              <AnimatePresence key={`${tag.label}-${String(index)}`}>
-                <motion.div
-                  className='flex items-center gap-1'
-                  initial={{ opacity: 0, scale: 0.5, x: 20, y: -20 }}
-                  animate={{ opacity: 1, scale: 1, x: 0, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.5, x: 20, y: 20 }}
+              <div
+                className='flex items-center gap-1'
+                key={`${tag.label}-${String(index)}`}
+              >
+                <ChipTag label={tag.label} color={tag.color} size='md' />
+                <button
+                  type='button'
+                  className='ml-1 text-gray-400 hover:text-gray-600'
+                  onClick={() => {
+                    removeTag(index);
+                  }}
                 >
-                  <ChipTag label={tag.label} color={tag.color} size='md' />
-                  <button
-                    type='button'
-                    className='ml-1 text-gray-400 hover:text-gray-600'
-                    onClick={() => {
-                      removeTag(index);
-                    }}
-                  >
-                    ×
-                  </button>
-                </motion.div>
-              </AnimatePresence>
+                  ×
+                </button>
+              </div>
             );
           })}
           {/* 새 태그 입력 */}

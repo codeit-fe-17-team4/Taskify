@@ -73,8 +73,8 @@ export default function Button({
   return (
     <>
       <motion.button
-        whileHover={{ scale: disabled ? 1 : 1.05 }}
-        whileTap={{ scale: disabled ? 1 : 0.95 }}
+        whileHover={{ scale: disabled ? 1 : 1.03 }}
+        whileTap={{ scale: disabled ? 1 : 0.97 }}
         className={cn(
           ButtonVariants({ variant, backgroundColor, labelColor }),
           additionalClass
