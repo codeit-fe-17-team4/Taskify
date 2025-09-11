@@ -38,7 +38,7 @@ export default function Mydashboard(): ReactNode {
   /* 초대받은 목록 API 연동 */
   const {
     data: inviteData,
-    isLoading: invitationLoading,
+    isLoading,
     error: invitationError,
     hasMore,
     ref,
@@ -92,9 +92,9 @@ export default function Mydashboard(): ReactNode {
     return <div>Error ... </div>;
   }
 
-  if (!inviteData || invitationLoading) {
-    return <div> loading ...</div>;
-  }
+  // if (!inviteData || invitationLoading) {
+  //   return <div> loading ...</div>;
+  // }
 
   if (invitationError) {
     return <div>Error ... </div>;
