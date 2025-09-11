@@ -1,6 +1,7 @@
 import { cva } from 'class-variance-authority';
 import { motion } from 'framer-motion';
 import type { FormEvent, ReactNode } from 'react';
+import { useTheme } from '@/contexts/ThemeContext';
 import { cn } from '@/utils/cn';
 
 export const ButtonVariants = cva(
@@ -17,9 +18,8 @@ export const ButtonVariants = cva(
         modal: 'h-[2.625rem] mobile:h-12 py-3 mobile:py-3.5 rounded-lg',
       },
       backgroundColor: {
-        violet: 'bg-violet hover:bg-violet-800 active:bg-violet-900 ',
-        white:
-          'bg-white border border-gray-300 text-violet hover:bg-gray-4 active:bg-gray-3 disabled:hover:bg-white',
+        violet: 'hover:bg-violet-800 active:bg-violet-900',
+        white: 'border disabled:hover:bg-white',
       },
       labelColor: {
         gray: 'text-gray-1',
@@ -70,15 +70,40 @@ export default function Button({
   disabled,
   ...props
 }: ButtonProps): ReactNode {
+  const { theme } = useTheme();
+
+  const getButtonStyles = () => {
+    const baseStyles = ButtonVariants({ variant, backgroundColor, labelColor });
+
+    if (backgroundColor === 'violet') {
+      return cn(
+        baseStyles,
+        'text-white font-semibold',
+        theme === 'dark'
+          ? 'bg-[var(--auth-primary)] hover:bg-[var(--button-primary-hover)] active:bg-[var(--button-primary-hover)]'
+          : 'bg-violet hover:bg-violet-800 active:bg-violet-900',
+        additionalClass
+      );
+    }
+
+    //white
+    return cn(
+      baseStyles,
+      theme === 'dark'
+        ? 'bg-[var(--auth-input-bg)] border-[var(--auth-border)] text-[var(--auth-text-strong)] hover:bg-[var(--button-secondary-hover)] active:bg-[var(--button-secondary)]'
+        : 'bg-white border-gray-300 text-violet hover:bg-gray-4 active:bg-gray-3',
+      additionalClass
+    );
+
+    return cn(baseStyles, additionalClass);
+  };
+
   return (
     <>
       <motion.button
+        className={getButtonStyles()}
         whileHover={{ scale: disabled ? 1 : 1.03 }}
         whileTap={{ scale: disabled ? 1 : 0.97 }}
-        className={cn(
-          ButtonVariants({ variant, backgroundColor, labelColor }),
-          additionalClass
-        )}
         onClick={onClick}
         {...props}
         disabled={disabled}

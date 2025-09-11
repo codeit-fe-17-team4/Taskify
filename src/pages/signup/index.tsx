@@ -34,11 +34,20 @@ const validateSignupForm = (
     options: { skipConfirmPassword: boolean }
   ) => boolean
 ): boolean => {
+  // 모든 필드가 입력되었는지 확인
+  const allFieldsFilled = Boolean(
+    formData.nickname.trim() &&
+      formData.email.trim() &&
+      formData.password.trim() &&
+      formData.confirmPassword.trim()
+  );
+
+  // 폼 유효성 검증
   const isFormValid = isSignupFormValid(formData, {
     skipConfirmPassword: false,
   });
 
-  return isFormValid && hasAgreedToTerms;
+  return allFieldsFilled && isFormValid && hasAgreedToTerms;
 };
 
 export default function SignupPage(): React.JSX.Element {
@@ -92,20 +101,22 @@ export default function SignupPage(): React.JSX.Element {
   }, [validateConfirmPassword, password, confirmPassword]);
 
   const isFormValidNow = useMemo(() => {
-    return (
-      isSignupFormValid(
-        { nickname, email, password, confirmPassword },
-        { skipConfirmPassword: true }
-      ) && agreedToTerms
+    // 모든 필드가 입력되었는지 확인
+    const allFieldsFilled = Boolean(
+      nickname.trim() &&
+        email.trim() &&
+        password.trim() &&
+        confirmPassword.trim()
     );
-  }, [
-    isSignupFormValid,
-    nickname,
-    email,
-    password,
-    confirmPassword,
-    agreedToTerms,
-  ]);
+
+    // 폼 유효성 검증
+    const isFormValid = isSignupFormValid(
+      { nickname, email, password, confirmPassword },
+      { skipConfirmPassword: false }
+    );
+
+    return allFieldsFilled && isFormValid && agreedToTerms;
+  }, [nickname, email, password, confirmPassword, agreedToTerms]);
 
   const handleModalClose = useCallback(() => {
     setShowModal(false);
@@ -194,9 +205,11 @@ export default function SignupPage(): React.JSX.Element {
         style={{
           height: '1211px',
           minHeight: '1211px',
+          marginTop: '30px',
+          marginBottom: '30px',
         }}
       >
-        <div className='flex h-auto min-h-[653px] w-full max-w-[520px] shrink-0 flex-col items-center gap-[30px] px-4 max-[375px]:max-w-[351px] max-[375px]:gap-[36px]'>
+        <div className='flex h-auto w-full max-w-[520px] shrink-0 flex-col items-center gap-[30px] px-4 max-[375px]:max-w-[351px] max-[375px]:gap-[36px]'>
           {/* Hero Block */}
           <AuthHero title='첫 방문을 환영합니다!' />
 
@@ -271,9 +284,9 @@ export default function SignupPage(): React.JSX.Element {
                     이용약관에 동의합니다
                   </label>
                 </div>
-
                 {/* 회원가입 버튼 */}
                 <AuthButton
+                  type='submit'
                   disabled={!isFormValidNow}
                   isLoading={isLoading}
                   loadingText='가입 중...'

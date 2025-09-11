@@ -25,7 +25,7 @@ export default function CreateNewboardForm({
       <div className='mb-6'>
         <label
           htmlFor='new-dashboard-name'
-          className='mb-2 block text-lg leading-6 font-medium'
+          className='mb-2 block text-lg leading-6 font-medium text-[var(--auth-text-strong)]'
         >
           <span>대시보드 이름</span>
         </label>
@@ -36,7 +36,7 @@ export default function CreateNewboardForm({
           type='text'
           maxLength={10}
           placeholder='새로운 대시보드'
-          className='w-full rounded-lg border border-gray-300 p-4 focus:outline-none'
+          className='w-full rounded-lg border border-[var(--auth-border)] bg-[var(--auth-input-bg)] p-4 text-[var(--auth-text-strong)] placeholder:text-[var(--auth-placeholder)] focus:ring-2 focus:ring-[var(--auth-primary)] focus:outline-none'
           value={formData.title}
           onChange={(e) => {
             setFormData((prev) => ({ ...prev, title: e.target.value }));

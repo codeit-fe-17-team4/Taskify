@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { useTheme } from '@/contexts/ThemeContext';
 import { cn } from '@/utils/cn';
 
 interface ChipProps {
@@ -13,11 +14,16 @@ export default function ChipState({
   label,
   ...props
 }: ChipProps): ReactNode {
+  const { theme } = useTheme();
+
   return (
     <>
       <div
         className={cn(
-          'bg-violet-light text-violet flex-center gap-1.5 rounded-2xl px-2 py-1 text-xs font-normal',
+          'flex-center gap-1.5 rounded-2xl px-2 py-1 text-xs font-normal',
+          theme === 'dark'
+            ? 'bg-[var(--button-secondary)] text-[var(--auth-primary)]'
+            : 'bg-violet-light text-violet',
           size === 'lg' && 'text-md'
         )}
         {...props}
@@ -30,7 +36,12 @@ export default function ChipState({
             height='6.5'
             fill='none'
           >
-            <circle cx='3' cy='3' r='3' fill='#5534DA' />
+            <circle
+              cx='3'
+              cy='3'
+              r='3'
+              fill={theme === 'dark' ? 'var(--auth-primary)' : '#5534DA'}
+            />
           </svg>
         </span>
         <span>{label}</span>

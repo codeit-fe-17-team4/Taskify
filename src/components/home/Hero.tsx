@@ -3,9 +3,12 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { type ReactElement, useEffect, useState } from 'react';
+import { useTheme } from '@/contexts/ThemeContext';
+import { getThemeIcon } from '@/utils/getThemeIcon';
 
 export default function Hero(): ReactElement {
   const [isAuth, setIsAuth] = useState(false);
+  const { theme } = useTheme();
 
   useEffect(() => {
     (async () => {
@@ -24,7 +27,7 @@ export default function Hero(): ReactElement {
       {/* desktop 이미지 */}
       <Image
         priority
-        src='/auth/image/hero-desktop.svg'
+        src={getThemeIcon('hero-desktop', theme)}
         alt='메인 히어로 일러스트'
         width={722}
         height={422.76}
@@ -35,10 +38,10 @@ export default function Hero(): ReactElement {
 
       {/* 제목 */}
       <h1 className='mx-auto mt-[48.24px] flex h-[100px] w-full max-w-[834px] items-center justify-center gap-[28px] whitespace-nowrap max-[744px]:max-w-[626px] max-[375px]:mt-[28px] max-[375px]:h-[105px] max-[375px]:max-w-[245px] max-[375px]:flex-col max-[375px]:gap-0'>
-        <span className='text-[76px] leading-[100px] font-bold tracking-[-0.02em] break-keep text-white max-[744px]:text-[56px] max-[744px]:leading-[74px] max-[375px]:text-[40px] max-[375px]:leading-[52px]'>
+        <span className='text-[76px] leading-[100px] font-bold tracking-[-0.02em] break-keep text-[var(--c-fg)] max-[744px]:text-[56px] max-[744px]:leading-[74px] max-[375px]:text-[40px] max-[375px]:leading-[52px]'>
           새로운 일정 관리
         </span>
-        <span className='text-[90px] leading-[65px] font-bold tracking-[-0.01em] break-keep text-violet-600 max-[744px]:text-[66px] max-[744px]:leading-[48px] max-[375px]:text-[40px] max-[375px]:leading-[52px]'>
+        <span className='text-[90px] leading-[65px] font-bold tracking-[-0.01em] break-keep text-[var(--auth-primary)] max-[744px]:text-[66px] max-[744px]:leading-[48px] max-[375px]:text-[40px] max-[375px]:leading-[52px]'>
           Taskify
         </span>
       </h1>
@@ -47,7 +50,7 @@ export default function Hero(): ReactElement {
       <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
         <Link
           href={isAuth ? '/mydashboard' : '/login'}
-          className='mx-auto mt-[111px] inline-flex h-[54px] w-[280px] items-center justify-center rounded-[8px] bg-violet-600 text-[18px] leading-[26px] font-[500] text-white hover:opacity-90 focus:ring-2 focus:ring-violet-600 focus:ring-offset-2 focus:ring-offset-black focus:outline-none max-[744px]:mt-[111px] max-[375px]:mt-[101px] max-[375px]:h-[46px] max-[375px]:w-[235px]'
+          className='mx-auto mt-[111px] inline-flex h-[54px] w-[280px] items-center justify-center rounded-[8px] bg-[var(--auth-primary)] text-[18px] leading-[26px] font-[500] text-white hover:opacity-90 focus:outline-none max-[744px]:mt-[111px] max-[375px]:mt-[101px] max-[375px]:h-[46px] max-[375px]:w-[235px]'
           aria-label='로그인 페이지로 이동'
           role='button'
         >

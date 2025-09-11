@@ -39,7 +39,7 @@ export default function Footer(): ReactElement {
           <a
             aria-label='email'
             href='mailto:contact@taskify.app'
-            className='text-on-inverse'
+            className='text-on-inverse focus:outline-none'
           >
             <svg
               width='18'
@@ -57,7 +57,7 @@ export default function Footer(): ReactElement {
             href='https://www.facebook.com'
             target='_blank'
             rel='noopener noreferrer'
-            className='text-on-inverse'
+            className='text-on-inverse focus:outline-none'
           >
             <svg
               width='18'
@@ -66,10 +66,17 @@ export default function Footer(): ReactElement {
               fill='none'
               aria-hidden='true'
             >
-              <rect x='3' y='3' width='18' height='18' rx='3' fill='white' />
+              <rect
+                x='3'
+                y='3'
+                width='18'
+                height='18'
+                rx='3'
+                fill='var(--c-bg)'
+              />
               <path
                 d='M13 22V12h3l1-4h-4V6c0-1.103.897-2 2-2h2V0h-2a6 6 0 0 0-6 6v2H7v4h3v10h3Z'
-                fill='black'
+                fill='var(--c-fg)'
               />
             </svg>
           </a>
@@ -79,7 +86,7 @@ export default function Footer(): ReactElement {
             href='https://www.instagram.com'
             target='_blank'
             rel='noopener noreferrer'
-            className='text-on-inverse'
+            className='text-on-inverse focus:outline-none'
           >
             <svg
               width='18'

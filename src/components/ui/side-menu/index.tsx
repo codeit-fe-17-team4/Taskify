@@ -5,10 +5,13 @@ import CreateNewboardModal from '@/components/mydashboard/create-newboard-modal'
 import ButtonPagination from '@/components/ui/button/button-pagination';
 import ModalPortal from '@/components/ui/modal/modal-portal';
 import DashboardList from '@/components/ui/side-menu/dashboard-list';
+import { useTheme } from '@/contexts/ThemeContext';
 import { useFetch } from '@/hooks/useAsync';
 import { getDashBoardList } from '@/lib/dashboards/api';
+import { getThemeIcon } from '@/utils/getThemeIcon';
 
 export default function SideMenu(): ReactNode {
+  const { theme } = useTheme();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [page, setPage] = useState(1);
   const pageSize = 12;
@@ -64,7 +67,7 @@ export default function SideMenu(): ReactNode {
       >
         <Image
           priority
-          src={'/side-menu/logo.png'}
+          src={getThemeIcon('logo', theme)}
           alt='깃펜 그림'
           width={29}
           height={33}
@@ -72,14 +75,14 @@ export default function SideMenu(): ReactNode {
         />
         <Image
           priority
-          src={'/side-menu/Taskify.svg'}
+          src={getThemeIcon('Taskify', theme)}
           alt='Taskify'
           className='mobile:hidden h-auto w-auto'
           width={80}
           height={22}
         />
       </Link>
-      <nav className='text-gray-1 flex flex-col gap-3'>
+      <nav className='flex flex-col gap-3 text-[var(--auth-text-strong)]'>
         <div className='mobile:justify-center flex justify-between'>
           <span className='mobile:hidden text-xs font-semibold'>
             DashBoards

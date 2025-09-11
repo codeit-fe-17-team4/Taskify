@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useRef, useState } from 'react';
 import DeleteColumnModal from '@/components/dashboard/modal/delete-column-modal';
 import ManageColumnForm from '@/components/dashboard/modal/manage-column-form';
 import type {
@@ -26,9 +26,18 @@ export default function ManageColumnModal({
   existingColumns = [],
 }: ManageColumnModalProps) {
   const [formData, setFormData] = useState<ManageColumnFormData>({
-    name: column?.title || '',
+    name: '',
   });
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const prevIsOpenRef = useRef(false);
+
+  // 모달이 열릴 때마다 formData 초기화
+  if (isOpen && !prevIsOpenRef.current && column) {
+    setFormData({
+      name: column.title || '',
+    });
+  }
+  prevIsOpenRef.current = isOpen;
 
   const handleClose = () => {
     onClose();
@@ -62,7 +71,10 @@ export default function ManageColumnModal({
     .filter((colName) => colName !== column?.title)
     .some((colName) => colName.toLowerCase() === formData.name.toLowerCase());
 
-  const isUpdateDisabled = !formData.name.trim() || isDuplicate;
+  // 변경사항이 있는지 확인
+  const hasChanges = formData.name.trim() !== (column?.title || '');
+
+  const isUpdateDisabled = !formData.name.trim() || isDuplicate || !hasChanges;
 
   if (!column) {
     return null;
@@ -71,6 +83,7 @@ export default function ManageColumnModal({
   return (
     <>
       <ButtonModal
+        key={column.id}
         isOpen={isOpen}
         title='컬럼 관리'
         submitText='변경'

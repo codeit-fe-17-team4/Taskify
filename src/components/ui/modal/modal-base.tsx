@@ -37,7 +37,7 @@ export default function BaseModal({
       <div
         role='dialog'
         aria-modal='true'
-        className={`scrollbar-hide max-h-[90vh] ${width} overflow-y-scroll rounded-lg bg-white p-8`}
+        className={`scrollbar-hide max-h-[90vh] ${width} overflow-y-scroll rounded-lg bg-[var(--auth-input-bg)] p-8`}
       >
         {children}
       </div>
