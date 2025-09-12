@@ -173,33 +173,35 @@ export default function Mydashboard(): ReactNode {
           theme === 'dark' ? 'bg-[var(--auth-bg)]' : 'bg-gray-50'
         }`}
       >
-        {/* 새로운 대시보드 */}
-        <div className='max-w-7xl p-6'>
-          {!dashboardData || dashboardLoading ? (
-            <DashboardListSkeleton />
-          ) : (
-            <DashboardList
-              dashboards={dashboardData.dashboards}
-              totalPages={totalPages}
-              currentPage={currentPage}
-              onPrevPage={handlePrevPage}
-              onNextPage={handleNextPage}
-              onOpenModal={handleOpenModal}
+        <div className='w-4xl'>
+          {/* 새로운 대시보드 */}
+          <div className='max-w-7xl p-6'>
+            {!dashboardData || dashboardLoading ? (
+              <DashboardListSkeleton />
+            ) : (
+              <DashboardList
+                dashboards={dashboardData.dashboards}
+                totalPages={totalPages}
+                currentPage={currentPage}
+                onPrevPage={handlePrevPage}
+                onNextPage={handleNextPage}
+                onOpenModal={handleOpenModal}
+              />
+            )}
+            {/* 초대받은 대시보드 */}
+            <InvitationList
+              inviteData={inviteData}
+              invitationLoading={invitationLoading}
+              searchQuery={searchQuery}
+              handleComposition={handleComposition}
+              loaderRef={ref}
+              hasMore={hasMore}
+              onAccept={handleAcceptInvitation}
+              onReject={handleRejectInvitation}
+              onChange={handleChange}
+              onKeyDown={handleKeyDown}
             />
-          )}
-          {/* 초대받은 대시보드 */}
-          <InvitationList
-            inviteData={inviteData}
-            invitationLoading={invitationLoading}
-            searchQuery={searchQuery}
-            handleComposition={handleComposition}
-            loaderRef={ref}
-            hasMore={hasMore}
-            onAccept={handleAcceptInvitation}
-            onReject={handleRejectInvitation}
-            onChange={handleChange}
-            onKeyDown={handleKeyDown}
-          />
+          </div>
         </div>
       </div>
       <ModalPortal>

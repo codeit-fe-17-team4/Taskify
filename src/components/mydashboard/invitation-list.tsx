@@ -64,7 +64,7 @@ export default function InvitationList({
     if (searchQuery.trim()) {
       return (
         <div
-          className={`tablet:w-lg mobile:w-2xs flex h-[650px] w-4xl flex-col rounded-lg border-0 ${
+          className={`tablet:w-lg mobile:w-2xs flex h-[650px] w-full flex-col rounded-lg border-0 ${
             theme === 'dark' ? CONTAINER_STYLES.dark : CONTAINER_STYLES.light
           }`}
         >
@@ -124,7 +124,7 @@ export default function InvitationList({
 
     return (
       <div
-        className={`tablet:w-lg mobile:w-3xs mt-10 flex h-[280px] w-2xl flex-col rounded-lg border-0 ${
+        className={`tablet:w-lg mobile:w-3xs mt-10 flex h-[280px] w-full flex-col rounded-lg border-0 ${
           theme === 'dark' ? CONTAINER_STYLES.dark : CONTAINER_STYLES.light
         }`}
       >
@@ -163,7 +163,7 @@ export default function InvitationList({
   return (
     <div className='mt-10'>
       <div
-        className={`tablet:w-lg mobile:w-2xs flex h-[650px] w-4xl flex-col rounded-lg border-0 ${
+        className={`tablet:w-lg mobile:w-2xs flex h-[650px] w-full flex-col rounded-lg border-0 ${
           theme === 'dark' ? CONTAINER_STYLES.dark : CONTAINER_STYLES.light
         }`}
       >

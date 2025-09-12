@@ -43,9 +43,6 @@ const getThemeStyles = (theme: string) => {
       backgroundColor: isDark ? '#201f23' : '#ffffff',
       padding: '24px',
       borderRadius: '8px',
-      boxShadow: isDark
-        ? '0 2px 8px rgba(0, 0, 0, 0.3)'
-        : '0 2px 8px rgba(0, 0, 0, 0.1)',
     },
     title: {
       color: isDark ? 'var(--auth-text-strong)' : '#333236',
