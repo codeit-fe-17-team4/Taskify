@@ -50,7 +50,7 @@ export default function Mydashboard(): ReactNode {
     fetchData: useCallback(
       async (cursorId?: number) => {
         const result = await getInvitationList({
-          size: 10,
+          size: 5,
           title: submittedSearchQuery,
           cursorId,
         });

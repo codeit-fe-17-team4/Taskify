@@ -212,7 +212,7 @@ export default function InvitationList({
           <div>초대자</div>
           <div className='mobile:hidden text-center'>수락 여부</div>
         </div>
-        <div className='relative flex-1 overflow-y-auto'>
+        <div className='scrollbar-hide relative flex-1 overflow-y-auto'>
           {inviteData.map((invite) => {
             return (
               <div

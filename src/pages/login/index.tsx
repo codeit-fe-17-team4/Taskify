@@ -139,8 +139,6 @@ export default function LoginPage(): JSX.Element {
         style={{
           height: '1080px',
           minHeight: '1080px',
-          marginTop: '95.5px',
-          marginBottom: '95.5px',
         }}
       >
         <div className='flex h-auto w-[520px] shrink-0 flex-col items-center gap-[30px] max-[375px]:w-[351px] max-[375px]:gap-[36px]'>

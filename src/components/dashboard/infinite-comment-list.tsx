@@ -1,8 +1,8 @@
 import Image from 'next/image';
 import { useCallback, useState } from 'react';
+import { useTheme } from '@/contexts/ThemeContext';
 import { useCursorInfiniteScroll } from '@/hooks/useCursorInfiniteScroll';
 import type { CommentType } from '@/lib/comments/type';
-import { useTheme } from '@/contexts/ThemeContext';
 import { cn } from '@/utils/cn';
 
 interface InfiniteCommentListProps {
