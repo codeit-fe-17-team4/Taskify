@@ -14,16 +14,18 @@ export default function ManageColumnForm({
 }: ManageColumnFormProps) {
   const { theme } = useTheme();
 
-  let inputClass = '';
+  const getInputClass = () => {
+    if (hasError) {
+      return 'border-red-500 focus:border-red-500';
+    }
+    if (theme === 'dark') {
+      return 'border-[var(--auth-border)] bg-[var(--auth-input-bg)] text-white focus:border-green-500';
+    }
 
-  if (hasError) {
-    inputClass = 'border-red-500 focus:border-red-500';
-  } else if (theme === 'dark') {
-    inputClass =
-      'border-[var(--auth-border)] bg-[var(--auth-input-bg)] text-white focus:border-green-500';
-  } else {
-    inputClass = 'focus:border-violet border-gray-300 bg-white text-gray-900';
-  }
+    return 'focus:border-violet border-gray-300 bg-white text-gray-900';
+  };
+
+  const inputClass = getInputClass();
 
   return (
     <>

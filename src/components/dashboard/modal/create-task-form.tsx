@@ -325,7 +325,8 @@ export default function CreateTaskForm({
           <button
             type='button'
             className='absolute inset-y-0 left-0 flex cursor-pointer items-center pl-4'
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation();
               const input = document.querySelector(
                 '#dueDate'
               ) as HTMLInputElement;
